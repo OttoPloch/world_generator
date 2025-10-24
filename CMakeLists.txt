@@ -14,6 +14,9 @@ FetchContent_MakeAvailable(SFML)
 
 add_executable(app
 src/main.cpp
+src/game.cpp
+src/window.cpp
+src/event_handler.cpp
 )
 
 target_compile_features(app PRIVATE cxx_std_17)
