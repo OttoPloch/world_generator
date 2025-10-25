@@ -18,9 +18,13 @@ sf::Vector2i toV2I(sf::Vector2u vector);
 
 sf::Vector2i toV2I(unsigned int x, unsigned int y);
 
+float toFloat(double value);
+
 float toFloat(int value);
 
 float toFloat(unsigned int value);
+
+int toInt(double value);
 
 int toInt(float value);
 

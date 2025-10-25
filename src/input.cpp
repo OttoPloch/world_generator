@@ -62,7 +62,7 @@ sf::Vector2f getMovement()
 
     if (movement.x != 0 && movement.y != 0)
     {
-        return {std::sqrt(2.f) * toFloat(movement.x), std::sqrt(2.f) * toFloat(movement.y)};
+        return {(toFloat(sqrt(2.f)) / 2.f) * toFloat(movement.x), (toFloat(sqrt(2.f)) / 2.f) * toFloat(movement.y)};
     }
     else
     {

@@ -64,7 +64,12 @@ sf::Vector2i toV2I(unsigned int x, unsigned int y)
     };
 }
 
-float toFloat (int value)
+float toFloat(double value)
+{
+    return static_cast<float>(value);
+}
+
+float toFloat(int value)
 {
     return static_cast<float>(value);
 }
@@ -72,6 +77,11 @@ float toFloat (int value)
 float toFloat(unsigned int value)
 {
     return static_cast<float>(value);
+}
+
+int toInt(double value)
+{
+    return static_cast<int>(value);
 }
 
 int toInt(float value)
