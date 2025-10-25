@@ -1,5 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <cmath>
 
-#include "input_handler.hpp"
+#include "input.hpp"
+#include "conversions.hpp"

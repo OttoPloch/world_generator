@@ -1,4 +1,4 @@
-#include "input_handler.hpp"
+#include "input.hpp"
 
 bool getKey(sf::Keyboard::Key key)
 {
@@ -49,4 +49,23 @@ bool getKey(std::string key)
     if (key == "ENTER" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) return true;
 
     return false;
+}
+
+sf::Vector2f getMovement()
+{
+    sf::Vector2i movement = {0, 0};
+
+    if (getKey("W")) movement.y -= 1;
+    if (getKey("A")) movement.x -= 1;
+    if (getKey("S")) movement.y += 1;
+    if (getKey("D")) movement.x += 1;
+
+    if (movement.x != 0 && movement.y != 0)
+    {
+        return {std::sqrt(2.f) * toFloat(movement.x), std::sqrt(2.f) * toFloat(movement.y)};
+    }
+    else
+    {
+        return toV2F(movement.x, movement.y);
+    }
 }

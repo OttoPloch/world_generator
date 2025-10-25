@@ -57,60 +57,29 @@ sf::Vector2f Camera::getTopLeft()
 
 void Camera::update(float dt)
 {
-    if (movement.x != 0 && movement.y != 0)
+    if (getMovement().x == 0)
     {
-        velocity.x = FREECAM_MOVE_SPEED * movement.x / 1.41;
-        velocity.y = FREECAM_MOVE_SPEED * movement.y / 1.41;
+        velocity.x *= 1 - (dt * 8);
     }
     else
     {
-        if (movement.x == 0)
-        {
-            velocity.x *= 1 - (dt * 8);
-        }
-        else
-        {
-            velocity.x = FREECAM_MOVE_SPEED * movement.x;
-        }
+        velocity.x = FREECAM_MOVE_SPEED * getMovement().x;
+    }
 
-        if (movement.y == 0)
-        {
-            velocity.y *= 1 - (dt * 8);
-        }
-        else
-        {
-            velocity.y = FREECAM_MOVE_SPEED * movement.y;
-        }
+    if (getMovement().y == 0)
+    {
+        velocity.y *= 1 - (dt * 8);
+    }
+    else
+    {
+        velocity.y = FREECAM_MOVE_SPEED * getMovement().y;
     }
 
     center.x += velocity.x * 100 * dt;
     center.y += velocity.y * 100 * dt;
 
-    movement = {0, 0};
-
     view.setCenter(center);
-}
-
-void Camera::setMovement(sf::Vector2i movement)
-{
-    this->movement = movement;
-}
-
-void Camera::setMovement(char direction, int magnitude)
-{
-    if (direction == 'x')
-    {
-        movement.x = magnitude;
-    }
-    else if (direction == 'y')
-    {
-        movement.y = magnitude;
-    }
-    else
-    {
-        std::cout << "pick a direction!\n";
-        assert(false);
-    }
+    view.setSize(toV2F(window->getSize()));
 }
 
 void Camera::setVelocity(sf::Vector2f newVelocity)

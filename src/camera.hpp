@@ -25,10 +25,6 @@ public:
 
     void update(float dt);
 
-    void setMovement(sf::Vector2i movement);
-
-    void setMovement(char direction, int magnitude);
-
     void setVelocity(sf::Vector2f newVelocity);
 
     void setVelocity(char direction, float newVelocity);
@@ -46,8 +42,6 @@ private:
     sf::Vector2f center;
 
     sf::Vector2f velocity;
-
-    sf::Vector2i movement;
 
     sf::View view;
 };

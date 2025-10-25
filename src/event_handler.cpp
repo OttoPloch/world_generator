@@ -19,10 +19,6 @@ void EventHandler::processEvents()
         {
             keyPressed(key->code);
         }
-        else if (event->is<sf::Event::Resized>())
-        {
-            window->resetView();
-        }
     }
 }
 

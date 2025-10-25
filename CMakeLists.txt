@@ -18,7 +18,8 @@ src/game.cpp
 src/window.cpp
 src/event_handler.cpp
 src/camera.cpp
-src/input_handler.cpp
+src/input.cpp
+src/conversions.cpp
 )
 
 target_compile_features(app PRIVATE cxx_std_17)

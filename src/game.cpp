@@ -8,6 +8,8 @@ void Game::init()
 
     eventHandler.init(window);
 
+    camera.init(window, true, {0, 0}, toV2F(window.getSize()));
+
     paused = false;
 
     ticksPerSecond = 20;
@@ -22,14 +24,14 @@ void Game::run()
     rect.setSize({100.f, 100.f});
     rect.setFillColor(sf::Color::Red);
     rect.setOrigin({50.f, 50.f});
-    rect.setPosition({static_cast<float>(window.getWindow().getSize().x) / 2.f, static_cast<float>(window.getWindow().getSize().y) / 2.f});
+    rect.setPosition(toV2F(window.getSize().x / 2, window.getSize().y / 2));
 
     outline.setSize({480, 480});
     outline.setOutlineColor(sf::Color::Red);
     outline.setOutlineThickness(5.f);
     outline.setFillColor(sf::Color::Transparent);
     outline.setOrigin({240.f, 240.f});
-    outline.setPosition({static_cast<float>(window.getWindow().getSize().x) / 2.f, static_cast<float>(window.getWindow().getSize().y) / 2.f});
+    outline.setPosition(toV2F(window.getSize().x / 2, window.getSize().y / 2));
 
     while (window.getWindow().isOpen())
     {
@@ -66,7 +68,8 @@ void Game::tick()
 
 void Game::update(float dt)
 {
-    window.update(dt);
+    camera.update(dt);
+    window.setView(camera.getView());
 }
 
 void Game::draw()

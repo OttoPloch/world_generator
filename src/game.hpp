@@ -26,6 +26,8 @@ private:
 
     EventHandler eventHandler;
 
+    Camera camera;
+
     bool paused;
     
     int ticksPerSecond;

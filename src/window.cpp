@@ -14,39 +14,8 @@ void Window::create(sf::Vector2u size, std::string name, bool fullscreen, int ma
     {
         window.setFramerateLimit(maxFPS);
     }
-
+    
     this->bgColor = bgColor;
-
-    camera.init(*this, true, {0, 0}, {static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)});
-
-    window.setView(camera.getView());
-}
-
-void Window::update(float dt)
-{
-    window.setView(camera.getView());
-    
-    camera.update(dt);
-
-    if (getKey("W"))
-    {
-        camera.setMovement('y', -1);
-    }
-    
-    if (getKey("A"))
-    {
-        camera.setMovement('x', -1);
-    }
-    
-    if (getKey("S"))
-    {
-        camera.setMovement('y', 1);
-    }
-    
-    if (getKey("D"))
-    {
-        camera.setMovement('x', 1);
-    }
 }
 
 void Window::clear()
@@ -69,12 +38,11 @@ void Window::exit()
     window.close();
 }
 
-void Window::resetView()
+void Window::setView(sf::View view)
 {
-    camera.setSize({
-        static_cast<float>(window.getSize().x),
-        static_cast<float>(window.getSize().y)
-    });
+    window.setView(view);
 }
 
 sf::RenderWindow& Window::getWindow() { return window; }
+
+sf::Vector2u Window::getSize() { return window.getSize(); }
