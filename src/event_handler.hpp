@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "common.hpp"
 #include "window.hpp"
 
 class EventHandler

@@ -1,12 +1,10 @@
 #include "game.hpp"
 
-#include <iostream>
-
 Game::Game() {}
 
 void Game::init()
 {
-    window.create({500, 500}, "INFINITE", false, 60, sf::Color(10, 10, 12));
+    window.create({1200, 1200}, "INFINITE", false, 165, sf::Color(10, 10, 12));
 
     eventHandler.init(window);
 
@@ -25,6 +23,13 @@ void Game::run()
     rect.setFillColor(sf::Color::Red);
     rect.setOrigin({50.f, 50.f});
     rect.setPosition({static_cast<float>(window.getWindow().getSize().x) / 2.f, static_cast<float>(window.getWindow().getSize().y) / 2.f});
+
+    outline.setSize({480, 480});
+    outline.setOutlineColor(sf::Color::Red);
+    outline.setOutlineThickness(5.f);
+    outline.setFillColor(sf::Color::Transparent);
+    outline.setOrigin({240.f, 240.f});
+    outline.setPosition({static_cast<float>(window.getWindow().getSize().x) / 2.f, static_cast<float>(window.getWindow().getSize().y) / 2.f});
 
     while (window.getWindow().isOpen())
     {
@@ -46,7 +51,7 @@ void Game::run()
             }
         }
 
-        update();
+        update(dt);
 
         draw();
     }
@@ -59,9 +64,9 @@ void Game::tick()
 
 }
 
-void Game::update()
+void Game::update(float dt)
 {
-    
+    window.update(dt);
 }
 
 void Game::draw()
@@ -69,6 +74,7 @@ void Game::draw()
     window.clear();
 
     window.draw(rect);
+    window.draw(outline);
 
     window.display();
 }

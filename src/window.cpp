@@ -16,6 +16,37 @@ void Window::create(sf::Vector2u size, std::string name, bool fullscreen, int ma
     }
 
     this->bgColor = bgColor;
+
+    camera.init(*this, true, {0, 0}, {static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)});
+
+    window.setView(camera.getView());
+}
+
+void Window::update(float dt)
+{
+    window.setView(camera.getView());
+    
+    camera.update(dt);
+
+    if (getKey("W"))
+    {
+        camera.setMovement('y', -1);
+    }
+    
+    if (getKey("A"))
+    {
+        camera.setMovement('x', -1);
+    }
+    
+    if (getKey("S"))
+    {
+        camera.setMovement('y', 1);
+    }
+    
+    if (getKey("D"))
+    {
+        camera.setMovement('x', 1);
+    }
 }
 
 void Window::clear()
@@ -40,13 +71,10 @@ void Window::exit()
 
 void Window::resetView()
 {
-    sf::View newView = sf::View(
-        window.getView().getCenter(),
-        {static_cast<float>(window.getSize().x),
-        static_cast<float>(window.getSize().y)}
-    );
-
-    window.setView(newView);
+    camera.setSize({
+        static_cast<float>(window.getSize().x),
+        static_cast<float>(window.getSize().y)
+    });
 }
 
 sf::RenderWindow& Window::getWindow() { return window; }

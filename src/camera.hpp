@@ -1,0 +1,53 @@
+#pragma once
+
+#include <SFML/Graphics.hpp>
+
+#include "common.hpp"
+
+class Window;
+
+class Camera
+{
+public:
+    Camera();
+
+    void init(Window& window, bool setTopLeftPos, sf::Vector2f position, sf::Vector2f size);
+
+    void setCenter(sf::Vector2f center);
+
+    void setTopLeft(sf::Vector2f topLeft);
+
+    sf::View getView();
+
+    sf::Vector2f getCenter();
+
+    sf::Vector2f getTopLeft();
+
+    void update(float dt);
+
+    void setMovement(sf::Vector2i movement);
+
+    void setMovement(char direction, int magnitude);
+
+    void setVelocity(sf::Vector2f newVelocity);
+
+    void setVelocity(char direction, float newVelocity);
+    
+    void changeVelocity(sf::Vector2f amount);
+
+    void changeVelocity(char direction, float amount);
+
+    void setSize(sf::Vector2f newSize);
+private:
+    Window* window;
+
+    sf::Vector2f size;
+    
+    sf::Vector2f center;
+
+    sf::Vector2f velocity;
+
+    sf::Vector2i movement;
+
+    sf::View view;
+};

@@ -1,7 +1,9 @@
 #pragma once
 
+#include "common.hpp"
 #include "window.hpp"
 #include "event_handler.hpp"
+#include "camera.hpp"
 
 class Game
 {
@@ -14,7 +16,7 @@ public:
 
     void tick();
 
-    void update();
+    void update(float dt);
 
     void draw();
 
@@ -31,4 +33,5 @@ private:
     sf::Clock dtClock;
 
     sf::RectangleShape rect;
+    sf::RectangleShape outline;
 };
