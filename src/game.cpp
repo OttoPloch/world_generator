@@ -6,7 +6,7 @@ void Game::init()
 {
     window.create({1200, 1200}, "INFINITE", false, 165, sf::Color(10, 10, 12));
 
-    eventHandler.init(window);
+    eventHandler.init(window, camera);
 
     camera.init(window, true, {0, 0}, toV2F(window.getSize()));
 

@@ -23,6 +23,8 @@ public:
 
     sf::Vector2f getTopLeft();
 
+    float getZoomFactor();
+
     void update(float dt);
 
     void setVelocity(sf::Vector2f newVelocity);
@@ -33,12 +35,20 @@ public:
 
     void changeVelocity(char direction, float amount);
 
-    void setSize(sf::Vector2f newSize);
+    void zoom(int amount);
+
+    void resetZoom();
+
+    void setBaseSize(sf::Vector2f newSize);
 private:
     Window* window;
 
+    sf::Vector2f baseSize;
+
     sf::Vector2f size;
     
+    float zoomFactor;
+
     sf::Vector2f center;
 
     sf::Vector2f velocity;
