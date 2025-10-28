@@ -4,7 +4,7 @@
 
 const int FREECAM_MOVE_SPEED_BASE = 10;
 
-const float CAMERA_BIG_ZOOM_FACTOR = 2.f;
+const float CAMERA_BIG_ZOOM_FACTOR = 1.5f;
 const float CAMERA_SMALL_ZOOM_AMOUNT = 0.1f;
 const float CAMERA_MIN_ZOOM_FACTOR = 0.5f;
 const float CAMERA_MAX_ZOOM_FACTOR = pow(CAMERA_BIG_ZOOM_FACTOR, 3);
