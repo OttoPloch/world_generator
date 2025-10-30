@@ -10,11 +10,13 @@ public:
 
     void create(sf::Vector2f position);
 
-    void giveSprite(std::string path, sf::Vector2f size);
+    void giveSprite(std::string path, sf::Vector2f size, bool centerOrigin = true);
 
     void draw(sf::RenderWindow& window);
 
     sf::Vector2f getPosition();
+
+    const Sprite& getSprite();
 private:
     sf::Vector2f position;
 

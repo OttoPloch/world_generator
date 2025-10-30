@@ -17,9 +17,9 @@ public:
 
     void setRotation(float newRotation);
 
-    sf::Sprite getSprite();
-    
     void draw(sf::RenderWindow& window);
+    
+    sf::Sprite getSprite();
 private:
     sf::Vector2f position;
 

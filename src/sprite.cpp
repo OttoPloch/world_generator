@@ -39,16 +39,14 @@ void Sprite::setSize(sf::Vector2f newSize)
 
 void Sprite::setRotation(float newRotation)
 {
-    sf::Angle angle = sf::degrees(newRotation);
-
-    sprite->setRotation(angle);
+    sprite->setRotation(sf::degrees(newRotation));
 
     rotation = newRotation;
 }
-
-sf::Sprite Sprite::getSprite() { return *sprite; }
 
 void Sprite::draw(sf::RenderWindow& window)
 {
     window.draw(*sprite);
 }
+
+sf::Sprite Sprite::getSprite() { return *sprite; }
