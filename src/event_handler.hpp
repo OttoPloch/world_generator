@@ -1,7 +1,5 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
-
 #include "common.hpp"
 #include "window.hpp"
 #include "camera.hpp"

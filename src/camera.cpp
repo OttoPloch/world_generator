@@ -6,7 +6,7 @@ const int FREECAM_MOVE_SPEED_BASE = 10;
 
 const float CAMERA_BIG_ZOOM_FACTOR = 1.5f;
 const float CAMERA_SMALL_ZOOM_AMOUNT = 0.1f;
-const float CAMERA_MIN_ZOOM_FACTOR = 0.5f;
+const float CAMERA_MIN_ZOOM_FACTOR = 0.3f;
 const float CAMERA_MAX_ZOOM_FACTOR = pow(CAMERA_BIG_ZOOM_FACTOR, 3);
 
 Camera::Camera() {}
@@ -142,44 +142,28 @@ void Camera::zoom(int amount)
     if (zoomFactor <= CAMERA_MIN_ZOOM_FACTOR && amount < 0) return;
     if (zoomFactor >= CAMERA_MAX_ZOOM_FACTOR && amount > 0) return;
     
-    std::cout << "amount is " << amount << " which is ";
-
     if (amount > 0)
     {
-        std::cout << "> 0, so ";
-
         if (zoomFactor >= 1.f)
         {
-            std::cout << "since zoomFactor is " << zoomFactor << ", which is >= 1, multiply by 2\n";
-
             zoomFactor *= CAMERA_BIG_ZOOM_FACTOR;
         }
         else if (zoomFactor < 1.f)
         {
-            std::cout << "since zoomFactor is " << zoomFactor << ", which is < 1, add .1 to it\n";
-
             zoomFactor += CAMERA_SMALL_ZOOM_AMOUNT;
         }
     }
     else if (amount < 0)
     {
-        std::cout << "< 0, so ";
-
         if (zoomFactor > 1.f)
         {
-            std::cout << "since zoomFactor is " << zoomFactor << ", which is > 1, divide by 2\n";
-
             zoomFactor /= CAMERA_BIG_ZOOM_FACTOR;
         }
         else if (zoomFactor <= 1.f)
         {
-            std::cout << "since zoomFactor is " << zoomFactor << ", which is <= 1, subtract by .1\n";
-            
             zoomFactor -= CAMERA_SMALL_ZOOM_AMOUNT;
         }
     }
-
-    std::cout << "new zoom: " << zoomFactor << '\n';
 
     size = {
         baseSize.x * zoomFactor,

@@ -93,3 +93,8 @@ int toInt(unsigned int value)
 {
     return static_cast<int>(value);
 }
+
+float deg2Rad(float degrees)
+{
+    return degrees * M_PI / 180;
+}

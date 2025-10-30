@@ -4,6 +4,7 @@
 #include "window.hpp"
 #include "event_handler.hpp"
 #include "camera.hpp"
+#include "entity.hpp"
 
 class Game
 {
@@ -36,4 +37,7 @@ private:
 
     sf::RectangleShape rect;
     sf::RectangleShape outline;
+
+    Entity thing;
+    Entity thing2;
 };

@@ -4,7 +4,7 @@ Game::Game() {}
 
 void Game::init()
 {
-    window.create({1200, 1200}, "INFINITE", false, 165, sf::Color(10, 10, 12));
+    window.create({800, 800}, "INFINITE", false, 165, sf::Color(10, 10, 12));
 
     eventHandler.init(window, camera);
 
@@ -13,6 +13,12 @@ void Game::init()
     paused = false;
 
     ticksPerSecond = 20;
+
+    thing.create({475, 475});
+    thing.giveSprite("../../assets/images/image.png", {50, 50});
+
+    thing2.create({0, 0});
+    thing2.giveSprite("../../assets/images/shaq_time_out.png", {300, 300});
 
     run();
 }
@@ -78,6 +84,9 @@ void Game::draw()
 
     window.draw(rect);
     window.draw(outline);
+
+    thing.draw(window.getWindow());
+    thing2.draw(window.getWindow());
 
     window.display();
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include "common.hpp"
 
 sf::Vector2f toV2F(sf::Vector2i vector);
 
@@ -29,3 +29,5 @@ int toInt(double value);
 int toInt(float value);
 
 int toInt(unsigned int value);
+
+float deg2Rad(float degrees);

@@ -20,6 +20,8 @@ src/event_handler.cpp
 src/camera.cpp
 src/input.cpp
 src/conversions.cpp
+src/entity.cpp
+src/sprite.cpp
 )
 
 target_compile_features(app PRIVATE cxx_std_17)

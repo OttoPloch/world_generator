@@ -57,5 +57,12 @@ void EventHandler::keyPressed(sf::Keyboard::Key key)
 
 void EventHandler::mouseWheelScrolled(const sf::Event::MouseWheelScrolled* scroll)
 {
-    camera->zoom(toInt(-scroll->delta));
+    if (scroll->wheel == sf::Mouse::Wheel::Horizontal)
+    {
+        camera->zoom(toInt(scroll->delta));
+    }
+    else
+    {
+        camera->zoom(toInt(-scroll->delta));
+    }
 }
