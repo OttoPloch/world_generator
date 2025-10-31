@@ -2,6 +2,7 @@
 
 #include "common.hpp"
 #include "sprite.hpp"
+#include "asset_manager.hpp"
 
 class Entity
 {
@@ -10,7 +11,9 @@ public:
 
     void create(sf::Vector2f position);
 
-    void giveSprite(std::string path, sf::Vector2f size, bool centerOrigin = true);
+    void giveSprite(sf::Texture* texture, sf::Vector2f size, bool centerOrigin = true);
+
+    void changeSpriteTexture(sf::Texture* texture);
 
     void draw(sf::RenderWindow& window);
 

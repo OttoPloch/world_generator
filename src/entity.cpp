@@ -9,9 +9,14 @@ void Entity::create(sf::Vector2f position)
     rotation = 0;
 }
 
-void Entity::giveSprite(std::string path, sf::Vector2f size, bool centerOrigin)
+void Entity::giveSprite(sf::Texture* texture, sf::Vector2f size, bool centerOrigin)
 {
-    sprite.create(path, position, size, centerOrigin);
+    sprite.create(texture, position, size, centerOrigin);
+}
+
+void Entity::changeSpriteTexture(sf::Texture* texture)
+{
+    sprite.setTexture(texture);
 }
 
 void Entity::draw(sf::RenderWindow& window)

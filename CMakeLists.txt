@@ -22,6 +22,7 @@ src/input.cpp
 src/conversions.cpp
 src/entity.cpp
 src/sprite.cpp
+src/asset_manager.cpp
 )
 
 target_compile_features(app PRIVATE cxx_std_17)

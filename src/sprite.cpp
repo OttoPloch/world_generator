@@ -2,22 +2,18 @@
 
 Sprite::Sprite() {}
 
-void Sprite::create(std::string path, sf::Vector2f position, sf::Vector2f size, bool centerOrigin)
+void Sprite::create(sf::Texture* texture, sf::Vector2f position, sf::Vector2f size, bool centerOrigin)
 {
-    if (!texture.loadFromFile(path))
-    {
-        std::cout << "failed to load file '" << path << "'\n";
-    }
-
     this->position = position;
     
     this->size = size;
 
     rotation = 0.f;
 
-    sprite = std::make_unique<sf::Sprite>(texture);
+    this->texture = texture;
 
-    sprite->setTexture(texture);
+    sprite = std::make_unique<sf::Sprite>(*texture);
+
     if (centerOrigin) sprite->setOrigin({sprite->getTextureRect().size.x / 2.f, sprite->getTextureRect().size.y / 2.f});
     sprite->setScale({size.x / sprite->getTextureRect().size.x, size.y / sprite->getTextureRect().size.y});
     sprite->setPosition(position);
@@ -42,6 +38,13 @@ void Sprite::setRotation(float newRotation)
     sprite->setRotation(sf::degrees(newRotation));
 
     rotation = newRotation;
+}
+
+void Sprite::setTexture(sf::Texture* newTexture)
+{
+    sprite->setTexture(*newTexture);
+    
+    texture = newTexture;
 }
 
 void Sprite::draw(sf::RenderWindow& window)

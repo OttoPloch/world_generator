@@ -15,10 +15,10 @@ void Game::init()
     ticksPerSecond = 20;
 
     thing.create({475, 475});
-    thing.giveSprite("../../assets/images/image.png", {50, 50});
+    thing.giveSprite(assetManager.getTexture("pixel"), {50, 50});
 
     thing2.create({0, 0});
-    thing2.giveSprite("../../assets/images/shaq_time_out.png", {300, 300});
+    thing2.giveSprite(assetManager.getTexture("shaq"), {300, 300});
 
     run();
 }

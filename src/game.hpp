@@ -5,6 +5,7 @@
 #include "event_handler.hpp"
 #include "camera.hpp"
 #include "entity.hpp"
+#include "asset_manager.hpp"
 
 class Game
 {
@@ -28,6 +29,8 @@ private:
     EventHandler eventHandler;
 
     Camera camera;
+
+    AssetManager assetManager;
 
     bool paused;
     
