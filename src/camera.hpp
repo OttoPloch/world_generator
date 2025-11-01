@@ -27,10 +27,12 @@ public:
 
     void setVelocity(sf::Vector2f newVelocity);
 
+    // 'x' or 'y'
     void setVelocity(char direction, float newVelocity);
     
     void changeVelocity(sf::Vector2f amount);
-
+    
+    // 'x' or 'y'
     void changeVelocity(char direction, float amount);
 
     void zoom(int amount);

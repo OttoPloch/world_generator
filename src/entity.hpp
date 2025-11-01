@@ -1,8 +1,11 @@
 #pragma once
 
+#include <memory>
+
 #include "common.hpp"
 #include "sprite.hpp"
 #include "asset_manager.hpp"
+#include "motion_attribute.hpp"
 
 class Entity
 {
@@ -13,7 +16,11 @@ public:
 
     void giveSprite(sf::Texture* texture, sf::Vector2f size, bool centerOrigin = true);
 
+    void giveMotion();
+
     void changeSpriteTexture(sf::Texture* texture);
+
+    void tick();
 
     void draw(sf::RenderWindow& window);
 
@@ -25,5 +32,7 @@ private:
 
     float rotation;
 
-    Sprite sprite;
+    std::unique_ptr<Sprite> sprite;
+
+    std::unique_ptr<MotionAttribute> motion;
 };

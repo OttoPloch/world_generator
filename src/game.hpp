@@ -37,6 +37,7 @@ private:
     int ticksPerSecond;
     
     sf::Clock dtClock;
+    sf::Clock tickClock;
 
     sf::RectangleShape rect;
     sf::RectangleShape outline;

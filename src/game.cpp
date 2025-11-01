@@ -12,13 +12,14 @@ void Game::init()
 
     paused = false;
 
-    ticksPerSecond = 20;
+    ticksPerSecond = 30;
 
     thing.create({475, 475});
     thing.giveSprite(assetManager.getTexture("pixel"), {50, 50});
 
     thing2.create({0, 0});
     thing2.giveSprite(assetManager.getTexture("shaq"), {300, 300});
+    thing2.giveMotion();
 
     run();
 }
@@ -53,6 +54,10 @@ void Game::run()
 
             while (ticksToProcess >= 1.f)
             {
+                float dtick = tickClock.restart().asSeconds();
+
+                std::cout << "dt: " << dt << "; dtick: " << dtick << '\n';
+
                 tick();
 
                 ticksToProcess -= 1.f;
@@ -69,7 +74,8 @@ void Game::run()
 
 void Game::tick()
 {
-
+    thing.tick();
+    thing2.tick();
 }
 
 void Game::update(float dt)

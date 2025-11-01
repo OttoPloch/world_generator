@@ -23,6 +23,8 @@ src/conversions.cpp
 src/entity.cpp
 src/sprite.cpp
 src/asset_manager.cpp
+src/attribute.cpp
+src/motion_attribute.cpp
 )
 
 target_compile_features(app PRIVATE cxx_std_17)
