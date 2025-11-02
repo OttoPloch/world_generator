@@ -2,6 +2,8 @@
 
 #include "common.hpp"
 
+#include "entity.hpp"
+
 class Window;
 
 class Camera
@@ -9,7 +11,7 @@ class Camera
 public:
     Camera();
 
-    void init(Window& window, bool setTopLeftPos, sf::Vector2f position, sf::Vector2f size);
+    void init(Window& window, bool setTopLeftPos, sf::Vector2f position, sf::Vector2f size, Entity* focus = nullptr);
 
     void setCenter(sf::Vector2f center);
 
@@ -40,6 +42,12 @@ public:
     void resetZoom();
 
     void setBaseSize(sf::Vector2f newSize);
+
+    void setFocus(Entity* newFocus);
+
+    void removeFocus();
+
+    Entity* getFocus();
 private:
     Window* window;
 
@@ -54,4 +62,6 @@ private:
     sf::Vector2f velocity;
 
     sf::View view;
+
+    Entity* focus;
 };

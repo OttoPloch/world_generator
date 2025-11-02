@@ -4,7 +4,7 @@ Entity::Entity() {}
 
 void Entity::create(sf::Vector2f position)
 {
-    this->position = position;
+    this->position.set(position);
 
     rotation = 0;
 }
@@ -20,8 +20,8 @@ void Entity::giveMotion()
 {
     motion = std::make_unique<MotionAttribute>(position);
 
-    motion->setVelocity('x', 3.f);
-    motion->setVelocity('y', 6.f);
+    motion->setVelocity('x', 4.f);
+    motion->setVelocity('y', 8.f);
 }
 
 void Entity::changeSpriteTexture(sf::Texture* texture)
@@ -31,18 +31,9 @@ void Entity::changeSpriteTexture(sf::Texture* texture)
 
 void Entity::tick()
 {
-    if (motion)
-    {
-        motion->tick();
-
-        position = motion->getPosition();
-        
-        if (sprite)
-        {
-            sprite->setPosition(position);
-        }
-    }
-
+    if (motion) motion->tick();
+    
+    if (sprite) sprite->tick();
 }
 
 void Entity::draw(sf::RenderWindow& window)
@@ -50,6 +41,6 @@ void Entity::draw(sf::RenderWindow& window)
     if (sprite) sprite->draw(window);
 }
 
-sf::Vector2f Entity::getPosition() { return position; }
+sf::Vector2f Entity::getPosition() { return position.get(); }
 
 const Sprite& Entity::getSprite() { return *sprite; }

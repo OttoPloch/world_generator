@@ -6,7 +6,7 @@ void Game::init()
 {
     window.create({800, 800}, "INFINITE", false, 165, sf::Color(10, 10, 12));
 
-    eventHandler.init(window, camera);
+    eventHandler.init(window, camera, *this);
 
     camera.init(window, true, {0, 0}, toV2F(window.getSize()));
 
@@ -57,6 +57,7 @@ void Game::run()
                 float dtick = tickClock.restart().asSeconds();
 
                 std::cout << "dt: " << dt << "; dtick: " << dtick << '\n';
+                std::cout << "fps: " << fps << "; tps: " << 1.f / dtick << '\n'; 
 
                 tick();
 
@@ -100,4 +101,26 @@ void Game::draw()
 void Game::exit()
 {
     window.exit();
+}
+
+void Game::keyPress(sf::Keyboard::Key key)
+{
+    switch(key)
+    {
+        case sf::Keyboard::Key::Escape:
+            exit();
+            break;
+        case sf::Keyboard::Key::Enter:
+            camera.resetZoom();
+            break;
+        case sf::Keyboard::Key::Tab:
+            paused = !paused;
+            break;
+        case sf::Keyboard::Key::Right:
+            if (paused) tick();
+            break;       
+        case sf::Keyboard::Key::F1:
+            (camera.getFocus() != nullptr) ? camera.removeFocus() : camera.setFocus(&thing2);
+            break;
+    }
 }

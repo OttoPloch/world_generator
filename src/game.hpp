@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+
 #include "common.hpp"
 #include "window.hpp"
 #include "event_handler.hpp"
@@ -23,6 +25,8 @@ public:
     void draw();
 
     void exit();
+
+    void keyPress(sf::Keyboard::Key key);
 private:
     Window window;
 

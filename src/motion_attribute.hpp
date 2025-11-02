@@ -2,11 +2,12 @@
 
 #include "common.hpp"
 #include "attribute.hpp"
+#include "game_position.hpp"
 
 class MotionAttribute : public Attribute
 {
 public:
-    MotionAttribute(sf::Vector2f position);
+    MotionAttribute(GamePosition position);
 
     void tick();
 
@@ -17,12 +18,11 @@ public:
     void changeVelocity(sf::Vector2f amount);
 
     void changeVelocity(char direction, float amount);
-
-    sf::Vector2f getPosition();
-
+    
     float getRotation();
 private:
-    sf::Vector2f position;
+    GamePosition position;
+
     float rotation;
 
     sf::Vector2f velocity;

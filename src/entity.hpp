@@ -6,6 +6,7 @@
 #include "sprite.hpp"
 #include "asset_manager.hpp"
 #include "motion_attribute.hpp"
+#include "game_position.hpp"
 
 class Entity
 {
@@ -28,7 +29,7 @@ public:
 
     const Sprite& getSprite();
 private:
-    sf::Vector2f position;
+    GamePosition position;
 
     float rotation;
 

@@ -2,7 +2,7 @@
 
 Sprite::Sprite() {}
 
-void Sprite::create(sf::Texture* texture, sf::Vector2f position, sf::Vector2f size, bool centerOrigin)
+void Sprite::create(sf::Texture* texture, GamePosition position, sf::Vector2f size, bool centerOrigin)
 {
     this->position = position;
     
@@ -16,14 +16,7 @@ void Sprite::create(sf::Texture* texture, sf::Vector2f position, sf::Vector2f si
 
     if (centerOrigin) sprite->setOrigin({sprite->getTextureRect().size.x / 2.f, sprite->getTextureRect().size.y / 2.f});
     sprite->setScale({size.x / sprite->getTextureRect().size.x, size.y / sprite->getTextureRect().size.y});
-    sprite->setPosition(position);
-}
-
-void Sprite::setPosition(sf::Vector2f newPosition)
-{
-    sprite->setPosition(newPosition);
-
-    position = newPosition;
+    sprite->setPosition(position.get());
 }
 
 void Sprite::setSize(sf::Vector2f newSize)
@@ -45,6 +38,11 @@ void Sprite::setTexture(sf::Texture* newTexture)
     sprite->setTexture(*newTexture);
     
     texture = newTexture;
+}
+
+void Sprite::tick()
+{
+    sprite->setPosition(position.get());
 }
 
 void Sprite::draw(sf::RenderWindow& window)

@@ -9,15 +9,19 @@ const float CAMERA_SMALL_ZOOM_AMOUNT = 0.1f;
 const float CAMERA_MIN_ZOOM_FACTOR = 0.3f;
 const float CAMERA_MAX_ZOOM_FACTOR = pow(CAMERA_BIG_ZOOM_FACTOR, 3);
 
+const float CAMERA_FOCUS_FOLLOW_DELAY = 10.f;
+
 Camera::Camera() {}
 
-void Camera::init(Window& window, bool setTopLeftPos, sf::Vector2f position, sf::Vector2f size)
+void Camera::init(Window& window, bool setTopLeftPos, sf::Vector2f position, sf::Vector2f size, Entity* focus)
 {
     this->window = &window;
 
     baseSize = size;
     
     this->size = baseSize;
+
+    this->focus = focus;
 
     zoomFactor = 1.f;
 
@@ -68,22 +72,30 @@ float Camera::getZoomFactor() { return zoomFactor; }
 
 void Camera::update(float dt)
 {
-    if (getMovement().x == 0)
+    if (focus != nullptr)
     {
-        velocity.x *= 1 - (dt * 8);
+        velocity.x = (focus->getPosition().x - center.x) / CAMERA_FOCUS_FOLLOW_DELAY;
+        velocity.y = (focus->getPosition().y - center.y) / CAMERA_FOCUS_FOLLOW_DELAY;
     }
     else
     {
-        velocity.x = (FREECAM_MOVE_SPEED_BASE * zoomFactor) * getMovement().x;
-    }
-
-    if (getMovement().y == 0)
-    {
-        velocity.y *= 1 - (dt * 8);
-    }
-    else
-    {
-        velocity.y = (FREECAM_MOVE_SPEED_BASE * zoomFactor) * getMovement().y;
+        if (getMovement().x == 0)
+        {
+            velocity.x *= 1 - (dt * 8);
+        }
+        else
+        {
+            velocity.x = (FREECAM_MOVE_SPEED_BASE * zoomFactor) * getMovement().x;
+        }
+    
+        if (getMovement().y == 0)
+        {
+            velocity.y *= 1 - (dt * 8);
+        }
+        else
+        {
+            velocity.y = (FREECAM_MOVE_SPEED_BASE * zoomFactor) * getMovement().y;
+        }
     }
 
     center.x += velocity.x * 100 * dt;
@@ -193,3 +205,12 @@ void Camera::setBaseSize(sf::Vector2f newSize)
 
     view.setSize(size);
 }
+
+void Camera::setFocus(Entity* newFocus)
+{
+    focus = newFocus;
+}
+
+void Camera::removeFocus() { focus = nullptr; }
+
+Entity* Camera::getFocus() { return focus; }

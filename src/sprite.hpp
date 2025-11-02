@@ -3,15 +3,14 @@
 #include <memory>
 
 #include "common.hpp"
+#include "game_position.hpp"
 
 class Sprite
 {
 public:
     Sprite();
 
-    void create(sf::Texture* texture, sf::Vector2f position, sf::Vector2f size, bool centerOrigin = true);
-
-    void setPosition(sf::Vector2f newPosition);
+    void create(sf::Texture* texture, GamePosition position, sf::Vector2f size, bool centerOrigin = true);
 
     void setSize(sf::Vector2f newSize);
 
@@ -19,11 +18,13 @@ public:
 
     void setTexture(sf::Texture* newTexture);
 
+    void tick();
+
     void draw(sf::RenderWindow& window);
     
     sf::Sprite getSprite();
 private:
-    sf::Vector2f position;
+    GamePosition position;
 
     sf::Vector2f size;
 
@@ -31,5 +32,6 @@ private:
 
     sf::Texture* texture;
 
+    // needs to be a ptr bc of no default constructor for sf::Sprite
     std::unique_ptr<sf::Sprite> sprite;
 };

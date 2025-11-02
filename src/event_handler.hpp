@@ -4,24 +4,22 @@
 #include "window.hpp"
 #include "camera.hpp"
 
+class Game;
+
 class EventHandler
 {
 public:
     EventHandler();
 
-    void init(Window& window, Camera& camera);
+    void init(Window& window, Camera& camera, Game& game);
 
     void processEvents();
-
-    void windowClosed();
-
-    void windowResized();
-    
-    void keyPressed(sf::Keyboard::Key key);
 
     void mouseWheelScrolled(const sf::Event::MouseWheelScrolled* scroll);
 private:
     Window* window;
 
     Camera* camera;
+
+    Game* game;
 };
