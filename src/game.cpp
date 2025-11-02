@@ -28,6 +28,9 @@ void Game::run()
 {
     float ticksToProcess = 0.f;
     
+        float averageTps = 0.f;
+    int tpsCount = 0;
+
     rect.setSize({100.f, 100.f});
     rect.setFillColor(sf::Color::Red);
     rect.setOrigin({50.f, 50.f});
@@ -56,8 +59,14 @@ void Game::run()
             {
                 float dtick = tickClock.restart().asSeconds();
 
+                averageTps *= tpsCount;
+                averageTps += (1.f / dtick);
+                tpsCount++;
+                averageTps /= tpsCount;
+                
                 std::cout << "dt: " << dt << "; dtick: " << dtick << '\n';
-                std::cout << "fps: " << fps << "; tps: " << 1.f / dtick << '\n'; 
+                std::cout << "fps: " << fps << "; tps: " << 1.f / dtick << '\n';
+                std::cout << "average tps: " << averageTps << '\n';
 
                 tick();
 
