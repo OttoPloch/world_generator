@@ -122,5 +122,7 @@ void Game::keyPress(sf::Keyboard::Key key)
         case sf::Keyboard::Key::F1:
             (camera.getFocus() != nullptr) ? camera.removeFocus() : camera.setFocus(&thing2);
             break;
+        default:
+            break;
     }
 }
