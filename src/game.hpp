@@ -27,7 +27,7 @@ public:
 
     void exit();
 
-    void keyPress(sf::Keyboard::Key key);
+    void processInput(sf::Keyboard::Key key);
 private:
     Window window;
 

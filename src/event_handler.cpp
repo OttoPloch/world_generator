@@ -4,13 +4,13 @@
 
 EventHandler::EventHandler() {}
 
-void EventHandler::init(Window& window, Camera& camera, Game& game)
+void EventHandler::init(Window* window, Camera* camera, Game* game)
 {
-    this->window = &window;
+    this->window = window;
 
-    this->camera = &camera;
+    this->camera = camera;
 
-    this->game = &game;
+    this->game = game;
 }
 
 void EventHandler::processEvents()
@@ -27,7 +27,7 @@ void EventHandler::processEvents()
         }
         else if (const auto key = event->getIf<sf::Event::KeyPressed>())
         {
-            game->keyPress(key->code);
+            game->processInput(key->code);
         }
         else if (const auto scroll = event->getIf<sf::Event::MouseWheelScrolled>())
         {

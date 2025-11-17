@@ -3,6 +3,7 @@
 #include "common.hpp"
 #include "camera.hpp"
 #include "window.hpp"
+#include "asset_manager.hpp"
 
 class Scene
 {
@@ -15,10 +16,18 @@ public:
 
     void update(float dt);
 
-    void draw(sf::RenderWindow* window);
+    void draw();
+
+    void sceneInput(sf::Keyboard::Key key);
 
     Camera* getCamera();
+
+    void toggleFocus();
 private:
+    Window* window;
+    
+    AssetManager* assetManager;    
+
     Camera camera;
 
     sf::RectangleShape rect;

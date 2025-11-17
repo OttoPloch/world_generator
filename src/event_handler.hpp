@@ -11,7 +11,7 @@ class EventHandler
 public:
     EventHandler();
 
-    void init(Window& window, Camera& camera, Game& game);
+    void init(Window* window, Camera* camera, Game* game);
 
     void processEvents();
 

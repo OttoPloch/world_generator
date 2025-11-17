@@ -8,7 +8,7 @@ void Game::init()
 
     scene.init(&window, &assetManager);
 
-    eventHandler.init(window, *scene.getCamera(), *this);
+    eventHandler.init(&window, scene.getCamera(), this);
 
     paused = false;
 
@@ -71,15 +71,13 @@ void Game::tick()
 void Game::update(float dt)
 {
     scene.update(dt);
-
-    window.setView(scene.getCamera()->getView());
 }
 
 void Game::draw()
 {
     window.clear();
 
-    scene.draw(&window.getWindow());
+    scene.draw();
 
     window.display();
 }
@@ -89,15 +87,12 @@ void Game::exit()
     window.exit();
 }
 
-void Game::keyPress(sf::Keyboard::Key key)
+void Game::processInput(sf::Keyboard::Key key)
 {
     switch(key)
     {
         case sf::Keyboard::Key::Escape:
             exit();
-            break;
-        case sf::Keyboard::Key::Enter:
-            scene.getCamera()->resetZoom();    
             break;
         case sf::Keyboard::Key::Tab:
             paused = !paused;
@@ -105,10 +100,8 @@ void Game::keyPress(sf::Keyboard::Key key)
         case sf::Keyboard::Key::Right:
             if (paused) tick();
             break;       
-        case sf::Keyboard::Key::F1:
-            //(scene.getCamera()->getFocus() != nullptr) ? scene.getCamera()->removeFocus() : scene.getCamera()->setFocus(&thing2);
-            break;
         default:
+            scene.sceneInput(key);
             break;
     }
 }

@@ -4,6 +4,10 @@ Scene::Scene() {}
 
 void Scene::init(Window* window, AssetManager* assetManager)
 {
+    this->window = window;
+
+    this->assetManager = assetManager;
+
     camera.init(window, true, {0, 0}, toV2F(window->getSize()));
 
     thing.create({475, 475});
@@ -35,18 +39,44 @@ void Scene::tick()
 void Scene::update(float dt)
 {
     camera.update(dt);
+
+    window->setView(camera.getView());
 }
 
-void Scene::draw(sf::RenderWindow* window)
+void Scene::draw()
 {
     window->draw(rect);
     window->draw(outline);
 
-    thing.draw(*window);
-    thing2.draw(*window);
+    thing.draw(window->getWindow());
+    thing2.draw(window->getWindow());
 }
 
-Camera* Scene::getCamera()
+void Scene::sceneInput(sf::Keyboard::Key key)
 {
-    return &camera;
+    switch (key)
+    {
+        case sf::Keyboard::Key::Enter:
+            camera.resetZoom();
+            break;
+        case sf::Keyboard::Key::F1:
+            toggleFocus();
+            break;
+        default:
+            break;
+    }
+}
+
+Camera* Scene::getCamera() { return &camera; }
+
+void Scene::toggleFocus()
+{
+    if (camera.getFocus() == nullptr)
+    {
+        camera.setFocus(&thing2);
+    }
+    else
+    {
+        camera.removeFocus();
+    }
 }
