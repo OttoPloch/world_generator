@@ -13,9 +13,9 @@ const float CAMERA_FOCUS_FOLLOW_DELAY = 10.f;
 
 Camera::Camera() {}
 
-void Camera::init(Window& window, bool setTopLeftPos, sf::Vector2f position, sf::Vector2f size, Entity* focus)
+void Camera::init(Window* window, bool setTopLeftPos, sf::Vector2f position, sf::Vector2f size, Entity* focus)
 {
-    this->window = &window;
+    this->window = window;
 
     baseSize = size;
     

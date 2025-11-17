@@ -8,6 +8,7 @@
 #include "camera.hpp"
 #include "entity.hpp"
 #include "asset_manager.hpp"
+#include "scene.hpp"
 
 class Game
 {
@@ -32,9 +33,9 @@ private:
 
     EventHandler eventHandler;
 
-    Camera camera;
-
     AssetManager assetManager;
+
+    Scene scene;
 
     bool paused;
     
@@ -42,10 +43,4 @@ private:
     
     sf::Clock dtClock;
     sf::Clock tickClock;
-
-    sf::RectangleShape rect;
-    sf::RectangleShape outline;
-
-    Entity thing;
-    Entity thing2;
 };

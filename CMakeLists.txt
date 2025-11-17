@@ -26,6 +26,7 @@ src/asset_manager.cpp
 src/attribute.cpp
 src/motion_attribute.cpp
 src/game_position.cpp
+src/scene.cpp
 )
 
 target_compile_features(app PRIVATE cxx_std_17)

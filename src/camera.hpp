@@ -11,7 +11,7 @@ class Camera
 public:
     Camera();
 
-    void init(Window& window, bool setTopLeftPos, sf::Vector2f position, sf::Vector2f size, Entity* focus = nullptr);
+    void init(Window* window, bool setTopLeftPos, sf::Vector2f position, sf::Vector2f size, Entity* focus = nullptr);
 
     void setCenter(sf::Vector2f center);
 

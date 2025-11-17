@@ -6,20 +6,13 @@ void Game::init()
 {
     window.create({800, 800}, "INFINITE", false, 165, sf::Color(10, 10, 12));
 
-    eventHandler.init(window, camera, *this);
+    scene.init(&window, &assetManager);
 
-    camera.init(window, true, {0, 0}, toV2F(window.getSize()));
+    eventHandler.init(window, *scene.getCamera(), *this);
 
     paused = false;
 
     ticksPerSecond = 30;
-
-    thing.create({475, 475});
-    thing.giveSprite(assetManager.getTexture("pixel"), {50, 50});
-
-    thing2.create({0, 0});
-    thing2.giveSprite(assetManager.getTexture("shaq"), {300, 300});
-    thing2.giveMotion();
 
     run();
 }
@@ -28,20 +21,8 @@ void Game::run()
 {
     float ticksToProcess = 0.f;
     
-        float averageTps = 0.f;
+    float averageTps = 0.f;
     int tpsCount = 0;
-
-    rect.setSize({100.f, 100.f});
-    rect.setFillColor(sf::Color::Red);
-    rect.setOrigin({50.f, 50.f});
-    rect.setPosition(toV2F(window.getSize().x / 2, window.getSize().y / 2));
-
-    outline.setSize({480, 480});
-    outline.setOutlineColor(sf::Color::Red);
-    outline.setOutlineThickness(5.f);
-    outline.setFillColor(sf::Color::Transparent);
-    outline.setOrigin({240.f, 240.f});
-    outline.setPosition(toV2F(window.getSize().x / 2, window.getSize().y / 2));
 
     while (window.getWindow().isOpen())
     {
@@ -84,25 +65,21 @@ void Game::run()
 
 void Game::tick()
 {
-    thing.tick();
-    thing2.tick();
+    scene.tick();
 }
 
 void Game::update(float dt)
 {
-    camera.update(dt);
-    window.setView(camera.getView());
+    scene.update(dt);
+
+    window.setView(scene.getCamera()->getView());
 }
 
 void Game::draw()
 {
     window.clear();
 
-    window.draw(rect);
-    window.draw(outline);
-
-    thing.draw(window.getWindow());
-    thing2.draw(window.getWindow());
+    scene.draw(&window.getWindow());
 
     window.display();
 }
@@ -120,7 +97,7 @@ void Game::keyPress(sf::Keyboard::Key key)
             exit();
             break;
         case sf::Keyboard::Key::Enter:
-            camera.resetZoom();
+            scene.getCamera()->resetZoom();    
             break;
         case sf::Keyboard::Key::Tab:
             paused = !paused;
@@ -129,7 +106,7 @@ void Game::keyPress(sf::Keyboard::Key key)
             if (paused) tick();
             break;       
         case sf::Keyboard::Key::F1:
-            (camera.getFocus() != nullptr) ? camera.removeFocus() : camera.setFocus(&thing2);
+            //(scene.getCamera()->getFocus() != nullptr) ? scene.getCamera()->removeFocus() : scene.getCamera()->setFocus(&thing2);
             break;
         default:
             break;
