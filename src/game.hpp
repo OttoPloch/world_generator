@@ -43,4 +43,5 @@ private:
     
     sf::Clock dtClock;
     sf::Clock tickClock;
+    sf::Clock gameClock;
 };

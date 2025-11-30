@@ -16,9 +16,9 @@ void Entity::giveSprite(sf::Texture* texture, sf::Vector2f size, bool centerOrig
     sprite->create(texture, position, size, centerOrigin);
 }
 
-void Entity::giveMotion()
+void Entity::giveMotion(bool controlling)
 {
-    motion = std::make_unique<MotionAttribute>(position);
+    motion = std::make_unique<MotionAttribute>(position, controlling);
 
     motion->setVelocity('x', 4.f);
     motion->setVelocity('y', 8.f);
@@ -41,6 +41,6 @@ void Entity::draw(sf::RenderWindow& window)
     if (sprite) sprite->draw(window);
 }
 
-sf::Vector2f Entity::getPosition() { return position.get(); }
+sf::Vector2f Entity::getPosition() { return *(position.position); }
 
 const Sprite& Entity::getSprite() { return *sprite; }

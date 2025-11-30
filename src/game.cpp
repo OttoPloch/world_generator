@@ -12,7 +12,7 @@ void Game::init()
 
     paused = false;
 
-    ticksPerSecond = 30;
+    ticksPerSecond = 20;
 
     run();
 }
@@ -48,6 +48,7 @@ void Game::run()
                 std::cout << "dt: " << dt << "; dtick: " << dtick << '\n';
                 std::cout << "fps: " << fps << "; tps: " << 1.f / dtick << '\n';
                 std::cout << "average tps: " << averageTps << '\n';
+                std::cout << "time: " << gameClock.getElapsedTime().asSeconds() << '\n';
 
                 tick();
 

@@ -9,6 +9,8 @@ class GamePosition
 public:
     GamePosition();
 
+    std::shared_ptr<sf::Vector2f> position;
+
     sf::Vector2f get();
 
     void set(sf::Vector2f value);
@@ -18,6 +20,4 @@ public:
     void change(sf::Vector2f amount);
 
     void change(char direction, float amount);
-private:
-    std::shared_ptr<sf::Vector2f> position;
 };

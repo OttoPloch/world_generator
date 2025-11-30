@@ -17,7 +17,7 @@ public:
 
     void giveSprite(sf::Texture* texture, sf::Vector2f size, bool centerOrigin = true);
 
-    void giveMotion();
+    void giveMotion(bool controlling);
 
     void changeSpriteTexture(sf::Texture* texture);
 

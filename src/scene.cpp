@@ -8,14 +8,14 @@ void Scene::init(Window* window, AssetManager* assetManager)
 
     this->assetManager = assetManager;
 
-    camera.init(window, true, {0, 0}, toV2F(window->getSize()));
+    camera.init(window, true, {0, 0}, toV2F(window->getSize()), &thing2);
 
     thing.create({475, 475});
     thing.giveSprite(assetManager->getTexture("pixel"), {50, 50});
 
     thing2.create({0, 0});
     thing2.giveSprite(assetManager->getTexture("shaq"), {300, 300});
-    thing2.giveMotion();
+    thing2.giveMotion(true);
 
     rect.setSize({100.f, 100.f});
     rect.setFillColor(sf::Color::Red);

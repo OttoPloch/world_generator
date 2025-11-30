@@ -7,7 +7,7 @@
 class MotionAttribute : public Attribute
 {
 public:
-    MotionAttribute(GamePosition position);
+    MotionAttribute(GamePosition position, bool controlling);
 
     void tick();
 
@@ -20,6 +20,8 @@ public:
     void changeVelocity(char direction, float amount);
     
     float getRotation();
+
+    void setControlling(bool option);
 private:
     GamePosition position;
 
@@ -28,4 +30,6 @@ private:
     sf::Vector2f velocity;
 
     float rotationalVelocity;
+
+    bool controlling;
 };

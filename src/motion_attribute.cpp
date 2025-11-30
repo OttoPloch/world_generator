@@ -1,13 +1,23 @@
 #include "motion_attribute.hpp"
 
-MotionAttribute::MotionAttribute(GamePosition position) : Attribute("motion"), velocity({0.f, 0.f}), rotationalVelocity(0.f)
+MotionAttribute::MotionAttribute(GamePosition position, bool controlling) : Attribute("motion"), velocity({0.f, 0.f}), rotationalVelocity(0.f)
 {
     this->position = position;
+
+    this->controlling = controlling;
 }
 
 void MotionAttribute::tick()
 {
     position.change(velocity);
+
+    if (controlling)
+    {
+        sf::Vector2f movement = getMovement();
+
+        (movement.x != 0.f) ? velocity.x = movement.x * 30.f : velocity.x *= 0.8f;
+        (movement.y != 0.f) ? velocity.y = movement.y * 30.f : velocity.y *= 0.8f;
+    }
 }
 
 void MotionAttribute::setVelocity(sf::Vector2f newVelocity) { velocity = newVelocity; }
@@ -49,3 +59,5 @@ void MotionAttribute::changeVelocity(char direction, float amount)
 }
 
 float MotionAttribute::getRotation() { return rotation; }
+
+void MotionAttribute::setControlling(bool option) { controlling = option; }
