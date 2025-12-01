@@ -5,10 +5,15 @@
 #include "common.hpp"
 #include "game_position.hpp"
 
+//temp
+#include "motion_attribute.hpp"
+
 class Sprite
 {
 public:
     Sprite();
+
+    ~Sprite();
 
     void create(sf::Texture* texture, GamePosition position, sf::Vector2f size, bool centerOrigin = true);
 
@@ -20,17 +25,27 @@ public:
 
     void tick();
 
+    void update(float dt, MotionAttribute* a);
+
     void draw(sf::RenderWindow& window);
     
     sf::Sprite getSprite();
+
+    sf::Vector2f getSpritePosition();
 private:
     GamePosition position;
+
+    sf::Vector2f spritePosition;
 
     sf::Vector2f size;
 
     float rotation;
 
     sf::Texture* texture;
+
+    int x;
+    int y;
+    std::vector<int> v;
 
     // needs to be a ptr bc of no default constructor for sf::Sprite
     std::unique_ptr<sf::Sprite> sprite;

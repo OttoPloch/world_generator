@@ -41,6 +41,9 @@ void Scene::update(float dt)
     camera.update(dt);
 
     window->setView(camera.getView());
+
+    thing.update(dt);
+    thing2.update(dt);
 }
 
 void Scene::draw()

@@ -23,11 +23,13 @@ public:
 
     void tick();
 
+    void update(float dt);
+
     void draw(sf::RenderWindow& window);
 
     sf::Vector2f getPosition();
 
-    const Sprite& getSprite();
+    Sprite* getSprite();
 private:
     GamePosition position;
 

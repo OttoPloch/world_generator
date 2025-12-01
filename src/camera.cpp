@@ -3,13 +3,14 @@
 #include "window.hpp"
 
 const int FREECAM_MOVE_SPEED_BASE = 10;
+const float FREECAM_FRICTION = 8.f;
 
 const float CAMERA_BIG_ZOOM_FACTOR = 1.5f;
 const float CAMERA_SMALL_ZOOM_AMOUNT = 0.1f;
 const float CAMERA_MIN_ZOOM_FACTOR = 0.3f;
 const float CAMERA_MAX_ZOOM_FACTOR = pow(CAMERA_BIG_ZOOM_FACTOR, 3);
 
-const float CAMERA_FOCUS_FOLLOW_DELAY = 10.f;
+const float FOCUS_FOLLOW_DELAY = 10.f;
 
 Camera::Camera() {}
 
@@ -74,14 +75,18 @@ void Camera::update(float dt)
 {
     if (focus != nullptr)
     {
-        velocity.x = (focus->getPosition().x - center.x) / CAMERA_FOCUS_FOLLOW_DELAY;
-        velocity.y = (focus->getPosition().y - center.y) / CAMERA_FOCUS_FOLLOW_DELAY;
+        sf::Vector2f targetPosition;
+        
+        (focus->getSprite() != nullptr) ? targetPosition = focus->getSprite()->getSpritePosition() : targetPosition = focus->getPosition();
+
+        velocity.x = (targetPosition.x - center.x) / FOCUS_FOLLOW_DELAY;
+        velocity.y = (targetPosition.y - center.y) / FOCUS_FOLLOW_DELAY;
     }
     else
     {
         if (getMovement().x == 0)
         {
-            velocity.x *= 1 - (dt * 8);
+            velocity.x *= 1 - (dt * FREECAM_FRICTION);
         }
         else
         {
@@ -90,7 +95,7 @@ void Camera::update(float dt)
     
         if (getMovement().y == 0)
         {
-            velocity.y *= 1 - (dt * 8);
+            velocity.y *= 1 - (dt * FREECAM_FRICTION);
         }
         else
         {
@@ -98,6 +103,7 @@ void Camera::update(float dt)
         }
     }
 
+    // the 100 is just to make things go faster, not intended to be changeable
     center.x += velocity.x * 100 * dt;
     center.y += velocity.y * 100 * dt;
 

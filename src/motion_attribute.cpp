@@ -15,8 +15,8 @@ void MotionAttribute::tick()
     {
         sf::Vector2f movement = getMovement();
 
-        (movement.x != 0.f) ? velocity.x = movement.x * 30.f : velocity.x *= 0.8f;
-        (movement.y != 0.f) ? velocity.y = movement.y * 30.f : velocity.y *= 0.8f;
+        (movement.x != 0.f) ? velocity.x = movement.x * 20.f : velocity.x *= 0.6f;
+        (movement.y != 0.f) ? velocity.y = movement.y * 20.f : velocity.y *= 0.6f;
     }
 }
 

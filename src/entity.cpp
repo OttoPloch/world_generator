@@ -20,8 +20,8 @@ void Entity::giveMotion(bool controlling)
 {
     motion = std::make_unique<MotionAttribute>(position, controlling);
 
-    motion->setVelocity('x', 4.f);
-    motion->setVelocity('y', 8.f);
+    motion->setVelocity('x', 1.f);
+    motion->setVelocity('y', 0.f);
 }
 
 void Entity::changeSpriteTexture(sf::Texture* texture)
@@ -36,6 +36,11 @@ void Entity::tick()
     if (sprite) sprite->tick();
 }
 
+void Entity::update(float dt)
+{
+    if (sprite) sprite->update(dt, motion.get());
+}
+
 void Entity::draw(sf::RenderWindow& window)
 {
     if (sprite) sprite->draw(window);
@@ -43,4 +48,4 @@ void Entity::draw(sf::RenderWindow& window)
 
 sf::Vector2f Entity::getPosition() { return *(position.position); }
 
-const Sprite& Entity::getSprite() { return *sprite; }
+Sprite* Entity::getSprite() { return sprite.get(); }
