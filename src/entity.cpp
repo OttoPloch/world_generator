@@ -19,9 +19,6 @@ void Entity::giveSprite(sf::Texture* texture, sf::Vector2f size, bool centerOrig
 void Entity::giveMotion(bool controlling)
 {
     motion = std::make_unique<MotionAttribute>(position, controlling);
-
-    motion->setVelocity('x', 1.f);
-    motion->setVelocity('y', 0.f);
 }
 
 void Entity::changeSpriteTexture(sf::Texture* texture)
