@@ -18,11 +18,6 @@ void Sprite::create(sf::Texture* texture, GamePosition position, sf::Vector2f si
     if (centerOrigin) sprite->setOrigin({sprite->getTextureRect().size.x / 2.f, sprite->getTextureRect().size.y / 2.f});
     sprite->setScale({size.x / sprite->getTextureRect().size.x, size.y / sprite->getTextureRect().size.y});
     sprite->setPosition(spritePosition);
-
-
-    x = 0;
-    y = 1;
-    v = {};
 }
 
 void Sprite::setSize(sf::Vector2f newSize)
@@ -76,8 +71,6 @@ void Sprite::update(float dt, MotionAttribute* a)
 
         (abs(xDiff) < 0.001f) ? spritePosition.x = position.get().x : spritePosition.x += xDiff / delay;
         (abs(yDiff) < 0.001f) ? spritePosition.y = position.get().y : spritePosition.y += yDiff / delay;
-
-        x++;
     }
     
     sprite->setPosition(spritePosition);
@@ -91,13 +84,3 @@ void Sprite::draw(sf::RenderWindow& window)
 sf::Sprite Sprite::getSprite() { return *sprite; }
 
 sf::Vector2f Sprite::getSpritePosition() { return spritePosition; }
-
-Sprite::~Sprite()
-{
-    std::cout << "///////////////////////////////\n";
-    for (int i = 0; i < v.size(); i++)
-    {
-        std::cout << v[i] << '\n';
-    }
-    std::cout << "///////////////////////////////\n";
-}

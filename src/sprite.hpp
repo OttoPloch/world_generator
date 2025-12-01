@@ -42,11 +42,7 @@ private:
     float rotation;
 
     sf::Texture* texture;
-
-    int x;
-    int y;
-    std::vector<int> v;
-
+    
     // needs to be a ptr bc of no default constructor for sf::Sprite
     std::unique_ptr<sf::Sprite> sprite;
 };
