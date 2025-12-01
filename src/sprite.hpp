@@ -13,8 +13,6 @@ class Sprite
 public:
     Sprite();
 
-    ~Sprite();
-
     void create(sf::Texture* texture, GamePosition position, sf::Vector2f size, bool centerOrigin = true);
 
     void setSize(sf::Vector2f newSize);
@@ -42,7 +40,7 @@ private:
     float rotation;
 
     sf::Texture* texture;
-    
+
     // needs to be a ptr bc of no default constructor for sf::Sprite
     std::unique_ptr<sf::Sprite> sprite;
 };
