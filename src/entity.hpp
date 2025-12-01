@@ -30,6 +30,8 @@ public:
     sf::Vector2f getPosition();
 
     Sprite* getSprite();
+
+    MotionAttribute* getMotion();
 private:
     GamePosition position;
 

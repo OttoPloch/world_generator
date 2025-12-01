@@ -18,6 +18,11 @@ void MotionAttribute::tick()
         (movement.x != 0.f) ? velocity.x = movement.x * 20.f : velocity.x *= 0.6f;
         (movement.y != 0.f) ? velocity.y = movement.y * 20.f : velocity.y *= 0.6f;
     }
+    else
+    {
+        velocity.x *= 0.6f;
+        velocity.y *= 0.6f;
+    }
 }
 
 void MotionAttribute::setVelocity(sf::Vector2f newVelocity) { velocity = newVelocity; }
@@ -59,5 +64,3 @@ void MotionAttribute::changeVelocity(char direction, float amount)
 }
 
 float MotionAttribute::getRotation() { return rotation; }
-
-void MotionAttribute::setControlling(bool option) { controlling = option; }

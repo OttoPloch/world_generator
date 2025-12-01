@@ -21,7 +21,7 @@ public:
     
     float getRotation();
 
-    void setControlling(bool option);
+    bool controlling;
 private:
     GamePosition position;
 
@@ -30,6 +30,4 @@ private:
     sf::Vector2f velocity;
 
     float rotationalVelocity;
-
-    bool controlling;
 };

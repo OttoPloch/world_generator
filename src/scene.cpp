@@ -77,9 +77,11 @@ void Scene::toggleFocus()
     if (camera.getFocus() == nullptr)
     {
         camera.setFocus(&thing2);
+        thing2.getMotion()->controlling = true;
     }
     else
     {
         camera.removeFocus();
+        thing2.getMotion()->controlling = false;
     }
 }

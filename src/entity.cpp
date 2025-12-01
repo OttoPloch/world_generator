@@ -46,3 +46,5 @@ void Entity::draw(sf::RenderWindow& window)
 sf::Vector2f Entity::getPosition() { return *(position.position); }
 
 Sprite* Entity::getSprite() { return sprite.get(); }
+
+MotionAttribute* Entity::getMotion() { return motion.get(); }
