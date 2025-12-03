@@ -60,9 +60,9 @@ void Sprite::update(float dt, MotionAttribute* a)
         // of fun stuff.
 
         float delay;
-        if (.025f / dt >= 1.f)
+        if (.15f / dt >= 1.f)
         {
-            delay = .025f / dt;
+            delay = .15f / dt;
         }
         else
         {

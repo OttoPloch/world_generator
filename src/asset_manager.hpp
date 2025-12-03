@@ -14,6 +14,6 @@ private:
     std::map<std::string, sf::Texture*> textures;
 
     sf::Texture pixelTexture;
-
     sf::Texture shaqTexture;
+    sf::Texture drBeeTexture;
 };
