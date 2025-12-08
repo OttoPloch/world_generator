@@ -4,6 +4,9 @@
 #include "camera.hpp"
 #include "window.hpp"
 #include "asset_manager.hpp"
+#include "collision_attribute.hpp"
+
+#include <vector>
 
 class Scene
 {
@@ -28,6 +31,10 @@ private:
     
     AssetManager* assetManager;    
 
+    int IDCounter;
+    
+    std::vector<Entity> entities;
+
     Camera camera;
 
     sf::RectangleShape rect;
@@ -35,4 +42,6 @@ private:
 
     Entity thing;
     Entity thing2;
+
+    //sf::CircleShape realPos;
 };

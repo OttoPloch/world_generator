@@ -27,6 +27,8 @@ src/attribute.cpp
 src/motion_attribute.cpp
 src/game_position.cpp
 src/scene.cpp
+src/collision_attribute.cpp
+src/collision_rect.cpp
 )
 
 target_compile_features(app PRIVATE cxx_std_17)

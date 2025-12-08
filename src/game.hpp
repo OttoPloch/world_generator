@@ -41,6 +41,8 @@ private:
     
     int ticksPerSecond;
     
+    float dt;
+
     sf::Clock dtClock;
     sf::Clock tickClock;
     sf::Clock gameClock;

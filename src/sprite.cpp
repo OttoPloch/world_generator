@@ -60,9 +60,9 @@ void Sprite::update(float dt, MotionAttribute* a)
         // of fun stuff.
 
         float delay;
-        if (.15f / dt >= 1.f)
+        if (.03f / dt >= 1.f)
         {
-            delay = .15f / dt;
+            delay = .03f / dt;
         }
         else
         {
@@ -84,3 +84,11 @@ void Sprite::draw(sf::RenderWindow& window)
 sf::Sprite Sprite::getSprite() { return *sprite; }
 
 sf::Vector2f Sprite::getSpritePosition() { return spritePosition; }
+
+sf::Vector2f Sprite::getSize() { return size; }
+
+void Sprite::jumpToTarget()
+{
+    sprite->setPosition(position.get());
+    spritePosition = position.get();
+}

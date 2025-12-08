@@ -30,6 +30,10 @@ public:
     sf::Sprite getSprite();
 
     sf::Vector2f getSpritePosition();
+
+    sf::Vector2f getSize();
+
+    void jumpToTarget();
 private:
     GamePosition position;
 

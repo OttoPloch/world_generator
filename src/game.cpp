@@ -12,7 +12,7 @@ void Game::init()
 
     paused = false;
 
-    ticksPerSecond = 40;
+    ticksPerSecond = 60;
 
     run();
 }
@@ -29,7 +29,7 @@ void Game::run()
 
     while (window.getWindow().isOpen())
     {
-        float dt = dtClock.restart().asSeconds();
+        dt = dtClock.restart().asSeconds();
 
         eventHandler.processEvents();
 
@@ -113,7 +113,11 @@ void Game::processInput(sf::Keyboard::Key key)
             paused = !paused;
             break;
         case sf::Keyboard::Key::Right:
-            if (paused) tick();
+            if (paused)
+            {
+                tick();
+                update(dt);
+            }
             break;       
         default:
             scene.sceneInput(key);
