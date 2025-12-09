@@ -11,6 +11,8 @@ public:
 
     void tick();
 
+    sf::Vector2f getVelocity();
+
     void setVelocity(sf::Vector2f newVelocity);
 
     void setVelocity(char direction, float newVelocity);

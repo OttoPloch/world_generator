@@ -12,10 +12,10 @@ public:
 
     void init(GamePosition position, sf::Vector2f size);
 
-    sf::Vector2f getPosition();
-
+    sf::Vector2f center();
+    
     sf::Vector2f getSize();
-
+    
     // left, right, top, bottom
     std::array<float, 4> getBorders();
 

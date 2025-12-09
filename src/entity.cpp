@@ -3,6 +3,11 @@
 
 Entity::Entity() {}
 
+Entity::Entity(int ID, sf::Vector2f position)
+{
+    create(ID, position);
+}
+
 void Entity::create(int ID, sf::Vector2f position)
 {
     this->ID = ID;
@@ -28,7 +33,7 @@ void Entity::giveMotion(bool controlling)
 
 void Entity::giveCollision(std::vector<Entity>* entities, bool active)
 {
-    collision = std::make_unique<CollisionAttribute>(ID, position, sprite->getSize(), entities, active);
+    collision = std::make_unique<CollisionAttribute>(this, position, sprite->getSize(), entities, active);
 }
 
 void Entity::changeSpriteTexture(sf::Texture* texture)

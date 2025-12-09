@@ -10,22 +10,20 @@ void Scene::init(Window* window, AssetManager* assetManager)
     
     IDCounter = 0;
 
-    thing.create(IDCounter, {475, 475});
-    thing.giveSprite(assetManager->getTexture("pixel"), {50, 50});
-    thing.giveCollision(&entities, true);
-    
-    IDCounter++;
-
-    thing2.create(IDCounter, {0, 0});
-    thing2.giveSprite(assetManager->getTexture("shaq"), {300, 300});
-    thing2.giveMotion(true);
-    thing2.giveCollision(&entities, false);
-    
-    IDCounter++;
-
     entities.clear();
-    entities.push_back(std::move(thing));
-    entities.push_back(std::move(thing2));
+    entities.push_back(Entity(getNewID(), {475, 475}));
+    entities.push_back(Entity(getNewID(), {0, 0}));
+    entities.push_back(Entity(getNewID(), {900, 900}));
+
+    entities[0].giveSprite(assetManager->getTexture("pixel"), {50, 50});
+    entities[0].giveCollision(&entities, false);
+
+    entities[1].giveSprite(assetManager->getTexture("shaq"), {300, 300});
+    entities[1].giveMotion(true);
+    entities[1].giveCollision(&entities, true);
+
+    entities[2].giveSprite(assetManager->getTexture("dr bee"), {200, 200});
+    entities[2].giveCollision(&entities, false);
     
     camera.init(window, true, {0, 0}, toV2F(window->getSize()), &entities[1]);
 
@@ -49,8 +47,10 @@ void Scene::init(Window* window, AssetManager* assetManager)
 
 void Scene::tick()
 {
-    entities[0].tick();
-    entities[1].tick();
+    for (int i = 0; i < entities.size(); i++)
+    {
+        entities[i].tick();
+    }
 
     // realPos.setPosition(entities[1].getPosition());
 }
@@ -61,8 +61,10 @@ void Scene::update(float dt)
 
     window->setView(camera.getView());
 
-    entities[0].update(dt);
-    entities[1].update(dt);
+    for (int i = 0; i < entities.size(); i++)
+    {
+        entities[i].update(dt);
+    }
 }
 
 void Scene::draw()
@@ -70,8 +72,10 @@ void Scene::draw()
     window->draw(rect);
     window->draw(outline);
 
-    entities[0].draw(window->getWindow());
-    entities[1].draw(window->getWindow());
+    for (int i = 0; i < entities.size(); i++)
+    {
+        entities[i].draw(window->getWindow());
+    }
 
     // window->draw(realPos);
 }
@@ -105,4 +109,11 @@ void Scene::toggleFocus()
         camera.removeFocus();
         entities[1].getMotion()->controlling = false;
     }
+}
+
+int Scene::getNewID()
+{
+    IDCounter++;
+
+    return IDCounter - 1;
 }

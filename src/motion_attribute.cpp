@@ -25,6 +25,8 @@ void MotionAttribute::tick()
     }
 }
 
+sf::Vector2f MotionAttribute::getVelocity() { return velocity; }
+
 void MotionAttribute::setVelocity(sf::Vector2f newVelocity) { velocity = newVelocity; }
 
 void MotionAttribute::setVelocity(char direction, float newVelocity)

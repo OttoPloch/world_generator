@@ -11,13 +11,13 @@
 class CollisionAttribute : public Attribute
 {
 public:
-    CollisionAttribute(int myEntityID, GamePosition position, sf::Vector2f size, std::vector<Entity>* entities, bool active);
+    CollisionAttribute(Entity* myEntity, GamePosition position, sf::Vector2f size, std::vector<Entity>* entities, bool active);
 
     void tick();
 
     bool active;
 private:
-    int myEntityID;
+    Entity* myEntity;
     
     GamePosition position;
     

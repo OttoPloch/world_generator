@@ -26,6 +26,8 @@ public:
     Camera* getCamera();
 
     void toggleFocus();
+
+    int getNewID();
 private:
     Window* window;
     
@@ -39,9 +41,6 @@ private:
 
     sf::RectangleShape rect;
     sf::RectangleShape outline;
-
-    Entity thing;
-    Entity thing2;
 
     //sf::CircleShape realPos;
 };

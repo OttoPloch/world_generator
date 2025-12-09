@@ -8,7 +8,7 @@ void CollisionRect::init(GamePosition position, sf::Vector2f size)
     this->size = size;
 }
 
-sf::Vector2f CollisionRect::getPosition() { return position.get(); }
+sf::Vector2f CollisionRect::center() { return position.get(); }
 
 sf::Vector2f CollisionRect::getSize() { return size; }
 

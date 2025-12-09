@@ -16,6 +16,8 @@ class Entity
 public:
     Entity();
 
+    Entity(int ID, sf::Vector2f position);
+
     void create(int ID, sf::Vector2f position);
 
     int getID();
