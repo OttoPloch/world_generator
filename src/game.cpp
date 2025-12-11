@@ -48,7 +48,7 @@ void Game::run()
                 tpsCount++;
                 averageTps /= tpsCount;
                 
-                if (std::fmod(gameClock.getElapsedTime().asSeconds(), 1.d) < lastTimeCount)
+                if (std::fmod(gameClock.getElapsedTime().asSeconds(), 1.f) < lastTimeCount)
                 {
                     // std::cout << "dt: " << dt << "; dtick: " << dtick << '\n';
                     // std::cout << "fps: " << fps << "; tps: " << 1.f / dtick << '\n';
@@ -60,7 +60,7 @@ void Game::run()
                     ticksLastSecond = 0;
                 }
                 
-                lastTimeCount = std::fmod(gameClock.getElapsedTime().asSeconds(), 1.d);
+                lastTimeCount = std::fmod(gameClock.getElapsedTime().asSeconds(), 1.f);
 
                 tick();
 
