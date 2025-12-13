@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <utility>
 
 #include "common.hpp"
 #include "attribute.hpp"
@@ -18,10 +19,6 @@ public:
     bool active;
 private:
     Entity* myEntity;
-    
-    GamePosition position;
-    
-    sf::Vector2f size;
     
     CollisionRect rect;
     

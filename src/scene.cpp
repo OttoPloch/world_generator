@@ -16,7 +16,7 @@ void Scene::init(Window* window, AssetManager* assetManager)
     entities.push_back(Entity(getNewID(), {900, 900}));
 
     entities[0].giveSprite(assetManager->getTexture("pixel"), {50, 50});
-    entities[0].giveCollision(&entities, false);
+    //entities[0].giveCollision(&entities, false);
 
     entities[1].giveSprite(assetManager->getTexture("shaq"), {300, 300});
     entities[1].giveMotion(true);

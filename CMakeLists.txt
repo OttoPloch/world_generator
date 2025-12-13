@@ -29,6 +29,7 @@ src/game_position.cpp
 src/scene.cpp
 src/collision_attribute.cpp
 src/collision_rect.cpp
+src/utils.cpp
 )
 
 target_compile_features(app PRIVATE cxx_std_17)

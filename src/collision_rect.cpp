@@ -6,6 +6,8 @@ void CollisionRect::init(GamePosition position, sf::Vector2f size)
 {
     this->position = position;
     this->size = size;
+
+    lastPosition = position.get();
 }
 
 sf::Vector2f CollisionRect::center() { return position.get(); }
@@ -40,6 +42,31 @@ float CollisionRect::top()
 float CollisionRect::bottom()
 {
     return position.get().y + (size.y / 2.f);
+}
+
+float CollisionRect::length()
+{
+    return size.x;
+}
+
+float CollisionRect::halfLength()
+{
+    return size.x / 2.f;    
+}
+
+float CollisionRect::width()
+{
+    return size.y;
+}
+
+float CollisionRect::halfWidth()
+{
+    return size.y / 2.f;
+}
+
+void CollisionRect::setPosition(sf::Vector2f newPosition)
+{
+    position.set(newPosition);
 }
 
 void CollisionRect::setLeft(float value)

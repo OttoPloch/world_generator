@@ -27,6 +27,16 @@ public:
 
     float bottom();
 
+    float length();
+    
+    float halfLength();
+    
+    float width();
+
+    float halfWidth();
+
+    void setPosition(sf::Vector2f newPosition);
+
     void setLeft(float value);
 
     void setRight(float value);
@@ -34,6 +44,8 @@ public:
     void setTop(float value);
 
     void setBottom(float value);
+    
+    sf::Vector2f lastPosition;
 private:
     GamePosition position;
 

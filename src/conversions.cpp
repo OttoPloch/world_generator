@@ -64,6 +64,21 @@ sf::Vector2i toV2I(unsigned int x, unsigned int y)
     };
 }
 
+double toDouble(float value)
+{
+    return static_cast<double>(value);
+}
+
+double toDouble(int value)
+{
+    return static_cast<double>(value);
+}
+
+double toDouble(unsigned int value)
+{
+    return static_cast<double>(value);
+}
+
 float toFloat(double value)
 {
     return static_cast<float>(value);
@@ -97,4 +112,9 @@ int toInt(unsigned int value)
 float deg2Rad(float degrees)
 {
     return degrees * M_PI / 180;
+}
+
+float rad2Deg(float radians)
+{
+    return radians / M_PI * 180;
 }
