@@ -14,7 +14,6 @@ void Scene::init(Window* window, AssetManager* assetManager)
     entities.push_back(Entity(getNewID(), {475, 475}));
     entities.push_back(Entity(getNewID(), {1000, 0}));
     entities.push_back(Entity(getNewID(), {900, 900}));
-    entities.push_back(Entity(getNewID(), {1210, 900}));
 
     entities[0].giveSprite(assetManager->getTexture("pixel"), {50, 50});
     entities[0].giveCollision(&entities, false);
@@ -25,9 +24,7 @@ void Scene::init(Window* window, AssetManager* assetManager)
 
     entities[2].giveSprite(assetManager->getTexture("dr bee"), {200, 200});
     entities[2].giveCollision(&entities, false);
-    entities[3].giveSprite(assetManager->getTexture("dr bee"), {400, 200});
-    entities[3].giveCollision(&entities, false);
-    
+
     camera.init(window, true, {0, 0}, toV2F(window->getSize()), &entities[1]);
 
     rect.setSize({100.f, 100.f});
@@ -41,11 +38,6 @@ void Scene::init(Window* window, AssetManager* assetManager)
     outline.setFillColor(sf::Color::Transparent);
     outline.setOrigin({240.f, 240.f});
     outline.setPosition(toV2F(window->getSize().x / 2, window->getSize().y / 2));
-
-    // realPos.setFillColor(sf::Color::Blue);
-    // realPos.setRadius(10.f);
-    // realPos.setOrigin({10.f, 10.f});
-    // realPos.setPosition(entities[1].getPosition());
 }
 
 void Scene::tick()
@@ -54,8 +46,6 @@ void Scene::tick()
     {
         entities[i].tick();
     }
-
-    // realPos.setPosition(entities[1].getPosition());
 }
 
 void Scene::update(float dt)
@@ -79,8 +69,6 @@ void Scene::draw()
     {
         entities[i].draw(window->getWindow());
     }
-
-    // window->draw(realPos);
 }
 
 void Scene::sceneInput(sf::Keyboard::Key key)

@@ -41,6 +41,4 @@ private:
 
     sf::RectangleShape rect;
     sf::RectangleShape outline;
-
-    //sf::CircleShape realPos;
 };
