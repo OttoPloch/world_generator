@@ -12,11 +12,12 @@ void Scene::init(Window* window, AssetManager* assetManager)
 
     entities.clear();
     entities.push_back(Entity(getNewID(), {475, 475}));
-    entities.push_back(Entity(getNewID(), {0, 0}));
+    entities.push_back(Entity(getNewID(), {1000, 0}));
     entities.push_back(Entity(getNewID(), {900, 900}));
+    entities.push_back(Entity(getNewID(), {1210, 900}));
 
     entities[0].giveSprite(assetManager->getTexture("pixel"), {50, 50});
-    //entities[0].giveCollision(&entities, false);
+    entities[0].giveCollision(&entities, false);
 
     entities[1].giveSprite(assetManager->getTexture("shaq"), {300, 300});
     entities[1].giveMotion(true);
@@ -24,6 +25,8 @@ void Scene::init(Window* window, AssetManager* assetManager)
 
     entities[2].giveSprite(assetManager->getTexture("dr bee"), {200, 200});
     entities[2].giveCollision(&entities, false);
+    entities[3].giveSprite(assetManager->getTexture("dr bee"), {400, 200});
+    entities[3].giveCollision(&entities, false);
     
     camera.init(window, true, {0, 0}, toV2F(window->getSize()), &entities[1]);
 
