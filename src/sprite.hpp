@@ -33,6 +33,8 @@ public:
 
     sf::Vector2f getSize();
 
+    float getBottom();
+
     void jumpToTarget();
 private:
     GamePosition position;

@@ -37,6 +37,8 @@ private:
     
     std::vector<Entity> entities;
 
+    std::vector<Entity*> entitiesDrawOrder;
+
     Camera camera;
 
     sf::RectangleShape rect;

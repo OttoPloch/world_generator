@@ -87,6 +87,8 @@ sf::Vector2f Sprite::getSpritePosition() { return spritePosition; }
 
 sf::Vector2f Sprite::getSize() { return size; }
 
+float Sprite::getBottom() { return spritePosition.y + (size.y / 2.f); }
+
 void Sprite::jumpToTarget()
 {
     sprite->setPosition(position.get());

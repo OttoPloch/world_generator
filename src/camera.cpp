@@ -1,5 +1,4 @@
 #include "camera.hpp"
-
 #include "window.hpp"
 
 const int FREECAM_MOVE_SPEED_BASE = 10;
