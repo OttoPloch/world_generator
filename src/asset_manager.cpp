@@ -1,24 +1,31 @@
 #include "asset_manager.hpp"
 
-AssetManager::AssetManager()
-{
-    if (!pixelTexture.loadFromFile("../../assets/images/image.png")) std::cout << "Error loading image.png\n";
-    if (!shaqTexture.loadFromFile("../../assets/images/shaq_time_out.png")) std::cout << "Error loading shaq_time_out.png\n";
-    if (!drBeeTexture.loadFromFile("../../assets/images/dr bee.jpg")) std::cout << "Error loading dr bee.jpg\n";
+AssetManager::AssetManager() {}
 
-    textures = {
-        {"pixel", &pixelTexture},
-        {"shaq", &shaqTexture},
-        {"dr bee", &drBeeTexture}
-    };
-}
-
-sf::Texture* AssetManager::getTexture(std::string path)
+sf::Texture* AssetManager::getTexture(std::string name)
 {
-    if (textures[path])
+    auto entry = textureMap.find(name);
+
+    if (entry != textureMap.end())
     {
-        return textures[path];        
+        return &entry->second;        
     }
-    
-    return nullptr;
+    else
+    {
+        sf::Texture newTexture;
+
+        if (!newTexture.loadFromFile("../../assets/images/" + name + ".jpg"))
+        {
+            if (!newTexture.loadFromFile("../../assets/images/" + name + ".png"))
+            {
+                std::cout << "Error loading " << name << " image, not a jpg or png.\n";   
+
+                return nullptr;
+            }
+        }
+
+        textureMap[name] = newTexture;
+
+        return &textureMap[name];
+    }
 }

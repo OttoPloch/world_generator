@@ -2,46 +2,54 @@
 
 CollisionRect::CollisionRect() {}
 
-void CollisionRect::init(GamePosition position, sf::Vector2f size)
+void CollisionRect::init(GamePosition position, sf::Vector2f offset, sf::Vector2f size)
 {
     this->position = position;
+    this->offset = offset;
     this->size = size;
-
+    
+    offsetPosition = {position.get().x + offset.x, position.get().y + offset.y};
+    
     lastPosition = position.get();
 }
 
-sf::Vector2f CollisionRect::center() { return position.get(); }
+void CollisionRect::updatePosition()
+{
+    offsetPosition = {position.get().x + offset.x, position.get().y + offset.y};
+}
+
+sf::Vector2f CollisionRect::center() { return offsetPosition; }
 
 sf::Vector2f CollisionRect::getSize() { return size; }
 
 std::array<float, 4> CollisionRect::getBorders()
 {
-    float left = position.get().x - (size.x / 2.f);
-    float right = position.get().x + (size.x / 2.f);
-    float top = position.get().y - (size.y / 2.f);
-    float bottom = position.get().y + (size.y / 2.f);
+    float left = offsetPosition.x - (size.x / 2.f);
+    float right = offsetPosition.x + (size.x / 2.f);
+    float top = offsetPosition.y - (size.y / 2.f);
+    float bottom = offsetPosition.y + (size.y / 2.f);
 
     return {left, right, top, bottom};
 }
 
 float CollisionRect::left()
 {
-    return position.get().x - (size.x / 2.f);
+    return offsetPosition.x - (size.x / 2.f);
 }
 
 float CollisionRect::right()
 {
-    return position.get().x + (size.x / 2.f);
+    return offsetPosition.x + (size.x / 2.f);
 }
 
 float CollisionRect::top()
 {
-    return position.get().y - (size.y / 2.f);;
+    return offsetPosition.y - (size.y / 2.f);
 }
 
 float CollisionRect::bottom()
 {
-    return position.get().y + (size.y / 2.f);
+    return offsetPosition.y + (size.y / 2.f);
 }
 
 float CollisionRect::length()
@@ -64,27 +72,44 @@ float CollisionRect::halfWidth()
     return size.y / 2.f;
 }
 
-void CollisionRect::setPosition(sf::Vector2f newPosition)
+void CollisionRect::setBasePosition(sf::Vector2f newPosition)
 {
     position.set(newPosition);
+
+    offsetPosition = {position.get().x + offset.x, position.get().y + offset.y};
+}
+
+void CollisionRect::setOffsetPosition(sf::Vector2f newPosition)
+{
+    offsetPosition = newPosition;
+
+    position.set({offsetPosition.x - offset.x, offsetPosition.y - offset.y});
 }
 
 void CollisionRect::setLeft(float value)
 {
-    position.set('x', value + (size.x / 2.f));
+    offsetPosition.x = value + (size.x / 2.f);
+
+    position.set('x', offsetPosition.x - offset.x);
 }
 
 void CollisionRect::setRight(float value)
 {
-    position.set('x', value - (size.x / 2.f));
+    offsetPosition.x = value - (size.x / 2.f);
+    
+    position.set('x', offsetPosition.x - offset.x);
 }
 
 void CollisionRect::setTop(float value)
 {
-    position.set('y', value + (size.y / 2.f));
+    offsetPosition.y = value + (size.y / 2.f);
+
+    position.set('y', offsetPosition.y - offset.y);
 }
 
 void CollisionRect::setBottom(float value)
 {
-    position.set('y', value - (size.y / 2.f));
+    offsetPosition.y = value - (size.y / 2.f);
+
+    position.set('y', offsetPosition.y - offset.y);
 }

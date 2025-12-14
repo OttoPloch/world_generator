@@ -15,13 +15,17 @@ void MotionAttribute::tick()
     {
         sf::Vector2f movement = getMovement();
 
-        (movement.x != 0.f) ? velocity.x = movement.x * 15.f : velocity.x *= 0.6f;
-        (movement.y != 0.f) ? velocity.y = movement.y * 15.f : velocity.y *= 0.6f;
+        float speed = 7.5f;
+
+        if (getKey("SHIFT")) speed *= 2;
+
+        (movement.x != 0.f) ? velocity.x = movement.x * speed : velocity.x *= 0.1f;
+        (movement.y != 0.f) ? velocity.y = movement.y * speed : velocity.y *= 0.1f;
     }
     else
     {
-        velocity.x *= 0.6f;
-        velocity.y *= 0.6f;
+        velocity.x *= 0.1f;
+        velocity.y *= 0.1f;
     }
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <vector>
 
 #include "common.hpp"
 
@@ -11,9 +12,5 @@ public:
 
     sf::Texture* getTexture(std::string name);
 private:
-    std::map<std::string, sf::Texture*> textures;
-
-    sf::Texture pixelTexture;
-    sf::Texture shaqTexture;
-    sf::Texture drBeeTexture;
+    std::map<std::string, sf::Texture> textureMap;
 };

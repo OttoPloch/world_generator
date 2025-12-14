@@ -1,10 +1,10 @@
 #include "collision_attribute.hpp"
 
-CollisionAttribute::CollisionAttribute(Entity* myEntity, GamePosition position, sf::Vector2f size, std::vector<Entity>* entities, bool active) : Attribute("collision")
+CollisionAttribute::CollisionAttribute(Entity* myEntity, GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::vector<Entity>* entities, bool active) : Attribute("collision")
 {
     this->myEntity = myEntity;
 
-    rect.init(position, size);
+    rect.init(position, offset, size);
 
     this->entities = entities;
 
@@ -13,6 +13,8 @@ CollisionAttribute::CollisionAttribute(Entity* myEntity, GamePosition position, 
 
 void CollisionAttribute::tick()
 {
+    rect.updatePosition();
+
     for (int i = 0; i < entities->size(); i++)
     {
         Entity* entity = &(*entities)[i];
@@ -40,9 +42,7 @@ void CollisionAttribute::tick()
                     }
                     if (topDiff < leftDiff && topDiff < rightDiff && topDiff < bottomDiff)
                     {
-                        rect.setBottom(other->top());
-
-                        
+                        rect.setBottom(other->top());                        
                     }
                     if (bottomDiff < leftDiff && bottomDiff < rightDiff && bottomDiff < topDiff)
                     {
@@ -55,3 +55,5 @@ void CollisionAttribute::tick()
 
     rect.lastPosition = rect.center();
 }
+
+CollisionRect CollisionAttribute::getRect() { return rect; }

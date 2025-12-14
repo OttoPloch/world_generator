@@ -23,7 +23,18 @@ void Entity::giveSprite(sf::Texture* texture, sf::Vector2f size, bool centerOrig
 {
     sprite = std::make_unique<Sprite>();
 
-    sprite->create(texture, position, size, centerOrigin);
+    sf::Vector2f spriteSize;
+
+    if (size == sf::Vector2f(-1.f, -1.f))
+    {
+        spriteSize = toV2F(texture->getSize());
+    }
+    else
+    {
+        spriteSize = size;
+    }
+
+    sprite->create(texture, position, spriteSize, centerOrigin);
 }
 
 void Entity::giveMotion(bool controlling)
@@ -31,9 +42,22 @@ void Entity::giveMotion(bool controlling)
     motion = std::make_unique<MotionAttribute>(position, controlling);
 }
 
-void Entity::giveCollision(std::vector<Entity>* entities, bool active)
+void Entity::giveCollision(std::vector<Entity>* entities, bool active, sf::Vector2f offsetFraction, sf::Vector2f size, bool sizeIsFraction)
 {
-    collision = std::make_unique<CollisionAttribute>(this, position, sprite->getSize(), entities, active);
+    sf::Vector2f offset = {sprite->getSize().x * offsetFraction.x, sprite->getSize().y * offsetFraction.y};
+    
+    sf::Vector2f collRectSize;
+
+    if (sizeIsFraction)
+    {
+        collRectSize = {sprite->getSize().x * size.x, sprite->getSize().y * size.y};
+    }
+    else
+    {
+        collRectSize = size;
+    }
+
+    collision = std::make_unique<CollisionAttribute>(this, position, offset, collRectSize, entities, active);
 }
 
 void Entity::changeSpriteTexture(sf::Texture* texture)

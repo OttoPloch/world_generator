@@ -14,16 +14,20 @@ void Scene::init(Window* window, AssetManager* assetManager)
     entities.push_back(Entity(getNewID(), {475, 475}));
     entities.push_back(Entity(getNewID(), {0, 0}));
     entities.push_back(Entity(getNewID(), {900, 900}));
+    entities.push_back(Entity(getNewID(), {100, 500}));
 
     entities[0].giveSprite(assetManager->getTexture("pixel"), {50, 50});
     // entities[0].giveCollision(&entities, false);
 
-    entities[1].giveSprite(assetManager->getTexture("shaq"), {300, 300});
+    entities[1].giveSprite(assetManager->getTexture("shaq_time_out"), {300, 300});
     entities[1].giveMotion(true);
-    entities[1].giveCollision(&entities, true);
+    entities[1].giveCollision(&entities, true, {0, 0.25f}, {1, 0.5f});
 
     entities[2].giveSprite(assetManager->getTexture("dr bee"), {200, 200});
-    entities[2].giveCollision(&entities, false);
+    entities[2].giveCollision(&entities, false, {0, 0}, {.8f, .8f});
+
+    entities[3].giveSprite(assetManager->getTexture("bush"), {200, 120});
+    entities[3].giveCollision(&entities, false, {0, 0.3f}, {.7f, .4f});
 
     for (int i = 0; i < entities.size(); i++)
     {
@@ -75,6 +79,20 @@ void Scene::draw()
     for (int i = 0; i < entitiesDrawOrder.size(); i++)
     {
         entitiesDrawOrder[i]->draw(window->getWindow());
+
+        // if (entitiesDrawOrder[i]->getCollision())
+        // {
+        //     sf::RectangleShape collOutline(entitiesDrawOrder[i]->getCollision()->getRect().getSize());
+    
+        //     collOutline.setOrigin({collOutline.getSize().x / 2.f, collOutline.getSize().y / 2.f});
+        //     collOutline.setPosition(entitiesDrawOrder[i]->getCollision()->getRect().center());
+    
+        //     collOutline.setFillColor(sf::Color::Transparent);
+        //     collOutline.setOutlineColor(sf::Color::Red);
+        //     collOutline.setOutlineThickness(1.f);
+    
+        //     window->draw(collOutline);
+        // }
     }
 }
 

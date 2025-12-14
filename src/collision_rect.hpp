@@ -10,7 +10,9 @@ class CollisionRect
 public:
     CollisionRect();
 
-    void init(GamePosition position, sf::Vector2f size);
+    void init(GamePosition position, sf::Vector2f offset, sf::Vector2f size);
+
+    void updatePosition();
 
     sf::Vector2f center();
     
@@ -35,7 +37,9 @@ public:
 
     float halfWidth();
 
-    void setPosition(sf::Vector2f newPosition);
+    void setBasePosition(sf::Vector2f newPosition);
+
+    void setOffsetPosition(sf::Vector2f newPosition);
 
     void setLeft(float value);
 
@@ -49,5 +53,9 @@ public:
 private:
     GamePosition position;
 
+    sf::Vector2f offset;
+
     sf::Vector2f size;
+    
+    sf::Vector2f offsetPosition;
 };
