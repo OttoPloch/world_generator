@@ -24,10 +24,10 @@ void Scene::init(Window* window, AssetManager* assetManager)
     entities[1].giveCollision(&entities, true, {0, 0.25f}, {1, 0.5f});
 
     entities[2].giveSprite(assetManager->getTexture("dr bee"), {200, 200});
-    entities[2].giveCollision(&entities, false, {0, 0}, {.8f, .8f});
+    entities[2].giveCollision(&entities, false);
 
     entities[3].giveSprite(assetManager->getTexture("bush"), {200, 120});
-    entities[3].giveCollision(&entities, false, {0, 0.3f}, {.7f, .4f});
+    entities[3].giveCollision(&entities, false, {0, 0.2f}, {.7f, .6f});
 
     for (int i = 0; i < entities.size(); i++)
     {
