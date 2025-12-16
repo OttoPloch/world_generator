@@ -1,8 +1,10 @@
 #include "collision_attribute.hpp"
 
-CollisionAttribute::CollisionAttribute(Entity* myEntity, GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::vector<Entity>* entities, bool active) : Attribute("collision")
+CollisionAttribute::CollisionAttribute(Entity* myEntity, GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::vector<Entity>* entities, bool active, std::string name) : Attribute("collision")
 {
     this->myEntity = myEntity;
+
+    this->name = name;
 
     rect.init(position, offset, size);
 

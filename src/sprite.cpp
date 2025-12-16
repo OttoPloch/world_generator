@@ -1,4 +1,5 @@
 #include "sprite.hpp"
+#include "animation.hpp"
 
 Sprite::Sprite() {}
 
@@ -15,14 +16,21 @@ void Sprite::create(sf::Texture* texture, GamePosition position, sf::Vector2f si
     this->texture = texture;
     
     sprite = std::make_unique<sf::Sprite>(*texture);
-    if (centerOrigin) sprite->setOrigin({sprite->getTextureRect().size.x / 2.f, sprite->getTextureRect().size.y / 2.f});
+    if (centerOrigin) centerSprite();
     sprite->setScale({size.x / sprite->getTextureRect().size.x, size.y / sprite->getTextureRect().size.y});
     sprite->setPosition(spritePosition);
+
+    animation = nullptr;
+}
+
+void Sprite::centerSprite()
+{
+    sprite->setOrigin({sprite->getTextureRect().size.x / 2.f, sprite->getTextureRect().size.y / 2.f});
 }
 
 void Sprite::setSize(sf::Vector2f newSize)
 {
-    sprite->setScale({newSize.x / size.x, newSize.y / size.y});
+    sprite->setScale({newSize.x / sprite->getTextureRect().size.x, newSize.y / sprite->getTextureRect().size.y});
 
     size = newSize;
 }
@@ -41,12 +49,70 @@ void Sprite::setTexture(sf::Texture* newTexture)
     texture = newTexture;
 }
 
-void Sprite::tick()
+void Sprite::giveAnimation(Animation* animation, unsigned int ticksPerFrame, bool reverse)
 {
+    this->animation = animation;
 
+    animTicksPerFrame = ticksPerFrame;
+    animReverse = reverse;
+
+    animTicksToNextFrame = ticksPerFrame;
+    animFrameIndex = 0;
+
+    animPlaying = false;
+
+    sprite->setTexture(*animation->getTexture());
+    sprite->setTextureRect(sf::IntRect(animation->getFrameCoords(0), animation->getFrameSize()));
+    centerSprite();
+    setSize(size);
 }
 
-void Sprite::update(float dt, MotionAttribute* a)
+void Sprite::animPlay()
+{
+    animPlaying = true;
+}
+
+void Sprite::animStop()
+{
+    animPlaying = false;
+}
+
+void Sprite::animReset()
+{
+    animFrameIndex = 0;
+    animTicksToNextFrame = animTicksPerFrame;
+}
+
+void Sprite::tick()
+{
+    if (animation)
+    {
+        if (animPlaying)
+        {
+            animTicksToNextFrame--;
+    
+            if (animTicksToNextFrame == 0)
+            {
+                animTicksToNextFrame = animTicksPerFrame;
+        
+                (animReverse) ? animFrameIndex-- : animFrameIndex++;
+        
+                if (animFrameIndex > animation->getFrameCount() - 1)
+                {
+                    animFrameIndex = 0;
+                }
+                if (animFrameIndex < 0)
+                {
+                    animFrameIndex = animation->getFrameCount() - 1;
+                }
+
+                sprite->setTextureRect(sf::IntRect(animation->getFrameCoords(animFrameIndex), animation->getFrameSize()));
+            }
+        }
+    }
+}
+
+void Sprite::update(float dt)
 {
     if (spritePosition != position.get())
     {

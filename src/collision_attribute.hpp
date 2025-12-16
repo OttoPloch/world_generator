@@ -12,7 +12,7 @@
 class CollisionAttribute : public Attribute
 {
 public:
-    CollisionAttribute(Entity* myEntity, GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::vector<Entity>* entities, bool active);
+    CollisionAttribute(Entity* myEntity, GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::vector<Entity>* entities, bool active, std::string name);
 
     void tick();
 
@@ -22,6 +22,8 @@ public:
 private:
     Entity* myEntity;
     
+    std::string name;
+
     CollisionRect rect;
     
     std::vector<Entity>* entities;

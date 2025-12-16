@@ -15,19 +15,26 @@ void Scene::init(Window* window, AssetManager* assetManager)
     entities.push_back(Entity(getNewID(), {0, 0}));
     entities.push_back(Entity(getNewID(), {900, 900}));
     entities.push_back(Entity(getNewID(), {100, 500}));
+    entities.push_back(Entity(getNewID(), {0, 0}));//{-600, 150}));
 
     entities[0].giveSprite(assetManager->getTexture("pixel"), {50, 50});
-    // entities[0].giveCollision(&entities, false);
+    // entities[0].giveCollision(&entities, false, "pixel");
 
-    entities[1].giveSprite(assetManager->getTexture("shaq_time_out"), {300, 300});
+    entities[1].giveSprite(assetManager->getTexture("IDLE_smaller"), {24 * 12, 21 * 12});
     entities[1].giveMotion(true);
-    entities[1].giveCollision(&entities, true, {0, 0.25f}, {1, 0.5f});
+    entities[1].giveCollision(&entities, true, "player", {0, 0.3f}, {0.3f, 0.2f});
+    entities[1].getSprite()->giveAnimation(assetManager->getAnimation("knight_idle"), 8);
+    entities[1].getSprite()->animPlay();
 
     entities[2].giveSprite(assetManager->getTexture("dr bee"), {200, 200});
-    entities[2].giveCollision(&entities, false);
+    entities[2].giveCollision(&entities, false, "enemy");
 
     entities[3].giveSprite(assetManager->getTexture("bush"), {200, 120});
-    entities[3].giveCollision(&entities, false, {0, 0.2f}, {.7f, .6f});
+    entities[3].giveCollision(&entities, false, "obstacle", {0, 0.2f}, {.7f, .6f});
+
+    entities[4].giveSprite(assetManager->getTexture("IDLE_smaller"), {24 * 10, 21 * 10});
+    entities[4].getSprite()->giveAnimation(assetManager->getAnimation("knight_idle"), 12);
+    entities[4].getSprite()->animPlay();
 
     for (int i = 0; i < entities.size(); i++)
     {
@@ -80,17 +87,49 @@ void Scene::draw()
     {
         entitiesDrawOrder[i]->draw(window->getWindow());
 
+        // if (entitiesDrawOrder[i]->getSprite())
+        // {
+        //     // Entity* entity = entitiesDrawOrder[i];
+        //     // Sprite* sprite = entity->getSprite();
+        //     // sf::Sprite sprite2 = sprite->getSprite();
+        //     // sf::Vector2f size = toV2F(sprite2.getTextureRect().size);
+        //     // sf::Vector2f size2 = sprite->getSize();
+
+        //     // sf::RectangleShape spriteOutline(size);
+        //     // sf::RectangleShape spriteOutline2(size2);
+
+        //     // spriteOutline.setOrigin({size.x / 2.f, size.y / 2.f});
+        //     // spriteOutline.setPosition(entitiesDrawOrder[i]->getPosition());
+            
+        //     // spriteOutline2.setOrigin({size2.x / 2.f, size2.y / 2.f});
+        //     // spriteOutline2.setPosition(entitiesDrawOrder[i]->getPosition());
+    
+        //     // spriteOutline.setFillColor(sf::Color::Transparent);
+        //     // spriteOutline.setOutlineColor(sf::Color::Red);
+        //     // spriteOutline.setOutlineThickness(3.f);
+
+        //     // spriteOutline2.setFillColor(sf::Color::Transparent);
+        //     // spriteOutline2.setOutlineColor(sf::Color::Green);
+        //     // spriteOutline2.setOutlineThickness(3.f);
+    
+        //     // window->draw(spriteOutline);
+        //     // window->draw(spriteOutline2);
+        // }
+
         // if (entitiesDrawOrder[i]->getCollision())
         // {
-        //     sf::RectangleShape collOutline(entitiesDrawOrder[i]->getCollision()->getRect().getSize());
-    
-        //     collOutline.setOrigin({collOutline.getSize().x / 2.f, collOutline.getSize().y / 2.f});
-        //     collOutline.setPosition(entitiesDrawOrder[i]->getCollision()->getRect().center());
-    
+        //     Entity* entity = entitiesDrawOrder[i];
+        //     CollisionRect coll = entity->getCollision()->getRect();
+
+        //     sf::RectangleShape collOutline(coll.getSize());
+
+        //     collOutline.setOrigin({collOutline.getSize().x / 2.f, collOutline.getSize().y});
+        //     collOutline.setPosition({coll.center().x, coll.bottom()});
+
         //     collOutline.setFillColor(sf::Color::Transparent);
-        //     collOutline.setOutlineColor(sf::Color::Red);
-        //     collOutline.setOutlineThickness(1.f);
-    
+        //     collOutline.setOutlineColor(sf::Color::Blue);
+        //     collOutline.setOutlineThickness(3.f);
+
         //     window->draw(collOutline);
         // }
     }

@@ -23,10 +23,10 @@ public:
     int getID();
 
     void giveSprite(sf::Texture* texture, sf::Vector2f size = {-1, -1}, bool centerOrigin = true);
-
+    
     void giveMotion(bool controlling);
 
-    void giveCollision(std::vector<Entity>* entities, bool active, sf::Vector2f offsetFraction = {0, 0}, sf::Vector2f size = {1, 1}, bool sizeIsFraction = true);
+    void giveCollision(std::vector<Entity>* entities, bool active, std::string name, sf::Vector2f offsetFraction = {0, 0}, sf::Vector2f size = {1, 1}, bool sizeIsFraction = true);
 
     void changeSpriteTexture(sf::Texture* texture);
 
