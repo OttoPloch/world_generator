@@ -1,0 +1,10 @@
+state idle
+anim knight_idle
+state walkingLeft
+anim knight_left
+state walkingRight
+anim knight_right
+state walkingUp
+anim knight_up
+state walkingDown
+anim knight_down

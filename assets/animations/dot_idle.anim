@@ -1,0 +1,6 @@
+tex name dot_idle
+path animations/test_animations/dot_idle.png
+col 10
+row 1
+sizex 0.6
+sizey 0.6

@@ -8,6 +8,7 @@
 #include "asset_manager.hpp"
 #include "motion_attribute.hpp"
 #include "game_position.hpp"
+#include "entity_states.hpp"
 
 class CollisionAttribute;
 
@@ -55,4 +56,6 @@ private:
     std::unique_ptr<MotionAttribute> motion;
 
     std::unique_ptr<CollisionAttribute> collision;
+
+    EntityStates states;
 };

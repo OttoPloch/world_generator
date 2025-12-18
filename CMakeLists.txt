@@ -31,6 +31,8 @@ src/collision_attribute.cpp
 src/collision_rect.cpp
 src/utils.cpp
 src/animation.cpp
+src/entity_states.cpp
+src/animation_set.cpp
 )
 
 target_compile_features(app PRIVATE cxx_std_17)

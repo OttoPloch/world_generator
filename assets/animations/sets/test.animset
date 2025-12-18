@@ -1,0 +1,10 @@
+state idle
+anim dot_idle
+state walkingLeft
+anim dot_left
+state walkingRight
+anim dot_right
+state walkingUp
+anim dot_up
+state walkingDown
+anim dot_down

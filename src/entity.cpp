@@ -15,6 +15,8 @@ void Entity::create(int ID, sf::Vector2f position)
     this->position.set(position);
 
     rotation = 0;
+
+    states.init();
 }
 
 int Entity::getID() { return ID; }
@@ -34,12 +36,12 @@ void Entity::giveSprite(sf::Texture* texture, sf::Vector2f size, bool centerOrig
         spriteSize = size;
     }
 
-    sprite->create(texture, position, spriteSize, centerOrigin);
+    sprite->create(&states, texture, position, spriteSize, centerOrigin);
 }
 
 void Entity::giveMotion(bool controlling)
 {
-    motion = std::make_unique<MotionAttribute>(position, controlling);
+    motion = std::make_unique<MotionAttribute>(&states, position, controlling);
 }
 
 void Entity::giveCollision(std::vector<Entity>* entities, bool active, std::string name, sf::Vector2f offsetFraction, sf::Vector2f size, bool sizeIsFraction)
@@ -57,7 +59,7 @@ void Entity::giveCollision(std::vector<Entity>* entities, bool active, std::stri
         collRectSize = size;
     }
 
-    collision = std::make_unique<CollisionAttribute>(this, position, offset, collRectSize, entities, active, name);
+    collision = std::make_unique<CollisionAttribute>(this, &states, position, offset, collRectSize, entities, active, name);
 }
 
 void Entity::changeSpriteTexture(sf::Texture* texture)
@@ -67,9 +69,11 @@ void Entity::changeSpriteTexture(sf::Texture* texture)
 
 void Entity::tick()
 {
+    states.resetAll();
+
     if (motion) motion->tick();
-    
-    if (sprite) sprite->tick();
+
+    if (sprite) (collision && collision->active) ? sprite->tick() : sprite->tick();
 
     if (collision && collision->active == true) collision->tick();
 }

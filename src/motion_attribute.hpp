@@ -3,11 +3,12 @@
 #include "common.hpp"
 #include "attribute.hpp"
 #include "game_position.hpp"
+#include "entity_states.hpp"
 
 class MotionAttribute : public Attribute
 {
 public:
-    MotionAttribute(GamePosition position, bool controlling);
+    MotionAttribute(EntityStates* states, GamePosition position, bool controlling);
 
     void tick();
 
@@ -25,6 +26,8 @@ public:
 
     bool controlling;
 private:
+    EntityStates* states;
+
     GamePosition position;
 
     float rotation;

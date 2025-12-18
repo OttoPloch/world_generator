@@ -38,6 +38,12 @@ int toInt(float value);
 
 int toInt(unsigned int value);
 
+unsigned int toUnsignedInt(double value);
+
+unsigned int toUnsignedInt(float value);
+
+unsigned int toUnsignedInt(int value);
+
 float deg2Rad(float degrees);
 
 float rad2Deg(float radians);

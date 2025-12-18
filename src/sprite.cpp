@@ -3,8 +3,10 @@
 
 Sprite::Sprite() {}
 
-void Sprite::create(sf::Texture* texture, GamePosition position, sf::Vector2f size, bool centerOrigin)
+void Sprite::create(EntityStates* states, sf::Texture* texture, GamePosition position, sf::Vector2f size, bool centerOrigin)
 {    
+    this->states = states;
+
     this->position = position;
 
     spritePosition = position.get();
@@ -20,6 +22,7 @@ void Sprite::create(sf::Texture* texture, GamePosition position, sf::Vector2f si
     sprite->setScale({size.x / sprite->getTextureRect().size.x, size.y / sprite->getTextureRect().size.y});
     sprite->setPosition(spritePosition);
 
+    animationSet = nullptr;
     animation = nullptr;
 }
 
@@ -49,9 +52,24 @@ void Sprite::setTexture(sf::Texture* newTexture)
     texture = newTexture;
 }
 
-void Sprite::giveAnimation(Animation* animation, unsigned int ticksPerFrame, bool reverse)
+void Sprite::giveAnimationSet(AnimationSet* animationSet, bool resetSizeX)
+{
+    this->animationSet = animationSet;
+
+    // TODO: Fix constant
+    giveAnimation(animationSet->getAnimationFor(states->getFirstTrue()), 5, resetSizeX);
+}
+
+void Sprite::giveAnimation(Animation* animation, unsigned int ticksPerFrame, bool resetSizeX, bool reverse, bool start)
 {
     this->animation = animation;
+
+    if (resetSizeX)
+    {
+        float ratio = animation->getFrameSize().x / animation->getFrameSize().y;
+        
+        size.x = size.y * ratio;
+    }
 
     animTicksPerFrame = ticksPerFrame;
     animReverse = reverse;
@@ -59,7 +77,7 @@ void Sprite::giveAnimation(Animation* animation, unsigned int ticksPerFrame, boo
     animTicksToNextFrame = ticksPerFrame;
     animFrameIndex = 0;
 
-    animPlaying = false;
+    animPlaying = start;
 
     sprite->setTexture(*animation->getTexture());
     sprite->setTextureRect(sf::IntRect(animation->getFrameCoords(0), animation->getFrameSize()));
@@ -85,6 +103,25 @@ void Sprite::animReset()
 
 void Sprite::tick()
 {
+    // TODO: make this less specific to states if possible or even a net good
+    if (animationSet)
+    {
+        if (animation)
+        {
+            if (animationSet->getKeyFor(animation) != states->getFirstTrue())
+            {
+                // TODO: remove the constant for speed
+                changeAnimation(animationSet->getAnimationFor(states->getFirstTrue()), 5);
+            }
+        }
+        else
+        {
+            // TODO: remove the constant for speed
+            giveAnimation(animationSet->getAnimationFor(states->getFirstTrue()), 5);
+        }
+
+    }
+
     if (animation)
     {
         if (animPlaying)
@@ -159,4 +196,19 @@ void Sprite::jumpToTarget()
 {
     sprite->setPosition(position.get());
     spritePosition = position.get();
+}
+
+void Sprite::changeAnimation(Animation* newAnimation, unsigned int ticksPerFrame)
+{
+    animation = newAnimation;
+
+    animTicksPerFrame = ticksPerFrame;
+
+    animTicksToNextFrame = animTicksPerFrame;
+    animFrameIndex = 0;
+
+    sprite->setTexture(*animation->getTexture());
+    sprite->setTextureRect(sf::IntRect(animation->getFrameCoords(0), animation->getFrameSize()));
+    centerSprite();
+    setSize(size);
 }

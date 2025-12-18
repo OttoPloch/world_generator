@@ -15,16 +15,20 @@ void Scene::init(Window* window, AssetManager* assetManager)
     entities.push_back(Entity(getNewID(), {0, 0}));
     entities.push_back(Entity(getNewID(), {900, 900}));
     entities.push_back(Entity(getNewID(), {100, 500}));
-    entities.push_back(Entity(getNewID(), {0, 0}));//{-600, 150}));
+    entities.push_back(Entity(getNewID(), {0, 0}));
+    entities.push_back(Entity(getNewID(), {-400, 100}));
+    entities.push_back(Entity(getNewID(), {-400, 250}));
+    entities.push_back(Entity(getNewID(), {-400, 400}));
+    entities.push_back(Entity(getNewID(), {-400, 550}));
+    entities.push_back(Entity(getNewID(), {-400, 700}));
 
     entities[0].giveSprite(assetManager->getTexture("pixel"), {50, 50});
     // entities[0].giveCollision(&entities, false, "pixel");
 
-    entities[1].giveSprite(assetManager->getTexture("IDLE_smaller"), {24 * 12, 21 * 12});
+    entities[1].giveSprite(assetManager->getTexture("IDLE_smaller"), {0, 200});
+    entities[1].getSprite()->giveAnimationSet(assetManager->getAnimSet("player"));
     entities[1].giveMotion(true);
-    entities[1].giveCollision(&entities, true, "player", {0, 0.3f}, {0.3f, 0.2f});
-    entities[1].getSprite()->giveAnimation(assetManager->getAnimation("knight_idle"), 8);
-    entities[1].getSprite()->animPlay();
+    entities[1].giveCollision(&entities, true, "player",s {0, 0.2}, {0.3, 0.3});
 
     entities[2].giveSprite(assetManager->getTexture("dr bee"), {200, 200});
     entities[2].giveCollision(&entities, false, "enemy");
@@ -34,7 +38,21 @@ void Scene::init(Window* window, AssetManager* assetManager)
 
     entities[4].giveSprite(assetManager->getTexture("IDLE_smaller"), {24 * 10, 21 * 10});
     entities[4].getSprite()->giveAnimation(assetManager->getAnimation("knight_idle"), 12);
-    entities[4].getSprite()->animPlay();
+
+    entities[5].giveSprite(assetManager->getTexture("pixel"), {100, 100});
+    entities[5].getSprite()->giveAnimation(assetManager->getAnimation("dot_idle"), 8);
+
+    entities[6].giveSprite(assetManager->getTexture("pixel"), {100, 100});
+    entities[6].getSprite()->giveAnimation(assetManager->getAnimation("dot_left"), 8);
+
+    entities[7].giveSprite(assetManager->getTexture("pixel"), {100, 100});
+    entities[7].getSprite()->giveAnimation(assetManager->getAnimation("dot_right"), 8);
+
+    entities[8].giveSprite(assetManager->getTexture("pixel"), {100, 100});
+    entities[8].getSprite()->giveAnimation(assetManager->getAnimation("dot_up"), 8);
+
+    entities[9].giveSprite(assetManager->getTexture("pixel"), {100, 100});
+    entities[9].getSprite()->giveAnimation(assetManager->getAnimation("dot_down"), 8);
 
     for (int i = 0; i < entities.size(); i++)
     {
@@ -89,31 +107,31 @@ void Scene::draw()
 
         // if (entitiesDrawOrder[i]->getSprite())
         // {
-        //     // Entity* entity = entitiesDrawOrder[i];
-        //     // Sprite* sprite = entity->getSprite();
-        //     // sf::Sprite sprite2 = sprite->getSprite();
-        //     // sf::Vector2f size = toV2F(sprite2.getTextureRect().size);
-        //     // sf::Vector2f size2 = sprite->getSize();
+        //     Entity* entity = entitiesDrawOrder[i];
+        //     Sprite* sprite = entity->getSprite();
+        //     sf::Sprite sprite2 = sprite->getSprite();
+        //     sf::Vector2f size = toV2F(sprite2.getTextureRect().size);
+        //     sf::Vector2f size2 = sprite->getSize();
 
-        //     // sf::RectangleShape spriteOutline(size);
-        //     // sf::RectangleShape spriteOutline2(size2);
+        //     sf::RectangleShape spriteOutline(size);
+        //     sf::RectangleShape spriteOutline2(size2);
 
-        //     // spriteOutline.setOrigin({size.x / 2.f, size.y / 2.f});
-        //     // spriteOutline.setPosition(entitiesDrawOrder[i]->getPosition());
+        //     spriteOutline.setOrigin({size.x / 2.f, size.y / 2.f});
+        //     spriteOutline.setPosition(entitiesDrawOrder[i]->getPosition());
             
-        //     // spriteOutline2.setOrigin({size2.x / 2.f, size2.y / 2.f});
-        //     // spriteOutline2.setPosition(entitiesDrawOrder[i]->getPosition());
+        //     spriteOutline2.setOrigin({size2.x / 2.f, size2.y / 2.f});
+        //     spriteOutline2.setPosition(entitiesDrawOrder[i]->getPosition());
     
-        //     // spriteOutline.setFillColor(sf::Color::Transparent);
-        //     // spriteOutline.setOutlineColor(sf::Color::Red);
-        //     // spriteOutline.setOutlineThickness(3.f);
+        //     spriteOutline.setFillColor(sf::Color::Transparent);
+        //     spriteOutline.setOutlineColor(sf::Color::Red);
+        //     spriteOutline.setOutlineThickness(3.f);
 
-        //     // spriteOutline2.setFillColor(sf::Color::Transparent);
-        //     // spriteOutline2.setOutlineColor(sf::Color::Green);
-        //     // spriteOutline2.setOutlineThickness(3.f);
+        //     spriteOutline2.setFillColor(sf::Color::Transparent);
+        //     spriteOutline2.setOutlineColor(sf::Color::Green);
+        //     spriteOutline2.setOutlineThickness(3.f);
     
-        //     // window->draw(spriteOutline);
-        //     // window->draw(spriteOutline2);
+        //     window->draw(spriteOutline);
+        //     window->draw(spriteOutline2);
         // }
 
         // if (entitiesDrawOrder[i]->getCollision())

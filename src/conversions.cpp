@@ -109,6 +109,36 @@ int toInt(unsigned int value)
     return static_cast<int>(value);
 }
 
+unsigned int toUnsignedInt(double value)
+{
+    if (value >= 0)
+    {
+        return static_cast<unsigned int>(value);
+    }
+    
+    return 0;
+}
+
+unsigned int toUnsignedInt(float value)
+{
+    if (value >= 0)
+    {
+        return static_cast<unsigned int>(value);
+    }
+    
+    return 0;
+}
+
+unsigned int toUnsignedInt(int value)
+{
+    if (value >= 0)
+    {
+        return static_cast<unsigned int>(value);
+    }
+    
+    return 0;
+}
+
 float deg2Rad(float degrees)
 {
     return degrees * M_PI / 180;

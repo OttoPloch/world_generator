@@ -2,6 +2,8 @@
 
 #include "common.hpp"
 #include "game_position.hpp"
+#include "animation_set.hpp"
+#include "entity_states.hpp"
 
 #include <memory>
 
@@ -12,7 +14,8 @@ class Sprite
 public:
     Sprite();
 
-    void create(sf::Texture* texture, GamePosition position, sf::Vector2f size, bool centerOrigin = true);
+    // sprite will always be centered if an animation is given, so centerOrigin only truly affects entities with no animations.
+    void create(EntityStates* states, sf::Texture* texture, GamePosition position, sf::Vector2f size, bool centerOrigin = true);
 
     void centerSprite();
 
@@ -22,7 +25,9 @@ public:
 
     void setTexture(sf::Texture* newTexture);
 
-    void giveAnimation(Animation* animation, unsigned int ticksPerFrame, bool reverse = false);
+    void giveAnimationSet(AnimationSet* animationSet, bool resetSizeX = true);
+
+    void giveAnimation(Animation* animation, unsigned int ticksPerFrame, bool resetSizeX = true, bool reverse = false, bool start = true);
 
     void animPlay();
 
@@ -46,6 +51,10 @@ public:
 
     void jumpToTarget();
 private:
+    void changeAnimation(Animation* newAnimation, unsigned int ticksPerFrame);
+
+    EntityStates* states;
+
     GamePosition position;
 
     sf::Vector2f spritePosition;
@@ -58,6 +67,8 @@ private:
 
     // needs to be a ptr bc of no default constructor for sf::Sprite
     std::unique_ptr<sf::Sprite> sprite;
+
+    AnimationSet* animationSet;
 
     Animation* animation;
     float animTicksPerFrame;
