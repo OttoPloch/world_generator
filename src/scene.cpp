@@ -25,7 +25,7 @@ void Scene::init(Window* window, AssetManager* assetManager)
     entities[0].giveSprite(assetManager->getTexture("pixel"), {50, 50}, -1);
     // entities[0].giveCollision(&entities, false, "pixel");
 
-    entities[1].giveSprite(assetManager->getTexture("IDLE_smaller"), {0, 200});
+    entities[1].giveSprite(assetManager->getTexture("IDLE_smaller"), {24 * 10, 21 * 10});
     entities[1].getSprite()->giveAnimationSet(assetManager->getAnimSet("player"));
     entities[1].giveMotion(true);
     entities[1].giveCollision(&entities, true, "player", {0, 0.2d}, {0.3, 0.3});
@@ -36,23 +36,23 @@ void Scene::init(Window* window, AssetManager* assetManager)
     entities[3].giveSprite(assetManager->getTexture("bush"), {200, 120});
     entities[3].giveCollision(&entities, false, "obstacle", {0, 0.2f}, {.7f, .6f});
 
-    entities[4].giveSprite(assetManager->getTexture("IDLE_smaller"), {24 * 10, 21 * 10});
-    entities[4].getSprite()->giveAnimation(assetManager->getAnimation("knight_idle"), 12);
+    entities[4].giveSprite(assetManager->getTexture("IDLE_smaller"), {24 * 11, 21 * 11});
+    entities[4].getSprite()->giveAnimation(assetManager->getAnimation("knight_idle"));
 
-    entities[5].giveSprite(assetManager->getTexture("pixel"), {100, 100}, -1);
-    entities[5].getSprite()->giveAnimation(assetManager->getAnimation("dot_idle"), 8);
+    entities[5].giveSprite(assetManager->getTexture("pixel"), {100, 100}, 5);
+    entities[5].getSprite()->giveAnimation(assetManager->getAnimation("dot_left"));
 
     entities[6].giveSprite(assetManager->getTexture("pixel"), {100, 100}, -1);
-    entities[6].getSprite()->giveAnimation(assetManager->getAnimation("dot_left"), 8);
+    entities[6].getSprite()->giveAnimation(assetManager->getAnimation("dot_right"));
 
     entities[7].giveSprite(assetManager->getTexture("pixel"), {100, 100}, -1);
-    entities[7].getSprite()->giveAnimation(assetManager->getAnimation("dot_right"), 8);
+    entities[7].getSprite()->giveAnimation(assetManager->getAnimation("dot_up"));
 
     entities[8].giveSprite(assetManager->getTexture("pixel"), {100, 100}, -1);
-    entities[8].getSprite()->giveAnimation(assetManager->getAnimation("dot_up"), 8);
+    entities[8].getSprite()->giveAnimation(assetManager->getAnimation("dot_down"));
 
     entities[9].giveSprite(assetManager->getTexture("pixel"), {100, 100}, -1);
-    entities[9].getSprite()->giveAnimation(assetManager->getAnimation("dot_down"), 8);
+    entities[9].getSprite()->giveAnimation(assetManager->getAnimation("dot_idle"));
 
     // TODO: optional, if i want to change whether an entity has a sprite or its z value,
     // then i would need to modify this whenever that happens.

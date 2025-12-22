@@ -10,7 +10,7 @@ class Animation
 public:
     Animation();
 
-    void init(std::string name, sf::Texture* texture, sf::Vector2i frameSize, std::vector<sf::Vector2i> frames);
+    void init(std::string name, int baseTicksPerFrame, sf::Texture* texture, sf::Vector2i frameSize, std::vector<sf::Vector2i> frames);
 
     sf::Texture* getTexture();
 
@@ -21,8 +21,12 @@ public:
     int getFrameCount();
 
     std::string getName();
+
+    int getBaseTicksPerFrame();
 private:
     std::string name;
+
+    int baseTicksPerFrame;
 
     sf::Texture* texture;
 

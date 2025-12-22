@@ -23,7 +23,8 @@ void MotionAttribute::tick()
         sf::Vector2f movement = getMovement();
 
         // TODO: same with friction and cutoff above
-        float speed = 7.5f;
+        float baseSpeed = 7.5f;
+        float speed = baseSpeed;
 
         if (getKey("SHIFT")) speed *= 2;
 
@@ -40,8 +41,8 @@ void MotionAttribute::tick()
 
         if (abs(velocity.y) <= abs(velocity.x))
         {
-            if (velocity.x < 0) states->set("animation", ANIM_WALKINGLEFT, velocity.x);
-            if (velocity.x > 0) states->set("animation", ANIM_WALKINGRIGHT, velocity.x);
+            if (velocity.x < 0) states->set("animation", ANIM_WALKINGLEFT, (baseSpeed / speed));
+            if (velocity.x > 0) states->set("animation", ANIM_WALKINGRIGHT, (baseSpeed / speed));
         }
 
         if (movement.y != 0)
@@ -55,8 +56,8 @@ void MotionAttribute::tick()
             (abs(velocity.y) > velocityCutoff) ? velocity.y *= friction : velocity.y = 0.f;
         }
 
-        if (velocity.y < 0) states->set("animation", ANIM_WALKINGUP, velocity.y);
-        if (velocity.y > 0) states->set("animation", ANIM_WALKINGDOWN, velocity.y);
+        if (velocity.y < 0) states->set("animation", ANIM_WALKINGUP, (baseSpeed / speed));
+        if (velocity.y > 0) states->set("animation", ANIM_WALKINGDOWN, (baseSpeed / speed));
     }
     else
     {

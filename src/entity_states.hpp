@@ -12,6 +12,9 @@ public:
 
     void init();
 
+    // if applicable, set strength to a value / 1, with the
+    // desired speed decreasing as the value goes up since
+    // it will be used to multiply the base ticks per frame
     void set(std::string stateSet, int state, float strength = 0.f);
 
     std::pair<bool, float>* getEntry(std::string stateSet, int state);

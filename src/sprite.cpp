@@ -58,11 +58,12 @@ void Sprite::giveAnimationSet(AnimationSet* animationSet, bool resetSizeX)
 {
     this->animationSet = animationSet;
 
-    // TODO: Fix constant
-    giveAnimation(animationSet->getAnimationFor(states->getFirstTrue("animation")), 5, resetSizeX);
+    Animation* currentAnimation = animationSet->getAnimationFor(states->getFirstTrue("animation"));
+
+    giveAnimation(currentAnimation, resetSizeX);
 }
 
-void Sprite::giveAnimation(Animation* animation, unsigned int ticksPerFrame, bool resetSizeX, bool reverse, bool start)
+void Sprite::giveAnimation(Animation* animation, bool resetSizeX, bool reverse, bool start)
 {
     this->animation = animation;
 
@@ -73,10 +74,10 @@ void Sprite::giveAnimation(Animation* animation, unsigned int ticksPerFrame, boo
         size.x = size.y * ratio;
     }
 
-    animTicksPerFrame = ticksPerFrame;
+    animTicksPerFrame = animation->getBaseTicksPerFrame();
     animReverse = reverse;
 
-    animTicksToNextFrame = ticksPerFrame;
+    animTicksToNextFrame = animTicksPerFrame;
     animFrameIndex = 0;
 
     animPlaying = start;
@@ -111,14 +112,16 @@ void Sprite::tick()
         {
             if (animationSet->getKeyFor(animation) != states->getFirstTrue("animation"))
             {
-                // TODO: remove the constant for speed
-                changeAnimation(animationSet->getAnimationFor(states->getFirstTrue("animation")), 5);
+                Animation* currentAnimation = animationSet->getAnimationFor(states->getFirstTrue("animation"));
+
+                changeAnimation(currentAnimation);
             }
         }
         else
         {
-            // TODO: remove the constant for speed
-            giveAnimation(animationSet->getAnimationFor(states->getFirstTrue("animation")), 5);
+            Animation* currentAnimation = animationSet->getAnimationFor(states->getFirstTrue("animation"));
+
+            giveAnimation(currentAnimation);
         }
 
     }
@@ -128,23 +131,28 @@ void Sprite::tick()
         if (animPlaying)
         {
             animTicksToNextFrame--;
-    
+            
             if (animTicksToNextFrame == 0)
             {
                 animTicksToNextFrame = animTicksPerFrame;
         
-                (animReverse) ? animFrameIndex-- : animFrameIndex++;
-        
-                if (animFrameIndex > animation->getFrameCount() - 1)
+                if (animReverse)
                 {
-                    animFrameIndex = 0;
+                    (animFrameIndex == 0) ? animFrameIndex = animation->getFrameCount() - 1 : animFrameIndex--;
                 }
-                if (animFrameIndex < 0)
+                else
                 {
-                    animFrameIndex = animation->getFrameCount() - 1;
+                    (animFrameIndex == animation->getFrameCount() - 1) ? animFrameIndex = 0 : animFrameIndex++;
                 }
 
                 sprite->setTextureRect(sf::IntRect(animation->getFrameCoords(animFrameIndex), animation->getFrameSize()));
+            }
+
+            if (animationSet)
+            {
+                float stateStrength = states->getEntry("animation", states->getFirstTrue("animation"))->second;
+    
+                if (stateStrength != 0.f) animTicksPerFrame = fabs(stateStrength) * animation->getBaseTicksPerFrame();
             }
         }
     }
@@ -201,11 +209,11 @@ void Sprite::jumpToTarget()
     spritePosition = position.get();
 }
 
-void Sprite::changeAnimation(Animation* newAnimation, unsigned int ticksPerFrame)
+void Sprite::changeAnimation(Animation* newAnimation)
 {
     animation = newAnimation;
 
-    animTicksPerFrame = ticksPerFrame;
+    animTicksPerFrame = animation->getBaseTicksPerFrame();
 
     animTicksToNextFrame = animTicksPerFrame;
     animFrameIndex = 0;

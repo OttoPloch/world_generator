@@ -27,7 +27,7 @@ public:
 
     void giveAnimationSet(AnimationSet* animationSet, bool resetSizeX = true);
 
-    void giveAnimation(Animation* animation, unsigned int ticksPerFrame, bool resetSizeX = true, bool reverse = false, bool start = true);
+    void giveAnimation(Animation* animation, bool resetSizeX = true, bool reverse = false, bool start = true);
 
     void animPlay();
 
@@ -53,7 +53,7 @@ public:
     
     void jumpToTarget();
 private:
-    void changeAnimation(Animation* newAnimation, unsigned int ticksPerFrame);
+    void changeAnimation(Animation* newAnimation);
 
     EntityStates* states;
 
@@ -75,7 +75,7 @@ private:
     AnimationSet* animationSet;
 
     Animation* animation;
-    float animTicksPerFrame;
+    int animTicksPerFrame;
     bool animReverse;
     unsigned int animTicksToNextFrame;
     unsigned int animFrameIndex;

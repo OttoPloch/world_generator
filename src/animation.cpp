@@ -2,9 +2,11 @@
 
 Animation::Animation() {}
 
-void Animation::init(std::string name, sf::Texture* texture, sf::Vector2i frameSize, std::vector<sf::Vector2i> frames)
+void Animation::init(std::string name, int baseTicksPerFrame, sf::Texture* texture, sf::Vector2i frameSize, std::vector<sf::Vector2i> frames)
 {
     this->name = name;
+
+    this->baseTicksPerFrame = baseTicksPerFrame;
 
     this->texture = texture;
 
@@ -22,3 +24,5 @@ sf::Vector2i Animation::getFrameCoords(int index) { return frames[index]; }
 int Animation::getFrameCount() { return frames.size(); }
 
 std::string Animation::getName() { return name; }
+
+int Animation::getBaseTicksPerFrame() { return baseTicksPerFrame; }

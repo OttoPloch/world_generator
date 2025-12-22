@@ -89,6 +89,7 @@ Animation* AssetManager::getAnimation(std::string name)
             int texRows;
             float sizeFractionX;
             float sizeFractionY;
+            int baseTicksPerFrame;
 
             std::string line;
 
@@ -100,6 +101,7 @@ Animation* AssetManager::getAnimation(std::string name)
                 if (line.substr(0, 3) == "row") texRows = toInt(std::stof(line.substr(4)));
                 if (line.substr(0, 5) == "sizex") sizeFractionX = std::stof(line.substr(6));
                 if (line.substr(0, 5) == "sizey") sizeFractionY = std::stof(line.substr(6));
+                if (line.substr(0, 17) == "baseticksperframe") baseTicksPerFrame = toInt(std::stof(line.substr(18)));
             }
 
             sf::Texture* animTexture = getTexture(textureName, texturePath, true);
@@ -125,7 +127,7 @@ Animation* AssetManager::getAnimation(std::string name)
                 }
             }
 
-            newAnimation.init(name, animTexture, {fittedFrameLength, fittedFrameHeight}, animationFrames);
+            newAnimation.init(name, baseTicksPerFrame, animTexture, {fittedFrameLength, fittedFrameHeight}, animationFrames);
         }
 
         animationMap[name] = newAnimation;
