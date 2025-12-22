@@ -20,9 +20,9 @@ public:
 
     AnimationSet* getAnimSet(std::string name);
 private:
-    std::map<std::string, sf::Texture> textureMap;
+    std::unordered_map<std::string, sf::Texture> textureMap;
 
-    std::map<std::string, Animation> animationMap;
+    std::unordered_map<std::string, Animation> animationMap;
 
-    std::map<std::string, AnimationSet> animSetMap;
+    std::unordered_map<std::string, AnimationSet> animSetMap;
 };

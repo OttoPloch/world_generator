@@ -23,7 +23,7 @@ public:
 
     int getID();
 
-    void giveSprite(sf::Texture* texture, sf::Vector2f size = {-1, -1}, bool centerOrigin = true);
+    void giveSprite(sf::Texture* texture, sf::Vector2f size = {-1, -1}, int z = 0, bool centerOrigin = true);
     
     void giveMotion(bool controlling);
 

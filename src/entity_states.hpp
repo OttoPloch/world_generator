@@ -12,18 +12,16 @@ public:
 
     void init();
 
-    std::pair<bool, float> getBoth(std::string key);
-    
-    bool get(std::string key);
+    void set(std::string stateSet, int state, float strength = 0.f);
 
-    std::string getFirstTrue();
+    std::pair<bool, float>* getEntry(std::string stateSet, int state);
 
-    void set(std::string key, float magnitude = 0.f);
+    int getFirstTrue(std::string stateSet);
 
     void resetAll();
 private:
     // the pair represents if a value is true or false and it's strength,
     // for example walking(direction) could be true and also have a speed, meanwhile
     // a value like touchingSomething could be true but have no magnitude
-    std::map<std::string, std::pair<bool, float>> states;
+    std::unordered_map<std::string, std::map<int, std::pair<bool, float>>> stateMapMap;
 };

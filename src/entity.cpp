@@ -21,7 +21,7 @@ void Entity::create(int ID, sf::Vector2f position)
 
 int Entity::getID() { return ID; }
 
-void Entity::giveSprite(sf::Texture* texture, sf::Vector2f size, bool centerOrigin)
+void Entity::giveSprite(sf::Texture* texture, sf::Vector2f size, int z, bool centerOrigin)
 {
     sprite = std::make_unique<Sprite>();
 
@@ -36,7 +36,7 @@ void Entity::giveSprite(sf::Texture* texture, sf::Vector2f size, bool centerOrig
         spriteSize = size;
     }
 
-    sprite->create(&states, texture, position, spriteSize, centerOrigin);
+    sprite->create(&states, texture, position, spriteSize, z, centerOrigin);
 }
 
 void Entity::giveMotion(bool controlling)

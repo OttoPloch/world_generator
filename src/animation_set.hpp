@@ -11,15 +11,15 @@ class AnimationSet
 public:
     AnimationSet();
 
-    AnimationSet(std::string setName, std::map<std::string, Animation*> animations);
+    AnimationSet(std::string setName, std::unordered_map<int, Animation*> animations);
 
-    void init(std::string setName, std::map<std::string, Animation*> animations);
+    void init(std::string setName, std::unordered_map<int, Animation*> animations);
 
-    Animation* getAnimationFor(std::string key);
+    Animation* getAnimationFor(int key);
 
-    std::string getKeyFor(Animation* animation);
+    int getKeyFor(Animation* animation);
 private:
     std::string setName;
 
-    std::map<std::string, Animation*> animations;
+    std::unordered_map<int, Animation*> animations;
 };

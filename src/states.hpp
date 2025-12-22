@@ -1,0 +1,10 @@
+#pragma once
+
+#ifndef STATES
+#define STATES
+
+enum animationStates {ANIM_WALKINGLEFT, ANIM_WALKINGRIGHT, ANIM_WALKINGUP, ANIM_WALKINGDOWN, ANIM_MOVING, ANIM_IDLE};
+
+enum collisionStates {COLL_ANY, COLL_LEFT, COLL_RIGHT, COLL_TOP, COLL_BOTTOM};
+
+#endif

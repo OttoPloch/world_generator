@@ -37,7 +37,7 @@ private:
     
     std::vector<Entity> entities;
 
-    std::vector<Entity*> entitiesDrawOrder;
+    std::map<int, std::vector<Entity*>> entitiesZMap;
 
     Camera camera;
 

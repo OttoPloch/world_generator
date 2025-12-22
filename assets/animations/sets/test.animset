@@ -1,10 +1,10 @@
-state idle
-anim dot_idle
-state walkingLeft
+state 0
 anim dot_left
-state walkingRight
+state 1
 anim dot_right
-state walkingUp
+state 2
 anim dot_up
-state walkingDown
+state 3
 anim dot_down
+state 5
+anim dot_idle

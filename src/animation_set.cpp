@@ -3,19 +3,19 @@
 
 AnimationSet::AnimationSet() {}
 
-AnimationSet::AnimationSet(std::string setName, std::map<std::string, Animation*> animations)
+AnimationSet::AnimationSet(std::string setName, std::unordered_map<int, Animation*> animations)
 {
     init(setName, animations);
 }
 
-void AnimationSet::init(std::string setName, std::map<std::string, Animation*> animations)
+void AnimationSet::init(std::string setName, std::unordered_map<int, Animation*> animations)
 {
     this->setName = setName;
 
     this->animations = animations;
 }
 
-Animation* AnimationSet::getAnimationFor(std::string key)
+Animation* AnimationSet::getAnimationFor(int key)
 {
     if (animations.find(key) != animations.end())
     {
@@ -29,7 +29,7 @@ Animation* AnimationSet::getAnimationFor(std::string key)
     }
 }
 
-std::string AnimationSet::getKeyFor(Animation* animation)
+int AnimationSet::getKeyFor(Animation* animation)
 {
     for (auto entry : animations)
     {
@@ -42,5 +42,5 @@ std::string AnimationSet::getKeyFor(Animation* animation)
     std::cout << "ERROR in animation set, trying to find key for animation with name of " << animation->getName() << ", no entry in animation map.\n";
     assert(false);
 
-    return "is this return necessary?";
+    return -1;
 }

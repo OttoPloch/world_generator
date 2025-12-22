@@ -15,7 +15,7 @@ public:
     Sprite();
 
     // sprite will always be centered if an animation is given, so centerOrigin only truly affects entities with no animations.
-    void create(EntityStates* states, sf::Texture* texture, GamePosition position, sf::Vector2f size, bool centerOrigin = true);
+    void create(EntityStates* states, sf::Texture* texture, GamePosition position, sf::Vector2f size, int z = 0, bool centerOrigin = true);
 
     void centerSprite();
 
@@ -49,6 +49,8 @@ public:
 
     float getBottom();
 
+    int getZ();
+    
     void jumpToTarget();
 private:
     void changeAnimation(Animation* newAnimation, unsigned int ticksPerFrame);
@@ -67,6 +69,8 @@ private:
 
     // needs to be a ptr bc of no default constructor for sf::Sprite
     std::unique_ptr<sf::Sprite> sprite;
+
+    int z;
 
     AnimationSet* animationSet;
 

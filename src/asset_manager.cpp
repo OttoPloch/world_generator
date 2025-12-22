@@ -1,4 +1,5 @@
 #include "asset_manager.hpp"
+#include "states.hpp"
 
 AssetManager::AssetManager() {}
 
@@ -154,16 +155,16 @@ AnimationSet* AssetManager::getAnimSet(std::string name)
             // load animation set
             std::ifstream setFile("../../assets/animations/sets/" + name + ".animset");
 
-            std::map<std::string, Animation*> animations;
+            std::unordered_map<int, Animation*> animations;
 
-            std::vector<std::string> states;
+            std::vector<int> states;
             std::vector<std::string> animNames;
 
             std::string line;
 
             while (std::getline(setFile, line))
             {
-                if (line.substr(0, 5) == "state") states.push_back(line.substr(6));
+                if (line.substr(0, 5) == "state") states.push_back(toInt(std::stof(line.substr(6))));
                 if (line.substr(0, 4) == "anim") animNames.push_back(line.substr(5));
             }
 

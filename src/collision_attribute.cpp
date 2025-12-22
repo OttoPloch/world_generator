@@ -1,4 +1,5 @@
 #include "collision_attribute.hpp"
+#include "states.hpp"
 
 CollisionAttribute::CollisionAttribute(Entity* myEntity, EntityStates* states, GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::vector<Entity>* entities, bool active, std::string name) : Attribute("collision")
 {
@@ -56,23 +57,23 @@ void CollisionAttribute::tick()
                 
                 if (rect.left() <= other->right() && rect.right() >= other->left() && rect.top() <= other->bottom() && rect.bottom() >= other->top())
                 {
-                    states->set("touchingSomething");
+                    states->set("collision", COLL_ANY);
 
                     if (leftDiff <= rightDiff && leftDiff <= topDiff && leftDiff <= bottomDiff)
                     {
-                        states->set("touchingRight");
+                        states->set("collision", COLL_RIGHT);
                     }
                     if (rightDiff <= leftDiff && rightDiff <= topDiff && rightDiff <= bottomDiff)
                     {
-                        states->set("touchingLeft");
+                        states->set("collision", COLL_LEFT);
                     }
                     if (topDiff <= leftDiff && topDiff <= rightDiff && topDiff <= bottomDiff)
                     {
-                        states->set("touchingDown");
+                        states->set("collision", COLL_BOTTOM);
                     }
                     if (bottomDiff <= leftDiff && bottomDiff <= rightDiff && bottomDiff <= topDiff)
                     {
-                        states->set("touchingUp");
+                        states->set("collision", COLL_TOP);
                     }
                 }
             }

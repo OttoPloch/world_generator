@@ -3,7 +3,7 @@
 
 Sprite::Sprite() {}
 
-void Sprite::create(EntityStates* states, sf::Texture* texture, GamePosition position, sf::Vector2f size, bool centerOrigin)
+void Sprite::create(EntityStates* states, sf::Texture* texture, GamePosition position, sf::Vector2f size, int z, bool centerOrigin)
 {    
     this->states = states;
 
@@ -21,6 +21,8 @@ void Sprite::create(EntityStates* states, sf::Texture* texture, GamePosition pos
     if (centerOrigin) centerSprite();
     sprite->setScale({size.x / sprite->getTextureRect().size.x, size.y / sprite->getTextureRect().size.y});
     sprite->setPosition(spritePosition);
+
+    this->z = z;
 
     animationSet = nullptr;
     animation = nullptr;
@@ -57,7 +59,7 @@ void Sprite::giveAnimationSet(AnimationSet* animationSet, bool resetSizeX)
     this->animationSet = animationSet;
 
     // TODO: Fix constant
-    giveAnimation(animationSet->getAnimationFor(states->getFirstTrue()), 5, resetSizeX);
+    giveAnimation(animationSet->getAnimationFor(states->getFirstTrue("animation")), 5, resetSizeX);
 }
 
 void Sprite::giveAnimation(Animation* animation, unsigned int ticksPerFrame, bool resetSizeX, bool reverse, bool start)
@@ -103,21 +105,20 @@ void Sprite::animReset()
 
 void Sprite::tick()
 {
-    // TODO: make this less specific to states if possible or even a net good
     if (animationSet)
     {
         if (animation)
         {
-            if (animationSet->getKeyFor(animation) != states->getFirstTrue())
+            if (animationSet->getKeyFor(animation) != states->getFirstTrue("animation"))
             {
                 // TODO: remove the constant for speed
-                changeAnimation(animationSet->getAnimationFor(states->getFirstTrue()), 5);
+                changeAnimation(animationSet->getAnimationFor(states->getFirstTrue("animation")), 5);
             }
         }
         else
         {
             // TODO: remove the constant for speed
-            giveAnimation(animationSet->getAnimationFor(states->getFirstTrue()), 5);
+            giveAnimation(animationSet->getAnimationFor(states->getFirstTrue("animation")), 5);
         }
 
     }
@@ -191,6 +192,8 @@ sf::Vector2f Sprite::getSpritePosition() { return spritePosition; }
 sf::Vector2f Sprite::getSize() { return size; }
 
 float Sprite::getBottom() { return spritePosition.y + (size.y / 2.f); }
+
+int Sprite::getZ() { return z; }
 
 void Sprite::jumpToTarget()
 {

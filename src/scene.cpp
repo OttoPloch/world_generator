@@ -22,13 +22,13 @@ void Scene::init(Window* window, AssetManager* assetManager)
     entities.push_back(Entity(getNewID(), {-400, 550}));
     entities.push_back(Entity(getNewID(), {-400, 700}));
 
-    entities[0].giveSprite(assetManager->getTexture("pixel"), {50, 50});
+    entities[0].giveSprite(assetManager->getTexture("pixel"), {50, 50}, -1);
     // entities[0].giveCollision(&entities, false, "pixel");
 
     entities[1].giveSprite(assetManager->getTexture("IDLE_smaller"), {0, 200});
     entities[1].getSprite()->giveAnimationSet(assetManager->getAnimSet("player"));
     entities[1].giveMotion(true);
-    entities[1].giveCollision(&entities, true, "player",s {0, 0.2}, {0.3, 0.3});
+    entities[1].giveCollision(&entities, true, "player", {0, 0.2d}, {0.3, 0.3});
 
     entities[2].giveSprite(assetManager->getTexture("dr bee"), {200, 200});
     entities[2].giveCollision(&entities, false, "enemy");
@@ -39,24 +39,29 @@ void Scene::init(Window* window, AssetManager* assetManager)
     entities[4].giveSprite(assetManager->getTexture("IDLE_smaller"), {24 * 10, 21 * 10});
     entities[4].getSprite()->giveAnimation(assetManager->getAnimation("knight_idle"), 12);
 
-    entities[5].giveSprite(assetManager->getTexture("pixel"), {100, 100});
+    entities[5].giveSprite(assetManager->getTexture("pixel"), {100, 100}, -1);
     entities[5].getSprite()->giveAnimation(assetManager->getAnimation("dot_idle"), 8);
 
-    entities[6].giveSprite(assetManager->getTexture("pixel"), {100, 100});
+    entities[6].giveSprite(assetManager->getTexture("pixel"), {100, 100}, -1);
     entities[6].getSprite()->giveAnimation(assetManager->getAnimation("dot_left"), 8);
 
-    entities[7].giveSprite(assetManager->getTexture("pixel"), {100, 100});
+    entities[7].giveSprite(assetManager->getTexture("pixel"), {100, 100}, -1);
     entities[7].getSprite()->giveAnimation(assetManager->getAnimation("dot_right"), 8);
 
-    entities[8].giveSprite(assetManager->getTexture("pixel"), {100, 100});
+    entities[8].giveSprite(assetManager->getTexture("pixel"), {100, 100}, -1);
     entities[8].getSprite()->giveAnimation(assetManager->getAnimation("dot_up"), 8);
 
-    entities[9].giveSprite(assetManager->getTexture("pixel"), {100, 100});
+    entities[9].giveSprite(assetManager->getTexture("pixel"), {100, 100}, -1);
     entities[9].getSprite()->giveAnimation(assetManager->getAnimation("dot_down"), 8);
 
+    // TODO: optional, if i want to change whether an entity has a sprite or its z value,
+    // then i would need to modify this whenever that happens.
     for (int i = 0; i < entities.size(); i++)
     {
-        entitiesDrawOrder.push_back(&entities[i]);
+        if (entities[i].getSprite())
+        {
+            entitiesZMap[entities[i].getSprite()->getZ()].push_back(&entities[i]);
+        }
     }
 
     camera.init(window, true, {0, 0}, toV2F(window->getSize()), &entities[1]);
@@ -99,57 +104,59 @@ void Scene::draw()
     window->draw(rect);
     window->draw(outline);
 
-    sortEntitiesByY(&entitiesDrawOrder, 0, entitiesDrawOrder.size() - 1);
-
-    for (int i = 0; i < entitiesDrawOrder.size(); i++)
+    for (auto i : entitiesZMap)
     {
-        entitiesDrawOrder[i]->draw(window->getWindow());
+        std::vector<Entity*>* vec = &i.second;
 
-        // if (entitiesDrawOrder[i]->getSprite())
-        // {
-        //     Entity* entity = entitiesDrawOrder[i];
-        //     Sprite* sprite = entity->getSprite();
-        //     sf::Sprite sprite2 = sprite->getSprite();
-        //     sf::Vector2f size = toV2F(sprite2.getTextureRect().size);
-        //     sf::Vector2f size2 = sprite->getSize();
+        sortEntitiesByY(vec, 0, vec->size() - 1);
 
-        //     sf::RectangleShape spriteOutline(size);
-        //     sf::RectangleShape spriteOutline2(size2);
+        for (int j = 0; j < vec->size(); j++)
+        {
+            (*vec)[j]->draw(window->getWindow());
 
-        //     spriteOutline.setOrigin({size.x / 2.f, size.y / 2.f});
-        //     spriteOutline.setPosition(entitiesDrawOrder[i]->getPosition());
+            // Entity* entity = (*vec)[j];
+            // Sprite* sprite = entity->getSprite();
+            // sf::Sprite sprite2 = sprite->getSprite();
+            // sf::Vector2f size = toV2F(sprite2.getTextureRect().size);
+            // sf::Vector2f size2 = sprite->getSize();
+
+            // sf::RectangleShape spriteOutline(size);
+            // sf::RectangleShape spriteOutline2(size2);
+
+            // spriteOutline.setOrigin({size.x / 2.f, size.y / 2.f});
+            // spriteOutline.setPosition((*vec)[j]->getPosition());
             
-        //     spriteOutline2.setOrigin({size2.x / 2.f, size2.y / 2.f});
-        //     spriteOutline2.setPosition(entitiesDrawOrder[i]->getPosition());
+            // spriteOutline2.setOrigin({size2.x / 2.f, size2.y / 2.f});
+            // spriteOutline2.setPosition((*vec)[j]->getPosition());
     
-        //     spriteOutline.setFillColor(sf::Color::Transparent);
-        //     spriteOutline.setOutlineColor(sf::Color::Red);
-        //     spriteOutline.setOutlineThickness(3.f);
+            // spriteOutline.setFillColor(sf::Color::Transparent);
+            // spriteOutline.setOutlineColor(sf::Color::Red);
+            // spriteOutline.setOutlineThickness(3.f);
 
-        //     spriteOutline2.setFillColor(sf::Color::Transparent);
-        //     spriteOutline2.setOutlineColor(sf::Color::Green);
-        //     spriteOutline2.setOutlineThickness(3.f);
+            // spriteOutline2.setFillColor(sf::Color::Transparent);
+            // spriteOutline2.setOutlineColor(sf::Color::Green);
+            // spriteOutline2.setOutlineThickness(3.f);
     
-        //     window->draw(spriteOutline);
-        //     window->draw(spriteOutline2);
-        // }
+            // window->draw(spriteOutline);
+            // window->draw(spriteOutline2);
 
-        // if (entitiesDrawOrder[i]->getCollision())
-        // {
-        //     Entity* entity = entitiesDrawOrder[i];
-        //     CollisionRect coll = entity->getCollision()->getRect();
+            // if ((*vec)[j]->getCollision())
+            // {
+            //     Entity* entity = (*vec)[j];
+            //     CollisionRect coll = entity->getCollision()->getRect();
 
-        //     sf::RectangleShape collOutline(coll.getSize());
+            //     sf::RectangleShape collOutline(coll.getSize());
 
-        //     collOutline.setOrigin({collOutline.getSize().x / 2.f, collOutline.getSize().y});
-        //     collOutline.setPosition({coll.center().x, coll.bottom()});
+            //     collOutline.setOrigin({collOutline.getSize().x / 2.f, collOutline.getSize().y});
+            //     collOutline.setPosition({coll.center().x, coll.bottom()});
 
-        //     collOutline.setFillColor(sf::Color::Transparent);
-        //     collOutline.setOutlineColor(sf::Color::Blue);
-        //     collOutline.setOutlineThickness(3.f);
+            //     collOutline.setFillColor(sf::Color::Transparent);
+            //     collOutline.setOutlineColor(sf::Color::Blue);
+            //     collOutline.setOutlineThickness(3.f);
 
-        //     window->draw(collOutline);
-        // }
+            //     window->draw(collOutline);
+            // }
+        }
     }
 }
 
