@@ -39,7 +39,7 @@ void Scene::init(Window* window, AssetManager* assetManager)
     entities[4].giveSprite(assetManager->getTexture("IDLE_smaller"), {24 * 11, 21 * 11});
     entities[4].getSprite()->giveAnimation(assetManager->getAnimation("knight_idle"));
 
-    entities[5].giveSprite(assetManager->getTexture("pixel"), {100, 100}, 5);
+    entities[5].giveSprite(assetManager->getTexture("pixel"), {100, 100}, -1);
     entities[5].getSprite()->giveAnimation(assetManager->getAnimation("dot_left"));
 
     entities[6].giveSprite(assetManager->getTexture("pixel"), {100, 100}, -1);
