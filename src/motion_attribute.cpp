@@ -44,7 +44,7 @@ void MotionAttribute::tick()
             if (getKey("SHIFT"))
             {
                 if (velocity.x < 0) states->set("animation", ANIM_RUNNINGLEFT, (baseSpeed / speed));
-                if (velocity.x > 0) states->set("animation", ANIM_RUNNINGRIGHT, (baseSpeed / speed));
+                if (velocity.x > 0) states->set("animation", ANIM_RUNNINGRIGHT, .8f);
             }
             else
             {
