@@ -23,7 +23,7 @@ void MotionAttribute::tick()
         sf::Vector2f movement = getMovement();
 
         // TODO: same with friction and cutoff above
-        float baseSpeed = 7.5f;
+        float baseSpeed = 5;
         float speed = baseSpeed;
 
         if (getKey("SHIFT")) speed *= 2;

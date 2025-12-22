@@ -130,14 +130,10 @@ void Sprite::tick()
     {
         if (animPlaying)
         {
-            if (z == 5) std::cout << animTicksToNextFrame;
             animTicksToNextFrame--;
-            if (z == 5) std::cout << " -> " << animTicksToNextFrame << '\n';
 
             if (animTicksToNextFrame <= 0)
             {
-                if (z == 5) std::cout << "HERE\n";
-
                 animTicksToNextFrame = animTicksPerFrame;
         
                 if (animReverse)
@@ -157,8 +153,6 @@ void Sprite::tick()
                 float stateStrength = states->getEntry("animation", states->getFirstTrue("animation"))->second;
                 
                 if (stateStrength != 0.f) animTicksPerFrame = fabs(stateStrength) * animation->getBaseTicksPerFrame();
-                
-                if (z == 5) std::cout << stateStrength << "; " << animTicksToNextFrame << "/" << animTicksPerFrame << "; " << animFrameIndex << "; " << animation->getFrameCount() << '\n';
             }
         }
     }
