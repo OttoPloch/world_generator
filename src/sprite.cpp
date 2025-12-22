@@ -110,7 +110,7 @@ void Sprite::tick()
     {
         if (animation)
         {
-            if (animationSet->getKeyFor(animation) != states->getFirstTrue("animation"))
+            if (animation->getName() != animationSet->getAnimationFor(states->getFirstTrue("animation"))->getName())
             {
                 Animation* currentAnimation = animationSet->getAnimationFor(states->getFirstTrue("animation"));
 
@@ -130,10 +130,14 @@ void Sprite::tick()
     {
         if (animPlaying)
         {
+            if (z == 5) std::cout << animTicksToNextFrame;
             animTicksToNextFrame--;
-            
-            if (animTicksToNextFrame == 0)
+            if (z == 5) std::cout << " -> " << animTicksToNextFrame << '\n';
+
+            if (animTicksToNextFrame <= 0)
             {
+                if (z == 5) std::cout << "HERE\n";
+
                 animTicksToNextFrame = animTicksPerFrame;
         
                 if (animReverse)
@@ -151,8 +155,10 @@ void Sprite::tick()
             if (animationSet)
             {
                 float stateStrength = states->getEntry("animation", states->getFirstTrue("animation"))->second;
-    
+                
                 if (stateStrength != 0.f) animTicksPerFrame = fabs(stateStrength) * animation->getBaseTicksPerFrame();
+                
+                if (z == 5) std::cout << stateStrength << "; " << animTicksToNextFrame << "/" << animTicksPerFrame << "; " << animFrameIndex << "; " << animation->getFrameCount() << '\n';
             }
         }
     }

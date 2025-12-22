@@ -1,5 +1,6 @@
 #include "animation_set.hpp"
 #include "animation.hpp"
+#include "states.hpp"
 
 AnimationSet::AnimationSet() {}
 
@@ -25,7 +26,7 @@ Animation* AnimationSet::getAnimationFor(int key)
     {
         std::cout << "ERROR loading animation for key of " << key << " in animation set name: " << setName << ". No entry in animations for that key.\n";
 
-        return nullptr;
+        return animations[ANIM_IDLE];
     }
 }
 

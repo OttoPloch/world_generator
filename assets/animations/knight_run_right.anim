@@ -1,0 +1,7 @@
+tex name RUN
+path animations/Knight 2D Pixel Art/Sprites/with_outline/RUN.png
+col 8
+row 1
+sizex 0.5
+sizey 0.5
+baseticksperframe 8

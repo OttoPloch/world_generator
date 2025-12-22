@@ -7,6 +7,10 @@ void EntityStates::init()
 {
     stateMapMap = {
         {"animation", {
+            {ANIM_RUNNINGLEFT, {false, 0.f}},
+            {ANIM_RUNNINGRIGHT, {false, 0.f}},
+            {ANIM_RUNNINGUP, {false, 0.f}},
+            {ANIM_RUNNINGDOWN, {false, 0.f}},
             {ANIM_WALKINGLEFT, {false, 0.f}},
             {ANIM_WALKINGRIGHT, {false, 0.f}},
             {ANIM_WALKINGUP, {false, 0.f}},

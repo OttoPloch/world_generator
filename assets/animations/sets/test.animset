@@ -1,10 +1,10 @@
-state 0
+state 4
 anim dot_left
-state 1
-anim dot_right
-state 2
-anim dot_up
-state 3
-anim dot_down
 state 5
+anim dot_right
+state 6
+anim dot_up
+state 7
+anim dot_down
+state 9
 anim dot_idle

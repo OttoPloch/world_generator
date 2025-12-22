@@ -41,8 +41,16 @@ void MotionAttribute::tick()
 
         if (abs(velocity.y) <= abs(velocity.x))
         {
-            if (velocity.x < 0) states->set("animation", ANIM_WALKINGLEFT, (baseSpeed / speed));
-            if (velocity.x > 0) states->set("animation", ANIM_WALKINGRIGHT, (baseSpeed / speed));
+            if (getKey("SHIFT"))
+            {
+                if (velocity.x < 0) states->set("animation", ANIM_RUNNINGLEFT, (baseSpeed / speed));
+                if (velocity.x > 0) states->set("animation", ANIM_RUNNINGRIGHT, (baseSpeed / speed));
+            }
+            else
+            {
+                if (velocity.x < 0) states->set("animation", ANIM_WALKINGLEFT, (baseSpeed / speed));
+                if (velocity.x > 0) states->set("animation", ANIM_WALKINGRIGHT, (baseSpeed / speed));
+            }
         }
 
         if (movement.y != 0)
@@ -56,8 +64,16 @@ void MotionAttribute::tick()
             (abs(velocity.y) > velocityCutoff) ? velocity.y *= friction : velocity.y = 0.f;
         }
 
-        if (velocity.y < 0) states->set("animation", ANIM_WALKINGUP, (baseSpeed / speed));
-        if (velocity.y > 0) states->set("animation", ANIM_WALKINGDOWN, (baseSpeed / speed));
+        if (getKey("SHIFT"))
+        {
+            if (velocity.y < 0) states->set("animation", ANIM_RUNNINGUP, (baseSpeed / speed));
+            if (velocity.y > 0) states->set("animation", ANIM_RUNNINGDOWN, (baseSpeed / speed));
+        }
+        else
+        {
+            if (velocity.y < 0) states->set("animation", ANIM_WALKINGUP, (baseSpeed / speed));
+            if (velocity.y > 0) states->set("animation", ANIM_WALKINGDOWN, (baseSpeed / speed));
+        }
     }
     else
     {

@@ -25,7 +25,7 @@ void Scene::init(Window* window, AssetManager* assetManager)
     entities[0].giveSprite(assetManager->getTexture("pixel"), {50, 50}, -1);
     // entities[0].giveCollision(&entities, false, "pixel");
 
-    entities[1].giveSprite(assetManager->getTexture("IDLE_smaller"), {24 * 10, 21 * 10});
+    entities[1].giveSprite(assetManager->getTexture("IDLE_smaller"), {24 * 10, 21 * 10}, 5);
     entities[1].getSprite()->giveAnimationSet(assetManager->getAnimSet("player"));
     entities[1].giveMotion(true);
     entities[1].giveCollision(&entities, true, "player", {0, 0.2d}, {0.3, 0.3});
