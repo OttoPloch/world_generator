@@ -140,22 +140,22 @@ void Scene::draw()
             // window->draw(spriteOutline);
             // window->draw(spriteOutline2);
 
-            if ((*vec)[j]->getCollision())
-            {
-                Entity* entity = (*vec)[j];
-                CollisionRect coll = *entity->getCollision()->getRect();
+            // if ((*vec)[j]->getCollision())
+            // {
+            //     Entity* entity = (*vec)[j];
+            //     CollisionRect coll = *entity->getCollision()->getRect();
 
-                sf::RectangleShape collOutline(coll.getSize());
+            //     sf::RectangleShape collOutline(coll.getSize());
 
-                collOutline.setOrigin({collOutline.getSize().x / 2.f, collOutline.getSize().y});
-                collOutline.setPosition({coll.center().x, coll.bottom()});
+            //     collOutline.setOrigin({collOutline.getSize().x / 2.f, collOutline.getSize().y});
+            //     collOutline.setPosition({coll.center().x, coll.bottom()});
 
-                collOutline.setFillColor(sf::Color::Transparent);
-                collOutline.setOutlineColor(sf::Color::Blue);
-                collOutline.setOutlineThickness(3.f);
+            //     collOutline.setFillColor(sf::Color::Transparent);
+            //     collOutline.setOutlineColor(sf::Color::Blue);
+            //     collOutline.setOutlineThickness(3.f);
 
-                window->draw(collOutline);
-            }
+            //     window->draw(collOutline);
+            // }
         }
     }
 }
