@@ -2,7 +2,7 @@
 
 Animation::Animation() {}
 
-void Animation::init(std::string name, int baseTicksPerFrame, sf::Texture* texture, sf::Vector2i frameSize, std::vector<sf::Vector2i> frames)
+void Animation::init(std::string name, int baseTicksPerFrame, sf::Texture* texture, sf::Vector2i frameSize, std::vector<sf::Vector2i> frames, sf::FloatRect collisionRect)
 {
     this->name = name;
 
@@ -13,6 +13,8 @@ void Animation::init(std::string name, int baseTicksPerFrame, sf::Texture* textu
     this->frameSize = frameSize;
 
     this->frames = frames;
+
+    this->collisionRect = collisionRect;
 }
 
 sf::Texture* Animation::getTexture() { return texture; }
@@ -26,3 +28,7 @@ int Animation::getFrameCount() { return frames.size(); }
 std::string Animation::getName() { return name; }
 
 int Animation::getBaseTicksPerFrame() { return baseTicksPerFrame; }
+
+bool Animation::hasCollisionRect() { return (collisionRect != sf::FloatRect({0, 0}, {0, 0})); }
+
+sf::FloatRect Animation::getCollisionRect() { return collisionRect; }

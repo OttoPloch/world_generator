@@ -8,8 +8,11 @@ void CollisionRect::init(GamePosition position, sf::Vector2f offset, sf::Vector2
     this->offset = offset;
     this->size = size;
     
+    defaultOffset = offset;
+    defaultSize = size;
+
     offsetPosition = {position.get().x + offset.x, position.get().y + offset.y};
-    
+
     lastPosition = position.get();
 }
 
@@ -21,6 +24,11 @@ void CollisionRect::updatePosition()
 sf::Vector2f CollisionRect::center() { return offsetPosition; }
 
 sf::Vector2f CollisionRect::getSize() { return size; }
+
+void CollisionRect::setSize(sf::Vector2f size)
+{
+    this->size = size;
+}
 
 std::array<float, 4> CollisionRect::getBorders()
 {
@@ -76,7 +84,7 @@ void CollisionRect::setBasePosition(sf::Vector2f newPosition)
 {
     position.set(newPosition);
 
-    offsetPosition = {position.get().x + offset.x, position.get().y + offset.y};
+    updatePosition();
 }
 
 void CollisionRect::setOffsetPosition(sf::Vector2f newPosition)
@@ -84,6 +92,13 @@ void CollisionRect::setOffsetPosition(sf::Vector2f newPosition)
     offsetPosition = newPosition;
 
     position.set({offsetPosition.x - offset.x, offsetPosition.y - offset.y});
+}
+
+void CollisionRect::setOffset(sf::Vector2f newOffset)
+{
+    offset = newOffset;
+
+    updatePosition();
 }
 
 void CollisionRect::setLeft(float value)
@@ -112,4 +127,10 @@ void CollisionRect::setBottom(float value)
     offsetPosition.y = value - (size.y / 2.f);
 
     position.set('y', offsetPosition.y - offset.y);
+}
+
+void CollisionRect::setToDefault()
+{
+    setOffset(defaultOffset);
+    setSize(defaultSize);
 }

@@ -18,6 +18,8 @@ public:
     
     sf::Vector2f getSize();
     
+    void setSize(sf::Vector2f size);
+
     // left, right, top, bottom
     std::array<float, 4> getBorders();
 
@@ -41,6 +43,8 @@ public:
 
     void setOffsetPosition(sf::Vector2f newPosition);
 
+    void setOffset(sf::Vector2f newOffset);
+
     void setLeft(float value);
 
     void setRight(float value);
@@ -48,6 +52,8 @@ public:
     void setTop(float value);
 
     void setBottom(float value);
+
+    void setToDefault();
     
     sf::Vector2f lastPosition;
 private:
@@ -55,7 +61,11 @@ private:
 
     sf::Vector2f offset;
 
+    sf::Vector2f defaultOffset;
+
     sf::Vector2f size;
+
+    sf::Vector2f defaultSize;
     
     sf::Vector2f offsetPosition;
 };

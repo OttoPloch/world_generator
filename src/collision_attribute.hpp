@@ -12,11 +12,15 @@
 class CollisionAttribute : public Attribute
 {
 public:
-    CollisionAttribute(Entity* myEntity, EntityStates* states, GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::vector<Entity>* entities, bool active, std::string name);
+    CollisionAttribute(Entity* myEntity, EntityStates* states, GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::vector<Entity>* entities, bool active, std::string coliderName);
 
     void tick();
 
-    CollisionRect getRect();
+    void setRect(sf::FloatRect newRect);
+    
+    CollisionRect* getRect();
+
+    std::string getColliderName();
 
     bool active;
 private:
@@ -24,7 +28,7 @@ private:
 
     EntityStates* states;
     
-    std::string name;
+    std::string colliderName;
 
     CollisionRect rect;
     

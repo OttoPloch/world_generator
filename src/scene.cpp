@@ -28,7 +28,7 @@ void Scene::init(Window* window, AssetManager* assetManager)
     entities[1].giveSprite(assetManager->getTexture("IDLE_smaller"), {24 * 10, 21 * 10});
     entities[1].getSprite()->giveAnimationSet(assetManager->getAnimSet("player"));
     entities[1].giveMotion(true);
-    entities[1].giveCollision(&entities, true, "player", {0, 0.2d}, {0.3, 0.3});
+    entities[1].giveCollision(&entities, true, "player", {0, 0.2}, {0.3, 0.3});
 
     entities[2].giveSprite(assetManager->getTexture("dr bee"), {200, 200});
     entities[2].giveCollision(&entities, false, "enemy");
@@ -143,7 +143,7 @@ void Scene::draw()
             // if ((*vec)[j]->getCollision())
             // {
             //     Entity* entity = (*vec)[j];
-            //     CollisionRect coll = entity->getCollision()->getRect();
+            //     CollisionRect coll = *entity->getCollision()->getRect();
 
             //     sf::RectangleShape collOutline(coll.getSize());
 

@@ -1,13 +1,13 @@
 #include "collision_attribute.hpp"
 #include "states.hpp"
 
-CollisionAttribute::CollisionAttribute(Entity* myEntity, EntityStates* states, GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::vector<Entity>* entities, bool active, std::string name) : Attribute("collision")
+CollisionAttribute::CollisionAttribute(Entity* myEntity, EntityStates* states, GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::vector<Entity>* entities, bool active, std::string colliderName) : Attribute("collision")
 {
     this->myEntity = myEntity;
 
     this->states = states;
 
-    this->name = name;
+    this->colliderName = colliderName;
 
     rect.init(position, offset, size);
 
@@ -83,4 +83,13 @@ void CollisionAttribute::tick()
     rect.lastPosition = rect.center();
 }
 
-CollisionRect CollisionAttribute::getRect() { return rect; }
+void CollisionAttribute::setRect(sf::FloatRect newRect)
+{
+    rect.setOffset(newRect.position);
+    
+    rect.setSize(newRect.size);
+}
+
+CollisionRect* CollisionAttribute::getRect() { return &rect; }
+
+std::string CollisionAttribute::getColliderName() { return colliderName; }

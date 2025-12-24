@@ -1,10 +1,14 @@
 #include "sprite.hpp"
 #include "animation.hpp"
+#include "entity.hpp"
+#include "collision_attribute.hpp"
 
 Sprite::Sprite() {}
 
-void Sprite::create(EntityStates* states, sf::Texture* texture, GamePosition position, sf::Vector2f size, int z, bool centerOrigin)
+void Sprite::create(Entity* myEntity, EntityStates* states, sf::Texture* texture, GamePosition position, sf::Vector2f size, int z, bool centerOrigin)
 {    
+    this->myEntity = myEntity;
+
     this->states = states;
 
     this->position = position;
@@ -65,8 +69,6 @@ void Sprite::giveAnimationSet(AnimationSet* animationSet, bool resetSizeX)
 
 void Sprite::giveAnimation(Animation* animation, bool resetSizeX, bool reverse, bool start)
 {
-    this->animation = animation;
-
     if (resetSizeX)
     {
         float ratio = animation->getFrameSize().x / animation->getFrameSize().y;
@@ -74,18 +76,10 @@ void Sprite::giveAnimation(Animation* animation, bool resetSizeX, bool reverse, 
         size.x = size.y * ratio;
     }
 
-    animTicksPerFrame = animation->getBaseTicksPerFrame();
     animReverse = reverse;
-
-    animTicksToNextFrame = animTicksPerFrame;
-    animFrameIndex = 0;
-
     animPlaying = start;
 
-    sprite->setTexture(*animation->getTexture());
-    sprite->setTextureRect(sf::IntRect(animation->getFrameCoords(0), animation->getFrameSize()));
-    centerSprite();
-    setSize(size);
+    changeAnimation(animation);
 }
 
 void Sprite::animPlay()
@@ -222,4 +216,24 @@ void Sprite::changeAnimation(Animation* newAnimation)
     sprite->setTextureRect(sf::IntRect(animation->getFrameCoords(0), animation->getFrameSize()));
     centerSprite();
     setSize(size);
+
+    if (myEntity->getCollision())
+    {
+        if (animation->hasCollisionRect())
+        {
+            sf::FloatRect collisionRect = animation->getCollisionRect();
+
+            collisionRect.position.x *= size.x;
+            collisionRect.position.y *= size.y;
+
+            collisionRect.size.x *= size.x;
+            collisionRect.size.y *= size.y;
+            
+            myEntity->getCollision()->setRect(collisionRect);
+        }
+        else
+        {
+            myEntity->getCollision()->getRect()->setToDefault();
+        }
+    }
 }

@@ -90,18 +90,37 @@ Animation* AssetManager::getAnimation(std::string name)
             float sizeFractionX;
             float sizeFractionY;
             int baseTicksPerFrame;
+            sf::FloatRect collisionRect({0, 0}, {0, 0});
 
             std::string line;
 
             while (std::getline(animFile, line))
             {
-                if (line.substr(0, 8) == "tex name") textureName = line.substr(9);
-                if (line.substr(0, 4) == "path") texturePath = line.substr(5);
-                if (line.substr(0, 3) == "col") texColumns = toInt(std::stof(line.substr(4)));
-                if (line.substr(0, 3) == "row") texRows = toInt(std::stof(line.substr(4)));
-                if (line.substr(0, 5) == "sizex") sizeFractionX = std::stof(line.substr(6));
-                if (line.substr(0, 5) == "sizey") sizeFractionY = std::stof(line.substr(6));
-                if (line.substr(0, 17) == "baseticksperframe") baseTicksPerFrame = toInt(std::stof(line.substr(18)));
+                if (line.substr(0, 9) == "tex name ") textureName = line.substr(9);
+                if (line.substr(0, 5) == "path ") texturePath = line.substr(5);
+                if (line.substr(0, 4) == "col ") texColumns = toInt(std::stof(line.substr(4)));
+                if (line.substr(0, 4) == "row ") texRows = toInt(std::stof(line.substr(4)));
+                if (line.substr(0, 6) == "sizex ") sizeFractionX = std::stof(line.substr(6));
+                if (line.substr(0, 6) == "sizey ") sizeFractionY = std::stof(line.substr(6));
+                if (line.substr(0, 18) == "baseticksperframe ") baseTicksPerFrame = toInt(std::stof(line.substr(18)));
+                if (line.substr(0, 11) == "colloffset ")
+                {
+                    std::string offset = line.substr(11);
+                    int comma = offset.find(',');
+                    float x = std::stof(offset.substr(0, comma));
+                    float y = std::stof(offset.substr(comma + 1));
+
+                    collisionRect.position = {x, y};
+                }
+                if (line.substr(0, 9) == "collsize ")
+                {
+                    std::string size = line.substr(9);
+                    auto comma = size.find(',');
+                    float x = std::stof(size.substr(0, comma));
+                    float y = std::stof(size.substr(comma + 1));
+
+                    collisionRect.size = {x, y};
+                }
             }
 
             sf::Texture* animTexture = getTexture(textureName, texturePath, true);
@@ -127,7 +146,7 @@ Animation* AssetManager::getAnimation(std::string name)
                 }
             }
 
-            newAnimation.init(name, baseTicksPerFrame, animTexture, {fittedFrameLength, fittedFrameHeight}, animationFrames);
+            newAnimation.init(name, baseTicksPerFrame, animTexture, {fittedFrameLength, fittedFrameHeight}, animationFrames, collisionRect);
         }
 
         animationMap[name] = newAnimation;

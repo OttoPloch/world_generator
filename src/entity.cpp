@@ -36,7 +36,7 @@ void Entity::giveSprite(sf::Texture* texture, sf::Vector2f size, int z, bool cen
         spriteSize = size;
     }
 
-    sprite->create(&states, texture, position, spriteSize, z, centerOrigin);
+    sprite->create(this, &states, texture, position, spriteSize, z, centerOrigin);
 }
 
 void Entity::giveMotion(bool controlling)

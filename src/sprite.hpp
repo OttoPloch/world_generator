@@ -8,6 +8,7 @@
 #include <memory>
 
 class Animation;
+class Entity;
 
 class Sprite
 {
@@ -15,7 +16,7 @@ public:
     Sprite();
 
     // sprite will always be centered if an animation is given, so centerOrigin only truly affects entities with no animations.
-    void create(EntityStates* states, sf::Texture* texture, GamePosition position, sf::Vector2f size, int z = 0, bool centerOrigin = true);
+    void create(Entity* myEntity, EntityStates* states, sf::Texture* texture, GamePosition position, sf::Vector2f size, int z = 0, bool centerOrigin = true);
 
     void centerSprite();
 
@@ -54,6 +55,8 @@ public:
     void jumpToTarget();
 private:
     void changeAnimation(Animation* newAnimation);
+
+    Entity* myEntity;
 
     EntityStates* states;
 
