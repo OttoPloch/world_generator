@@ -75,7 +75,7 @@ void Entity::tick()
 
     if (sprite) (collision && collision->active) ? sprite->tick() : sprite->tick();
 
-    if (collision && collision->active == true) collision->tick();
+    if (collision) collision->tick();
 }
 
 void Entity::update(float dt)
