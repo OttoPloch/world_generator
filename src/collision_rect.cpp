@@ -1,8 +1,10 @@
 #include "collision_rect.hpp"
 
+#include <algorithm>
+
 CollisionRect::CollisionRect() {}
 
-void CollisionRect::init(GamePosition position, sf::Vector2f offset, sf::Vector2f size)
+void CollisionRect::init(GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::string colliderName, int rectType, std::vector<std::string> blacklist)
 {
     this->position = position;
     this->offset = offset;
@@ -14,6 +16,12 @@ void CollisionRect::init(GamePosition position, sf::Vector2f offset, sf::Vector2
     offsetPosition = {position.get().x + offset.x, position.get().y + offset.y};
 
     lastPosition = position.get();
+
+    this->colliderName = colliderName;
+
+    this->rectType = rectType;
+
+    this->blacklist = blacklist;
 }
 
 void CollisionRect::updatePosition()
@@ -133,4 +141,23 @@ void CollisionRect::setToDefault()
 {
     setOffset(defaultOffset);
     setSize(defaultSize);
+}
+
+std::string CollisionRect::getColliderName() { return colliderName; }
+
+int CollisionRect::getType() { return rectType; }
+
+void CollisionRect::setBlacklist(std::vector<std::string> newList)
+{
+    blacklist = newList;
+}
+
+void CollisionRect::addToBlacklist(std::string newEntry)
+{
+    blacklist.push_back(newEntry);
+}
+
+bool CollisionRect::searchBlacklist(std::string entry)
+{
+    return std::find(blacklist.begin(), blacklist.end(), entry) != blacklist.end();
 }

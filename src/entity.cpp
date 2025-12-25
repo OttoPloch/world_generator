@@ -44,7 +44,7 @@ void Entity::giveMotion(bool controlling)
     motion = std::make_unique<MotionAttribute>(&states, position, controlling);
 }
 
-void Entity::giveCollision(std::vector<Entity>* entities, bool active, std::string name, sf::Vector2f offsetFraction, sf::Vector2f size, bool sizeIsFraction)
+void Entity::giveCollision(std::vector<Entity>* entities, std::string name, int rectType, std::vector<std::string> blacklist, sf::Vector2f offsetFraction, sf::Vector2f size, bool sizeIsFraction)
 {
     sf::Vector2f offset = {sprite->getSize().x * offsetFraction.x, sprite->getSize().y * offsetFraction.y};
     
@@ -59,7 +59,7 @@ void Entity::giveCollision(std::vector<Entity>* entities, bool active, std::stri
         collRectSize = size;
     }
 
-    collision = std::make_unique<CollisionAttribute>(this, &states, position, offset, collRectSize, entities, active, name);
+    collision = std::make_unique<CollisionAttribute>(this, &states, position, offset, collRectSize, entities, name, rectType, blacklist);
 }
 
 void Entity::changeSpriteTexture(sf::Texture* texture)
@@ -73,9 +73,9 @@ void Entity::tick()
 
     if (motion) motion->tick();
 
-    if (sprite) (collision && collision->active) ? sprite->tick() : sprite->tick();
-
     if (collision) collision->tick();
+    
+    if (sprite) sprite->tick();
 }
 
 void Entity::update(float dt)

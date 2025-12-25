@@ -185,7 +185,7 @@ AnimationSet* AssetManager::getAnimSet(std::string name)
 
             while (std::getline(setFile, line))
             {
-                if (line.substr(0, 5) == "state") states.push_back(toInt(std::stof(line.substr(6))));
+                if (line.substr(0, 5) == "state") states.push_back(animationStringToState[line.substr(6)]);
                 if (line.substr(0, 4) == "anim") animNames.push_back(line.substr(5));
             }
 

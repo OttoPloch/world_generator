@@ -1,4 +1,5 @@
 #include "scene.hpp"
+#include "rect_types.hpp"
 
 Scene::Scene() {}
 
@@ -21,39 +22,43 @@ void Scene::init(Window* window, AssetManager* assetManager)
     entities.push_back(Entity(getNewID(), {-400, 400}));
     entities.push_back(Entity(getNewID(), {-400, 550}));
     entities.push_back(Entity(getNewID(), {-400, 700}));
-
+    entities.push_back(Entity(getNewID(), {-200, 700}));
+    
     entities[0].giveSprite(assetManager->getTexture("pixel"), {50, 50}, -1);
     // entities[0].giveCollision(&entities, false, "pixel");
 
     entities[1].giveSprite(assetManager->getTexture("IDLE_smaller"), {24 * 10, 21 * 10});
     entities[1].getSprite()->giveAnimationSet(assetManager->getAnimSet("player"));
     entities[1].giveMotion(true);
-    entities[1].giveCollision(&entities, true, "player", {0, 0.2}, {0.3, 0.3});
+    entities[1].giveCollision(&entities, "player", ACTIVE, {}, {0, 0.2}, {0.3, 0.3});
 
     entities[2].giveSprite(assetManager->getTexture("dr bee"), {200, 200});
-    entities[2].giveCollision(&entities, false, "enemy");
+    entities[2].giveCollision(&entities, "enemy", STATIC);
 
     entities[3].giveSprite(assetManager->getTexture("bush"), {200, 120});
-    entities[3].giveCollision(&entities, false, "obstacle", {0, 0.2f}, {.7f, .6f});
+    entities[3].giveCollision(&entities, "obstacle", STATIC, {}, {0, 0.2f}, {.7f, .6f});
 
     entities[4].giveSprite(assetManager->getTexture("IDLE_smaller"), {24 * 11, 21 * 11});
     entities[4].getSprite()->giveAnimation(assetManager->getAnimation("knight_idle"));
 
-    entities[5].giveSprite(assetManager->getTexture("pixel"), {100, 100}, -1);
+    entities[5].giveSprite(assetManager->getTexture("pixel"), {100, 100}, -2);
     entities[5].getSprite()->giveAnimation(assetManager->getAnimation("dot_left"));
 
-    entities[6].giveSprite(assetManager->getTexture("pixel"), {100, 100}, -1);
+    entities[6].giveSprite(assetManager->getTexture("pixel"), {100, 100}, -2);
     entities[6].getSprite()->giveAnimation(assetManager->getAnimation("dot_right"));
 
-    entities[7].giveSprite(assetManager->getTexture("pixel"), {100, 100}, -1);
+    entities[7].giveSprite(assetManager->getTexture("pixel"), {100, 100}, -2);
     entities[7].getSprite()->giveAnimation(assetManager->getAnimation("dot_up"));
 
-    entities[8].giveSprite(assetManager->getTexture("pixel"), {100, 100}, -1);
+    entities[8].giveSprite(assetManager->getTexture("pixel"), {100, 100}, -2);
     entities[8].getSprite()->giveAnimation(assetManager->getAnimation("dot_down"));
 
-    entities[9].giveSprite(assetManager->getTexture("pixel"), {100, 100}, -1);
+    entities[9].giveSprite(assetManager->getTexture("pixel"), {100, 100}, -2);
     entities[9].getSprite()->giveAnimation(assetManager->getAnimation("dot_idle"));
 
+    entities[10].giveSprite(assetManager->getTexture("crate"), {150, 150});
+    entities[10].giveCollision(&entities, "crate", MOVABLE);
+    
     // TODO: optional, if i want to change whether an entity has a sprite or its z value,
     // then i would need to modify this whenever that happens.
     for (int i = 0; i < entities.size(); i++)

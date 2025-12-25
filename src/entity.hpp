@@ -27,7 +27,7 @@ public:
     
     void giveMotion(bool controlling);
 
-    void giveCollision(std::vector<Entity>* entities, bool active, std::string name, sf::Vector2f offsetFraction = {0, 0}, sf::Vector2f size = {1, 1}, bool sizeIsFraction = true);
+    void giveCollision(std::vector<Entity>* entities, std::string name, int rectType, std::vector<std::string> blacklist = {}, sf::Vector2f offsetFraction = {0, 0}, sf::Vector2f size = {1, 1}, bool sizeIsFraction = true);
 
     void changeSpriteTexture(sf::Texture* texture);
 

@@ -1,12 +1,33 @@
 #include "entity_states.hpp"
 #include "states.hpp"
 
+std::map<std::string, int> animationStringToState = {
+    {"ANIM_PUSHINGLEFT", 0},
+    {"ANIM_PUSHINGRIGHT", 1},
+    {"ANIM_PUSHINGUP", 2},
+    {"ANIM_PUSHINGDOWN", 3},
+    {"ANIM_RUNNINGLEFT", 4},
+    {"ANIM_RUNNINGRIGHT", 5},
+    {"ANIM_RUNNINGUP", 6},
+    {"ANIM_RUNNINGDOWN", 7},
+    {"ANIM_WALKINGLEFT", 8},
+    {"ANIM_WALKINGRIGHT", 9},
+    {"ANIM_WALKINGUP", 10},
+    {"ANIM_WALKINGDOWN", 11},
+    {"ANIM_MOVING", 12},
+    {"ANIM_IDLE", 13}
+};
+
 EntityStates::EntityStates() { init(); }
 
 void EntityStates::init()
 {
     stateMapMap = {
         {"animation", {
+            {ANIM_PUSHINGLEFT, {false, 0.f}},
+            {ANIM_PUSHINGRIGHT, {false, 0.f}},
+            {ANIM_PUSHINGUP, {false, 0.f}},
+            {ANIM_PUSHINGDOWN, {false, 0.f}},
             {ANIM_RUNNINGLEFT, {false, 0.f}},
             {ANIM_RUNNINGRIGHT, {false, 0.f}},
             {ANIM_RUNNINGUP, {false, 0.f}},

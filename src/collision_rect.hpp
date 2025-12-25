@@ -10,7 +10,7 @@ class CollisionRect
 public:
     CollisionRect();
 
-    void init(GamePosition position, sf::Vector2f offset, sf::Vector2f size);
+    void init(GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::string colliderName, int rectType, std::vector<std::string> blacklist);
 
     void updatePosition();
 
@@ -54,6 +54,16 @@ public:
     void setBottom(float value);
 
     void setToDefault();
+
+    std::string getColliderName();
+
+    int getType();
+
+    void setBlacklist(std::vector<std::string> newList);
+    
+    void addToBlacklist(std::string newEntry);
+    
+    bool searchBlacklist(std::string entry);
     
     sf::Vector2f lastPosition;
 private:
@@ -68,4 +78,10 @@ private:
     sf::Vector2f defaultSize;
     
     sf::Vector2f offsetPosition;
+
+    std::string colliderName;
+
+    std::vector<std::string> blacklist;
+
+    int rectType;
 };
