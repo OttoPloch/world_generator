@@ -1,9 +1,10 @@
 #pragma once
 
 #include "common.hpp"
-
 #include "entity.hpp"
+#include "gamerules.hpp"
 
+class Game;
 class Window;
 
 class Camera
@@ -11,7 +12,7 @@ class Camera
 public:
     Camera();
 
-    void init(Window* window, bool setTopLeftPos, sf::Vector2f position, sf::Vector2f size, Entity* focus = nullptr);
+    void init(Game* game, bool setTopLeftPos, sf::Vector2f position, sf::Vector2f size, Entity* focus = nullptr);
 
     void setCenter(sf::Vector2f center);
 
@@ -50,6 +51,8 @@ public:
     Entity* getFocus();
 private:
     Window* window;
+
+    Gamerules* gamerules;
 
     sf::Vector2f baseSize;
 

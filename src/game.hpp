@@ -9,6 +9,7 @@
 #include "entity.hpp"
 #include "asset_manager.hpp"
 #include "scene.hpp"
+#include "gamerules.hpp"
 
 class Game
 {
@@ -17,6 +18,16 @@ public:
     
     void init();
 
+    void exit();
+    
+    void processInput(sf::Keyboard::Key key);
+    
+    Window* getWindow();
+    
+    Gamerules* getGamerules();
+
+    AssetManager* getAssetManager();
+private:
     void run();
 
     void tick();
@@ -24,12 +35,10 @@ public:
     void update(float dt);
 
     void draw();
-
-    void exit();
-
-    void processInput(sf::Keyboard::Key key);
-private:
+    
     Window window;
+
+    Gamerules gamerules;
 
     EventHandler eventHandler;
 

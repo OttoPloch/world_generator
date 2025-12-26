@@ -1,5 +1,6 @@
 #include "entity.hpp"
 #include "collision_attribute.hpp"
+#include "game.hpp"
 
 Entity::Entity() {}
 
@@ -39,9 +40,9 @@ void Entity::giveSprite(sf::Texture* texture, sf::Vector2f size, int z, bool cen
     sprite->create(this, &states, texture, position, spriteSize, z, centerOrigin);
 }
 
-void Entity::giveMotion(bool controlling)
+void Entity::giveMotion(Game* game, bool controlling)
 {
-    motion = std::make_unique<MotionAttribute>(&states, position, controlling);
+    motion = std::make_unique<MotionAttribute>(game, &states, position, controlling);
 }
 
 void Entity::giveCollision(std::vector<Entity>* entities, std::string name, int rectType, std::vector<std::string> blacklist, sf::Vector2f offsetFraction, sf::Vector2f size, bool sizeIsFraction)

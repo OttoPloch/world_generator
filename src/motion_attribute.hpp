@@ -4,11 +4,14 @@
 #include "attribute.hpp"
 #include "game_position.hpp"
 #include "entity_states.hpp"
+#include "gamerules.hpp"
+
+class Game;
 
 class MotionAttribute : public Attribute
 {
 public:
-    MotionAttribute(EntityStates* states, GamePosition position, bool controlling);
+    MotionAttribute(Game* game, EntityStates* states, GamePosition position, bool controlling);
 
     void tick();
 
@@ -26,6 +29,8 @@ public:
 
     bool controlling;
 private:
+    Gamerules* gamerules;
+
     EntityStates* states;
 
     GamePosition position;

@@ -1,13 +1,14 @@
 #include "scene.hpp"
 #include "rect_types.hpp"
+#include "game.hpp"
 
 Scene::Scene() {}
 
-void Scene::init(Window* window, AssetManager* assetManager)
+void Scene::init(Game* game)
 {
-    this->window = window;
+    window = game->getWindow();
 
-    this->assetManager = assetManager;
+    assetManager = game->getAssetManager();
     
     IDCounter = 0;
 
@@ -29,7 +30,7 @@ void Scene::init(Window* window, AssetManager* assetManager)
 
     entities[1].giveSprite(assetManager->getTexture("IDLE_smaller"), {24 * 10, 21 * 10});
     entities[1].getSprite()->giveAnimationSet(assetManager->getAnimSet("player"));
-    entities[1].giveMotion(true);
+    entities[1].giveMotion(game, true);
     entities[1].giveCollision(&entities, "player", ACTIVE, {}, {0, 0.2}, {0.3, 0.3});
 
     entities[2].giveSprite(assetManager->getTexture("dr bee"), {200, 200});
@@ -69,7 +70,7 @@ void Scene::init(Window* window, AssetManager* assetManager)
         }
     }
 
-    camera.init(window, true, {0, 0}, toV2F(window->getSize()), &entities[1]);
+    camera.init(game, true, {0, 0}, toV2F(window->getSize()), &entities[1]);
 
     rect.setSize({100.f, 100.f});
     rect.setFillColor(sf::Color::Red);

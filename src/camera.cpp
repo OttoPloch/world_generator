@@ -1,21 +1,13 @@
 #include "camera.hpp"
-#include "window.hpp"
-
-const int FREECAM_MOVE_SPEED_BASE = 10;
-const float FREECAM_FRICTION = 8.f;
-
-const float CAMERA_BIG_ZOOM_FACTOR = 1.5f;
-const float CAMERA_SMALL_ZOOM_AMOUNT = 0.1f;
-const float CAMERA_MIN_ZOOM_FACTOR = 0.3f;
-const float CAMERA_MAX_ZOOM_FACTOR = pow(CAMERA_BIG_ZOOM_FACTOR, 3);
-
-const float FOCUS_FOLLOW_DELAY = 10.f;
+#include "game.hpp"
 
 Camera::Camera() {}
 
-void Camera::init(Window* window, bool setTopLeftPos, sf::Vector2f position, sf::Vector2f size, Entity* focus)
+void Camera::init(Game* game, bool setTopLeftPos, sf::Vector2f position, sf::Vector2f size, Entity* focus)
 {
-    this->window = window;
+    window = game->getWindow();
+
+    gamerules = game->getGamerules();
 
     baseSize = size;
     
@@ -78,27 +70,27 @@ void Camera::update(float dt)
         
         (focus->getSprite() != nullptr) ? targetPosition = focus->getSprite()->getSpritePosition() : targetPosition = focus->getPosition();
 
-        velocity.x = (targetPosition.x - center.x) / FOCUS_FOLLOW_DELAY;
-        velocity.y = (targetPosition.y - center.y) / FOCUS_FOLLOW_DELAY;
+        velocity.x = (targetPosition.x - center.x) / gamerules->getRule("camera_focusFollowDelay").valueFloat;
+        velocity.y = (targetPosition.y - center.y) / gamerules->getRule("camera_focusFollowDelay").valueFloat;
     }
     else
     {
         if (getMovement().x == 0)
         {
-            velocity.x *= 1 - (dt * FREECAM_FRICTION);
+            velocity.x *= 1 - (dt * gamerules->getRule("camera_freecamFriction").valueFloat);
         }
         else
         {
-            velocity.x = (FREECAM_MOVE_SPEED_BASE * zoomFactor) * getMovement().x;
+            velocity.x = (gamerules->getRule("camera_freecamMoveSpeedBase").valueInt * zoomFactor) * getMovement().x;
         }
     
         if (getMovement().y == 0)
         {
-            velocity.y *= 1 - (dt * FREECAM_FRICTION);
+            velocity.y *= 1 - (dt * gamerules->getRule("camera_freecamFriction").valueFloat);
         }
         else
         {
-            velocity.y = (FREECAM_MOVE_SPEED_BASE * zoomFactor) * getMovement().y;
+            velocity.y = (gamerules->getRule("camera_freecamMoveSpeedBase").valueInt * zoomFactor) * getMovement().y;
         }
     }
 
@@ -156,29 +148,29 @@ void Camera::changeVelocity(char direction, float amount)
 void Camera::zoom(int amount)
 {
     if (amount == 0) return;
-    if (zoomFactor <= CAMERA_MIN_ZOOM_FACTOR && amount < 0) return;
-    if (zoomFactor >= CAMERA_MAX_ZOOM_FACTOR && amount > 0) return;
+    if (zoomFactor <= gamerules->getRule("camera_minZoomFactor").valueFloat && amount < 0) return;
+    if (zoomFactor >= gamerules->getRule("camera_maxZoomFactor").valueFloat && amount > 0) return;
     
     if (amount > 0)
     {
         if (zoomFactor >= 1.f)
         {
-            zoomFactor *= CAMERA_BIG_ZOOM_FACTOR;
+            zoomFactor *= gamerules->getRule("camera_bigZoomFactor").valueFloat;
         }
         else if (zoomFactor < 1.f)
         {
-            zoomFactor += CAMERA_SMALL_ZOOM_AMOUNT;
+            zoomFactor += gamerules->getRule("camera_smallZoomAmount").valueFloat;
         }
     }
     else if (amount < 0)
     {
         if (zoomFactor > 1.f)
         {
-            zoomFactor /= CAMERA_BIG_ZOOM_FACTOR;
+            zoomFactor /= gamerules->getRule("camera_bigZoomFactor").valueFloat;
         }
         else if (zoomFactor <= 1.f)
         {
-            zoomFactor -= CAMERA_SMALL_ZOOM_AMOUNT;
+            zoomFactor -= gamerules->getRule("camera_smallZoomAmount").valueFloat;
         }
     }
 

@@ -1,8 +1,11 @@
 #include "motion_attribute.hpp"
 #include "states.hpp"
+#include "game.hpp"
 
-MotionAttribute::MotionAttribute(EntityStates* states, GamePosition position, bool controlling) : Attribute("motion"), velocity({0.f, 0.f}), rotationalVelocity(0.f)
+MotionAttribute::MotionAttribute(Game* game, EntityStates* states, GamePosition position, bool controlling) : Attribute("motion"), velocity({0.f, 0.f}), rotationalVelocity(0.f)
 {
+    this->gamerules = game->getGamerules();
+
     this->states = states;
 
     this->position = position;
@@ -14,16 +17,14 @@ void MotionAttribute::tick()
 {
     position.change(velocity);
 
-    // TODO: put in container class
-    float friction = 0.8f;
-    float velocityCutoff = 0.01f;
+    float friction = gamerules->getRule("motion_friction").valueFloat;
+    float velocityCutoff = gamerules->getRule("motion_velocityCutoff").valueFloat;
 
     if (controlling)
     {
         sf::Vector2f movement = getMovement();
 
-        // TODO: same with friction and cutoff above
-        float baseSpeed = 5;
+        float baseSpeed = gamerules->getRule("moveSpeed", "player").valueFloat;
         float speed = baseSpeed;
 
         if (getKey("SHIFT")) speed *= 2;

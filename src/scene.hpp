@@ -8,12 +8,14 @@
 
 #include <vector>
 
+class Game;
+
 class Scene
 {
 public:
     Scene();
 
-    void init(Window* window, AssetManager* assetManager);
+    void init(Game* game);
 
     void tick();
 

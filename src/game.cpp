@@ -6,7 +6,7 @@ void Game::init()
 {
     window.create({800, 800}, "INFINITE", false, 165, sf::Color(10, 10, 12));
 
-    scene.init(&window, &assetManager);
+    scene.init(this);
 
     eventHandler.init(&window, scene.getCamera(), this);
 
@@ -16,6 +16,40 @@ void Game::init()
 
     run();
 }
+
+void Game::exit()
+{
+    window.exit();
+}
+
+void Game::processInput(sf::Keyboard::Key key)
+{
+    switch(key)
+    {
+        case sf::Keyboard::Key::Escape:
+            exit();
+            break;
+        case sf::Keyboard::Key::Tab:
+            paused = !paused;
+            break;
+        case sf::Keyboard::Key::Right:
+            if (paused)
+            {
+                tick();
+                update(dt);
+            }
+            break;       
+        default:
+            scene.sceneInput(key);
+            break;
+    }
+}
+
+Window* Game::getWindow() { return &window; }
+
+Gamerules* Game::getGamerules() { return &gamerules; }
+
+AssetManager* Game::getAssetManager() { return &assetManager; }
 
 void Game::run()
 {
@@ -95,32 +129,4 @@ void Game::draw()
     scene.draw();
 
     window.display();
-}
-
-void Game::exit()
-{
-    window.exit();
-}
-
-void Game::processInput(sf::Keyboard::Key key)
-{
-    switch(key)
-    {
-        case sf::Keyboard::Key::Escape:
-            exit();
-            break;
-        case sf::Keyboard::Key::Tab:
-            paused = !paused;
-            break;
-        case sf::Keyboard::Key::Right:
-            if (paused)
-            {
-                tick();
-                update(dt);
-            }
-            break;       
-        default:
-            scene.sceneInput(key);
-            break;
-    }
 }
