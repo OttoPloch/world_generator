@@ -13,24 +13,24 @@ void Scene::init(Game* game)
     IDCounter = 0;
 
     entities.clear();
-    entities.push_back(Entity(getNewID(), {475, 475}));
-    entities.push_back(Entity(getNewID(), {0, 0}));
-    entities.push_back(Entity(getNewID(), {900, 900}));
-    entities.push_back(Entity(getNewID(), {100, 500}));
-    entities.push_back(Entity(getNewID(), {0, 0}));
-    entities.push_back(Entity(getNewID(), {-400, 100}));
-    entities.push_back(Entity(getNewID(), {-400, 250}));
-    entities.push_back(Entity(getNewID(), {-400, 400}));
-    entities.push_back(Entity(getNewID(), {-400, 550}));
-    entities.push_back(Entity(getNewID(), {-400, 700}));
-    entities.push_back(Entity(getNewID(), {-200, 700}));
+    entities.push_back(Entity(game, getNewID(), {475, 475}));
+    entities.push_back(Entity(game, getNewID(), {0, 0}));
+    entities.push_back(Entity(game, getNewID(), {900, 900}));
+    entities.push_back(Entity(game, getNewID(), {100, 500}));
+    entities.push_back(Entity(game, getNewID(), {0, 0}));
+    entities.push_back(Entity(game, getNewID(), {-400, 100}));
+    entities.push_back(Entity(game, getNewID(), {-400, 250}));
+    entities.push_back(Entity(game, getNewID(), {-400, 400}));
+    entities.push_back(Entity(game, getNewID(), {-400, 550}));
+    entities.push_back(Entity(game, getNewID(), {-400, 700}));
+    entities.push_back(Entity(game, getNewID(), {-200, 700}));
     
     entities[0].giveSprite(assetManager->getTexture("pixel"), {50, 50}, -1);
     // entities[0].giveCollision(&entities, false, "pixel");
 
     entities[1].giveSprite(assetManager->getTexture("IDLE_smaller"), {24 * 10, 21 * 10});
     entities[1].getSprite()->giveAnimationSet(assetManager->getAnimSet("player"));
-    entities[1].giveMotion(game, true);
+    entities[1].giveMotion(1.f, true);
     entities[1].giveCollision(&entities, "player", ACTIVE, {}, {0, 0.2}, {0.3, 0.3});
 
     entities[2].giveSprite(assetManager->getTexture("dr bee"), {200, 200});
@@ -58,6 +58,7 @@ void Scene::init(Game* game)
     entities[9].getSprite()->giveAnimation(assetManager->getAnimation("dot_idle"));
 
     entities[10].giveSprite(assetManager->getTexture("crate"), {150, 150});
+    entities[10].giveMotion(1.f);
     entities[10].giveCollision(&entities, "crate", MOVABLE);
     
     // TODO: optional, if i want to change whether an entity has a sprite or its z value,

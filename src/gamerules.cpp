@@ -16,13 +16,15 @@ void Gamerules::init()
         {"camera_smallZoomAmount", gamerule(0.1f, 0, false, "")},
         {"camera_minZoomFactor", gamerule(0.3f, 0, false, "")},
         {"camera_maxZoomFactor", gamerule(pow(bigZoomFactor, 3), 0, false, "")},
-        {"camera_focusFollowDelay", gamerule(10.f, 0, false, "")},
+        {"camera_focusFollowDelay", gamerule(6.f, 0, false, "")},
+        {"sprite_followDelay", gamerule(3.f, 0, false, "")},
         {"motion_friction", gamerule(0.8f, 0, false, "")},
         {"motion_velocityCutoff", gamerule(0.01f, 0, false, "")}
     };
 
     playerRules = {
-        {"moveSpeed", gamerule(15.f, 0, false, "")}
+        {"moveSpeed", gamerule(5.f, 0, false, "")},
+        {"acceleration", gamerule(5.f, 0, false, "")}
     };
 }
 

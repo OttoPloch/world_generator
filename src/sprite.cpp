@@ -2,14 +2,17 @@
 #include "animation.hpp"
 #include "entity.hpp"
 #include "collision_attribute.hpp"
+#include "game.hpp"
 
 Sprite::Sprite() {}
 
-void Sprite::create(Entity* myEntity, EntityStates* states, sf::Texture* texture, GamePosition position, sf::Vector2f size, int z, bool centerOrigin)
+void Sprite::create(Game* game, Entity* myEntity, sf::Texture* texture, GamePosition position, sf::Vector2f size, int z, bool centerOrigin)
 {    
+    gamerules = game->getGamerules();
+
     this->myEntity = myEntity;
 
-    this->states = states;
+    states = myEntity->getStates();
 
     this->position = position;
 
@@ -159,21 +162,13 @@ void Sprite::update(float dt)
         float xDiff = position.get().x - spritePosition.x;
         float yDiff = position.get().y - spritePosition.y;
 
-        // TODO: find a place for the constant determining delay, need some container
-        // for these values since there can be many sprites, entities, etc. that would
-        // all have their own memory for this constant if it is made a variable and left
-        // in here. A gamerule class or something would be great for easy access to a lot
-        // of fun stuff.
+        // note: the follow delay is divided by 100 to make the gamerule
+        // more readable, not sure if this is a bad practice or not.
+        float followDelay = gamerules->getRule("sprite_followDelay").valueFloat / 100;
 
-        float delay;
-        if (.03f / dt >= 1.f)
-        {
-            delay = .03f / dt;
-        }
-        else
-        {
-            delay = 1.f;
-        }
+        float delay = followDelay / dt;
+
+        if (delay < 1.f) delay = 1.f;
 
         (abs(xDiff) < 0.001f) ? spritePosition.x = position.get().x : spritePosition.x += xDiff / delay;
         (abs(yDiff) < 0.001f) ? spritePosition.y = position.get().y : spritePosition.y += yDiff / delay;

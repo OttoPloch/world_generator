@@ -1,12 +1,11 @@
 #include "collision_attribute.hpp"
 #include "states.hpp"
 #include "rect_types.hpp"
-
-CollisionAttribute::CollisionAttribute(Entity* myEntity, EntityStates* states, GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::vector<Entity>* entities, std::string colliderName, int rectType, std::vector<std::string> blacklist) : Attribute("collision")
+CollisionAttribute::CollisionAttribute(Entity* myEntity, GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::vector<Entity>* entities, std::string colliderName, int rectType, std::vector<std::string> blacklist) : Attribute("collision")
 {
     this->myEntity = myEntity;
 
-    this->states = states;
+    states = myEntity->getStates();
 
     rect.init(position, offset, size, colliderName, rectType, blacklist);
 
@@ -37,21 +36,44 @@ void CollisionAttribute::tick()
                             {
                                 bool pushingObject = false;
 
+                                MotionAttribute* myMotion = myEntity->getMotion();
+                                MotionAttribute* otherMotion = entity->getMotion();
+
+                                bool advancedCollision = (myMotion && otherMotion);
+
                                 if (rect.getType() == ACTIVE)
                                 {
                                     if (other->getType() == ACTIVE)
                                     {   
-                                        resolveCollision(other, 0.3f);
+                                        if (advancedCollision)
+                                        {
+                                            float pushFraction = (myMotion->getMass() / (myMotion->getMass() + otherMotion->getMass()));
+
+                                            resolveCollision(entity, pushFraction);
+                                        }
+                                        else
+                                        {
+                                            resolveCollision(entity, (0.3f));
+                                        }
                                     }
                                     else if (other->getType() == STATIC)
                                     {
-                                        resolveCollision(other, 0.f);
+                                        resolveCollision(entity, 0.f);
                                     }
                                     else if (other->getType() == MOVABLE)
                                     {
                                         pushingObject = true;
 
-                                        resolveCollision(other, .5f);
+                                        if (advancedCollision)
+                                        {
+                                            float pushFraction = (myMotion->getMass() / (myMotion->getMass() + otherMotion->getMass()));
+
+                                            resolveCollision(entity, pushFraction);
+                                        }
+                                        else
+                                        {
+                                            resolveCollision(entity, (0.5f));
+                                        }
                                     }
                                 }
                                 else if (rect.getType() == MOVABLE)
@@ -62,11 +84,20 @@ void CollisionAttribute::tick()
                                     }
                                     else if (other->getType() == STATIC)
                                     {
-                                        resolveCollision(other, 0.f);
+                                        resolveCollision(entity, 0.f);
                                     }
                                     else if (other->getType() == MOVABLE)
                                     {
-                                        resolveCollision(other, 0.5f);
+                                        if (advancedCollision)
+                                        {
+                                            float pushFraction = (myMotion->getMass() / (myMotion->getMass() + otherMotion->getMass()));
+
+                                            resolveCollision(entity, pushFraction);
+                                        }
+                                        else
+                                        {
+                                            resolveCollision(entity, (0.5f));
+                                        }
                                     }
                                 }
 
@@ -122,8 +153,10 @@ bool CollisionAttribute::collidesWith(CollisionRect* other)
     return false;
 }
 
-void CollisionAttribute::resolveCollision(CollisionRect* other, float pushFraction)
+void CollisionAttribute::resolveCollision(Entity* otherEntity, float pushFraction)
 {
+    CollisionRect* other = otherEntity->getCollision()->getRect();
+
     float leftDiff = abs(rect.right() - other->left());
     float rightDiff = abs(rect.left() - other->right());
     float topDiff = abs(rect.bottom() - other->top());
@@ -179,3 +212,5 @@ void CollisionAttribute::setRect(sf::FloatRect newRect)
 }
 
 CollisionRect* CollisionAttribute::getRect() { return &rect; }
+
+Entity* CollisionAttribute::getEntity() { return myEntity; }

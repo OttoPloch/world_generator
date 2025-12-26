@@ -4,13 +4,15 @@
 
 Entity::Entity() {}
 
-Entity::Entity(int ID, sf::Vector2f position)
+Entity::Entity(Game* game, int ID, sf::Vector2f position)
 {
-    create(ID, position);
+    create(game, ID, position);
 }
 
-void Entity::create(int ID, sf::Vector2f position)
+void Entity::create(Game* game, int ID, sf::Vector2f position)
 {
+    this->game = game;
+
     this->ID = ID;
 
     this->position.set(position);
@@ -37,12 +39,12 @@ void Entity::giveSprite(sf::Texture* texture, sf::Vector2f size, int z, bool cen
         spriteSize = size;
     }
 
-    sprite->create(this, &states, texture, position, spriteSize, z, centerOrigin);
+    sprite->create(game, this, texture, position, spriteSize, z, centerOrigin);
 }
 
-void Entity::giveMotion(Game* game, bool controlling)
+void Entity::giveMotion(float mass, bool controlling)
 {
-    motion = std::make_unique<MotionAttribute>(game, &states, position, controlling);
+    motion = std::make_unique<MotionAttribute>(game, this, position, mass, controlling);
 }
 
 void Entity::giveCollision(std::vector<Entity>* entities, std::string name, int rectType, std::vector<std::string> blacklist, sf::Vector2f offsetFraction, sf::Vector2f size, bool sizeIsFraction)
@@ -60,7 +62,7 @@ void Entity::giveCollision(std::vector<Entity>* entities, std::string name, int 
         collRectSize = size;
     }
 
-    collision = std::make_unique<CollisionAttribute>(this, &states, position, offset, collRectSize, entities, name, rectType, blacklist);
+    collision = std::make_unique<CollisionAttribute>(this, position, offset, collRectSize, entities, name, rectType, blacklist);
 }
 
 void Entity::changeSpriteTexture(sf::Texture* texture)
@@ -90,6 +92,8 @@ void Entity::draw(sf::RenderWindow& window)
 }
 
 sf::Vector2f Entity::getPosition() { return *(position.position); }
+
+EntityStates* Entity::getStates() { return &states; }
 
 Sprite* Entity::getSprite() { return sprite.get(); }
 

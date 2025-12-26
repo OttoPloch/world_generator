@@ -18,15 +18,15 @@ class Entity
 public:
     Entity();
 
-    Entity(int ID, sf::Vector2f position);
+    Entity(Game* game, int ID, sf::Vector2f position);
 
-    void create(int ID, sf::Vector2f position);
+    void create(Game* game, int ID, sf::Vector2f position);
 
     int getID();
 
     void giveSprite(sf::Texture* texture, sf::Vector2f size = {-1, -1}, int z = 0, bool centerOrigin = true);
     
-    void giveMotion(Game* game, bool controlling);
+    void giveMotion(float mass, bool controlling = false);
 
     void giveCollision(std::vector<Entity>* entities, std::string name, int rectType, std::vector<std::string> blacklist = {}, sf::Vector2f offsetFraction = {0, 0}, sf::Vector2f size = {1, 1}, bool sizeIsFraction = true);
 
@@ -40,6 +40,8 @@ public:
 
     sf::Vector2f getPosition();
 
+    EntityStates* getStates();
+
     Sprite* getSprite();
 
     MotionAttribute* getMotion();
@@ -47,6 +49,8 @@ public:
     CollisionAttribute* getCollision();
 private:
     int ID;
+
+    Game* game;
 
     GamePosition position;
 

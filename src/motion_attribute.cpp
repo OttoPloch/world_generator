@@ -2,13 +2,15 @@
 #include "states.hpp"
 #include "game.hpp"
 
-MotionAttribute::MotionAttribute(Game* game, EntityStates* states, GamePosition position, bool controlling) : Attribute("motion"), velocity({0.f, 0.f}), rotationalVelocity(0.f)
+MotionAttribute::MotionAttribute(Game* game, Entity* myEntity, GamePosition position, float mass, bool controlling) : Attribute("motion"), velocity({0.f, 0.f}), rotationalVelocity(0.f)
 {
     this->gamerules = game->getGamerules();
 
-    this->states = states;
+    states = myEntity->getStates();
 
     this->position = position;
+
+    this->mass = mass;
 
     this->controlling = controlling;
 }
@@ -24,10 +26,12 @@ void MotionAttribute::tick()
     {
         sf::Vector2f movement = getMovement();
 
+        // TODO: replace "player" here and further down with
+        // a variable representing the entity's name or type
         float baseSpeed = gamerules->getRule("moveSpeed", "player").valueFloat;
         float speed = baseSpeed;
 
-        if (getKey("SHIFT")) speed *= 2;
+        if (getKey("SHIFT")) speed *= 2.f;
 
         if (movement.x != 0)
         {
@@ -124,3 +128,5 @@ void MotionAttribute::changeVelocity(char direction, float amount)
 }
 
 float MotionAttribute::getRotation() { return rotation; }
+
+float MotionAttribute::getMass() { return mass; }

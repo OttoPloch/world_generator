@@ -70,8 +70,16 @@ void Camera::update(float dt)
         
         (focus->getSprite() != nullptr) ? targetPosition = focus->getSprite()->getSpritePosition() : targetPosition = focus->getPosition();
 
-        velocity.x = (targetPosition.x - center.x) / gamerules->getRule("camera_focusFollowDelay").valueFloat;
-        velocity.y = (targetPosition.y - center.y) / gamerules->getRule("camera_focusFollowDelay").valueFloat;
+        // note: the follow delay is divided by 100 to make the gamerule
+        // more readable, not sure if this is a bad practice or not.
+        float followDelay = gamerules->getRule("camera_focusFollowDelay").valueFloat / 100;
+
+        float delay = followDelay / dt;
+
+        if (delay < 1.f) delay = 1.f;
+
+        velocity.x = (targetPosition.x - center.x) / delay;
+        velocity.y = (targetPosition.y - center.y) / delay;
     }
     else
     {

@@ -12,17 +12,19 @@
 class CollisionAttribute : public Attribute
 {
 public:
-    CollisionAttribute(Entity* myEntity, EntityStates* states, GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::vector<Entity>* entities, std::string colliderName, int rectType, std::vector<std::string> blacklist);
+    CollisionAttribute(Entity* myEntity, GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::vector<Entity>* entities, std::string colliderName, int rectType, std::vector<std::string> blacklist);
 
     void tick();
 
     bool collidesWith(CollisionRect* other);
 
-    void resolveCollision(CollisionRect* other, float pushFraction);
+    void resolveCollision(Entity* otherEntity, float pushFraction);
 
     void setRect(sf::FloatRect newRect);
     
     CollisionRect* getRect();
+
+    Entity* getEntity();
 private:
     Entity* myEntity;
 

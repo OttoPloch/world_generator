@@ -11,7 +11,7 @@ class Game;
 class MotionAttribute : public Attribute
 {
 public:
-    MotionAttribute(Game* game, EntityStates* states, GamePosition position, bool controlling);
+    MotionAttribute(Game* game, Entity* myEntity, GamePosition position, float mass, bool controlling);
 
     void tick();
 
@@ -27,6 +27,8 @@ public:
     
     float getRotation();
 
+    float getMass();
+
     bool controlling;
 private:
     Gamerules* gamerules;
@@ -40,4 +42,6 @@ private:
     sf::Vector2f velocity;
 
     float rotationalVelocity;
+
+    float mass;
 };
