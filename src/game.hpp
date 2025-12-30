@@ -10,6 +10,7 @@
 #include "asset_manager.hpp"
 #include "scene.hpp"
 #include "gamerules.hpp"
+#include "settings.hpp"
 
 class Game
 {
@@ -39,6 +40,8 @@ private:
     Window window;
 
     Gamerules gamerules;
+
+    Settings settings;
 
     EventHandler eventHandler;
 

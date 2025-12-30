@@ -36,6 +36,9 @@ src/animation_set.cpp
 src/gamerules.cpp
 src/gamerule.cpp
 src/entity_layer.cpp
+src/setting.cpp
+src/settings.cpp
+src/ui_layer.cpp
 )
 
 target_compile_features(app PRIVATE cxx_std_17)
