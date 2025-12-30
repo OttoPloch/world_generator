@@ -47,7 +47,7 @@ void Entity::giveMotion(float mass, bool controlling)
     motion = std::make_unique<MotionAttribute>(game, this, position, mass, controlling);
 }
 
-void Entity::giveCollision(std::vector<Entity>* entities, std::string name, int rectType, std::vector<std::string> blacklist, sf::Vector2f offsetFraction, sf::Vector2f size, bool sizeIsFraction)
+void Entity::giveCollision(std::vector<std::unique_ptr<Entity>>* entities, std::string name, int rectType, std::vector<std::string> blacklist, sf::Vector2f offsetFraction, sf::Vector2f size, bool sizeIsFraction)
 {
     sf::Vector2f offset = {sprite->getSize().x * offsetFraction.x, sprite->getSize().y * offsetFraction.y};
     

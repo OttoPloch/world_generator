@@ -1,14 +1,14 @@
 #pragma once
 
-#include <memory>
-#include <vector>
-
 #include "common.hpp"
 #include "sprite.hpp"
 #include "asset_manager.hpp"
 #include "motion_attribute.hpp"
 #include "game_position.hpp"
 #include "entity_states.hpp"
+
+#include <memory>
+#include <vector>
 
 class CollisionAttribute;
 class Game;
@@ -24,11 +24,11 @@ public:
 
     int getID();
 
-    void giveSprite(sf::Texture* texture, sf::Vector2f size = {-1, -1}, int z = 0, bool centerOrigin = true);
+    void giveSprite(sf::Texture* texture, sf::Vector2f size = {-1.f, -1.f}, int z = 0, bool centerOrigin = true);
     
     void giveMotion(float mass, bool controlling = false);
 
-    void giveCollision(std::vector<Entity>* entities, std::string name, int rectType, std::vector<std::string> blacklist = {}, sf::Vector2f offsetFraction = {0, 0}, sf::Vector2f size = {1, 1}, bool sizeIsFraction = true);
+    void giveCollision(std::vector<std::unique_ptr<Entity>>* entities, std::string name, int rectType, std::vector<std::string> blacklist = {}, sf::Vector2f offsetFraction = {0, 0}, sf::Vector2f size = {1, 1}, bool sizeIsFraction = true);
 
     void changeSpriteTexture(sf::Texture* texture);
 

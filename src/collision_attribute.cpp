@@ -1,7 +1,7 @@
 #include "collision_attribute.hpp"
 #include "states.hpp"
 #include "rect_types.hpp"
-CollisionAttribute::CollisionAttribute(Entity* myEntity, GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::vector<Entity>* entities, std::string colliderName, int rectType, std::vector<std::string> blacklist) : Attribute("collision")
+CollisionAttribute::CollisionAttribute(Entity* myEntity, GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::vector<std::unique_ptr<Entity>>* entities, std::string colliderName, int rectType, std::vector<std::string> blacklist) : Attribute("collision")
 {
     this->myEntity = myEntity;
 
@@ -20,7 +20,7 @@ void CollisionAttribute::tick()
     {
         for (int i = 0; i < entities->size(); i++)
         {
-            Entity* entity = &(*entities)[i];
+            Entity* entity = (*entities)[i].get();
 
             if (entity->getID() != myEntity->getID())
             {

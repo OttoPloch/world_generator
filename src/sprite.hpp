@@ -18,7 +18,7 @@ public:
     Sprite();
 
     // sprite will always be centered if an animation is given, so centerOrigin only truly affects entities with no animations.
-    void create(Game* game, Entity* myEntity, sf::Texture* texture, GamePosition position, sf::Vector2f size, int z = 0, bool centerOrigin = true);
+    void create(Game* game, Entity* myEntity, sf::Texture* texture, GamePosition position, sf::Vector2f size, int z, bool centerOrigin);
 
     void centerSprite();
 

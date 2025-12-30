@@ -1,18 +1,19 @@
 #pragma once
 
-#include <vector>
-#include <utility>
-
 #include "common.hpp"
 #include "attribute.hpp"
 #include "game_position.hpp"
 #include "collision_rect.hpp"
 #include "entity.hpp"
 
+#include <vector>
+#include <utility>
+#include <memory>
+
 class CollisionAttribute : public Attribute
 {
 public:
-    CollisionAttribute(Entity* myEntity, GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::vector<Entity>* entities, std::string colliderName, int rectType, std::vector<std::string> blacklist);
+    CollisionAttribute(Entity* myEntity, GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::vector<std::unique_ptr<Entity>>* entities, std::string colliderName, int rectType, std::vector<std::string> blacklist);
 
     void tick();
 
@@ -32,5 +33,5 @@ private:
     
     CollisionRect rect;
     
-    std::vector<Entity>* entities;
+    std::vector<std::unique_ptr<Entity>>* entities;
 };

@@ -5,6 +5,7 @@
 #include "window.hpp"
 #include "asset_manager.hpp"
 #include "collision_attribute.hpp"
+#include "entity_layer.hpp"
 
 #include <vector>
 
@@ -37,9 +38,7 @@ private:
 
     int IDCounter;
     
-    std::vector<Entity> entities;
-
-    std::map<int, std::vector<Entity*>> entitiesZMap;
+    EntityLayer entityLayer;
 
     Camera camera;
 

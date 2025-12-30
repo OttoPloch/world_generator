@@ -35,6 +35,7 @@ src/entity_states.cpp
 src/animation_set.cpp
 src/gamerules.cpp
 src/gamerule.cpp
+src/entity_layer.cpp
 )
 
 target_compile_features(app PRIVATE cxx_std_17)
