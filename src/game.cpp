@@ -8,7 +8,7 @@ void Game::init()
 
     scene.init(this);
 
-    eventHandler.init(&window, scene.getCamera(), this);
+    eventHandler.init(&window, scene.getCamera(), this, &scene);
 
     paused = false;
 

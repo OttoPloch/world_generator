@@ -39,6 +39,7 @@ src/entity_layer.cpp
 src/setting.cpp
 src/settings.cpp
 src/ui_layer.cpp
+src/ui_element.cpp
 )
 
 target_compile_features(app PRIVATE cxx_std_17)

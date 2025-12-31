@@ -3,6 +3,7 @@
 #include "common.hpp"
 #include "window.hpp"
 #include "camera.hpp"
+#include "scene.hpp"
 
 class Game;
 
@@ -11,7 +12,7 @@ class EventHandler
 public:
     EventHandler();
 
-    void init(Window* window, Camera* camera, Game* game);
+    void init(Window* window, Camera* camera, Game* game, Scene* scene);
 
     void processEvents();
 
@@ -22,4 +23,6 @@ private:
     Camera* camera;
 
     Game* game;
+
+    Scene* scene;
 };

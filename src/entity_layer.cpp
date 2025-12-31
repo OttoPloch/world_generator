@@ -164,48 +164,48 @@ void EntityLayer::draw()
             {
                 entityVec[j]->draw(game->getWindow()->getWindow());
     
-                Entity* entity = entityVec[j];
-                Sprite* sprite = entity->getSprite();
-                sf::Sprite sprite2 = sprite->getSprite();
-                sf::Vector2f size = toV2F(sprite2.getTextureRect().size);
-                sf::Vector2f size2 = sprite->getSize();
+                // Entity* entity = entityVec[j];
+                // Sprite* sprite = entity->getSprite();
+                // sf::Sprite sprite2 = sprite->getSprite();
+                // sf::Vector2f size = toV2F(sprite2.getTextureRect().size);
+                // sf::Vector2f size2 = sprite->getSize();
     
-                sf::RectangleShape spriteOutline(size);
-                sf::RectangleShape spriteOutline2(size2);
+                // sf::RectangleShape spriteOutline(size);
+                // sf::RectangleShape spriteOutline2(size2);
     
-                spriteOutline.setOrigin({size.x / 2.f, size.y / 2.f});
-                spriteOutline.setPosition(entityVec[j]->getPosition());
+                // spriteOutline.setOrigin({size.x / 2.f, size.y / 2.f});
+                // spriteOutline.setPosition(entityVec[j]->getPosition());
                 
-                spriteOutline2.setOrigin({size2.x / 2.f, size2.y / 2.f});
-                spriteOutline2.setPosition(entityVec[j]->getPosition());
+                // spriteOutline2.setOrigin({size2.x / 2.f, size2.y / 2.f});
+                // spriteOutline2.setPosition(entityVec[j]->getPosition());
         
-                spriteOutline.setFillColor(sf::Color::Transparent);
-                spriteOutline.setOutlineColor(sf::Color::Red);
-                spriteOutline.setOutlineThickness(3.f);
+                // spriteOutline.setFillColor(sf::Color::Transparent);
+                // spriteOutline.setOutlineColor(sf::Color::Red);
+                // spriteOutline.setOutlineThickness(3.f);
     
-                spriteOutline2.setFillColor(sf::Color::Transparent);
-                spriteOutline2.setOutlineColor(sf::Color::Green);
-                spriteOutline2.setOutlineThickness(3.f);
+                // spriteOutline2.setFillColor(sf::Color::Transparent);
+                // spriteOutline2.setOutlineColor(sf::Color::Green);
+                // spriteOutline2.setOutlineThickness(3.f);
                 
-                game->getWindow()->draw(spriteOutline);
-                game->getWindow()->draw(spriteOutline2);
+                // game->getWindow()->draw(spriteOutline);
+                // game->getWindow()->draw(spriteOutline2);
     
-                if (entityVec[j]->getCollision())
-                {
-                    Entity* entity = entityVec[j];
-                    CollisionRect coll = *entity->getCollision()->getRect();
+                // if (entityVec[j]->getCollision())
+                // {
+                //     Entity* entity = entityVec[j];
+                //     CollisionRect coll = *entity->getCollision()->getRect();
     
-                    sf::RectangleShape collOutline(coll.getSize());
+                //     sf::RectangleShape collOutline(coll.getSize());
     
-                    collOutline.setOrigin({collOutline.getSize().x / 2.f, collOutline.getSize().y});
-                    collOutline.setPosition({coll.center().x, coll.bottom()});
+                //     collOutline.setOrigin({collOutline.getSize().x / 2.f, collOutline.getSize().y});
+                //     collOutline.setPosition({coll.center().x, coll.bottom()});
     
-                    collOutline.setFillColor(sf::Color::Transparent);
-                    collOutline.setOutlineColor(sf::Color::Blue);
-                    collOutline.setOutlineThickness(3.f);
+                //     collOutline.setFillColor(sf::Color::Transparent);
+                //     collOutline.setOutlineColor(sf::Color::Blue);
+                //     collOutline.setOutlineThickness(3.f);
     
-                    game->getWindow()->draw(collOutline);
-                }
+                //     game->getWindow()->draw(collOutline);
+                // }
             }
         }
     }

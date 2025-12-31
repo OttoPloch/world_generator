@@ -4,13 +4,15 @@
 
 EventHandler::EventHandler() {}
 
-void EventHandler::init(Window* window, Camera* camera, Game* game)
+void EventHandler::init(Window* window, Camera* camera, Game* game, Scene* scene)
 {
     this->window = window;
 
     this->camera = camera;
 
     this->game = game;
+
+    this->scene = scene;
 }
 
 void EventHandler::processEvents()
@@ -24,6 +26,7 @@ void EventHandler::processEvents()
         else if (event->is<sf::Event::Resized>())
         {
             camera->setBaseSize(toV2F(window->getSize()));
+            scene->getUILayer()->resetView();
         }
         else if (const auto key = event->getIf<sf::Event::KeyPressed>())
         {

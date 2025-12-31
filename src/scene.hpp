@@ -6,6 +6,7 @@
 #include "asset_manager.hpp"
 #include "collision_attribute.hpp"
 #include "entity_layer.hpp"
+#include "ui_layer.hpp"
 
 #include <vector>
 
@@ -31,6 +32,8 @@ public:
     void toggleFocus();
 
     int getNewID();
+
+    UILayer* getUILayer();
 private:
     Window* window;
     
@@ -39,6 +42,8 @@ private:
     int IDCounter;
     
     EntityLayer entityLayer;
+
+    UILayer uiLayer;
 
     Camera camera;
 

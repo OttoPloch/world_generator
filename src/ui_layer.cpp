@@ -1,8 +1,78 @@
 #include "ui_layer.hpp"
+#include "game.hpp"
 
 UILayer::UILayer() {}
 
-void UILayer::init()
+void UILayer::init(Game* game, Camera* camera)
 {
-    
+    this->game = game;
+
+    this->camera = camera;
+
+    resetView();
+
+    elements.push_back(UIElement(this, 0, {50, 50}, {500, 300}, sf::Color(15, 15, 15, 220)));
+    elements.push_back(UIElement(this, 0, {25, 25}, {360, 125}, sf::Color(30, 30, 30, 220), 0));
+    elements.push_back(UIElement(this, 0, {5, 5}, {350, 25}, sf::Color(225, 0, 0), 1));
+    elements.push_back(UIElement(this, 0, {5, 35}, {350, 25}, sf::Color(225, 0, 0), 1));
+    elements.push_back(UIElement(this, 0, {5, 65}, {350, 25}, sf::Color(225, 0, 0), 1));
+    elements.push_back(UIElement(this, 0, {5, 95}, {350, 25}, sf::Color(225, 0, 0), 1));
+    elements.push_back(UIElement(this, 0, {25, 175}, {350, 25}, sf::Color(225, 0, 0), 0));
+
+    if (elements.size() > 0)
+    {
+        for (int i = 0; i < elements.size(); i++)
+        {
+            UIElement* currElement = &elements[i];
+
+            sf::Vertex tlVert;
+            tlVert.position = {currElement->left(), currElement->top()};
+            tlVert.color = currElement->getColor();
+            sf::Vertex trVert;
+            trVert.position = {currElement->right(), currElement->top()};
+            trVert.color = currElement->getColor();
+            sf::Vertex blVert;
+            blVert.position = {currElement->left(), currElement->bottom()};
+            blVert.color = currElement->getColor();
+            sf::Vertex brVert;
+            brVert.position = {currElement->right(), currElement->bottom()};
+            brVert.color = currElement->getColor();
+
+            bgVertices.push_back(tlVert);
+            bgVertices.push_back(trVert);
+            bgVertices.push_back(blVert);
+            bgVertices.push_back(trVert);
+            bgVertices.push_back(brVert);
+            bgVertices.push_back(blVert);
+        }
+    }
+}
+
+UIElement* UILayer::getElement(int index)
+{
+    if (index > -1)
+    {
+        return &elements[index];
+    }
+
+    return nullptr;
+}
+
+sf::Vector2u UILayer::getScreenSize()
+{
+    return game->getWindow()->getSize();
+}
+
+void UILayer::resetView()
+{
+    sf::Vector2f viewSize = toV2F(game->getWindow()->getSize());
+
+    UIView = sf::View({viewSize.x / 2.f, viewSize.y / 2.f}, viewSize);
+}
+
+void UILayer::draw()
+{
+    game->getWindow()->setView(UIView);
+
+    game->getWindow()->getWindow().draw(&bgVertices[0], bgVertices.size(), sf::PrimitiveType::Triangles);
 }

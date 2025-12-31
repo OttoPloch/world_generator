@@ -65,6 +65,8 @@ void Scene::init(Game* game)
     entityLayer.giveEntityMotion(10, 1.f);
     entityLayer.giveEntityCollision(10, "crate", MOVABLE);
 
+    uiLayer.init(game, &camera);
+
     camera.init(game, true, {0, 0}, toV2F(window->getSize()), entityLayer.getEntity(1));
 
     rect.setSize({100.f, 100.f});
@@ -100,6 +102,8 @@ void Scene::draw()
     window->draw(outline);
 
     entityLayer.draw();
+
+    uiLayer.draw();
 }
 
 void Scene::sceneInput(sf::Keyboard::Key key)
@@ -139,3 +143,5 @@ int Scene::getNewID()
 
     return IDCounter - 1;
 }
+
+UILayer* Scene::getUILayer() { return &uiLayer; }
