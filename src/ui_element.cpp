@@ -3,12 +3,12 @@
 
 UIElement::UIElement() {}
 
-UIElement::UIElement(UILayer* uiLayer, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, sf::Color color, int parentIndex)
+UIElement::UIElement(UILayer* uiLayer, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentIndex)
 {
-    init(uiLayer, posSet, position, size, color, parentIndex);
+    init(uiLayer, posSet, position, size, parentIndex);
 }
 
-void UIElement::init(UILayer* uiLayer, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, sf::Color color, int parentIndex)
+void UIElement::init(UILayer* uiLayer, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentIndex)
 {
     this->uiLayer = uiLayer;
 
@@ -17,8 +17,6 @@ void UIElement::init(UILayer* uiLayer, unsigned int posSet, sf::Vector2f positio
     this->position = position;
 
     this->size = size;
-
-    this->color = color;
 
     this->parentIndex = parentIndex;
 }
@@ -149,5 +147,3 @@ float UIElement::bottom()
 sf::Vector2f UIElement::getSize() { return size; }
 
 UIElement* UIElement::getParent() { return uiLayer->getElement(parentIndex); }
-
-sf::Color UIElement::getColor() { return color; }

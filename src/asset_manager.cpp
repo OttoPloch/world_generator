@@ -77,6 +77,8 @@ Animation* AssetManager::getAnimation(std::string name)
         if (!std::filesystem::exists("../../assets/animations/" + name + ".anim"))
         {
             std::cout << "error loading " << name << ".anim\n";
+
+            return nullptr;
         }
         else
         {
@@ -170,6 +172,8 @@ AnimationSet* AssetManager::getAnimSet(std::string name)
         if (!std::filesystem::exists("../../assets/animations/sets/" + name + ".animset"))
         {
             std::cout << "error loading " << name << ".animset\n";
+
+            return nullptr;
         }
         else
         {
@@ -200,5 +204,66 @@ AnimationSet* AssetManager::getAnimSet(std::string name)
         animSetMap[name] = newSet;
 
         return &animSetMap[name];
+    }
+}
+
+TileSet* AssetManager::getTileSet(std::string name)
+{
+    auto entry = tileSetMap.find(name);
+
+    if (entry != tileSetMap.end())
+    {
+        return &entry->second;        
+    }
+    else
+    {
+        TileSet newSet;
+
+        if (!std::filesystem::exists("../../assets/tilesets/" + name + ".tileset"))
+        {
+            std::cout << "error loading " << name << ".tileset\n";
+
+            return nullptr;
+        }
+        else
+        {
+            // load tile set
+            std::ifstream setFile("../../assets/tilesets/" + name + ".tileset");
+
+            std::unordered_map<std::string, sf::Vector2f> texCoords;
+
+            sf::Texture* texture;
+            
+            std::string texName;
+            std::string texPath;
+
+            std::vector<std::string> locations;
+            std::vector<float> xCoords;
+            std::vector<float> yCoords;
+
+            std::string line;
+
+            while (std::getline(setFile, line))
+            {
+                if (line.substr(0, 7) == "texture") texName = line.substr(8);
+                if (line.substr(0, 4) == "path") texPath = line.substr(5);
+                if (line.substr(0, 8) == "location") locations.push_back(line.substr(9));
+                if (line.substr(0, 6) == "xCoord") xCoords.push_back(std::stof(line.substr(7)));
+                if (line.substr(0, 6) == "yCoord") yCoords.push_back(std::stof(line.substr(7)));
+            }
+
+            texture = getTexture(texName, texPath, true);
+
+            for (int i = 0; i < locations.size(); i++)
+            {
+                texCoords[locations[i]] = {xCoords[i], yCoords[i]};
+            }
+
+            newSet.init(name, texture, texCoords);
+        }
+
+        tileSetMap[name] = newSet;
+
+        return &tileSetMap[name];
     }
 }

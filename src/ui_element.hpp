@@ -10,10 +10,10 @@ public:
     UIElement();
 
     // posSet determines if the given position is the top left, top right, bottom left, bottom right or center of the element
-    UIElement(UILayer* uiLayer, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, sf::Color color, int parentIndex = -1);
+    UIElement(UILayer* uiLayer, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentIndex = -1);
 
     // posSet determines if the given position is the top left, top right, bottom left, bottom right or center of the element
-    void init(UILayer* uiLayer, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, sf::Color color, int parentIndex = -1);
+    void init(UILayer* uiLayer, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentIndex = -1);
 
     // returns the center of this element on the
     // parent element, if this element has one.
@@ -32,9 +32,7 @@ public:
     float bottom();
 
     sf::Vector2f getSize();
-
-    sf::Color getColor();
-private:
+protected:
     UIElement* getParent();
 
     UILayer* uiLayer;
@@ -44,8 +42,6 @@ private:
     sf::Vector2f position;
 
     sf::Vector2f size;
-
-    sf::Color color;
 
     int parentIndex;
 };

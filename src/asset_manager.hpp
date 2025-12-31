@@ -3,6 +3,7 @@
 #include "common.hpp"
 #include "animation.hpp"
 #include "animation_set.hpp"
+#include "tile_set.hpp"
 
 #include <map>
 #include <vector>
@@ -19,10 +20,14 @@ public:
     Animation* getAnimation(std::string name);
 
     AnimationSet* getAnimSet(std::string name);
+
+    TileSet* getTileSet(std::string name);
 private:
     std::unordered_map<std::string, sf::Texture> textureMap;
 
     std::unordered_map<std::string, Animation> animationMap;
 
     std::unordered_map<std::string, AnimationSet> animSetMap;
+
+    std::unordered_map<std::string, TileSet> tileSetMap;
 };

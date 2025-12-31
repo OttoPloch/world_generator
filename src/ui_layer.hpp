@@ -1,8 +1,10 @@
 #pragma once
 
 #include "common.hpp"
-#include "ui_element.hpp"
 #include "camera.hpp"
+#include "asset_manager.hpp"
+#include "ui_element.hpp"
+#include "ui_background.hpp"
 
 #include <vector>
 
@@ -25,11 +27,13 @@ public:
 private:
     Game* game;
 
+    AssetManager* assetManager;
+
     Camera* camera;
 
     sf::View UIView;
 
-    std::vector<UIElement> elements;
+    std::vector<UIBackground> bgElements;
 
     std::vector<sf::Vertex> bgVertices;
 };
