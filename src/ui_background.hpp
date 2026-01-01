@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ui_element.hpp"
-#include "ui_border.hpp"
 #include "tile_set.hpp"
 
 #include <vector>
@@ -19,15 +18,19 @@ public:
 
     void createBorderVertices();
 
-    void draw();
+    void draw() override;
 
     sf::Color getColor();
+
+    void resize(sf::Vector2f newSize, int posSet = -1) override;
 private:
     Game* game;
 
     sf::Color color;
 
     TileSet* tileSet;
+
+    sf::RectangleShape background;
 
     std::vector<sf::Vertex> borderVertices;
 

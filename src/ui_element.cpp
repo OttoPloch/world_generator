@@ -77,25 +77,6 @@ float UIElement::left()
 float UIElement::right()
 {
     return left() + size.x;
-
-    // float right;
-
-    // switch(posSet)
-    // {
-    //     case 0:
-    //     case 2:
-    //         (getParent()) ? right = getParent()->left() + position.x + size.x : right = position.x + size.x;
-    //         break;
-    //     case 1:
-    //     case 3:
-    //         (getParent()) ? right = getParent()->right() + position.x - size.x : right = position.x;
-    //         break;
-    //     default:
-    //         right = getScreenPosition().x + size.x / 2.f;
-    //         break;
-    // }
-
-    // return right;
 }
 
 float UIElement::top()
@@ -123,27 +104,17 @@ float UIElement::top()
 float UIElement::bottom()
 {
     return top() + size.y;
-
-    // float bottom;
-
-    // switch(posSet)
-    // {
-    //     case 0:
-    //     case 1:
-    //         (getParent()) ? bottom = getParent()->top() + position.y + size.y : bottom = position.y + size.y;
-    //         break;
-    //     case 2:
-    //     case 3:
-    //         (getParent()) ? bottom = getParent()->bottom() + position.y : bottom = position.y;
-    //         break;
-    //     default:
-    //         bottom = getScreenPosition().y + size.y / 2.f;
-    //         break;
-    // }
-
-    // return bottom;
 }
 
 sf::Vector2f UIElement::getSize() { return size; }
 
 UIElement* UIElement::getParent() { return uiLayer->getElement(parentIndex); }
+
+void UIElement::resize(sf::Vector2f newSize, int posSet)
+{
+    size = newSize;
+
+    if (posSet != -1) this->posSet = posSet;
+}
+
+void UIElement::draw() {}

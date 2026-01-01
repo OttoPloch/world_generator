@@ -34,6 +34,4 @@ private:
     sf::View UIView;
 
     std::vector<UIBackground> bgElements;
-
-    std::vector<sf::Vertex> bgVertices;
 };

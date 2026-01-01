@@ -18,13 +18,38 @@ void UIBackground::init(Game* game, sf::Color color, TileSet* tileSet)
 
     borderStates.texture = tileSet->getTexture();
     
+    background.setFillColor(color);
+    background.setPosition(position);
+    background.setSize(size);
+
+    switch(posSet)
+    {
+        case 0:
+            background.setOrigin({0, 0});
+            break;
+        case 1:
+            background.setOrigin({background.getSize().x, 0});
+            break;
+        case 2:
+            background.setOrigin({0, background.getSize().y});
+            break;
+        case 3:
+            background.setOrigin(background.getSize());
+            break;
+        default:
+            background.setOrigin({background.getSize().x / 2.f, background.getSize().y / 2.f});
+            break;
+    }
+
     createBorderVertices();
 }
 
 void UIBackground::createBorderVertices()
 {
-    float BORDERSIZE = 90.f;
+    float BORDERSIZE = 50.f;
     float HALFBORDERSIZE = BORDERSIZE / 2.f;
+
+    borderVertices.clear();
 
     sf::Vertex tltl;
     tltl.position = {left() - HALFBORDERSIZE, top() - HALFBORDERSIZE};
@@ -45,6 +70,25 @@ void UIBackground::createBorderVertices()
     borderVertices.push_back(tlbr);
     borderVertices.push_back(tltr);
 
+    sf::Vertex ttl;
+    ttl.position = {left() + HALFBORDERSIZE, top() - HALFBORDERSIZE};
+    ttl.texCoords = {tileSet->getCoordsFor("t").x, tileSet->getCoordsFor("t").y};
+    sf::Vertex ttr;
+    ttr.position = {right() - HALFBORDERSIZE, top() - HALFBORDERSIZE};
+    ttr.texCoords = {tileSet->getCoordsFor("t").x + 16.f, tileSet->getCoordsFor("t").y};
+    sf::Vertex tbl;
+    tbl.position = {left() + HALFBORDERSIZE, top() + HALFBORDERSIZE};
+    tbl.texCoords = {tileSet->getCoordsFor("t").x, tileSet->getCoordsFor("t").y + 16.f};
+    sf::Vertex tbr;
+    tbr.position = {right() - HALFBORDERSIZE, top() + HALFBORDERSIZE};
+    tbr.texCoords = {tileSet->getCoordsFor("t").x + 16.f, tileSet->getCoordsFor("t").y + 16.f};
+    borderVertices.push_back(ttl);
+    borderVertices.push_back(ttr);
+    borderVertices.push_back(tbl);
+    borderVertices.push_back(tbl);
+    borderVertices.push_back(tbr);
+    borderVertices.push_back(ttr);
+
     sf::Vertex trtl;
     trtl.position = {right() - HALFBORDERSIZE, top() - HALFBORDERSIZE};
     trtl.texCoords = {tileSet->getCoordsFor("tr").x, tileSet->getCoordsFor("tr").y};
@@ -63,6 +107,44 @@ void UIBackground::createBorderVertices()
     borderVertices.push_back(trbl);
     borderVertices.push_back(trbr);
     borderVertices.push_back(trtr);
+
+    sf::Vertex ltl;
+    ltl.position = {left() - HALFBORDERSIZE, top() + HALFBORDERSIZE};
+    ltl.texCoords = {tileSet->getCoordsFor("l").x, tileSet->getCoordsFor("l").y};
+    sf::Vertex ltr;
+    ltr.position = {left() + HALFBORDERSIZE, top() + HALFBORDERSIZE};
+    ltr.texCoords = {tileSet->getCoordsFor("l").x + 16.f, tileSet->getCoordsFor("l").y};
+    sf::Vertex lbl;
+    lbl.position = {left() - HALFBORDERSIZE, bottom() - HALFBORDERSIZE};
+    lbl.texCoords = {tileSet->getCoordsFor("l").x, tileSet->getCoordsFor("l").y + 16.f};
+    sf::Vertex lbr;
+    lbr.position = {left() + HALFBORDERSIZE, bottom() - HALFBORDERSIZE};
+    lbr.texCoords = {tileSet->getCoordsFor("l").x + 16.f, tileSet->getCoordsFor("l").y + 16.f};
+    borderVertices.push_back(ltl);
+    borderVertices.push_back(ltr);
+    borderVertices.push_back(lbl);
+    borderVertices.push_back(lbl);
+    borderVertices.push_back(lbr);
+    borderVertices.push_back(ltr);
+
+    sf::Vertex rtl;
+    rtl.position = {right() - HALFBORDERSIZE, top() + HALFBORDERSIZE};
+    rtl.texCoords = {tileSet->getCoordsFor("r").x, tileSet->getCoordsFor("r").y};
+    sf::Vertex rtr;
+    rtr.position = {right() + HALFBORDERSIZE, top() + HALFBORDERSIZE};
+    rtr.texCoords = {tileSet->getCoordsFor("r").x + 16.f, tileSet->getCoordsFor("r").y};
+    sf::Vertex rbl;
+    rbl.position = {right() - HALFBORDERSIZE, bottom() - HALFBORDERSIZE};
+    rbl.texCoords = {tileSet->getCoordsFor("r").x, tileSet->getCoordsFor("r").y + 16.f};
+    sf::Vertex rbr;
+    rbr.position = {right() + HALFBORDERSIZE, bottom() - HALFBORDERSIZE};
+    rbr.texCoords = {tileSet->getCoordsFor("r").x + 16.f, tileSet->getCoordsFor("r").y + 16.f};
+    borderVertices.push_back(rtl);
+    borderVertices.push_back(rtr);
+    borderVertices.push_back(rbl);
+    borderVertices.push_back(rbl);
+    borderVertices.push_back(rbr);
+    borderVertices.push_back(rtr);
     
     sf::Vertex bltl;
     bltl.position = {left() - HALFBORDERSIZE, bottom() - HALFBORDERSIZE};
@@ -83,6 +165,25 @@ void UIBackground::createBorderVertices()
     borderVertices.push_back(blbr);
     borderVertices.push_back(bltr);
 
+    sf::Vertex btl;
+    btl.position = {left() + HALFBORDERSIZE, bottom() - HALFBORDERSIZE};
+    btl.texCoords = {tileSet->getCoordsFor("b").x, tileSet->getCoordsFor("b").y};
+    sf::Vertex btr;
+    btr.position = {right() - HALFBORDERSIZE, bottom() - HALFBORDERSIZE};
+    btr.texCoords = {tileSet->getCoordsFor("b").x + 16.f, tileSet->getCoordsFor("b").y};
+    sf::Vertex bbl;
+    bbl.position = {left() + HALFBORDERSIZE, bottom() + HALFBORDERSIZE};
+    bbl.texCoords = {tileSet->getCoordsFor("b").x, tileSet->getCoordsFor("b").y + 16.f};
+    sf::Vertex bbr;
+    bbr.position = {right() - HALFBORDERSIZE, bottom() + HALFBORDERSIZE};
+    bbr.texCoords = {tileSet->getCoordsFor("b").x + 16.f, tileSet->getCoordsFor("b").y + 16.f};
+    borderVertices.push_back(btl);
+    borderVertices.push_back(btr);
+    borderVertices.push_back(bbl);
+    borderVertices.push_back(bbl);
+    borderVertices.push_back(bbr);
+    borderVertices.push_back(btr);
+
     sf::Vertex brtl;
     brtl.position = {right() - HALFBORDERSIZE, bottom() - HALFBORDERSIZE};
     brtl.texCoords = {tileSet->getCoordsFor("br").x, tileSet->getCoordsFor("br").y};
@@ -101,75 +202,53 @@ void UIBackground::createBorderVertices()
     borderVertices.push_back(brbl);
     borderVertices.push_back(brbr);
     borderVertices.push_back(brtr);
-
-    std::vector<std::pair<std::string, sf::Vector2f>> edges;
-
-    int xMin = 1;
-    int xMax = toInt(size.x / BORDERSIZE);
-
-    int yMin = 1;
-    int yMax = toInt(size.y / BORDERSIZE);
-
-    for (int x = xMin; x <= xMax; x++)
-    {
-        edges.push_back({
-                "t", {
-                    left() + toFloat(x) * BORDERSIZE,
-                    top()
-                }});   
-
-        edges.push_back({
-                "b", {
-                    right() - toFloat(x) * BORDERSIZE,
-                    bottom()
-                }});
-    }
-
-    for (int y = yMin; y <= yMax; y++)
-    {
-        edges.push_back({
-                "l", {
-                    left(),
-                    bottom() - toFloat(y) * BORDERSIZE
-                }});
-
-        edges.push_back({
-                "r", {
-                    right(),
-                    top() + toFloat(y) * BORDERSIZE
-                }});
-    }
-
-    for (int i = 0; i < edges.size(); i++)
-    {
-        sf::Vector2f coords = edges[i].second;
-        sf::Vector2f texCoords = tileSet->getCoordsFor(edges[i].first);
-
-        sf::Vertex tl;
-        tl.position = {coords.x - HALFBORDERSIZE, coords.y - HALFBORDERSIZE};
-        tl.texCoords = {texCoords.x, texCoords.y};
-        sf::Vertex tr;
-        tr.position = {coords.x + HALFBORDERSIZE, coords.y - HALFBORDERSIZE};
-        tr.texCoords = {texCoords.x + 16.f, texCoords.y};
-        sf::Vertex bl;
-        bl.position = {coords.x - HALFBORDERSIZE, coords.y + HALFBORDERSIZE};
-        bl.texCoords = {texCoords.x, texCoords.y + 16.f};
-        sf::Vertex br;
-        br.position = {coords.x + HALFBORDERSIZE, coords.y + HALFBORDERSIZE};
-        br.texCoords = {texCoords.x + 16.f, texCoords.y + 16.f};
-        
-        borderVertices.push_back(tl);
-        borderVertices.push_back(tr);
-        borderVertices.push_back(bl);
-        borderVertices.push_back(bl);
-        borderVertices.push_back(br);
-        borderVertices.push_back(tr);
-    }
 }
 
 void UIBackground::draw()
 {
+    game->getWindow()->draw(background);
+
     game->getWindow()->getWindow().draw(&borderVertices[0], borderVertices.size(), sf::PrimitiveType::Triangles, borderStates);
 }
 
 sf::Color UIBackground::getColor() { return color; }
+
+void UIBackground::resize(sf::Vector2f newSize, int posSet)
+{
+    sf::Vector2f tl = {left(), top()};
+    sf::Vector2f tr = {right(), top()};
+    sf::Vector2f bl = {left(), bottom()};
+    sf::Vector2f br = {right(), bottom()};
+
+    background.setSize(newSize);
+
+    if (posSet != -1) this->posSet = posSet;
+
+    switch(this->posSet)
+    {
+        case 0:
+            position = tl;
+            background.setOrigin({0, 0});
+            break;
+        case 1:
+            position = tr;
+            background.setOrigin({background.getSize().x, 0});
+            break;
+        case 2:
+            position = bl;
+            background.setOrigin({0, background.getSize().y});
+            break;
+        case 3:
+            position = br;
+            background.setOrigin(background.getSize());
+            break;
+        default:
+            position = {tl.x + (size.x / 2.f), tl.y + (size.y / 2.f)};
+            background.setOrigin({background.getSize().x / 2.f, background.getSize().y / 2.f});
+            break;
+    }
+
+    size = newSize;
+
+    createBorderVertices();
+}

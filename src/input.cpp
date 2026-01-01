@@ -51,6 +51,28 @@ bool getKey(std::string key)
     return false;
 }
 
+bool getButton(std::string key)
+{
+    if (sf::Joystick::isConnected(0))
+    {
+        if (key == "A" && sf::Joystick::isButtonPressed(0, 0)) return true;
+        if (key == "B" && sf::Joystick::isButtonPressed(0, 1)) return true;
+        if (key == "X" && sf::Joystick::isButtonPressed(0, 2)) return true;
+        if (key == "Y" && sf::Joystick::isButtonPressed(0, 3)) return true;
+    }
+
+    return false;
+}
+
+bool getControl(std::string key)
+{
+    if (key == "SPRINT" && (getKey("SHIFT") || getButton("A"))) return true;
+    if (key == "INTERACT" && (getKey("E") || getButton("X"))) return true;
+    if (key == "BACK" && (getKey("TAB") || getButton("B"))) return true;
+
+    return false;
+}
+
 sf::Vector2f getMovement()
 {
     sf::Vector2i movement = {0, 0};
@@ -59,10 +81,21 @@ sf::Vector2f getMovement()
     if (getKey("A")) movement.x -= 1;
     if (getKey("S")) movement.y += 1;
     if (getKey("D")) movement.x += 1;
+    
+    if (movement == sf::Vector2i(0, 0) && sf::Joystick::isConnected(0))
+    {
+        sf::Vector2f joystickMovement;
+
+        // TODO: fix the joystick input so that the two values add up to 1, not over.
+        joystickMovement.x = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X) / 100.f;
+        joystickMovement.y = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Y) / 100.f;
+
+        return joystickMovement;
+    }
 
     if (movement.x != 0 && movement.y != 0)
     {
-        return {(toFloat(sqrt(2.f)) / 2.f) * toFloat(movement.x), (toFloat(sqrt(2.f)) / 2.f) * toFloat(movement.y)};
+        return {toFloat(movement.x) / toFloat(sqrt(2.f)), toFloat(movement.y) / toFloat(sqrt(2.f))};
     }
     else
     {

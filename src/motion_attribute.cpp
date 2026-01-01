@@ -31,7 +31,7 @@ void MotionAttribute::tick()
         float baseSpeed = gamerules->getRule("moveSpeed", "player").valueFloat;
         float speed = baseSpeed;
 
-        if (getKey("SHIFT")) speed *= 2.f;
+        if (getControl("SPRINT")) speed *= 2.f;
 
         if (movement.x != 0)
         {

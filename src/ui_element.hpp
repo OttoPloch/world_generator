@@ -31,6 +31,10 @@ public:
 
     float bottom();
 
+    virtual void resize(sf::Vector2f newSize, int posSet);
+
+    virtual void draw();
+
     sf::Vector2f getSize();
 protected:
     UIElement* getParent();

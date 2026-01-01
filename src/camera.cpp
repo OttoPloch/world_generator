@@ -72,14 +72,10 @@ void Camera::update(float dt)
 
         // note: the follow delay is divided by 100 to make the gamerule
         // more readable, not sure if this is a bad practice or not.
-        float followDelay = gamerules->getRule("camera_focusFollowDelay").valueFloat / 100;
+        float followDelay = gamerules->getRule("camera_focusFollowDelay").valueFloat;
 
-        float delay = followDelay / dt;
-
-        if (delay < 1.f) delay = 1.f;
-
-        velocity.x = (targetPosition.x - center.x) / delay;
-        velocity.y = (targetPosition.y - center.y) / delay;
+        velocity.x = (targetPosition.x - center.x) / followDelay;
+        velocity.y = (targetPosition.y - center.y) / followDelay;
     }
     else
     {
