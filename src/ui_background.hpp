@@ -18,9 +18,9 @@ public:
 
     void createBorderVertices();
 
-    void draw() override;
-
     sf::Color getColor();
+    
+    void draw() override;
 
     void resize(sf::Vector2f newSize, int posSet = -1) override;
 private:

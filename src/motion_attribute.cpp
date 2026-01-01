@@ -46,7 +46,7 @@ void MotionAttribute::tick()
 
         if (abs(velocity.y) <= abs(velocity.x))
         {
-            if (getKey("SHIFT"))
+            if (getControl("SPRINT"))
             {
                 if (velocity.x < 0) states->set("animation", ANIM_RUNNINGLEFT, (baseSpeed / speed));
                 if (velocity.x > 0) states->set("animation", ANIM_RUNNINGRIGHT, .8f);
@@ -69,7 +69,7 @@ void MotionAttribute::tick()
             (abs(velocity.y) > velocityCutoff) ? velocity.y *= friction : velocity.y = 0.f;
         }
 
-        if (getKey("SHIFT"))
+        if (getControl("SPRINT"))
         {
             if (velocity.y < 0) states->set("animation", ANIM_RUNNINGUP, (baseSpeed / speed));
             if (velocity.y > 0) states->set("animation", ANIM_RUNNINGDOWN, (baseSpeed / speed));

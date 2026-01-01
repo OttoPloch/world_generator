@@ -19,34 +19,16 @@ void UIBackground::init(Game* game, sf::Color color, TileSet* tileSet)
     borderStates.texture = tileSet->getTexture();
     
     background.setFillColor(color);
-    background.setPosition(position);
-    background.setSize(size);
 
-    switch(posSet)
-    {
-        case 0:
-            background.setOrigin({0, 0});
-            break;
-        case 1:
-            background.setOrigin({background.getSize().x, 0});
-            break;
-        case 2:
-            background.setOrigin({0, background.getSize().y});
-            break;
-        case 3:
-            background.setOrigin(background.getSize());
-            break;
-        default:
-            background.setOrigin({background.getSize().x / 2.f, background.getSize().y / 2.f});
-            break;
-    }
+    background.setPosition({left(), top()});
+    background.setSize(size);
 
     createBorderVertices();
 }
 
 void UIBackground::createBorderVertices()
 {
-    float BORDERSIZE = 50.f;
+    float BORDERSIZE = 90.f;
     float HALFBORDERSIZE = BORDERSIZE / 2.f;
 
     borderVertices.clear();
@@ -204,6 +186,8 @@ void UIBackground::createBorderVertices()
     borderVertices.push_back(brtr);
 }
 
+sf::Color UIBackground::getColor() { return color; }
+
 void UIBackground::draw()
 {
     game->getWindow()->draw(background);
@@ -211,43 +195,13 @@ void UIBackground::draw()
     game->getWindow()->getWindow().draw(&borderVertices[0], borderVertices.size(), sf::PrimitiveType::Triangles, borderStates);
 }
 
-sf::Color UIBackground::getColor() { return color; }
-
 void UIBackground::resize(sf::Vector2f newSize, int posSet)
 {
-    sf::Vector2f tl = {left(), top()};
-    sf::Vector2f tr = {right(), top()};
-    sf::Vector2f bl = {left(), bottom()};
-    sf::Vector2f br = {right(), bottom()};
-
-    background.setSize(newSize);
-
     if (posSet != -1) this->posSet = posSet;
 
-    switch(this->posSet)
-    {
-        case 0:
-            position = tl;
-            background.setOrigin({0, 0});
-            break;
-        case 1:
-            position = tr;
-            background.setOrigin({background.getSize().x, 0});
-            break;
-        case 2:
-            position = bl;
-            background.setOrigin({0, background.getSize().y});
-            break;
-        case 3:
-            position = br;
-            background.setOrigin(background.getSize());
-            break;
-        default:
-            position = {tl.x + (size.x / 2.f), tl.y + (size.y / 2.f)};
-            background.setOrigin({background.getSize().x / 2.f, background.getSize().y / 2.f});
-            break;
-    }
-
+    background.setPosition({left(), top()});
+    background.setSize(newSize);
+    
     size = newSize;
 
     createBorderVertices();

@@ -68,7 +68,7 @@ bool getControl(std::string key)
 {
     if (key == "SPRINT" && (getKey("SHIFT") || getButton("A"))) return true;
     if (key == "INTERACT" && (getKey("E") || getButton("X"))) return true;
-    if (key == "BACK" && (getKey("TAB") || getButton("B"))) return true;
+    if (key == "BACK" && (getKey("Q") || getButton("B"))) return true;
 
     return false;
 }
