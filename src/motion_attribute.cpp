@@ -4,6 +4,8 @@
 
 MotionAttribute::MotionAttribute(Game* game, Entity* myEntity, GamePosition position, float mass, bool controlling) : Attribute("motion"), velocity({0.f, 0.f}), rotationalVelocity(0.f)
 {
+    this->game = game;
+
     this->gamerules = game->getGamerules();
 
     states = myEntity->getStates();
@@ -24,14 +26,14 @@ void MotionAttribute::tick()
 
     if (controlling)
     {
-        sf::Vector2f movement = getMovement();
+        sf::Vector2f movement = game->getInput()->getMovement();
 
         // TODO: replace "player" here and further down with
         // a variable representing the entity's name or type
         float baseSpeed = gamerules->getRule("moveSpeed", "player").valueFloat;
         float speed = baseSpeed;
 
-        if (getControl("SPRINT")) speed *= 2.f;
+        if (game->getInput()->getControl("SPRINT")) speed *= 2.f;
 
         if (movement.x != 0)
         {
@@ -46,7 +48,7 @@ void MotionAttribute::tick()
 
         if (abs(velocity.y) <= abs(velocity.x))
         {
-            if (getControl("SPRINT"))
+            if (game->getInput()->getControl("SPRINT"))
             {
                 if (velocity.x < 0) states->set("animation", ANIM_RUNNINGLEFT, (baseSpeed / speed));
                 if (velocity.x > 0) states->set("animation", ANIM_RUNNINGRIGHT, .8f);
@@ -69,7 +71,7 @@ void MotionAttribute::tick()
             (abs(velocity.y) > velocityCutoff) ? velocity.y *= friction : velocity.y = 0.f;
         }
 
-        if (getControl("SPRINT"))
+        if (game->getInput()->getControl("SPRINT"))
         {
             if (velocity.y < 0) states->set("animation", ANIM_RUNNINGUP, (baseSpeed / speed));
             if (velocity.y > 0) states->set("animation", ANIM_RUNNINGDOWN, (baseSpeed / speed));

@@ -1,79 +1,201 @@
 #include "input.hpp"
+#include "game.hpp"
 
-bool getKey(sf::Keyboard::Key key)
+Input::Input() {}
+
+void Input::init(Game* game)
 {
-    if (sf::Keyboard::isKeyPressed(key))
+    this->game = game;
+
+    keys = {
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K",
+        "L",
+        "M",
+        "N",
+        "O",
+        "P",
+        "Q",
+        "R",
+        "S",
+        "T",
+        "U",
+        "V",
+        "W",
+        "X",
+        "Y",
+        "Z",
+        "NUM0",
+        "NUM1",
+        "NUM2",
+        "NUM3",
+        "NUM4",
+        "NUM5",
+        "NUM6",
+        "NUM7",
+        "NUM8",
+        "NUM9",
+        "ESCAPE",
+        "LCONTROL",
+        "LSHIFT",
+        "LALT",
+        "LSYSTEM",
+        "RCONTROL",
+        "RSHIFT",
+        "RALT",
+        "RSYSTEM",
+        "MENU",
+        "LBRACKET",
+        "RBRACKET",
+        "SEMICOLON",
+        "COMMA",
+        "PERIOD",
+        "APOSTROPHE",
+        "SLASH",
+        "BACKSLASH",
+        "GRAVE",
+        "EQUAL",
+        "HYPHEN",
+        "SPACE",
+        "ENTER",
+        "BACKSPACE",
+        "TAB",
+        "PAGEUP",
+        "PAGEDOWN",
+        "END",
+        "HOME",
+        "INSERT",
+        "DELETE",
+        "ADD",
+        "SUBTRACT",
+        "MULTIPLY",
+        "DIVIDE",
+        "LEFT",
+        "RIGHT",
+        "UP",
+        "DOWN",
+        "NUMPAD0",
+        "NUMPAD1",
+        "NUMPAD2",
+        "NUMPAD3",
+        "NUMPAD4",
+        "NUMPAD5",
+        "NUMPAD6",
+        "NUMPAD7",
+        "NUMPAD8",
+        "NUMPAD9",
+        "F1",
+        "F2",
+        "F3",
+        "F4",
+        "F5",
+        "F6",
+        "F7",
+        "F8",
+        "F9",
+        "F10",
+        "F11",
+        "F12",
+        "F13",
+        "F14",
+        "F15",
+        "PAUSE"
+    };
+
+    for (int i = 0; i < keys.size(); i++)
     {
-        return true;
+        stringToKey[keys[i]] = i;
+
+        keyToString[i] = keys[i];
     }
 
-    return false;
-}
-    
-bool getKey(std::string key)
-{
-    if (key == "A" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) return true;
-    if (key == "B" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::B)) return true;
-    if (key == "C" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::C)) return true;
-    if (key == "D" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) return true;
-    if (key == "E" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::E)) return true;
-    if (key == "F" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F)) return true;
-    if (key == "G" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::G)) return true;
-    if (key == "H" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::H)) return true;
-    if (key == "I" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::I)) return true;
-    if (key == "J" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::J)) return true;
-    if (key == "K" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::K)) return true;
-    if (key == "L" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::L)) return true;
-    if (key == "M" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::M)) return true;
-    if (key == "N" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::N)) return true;
-    if (key == "O" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::O)) return true;
-    if (key == "P" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::P)) return true;
-    if (key == "Q" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) return true;
-    if (key == "R" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)) return true;
-    if (key == "S" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) return true;
-    if (key == "T" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::T)) return true;
-    if (key == "U" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::U)) return true;
-    if (key == "V" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::V)) return true;
-    if (key == "W" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) return true;
-    if (key == "X" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::X)) return true;
-    if (key == "Y" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Y)) return true;
-    if (key == "Z" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Z)) return true;
-    if (key == "LEFT" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) return true;
-    if (key == "RIGHT" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) return true;
-    if (key == "UP" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) return true;
-    if (key == "DOWN" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down)) return true;
-    if (key == "ESCAPE" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape)) return true;
-    if (key == "TAB" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Tab)) return true;
-    if (key == "SHIFT" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) return true;
-    if (key == "CONTROL" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl)) return true;
-    if (key == "ENTER" && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) return true;
+    buttons = {
+        "A",
+        "B",
+        "X",
+        "Y",
+        "LBUMPER",
+        "RBUMPER",
+        "SELECT",
+        "START",
+        "?",
+        "LSTICK",
+        "RSTICK",
+    };
 
-    return false;
+    for (int i = 0; i < buttons.size(); i++)
+    {
+        stringToButton[buttons[i]] = i;
+
+        buttonToString[i] = buttons[i];
+    }
+
+    controls = {
+        {"SPRINT", {"LSHIFT", "A"}},
+        {"INTERACT", {"E", "X"}},
+        {"MENU", {"Q", "B"}},
+        {"EXIT", {"ESCAPE", "Y"}},
+        {"PAUSE", {"TAB", "START"}},
+        {"STEP", {"RIGHT", "RSTICK"}},
+        {"RESETZOOM", {"ENTER", "SELECT"}},
+        {"TOGGLEFOCUS", {"F1", "LSTICK"}},
+        {"ZOOMIN", {"NONE", "LBUMPER"}},
+        {"ZOOMOUT", {"NONE", "RBUMPER"}}
+    };
 }
 
-bool getButton(std::string key)
+bool Input::getKey(std::string key)
 {
+    bool isPressed = false;
+
+    if (sf::Keyboard::isKeyPressed(static_cast<sf::Keyboard::Key>(stringToKey[key]))) isPressed = true;
+
+    if (isPressed) keysPressedThisFrame[key] = true;
+
+    return isPressed;
+}
+
+bool Input::getButton(std::string key)
+{
+    bool isPressed = false;
+
     if (sf::Joystick::isConnected(0))
     {
-        if (key == "A" && sf::Joystick::isButtonPressed(0, 0)) return true;
-        if (key == "B" && sf::Joystick::isButtonPressed(0, 1)) return true;
-        if (key == "X" && sf::Joystick::isButtonPressed(0, 2)) return true;
-        if (key == "Y" && sf::Joystick::isButtonPressed(0, 3)) return true;
+        if (sf::Joystick::isButtonPressed(0, toUnsignedInt(stringToButton[key]))) isPressed = true;
     }
 
-    return false;
+    if (isPressed) buttonsPressedThisFrame[key] = true;
+
+    return isPressed;
 }
 
-bool getControl(std::string key)
+bool Input::getControl(std::string key)
 {
-    if (key == "SPRINT" && (getKey("SHIFT") || getButton("A"))) return true;
-    if (key == "INTERACT" && (getKey("E") || getButton("X"))) return true;
-    if (key == "BACK" && (getKey("Q") || getButton("B"))) return true;
+    bool isPressed = false;
 
-    return false;
+    for (int i = 0; i < controls.size(); i++)
+    {
+        if (controls[i].first == key)
+        {
+            if (getKey(controls[i].second.first) || getButton(controls[i].second.second)) isPressed = true;
+        }
+    }
+
+    if (isPressed) controlsPressedThisFrame[key] = true;
+
+    return isPressed;
 }
 
-sf::Vector2f getMovement()
+sf::Vector2f Input::getMovement()
 {
     sf::Vector2i movement = {0, 0};
 
@@ -100,5 +222,52 @@ sf::Vector2f getMovement()
     else
     {
         return toV2F(movement.x, movement.y);
+    }
+}
+
+void Input::update()
+{
+    for (int i = 0; i < controls.size(); i++)
+    {
+        if (getControl(controls[i].first) && !controlsPressedLastFrame[controls[i].first])
+        {
+            game->processInput(controls[i].first);
+        }
+    }
+
+    for (auto i : keysPressedLastFrame)
+    {
+        keysPressedLastFrame[i.first] = false;
+    }
+
+    for (auto i : keysPressedThisFrame)
+    {
+        keysPressedLastFrame[i.first] = i.second;
+
+        keysPressedThisFrame[i.first] = false;
+    }
+
+    for (auto i : buttonsPressedLastFrame)
+    {
+        buttonsPressedLastFrame[i.first] = false;
+    }
+
+    for (auto i : buttonsPressedThisFrame)
+    {
+        buttonsPressedLastFrame[i.first] = i.second;
+
+        buttonsPressedThisFrame[i.first] = false;
+    }
+
+    for (auto i : controlsPressedLastFrame)
+    {
+        controlsPressedLastFrame[i.first] = false;
+    }
+
+    for (auto i : controlsPressedThisFrame)
+    {
+        controlsPressedLastFrame[i.first] = i.second;
+
+        controlsPressedThisFrame[i.first] = false;
     }
 }

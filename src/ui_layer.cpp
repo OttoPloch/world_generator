@@ -11,10 +11,10 @@ void UILayer::init(Game* game, Camera* camera)
 
     this->camera = camera;
 
-    resetView();
+    reset();
 
-    bgElements.push_back(UIBackground(game, sf::Color(15, 15, 15, 220), assetManager->getTileSet("test"), this, 4, {0, 0}, {500, 300}));
-    bgElements.push_back(UIBackground(game, sf::Color(255, 255, 255, 200), assetManager->getTileSet("test"), this, 4, {0, 0}, {400, 200}, 0));
+    bgElements.push_back(UIBackground(game, sf::Color(15, 15, 15, 220), assetManager->getTileSet("test"), this, 0, {50, 50}, {500, 300}));
+    bgElements.push_back(UIBackground(game, sf::Color(255, 255, 255, 200), assetManager->getTileSet("test"), this, 0, {50, 50}, {400, 200}, 0));
     // bgElements.push_back(UIBackground(game, sf::Color(30, 30, 30, 220), assetManager->getTileSet("test"), this, 0, {25, 25}, {360, 125}, 0));
     // bgElements.push_back(UIBackground(game, sf::Color(225, 0, 0), assetManager->getTileSet("test"), this, 0, {5, 5}, {350, 25}, 1));
     // bgElements.push_back(UIBackground(game, sf::Color(225, 0, 0), assetManager->getTileSet("test"), this, 0, {5, 35}, {350, 25}, 1));
@@ -38,11 +38,16 @@ sf::Vector2u UILayer::getScreenSize()
     return game->getWindow()->getSize();
 }
 
-void UILayer::resetView()
+void UILayer::reset()
 {
     sf::Vector2f viewSize = toV2F(game->getWindow()->getSize());
 
     UIView = sf::View({viewSize.x / 2.f, viewSize.y / 2.f}, viewSize);
+
+    for (int i = 0; i < bgElements.size(); i++)
+    {
+        bgElements[i].resize();
+    }
 }
 
 void UILayer::draw()
@@ -55,11 +60,11 @@ void UILayer::draw()
 
         if (i == 1)
         {
-            if (getControl("INTERACT"))
+            if (game->getInput()->getControl("INTERACT"))
             {
                 bgElements[i].resize({bgElements[i].getSize().x + 5.f, bgElements[i].getSize().y + 1.f});
             }
-            if (getControl("BACK"))
+            if (game->getInput()->getControl("MENU"))
             {
                 bgElements[i].resize({bgElements[i].getSize().x - 5.f, bgElements[i].getSize().y - 1.f});
             }

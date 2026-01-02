@@ -21,7 +21,7 @@ public:
     
     sf::Vector2u getScreenSize();
 
-    void resetView();
+    void reset();
     
     void draw();
 private:

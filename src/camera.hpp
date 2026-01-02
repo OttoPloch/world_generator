@@ -50,6 +50,8 @@ public:
 
     Entity* getFocus();
 private:
+    Game* game;
+
     Window* window;
 
     Gamerules* gamerules;

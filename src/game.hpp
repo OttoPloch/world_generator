@@ -21,13 +21,15 @@ public:
 
     void exit();
     
-    void processInput(sf::Keyboard::Key key);
+    void processInput(std::string control);
     
     Window* getWindow();
     
     Gamerules* getGamerules();
 
     AssetManager* getAssetManager();
+
+    Input* getInput();
 private:
     void run();
 
@@ -46,6 +48,8 @@ private:
     EventHandler eventHandler;
 
     AssetManager assetManager;
+
+    Input input;
 
     Scene scene;
 

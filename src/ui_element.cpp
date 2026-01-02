@@ -64,7 +64,7 @@ float UIElement::left()
             break;
         case 1:
         case 3:
-            (getParent()) ? left = getParent()->right() + position.x - size.x : left = position.x - size.x;
+            (getParent()) ? left = getParent()->right() + position.x - size.x : left = uiLayer->getScreenSize().x + position.x - size.x;
             break;
         default:
             (getParent()) ? left = getParent()->getScreenCenter().x + position.x - size.x / 2.f : left = (uiLayer->getScreenSize().x / 2.f) + position.x - size.x / 2.f;
@@ -91,10 +91,10 @@ float UIElement::top()
             break;
         case 2:
         case 3:
-            (getParent()) ? top = getParent()->bottom() + position.y - size.y : top = position.y - size.y;
+            (getParent()) ? top = getParent()->bottom() + position.y - size.y : top = uiLayer->getScreenSize().y + position.y - size.y;
             break;
         default:
-            (getParent()) ? top = getParent()->getScreenCenter().y + position.y - size.y / 2.f: top = (uiLayer->getScreenSize().y / 2.f) + position.y - size.y / 2.f;
+            (getParent()) ? top = getParent()->getScreenCenter().y + position.y - size.y / 2.f : top = (uiLayer->getScreenSize().y / 2.f) + position.y - size.y / 2.f;
             break;
     }
 
@@ -110,10 +110,12 @@ sf::Vector2f UIElement::getSize() { return size; }
 
 UIElement* UIElement::getParent() { return uiLayer->getElement(parentIndex); }
 
+void UIElement::resize() {}
+
 void UIElement::resize(sf::Vector2f newSize, int posSet)
 {
     size = newSize;
-
+    
     if (posSet != -1) this->posSet = posSet;
 }
 

@@ -106,18 +106,23 @@ void Scene::draw()
     uiLayer.draw();
 }
 
-void Scene::sceneInput(sf::Keyboard::Key key)
+void Scene::sceneInput(std::string control)
 {
-    switch (key)
+    if (control == "RESETZOOM")
     {
-        case sf::Keyboard::Key::Enter:
-            camera.resetZoom();
-            break;
-        case sf::Keyboard::Key::F1:
-            toggleFocus();
-            break;
-        default:
-            break;
+        camera.resetZoom();
+    }
+    else if (control == "TOGGLEFOCUS")
+    {
+        toggleFocus();
+    }
+    else if (control == "ZOOMIN")
+    {
+        camera.zoom(1);
+    }
+    else if (control == "ZOOMOUT")
+    {
+        camera.zoom(-1);
     }
 }
 

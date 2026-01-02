@@ -25,7 +25,7 @@ public:
 
     void draw();
 
-    void sceneInput(sf::Keyboard::Key key);
+    void sceneInput(std::string control);
 
     Camera* getCamera();
 

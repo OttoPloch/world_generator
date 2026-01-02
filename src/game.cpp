@@ -6,6 +6,8 @@ void Game::init()
 {
     window.create({800, 800}, "INFINITE", false, 165, sf::Color(10, 10, 12));
 
+    input.init(this);
+
     scene.init(this);
 
     eventHandler.init(&window, scene.getCamera(), this, &scene);
@@ -22,26 +24,27 @@ void Game::exit()
     window.exit();
 }
 
-void Game::processInput(sf::Keyboard::Key key)
+void Game::processInput(std::string control)
 {
-    switch(key)
+    if (control == "EXIT")
     {
-        case sf::Keyboard::Key::Escape:
-            exit();
-            break;
-        case sf::Keyboard::Key::Tab:
-            paused = !paused;
-            break;
-        case sf::Keyboard::Key::Right:
-            if (paused)
-            {
-                tick();
-                update(dt);
-            }
-            break;       
-        default:
-            scene.sceneInput(key);
-            break;
+        exit();
+    }
+    else if (control == "PAUSE")
+    {
+        paused = !paused;
+    }
+    else if (control == "STEP")
+    {
+        if (paused)
+        {
+            tick();
+            update(dt);
+        }
+    }
+    else
+    {
+        scene.sceneInput(control);
     }
 }
 
@@ -50,6 +53,8 @@ Window* Game::getWindow() { return &window; }
 Gamerules* Game::getGamerules() { return &gamerules; }
 
 AssetManager* Game::getAssetManager() { return &assetManager; }
+
+Input* Game::getInput() { return &input; }
 
 void Game::run()
 {
@@ -64,6 +69,8 @@ void Game::run()
     while (window.getWindow().isOpen())
     {
         dt = dtClock.restart().asSeconds();
+
+        input.update();
 
         eventHandler.processEvents();
 

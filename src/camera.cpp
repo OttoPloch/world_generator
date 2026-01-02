@@ -5,6 +5,8 @@ Camera::Camera() {}
 
 void Camera::init(Game* game, bool setTopLeftPos, sf::Vector2f position, sf::Vector2f size, Entity* focus)
 {
+    this->game = game;
+
     window = game->getWindow();
 
     gamerules = game->getGamerules();
@@ -79,22 +81,22 @@ void Camera::update(float dt)
     }
     else
     {
-        if (getMovement().x == 0)
+        if (game->getInput()->getMovement().x == 0)
         {
             velocity.x *= 1 - (dt * gamerules->getRule("camera_freecamFriction").valueFloat);
         }
         else
         {
-            velocity.x = (gamerules->getRule("camera_freecamMoveSpeedBase").valueInt * zoomFactor) * getMovement().x;
+            velocity.x = (gamerules->getRule("camera_freecamMoveSpeedBase").valueInt * zoomFactor) * game->getInput()->getMovement().x;
         }
     
-        if (getMovement().y == 0)
+        if (game->getInput()->getMovement().y == 0)
         {
             velocity.y *= 1 - (dt * gamerules->getRule("camera_freecamFriction").valueFloat);
         }
         else
         {
-            velocity.y = (gamerules->getRule("camera_freecamMoveSpeedBase").valueInt * zoomFactor) * getMovement().y;
+            velocity.y = (gamerules->getRule("camera_freecamMoveSpeedBase").valueInt * zoomFactor) * game->getInput()->getMovement().y;
         }
     }
 

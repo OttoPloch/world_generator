@@ -1,5 +1,6 @@
 texture ui_tile_set
 path images/ui_tile_set.png
+tilesize 16
 location tl
 xCoord 0
 yCoord 0

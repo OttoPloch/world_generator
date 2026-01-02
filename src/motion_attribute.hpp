@@ -31,6 +31,8 @@ public:
 
     bool controlling;
 private:
+    Game* game;
+
     Gamerules* gamerules;
 
     EntityStates* states;

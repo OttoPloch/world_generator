@@ -26,11 +26,7 @@ void EventHandler::processEvents()
         else if (event->is<sf::Event::Resized>())
         {
             camera->setBaseSize(toV2F(window->getSize()));
-            scene->getUILayer()->resetView();
-        }
-        else if (const auto key = event->getIf<sf::Event::KeyPressed>())
-        {
-            game->processInput(key->code);
+            scene->getUILayer()->reset();
         }
         else if (const auto scroll = event->getIf<sf::Event::MouseWheelScrolled>())
         {
