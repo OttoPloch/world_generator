@@ -20,10 +20,6 @@ public:
 
     sf::Color getColor();
 
-    // updates everything without changing size.
-    void resize() override;
-
-    // If posSet is -1, then the element's posSet will not change.
     void resize(sf::Vector2f newSize, int posSet = -1) override;
     
     void draw() override;

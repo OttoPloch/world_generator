@@ -15,12 +15,8 @@ void UILayer::init(Game* game, Camera* camera)
 
     bgElements.push_back(UIBackground(game, sf::Color(15, 15, 15, 220), assetManager->getTileSet("test"), this, 0, {50, 50}, {500, 300}));
     bgElements.push_back(UIBackground(game, sf::Color(255, 255, 255, 200), assetManager->getTileSet("test"), this, 4, {0, 0}, {400, 200}, 0));
-    // bgElements.push_back(UIBackground(game, sf::Color(30, 30, 30, 220), assetManager->getTileSet("test"), this, 0, {25, 25}, {360, 125}, 0));
-    // bgElements.push_back(UIBackground(game, sf::Color(225, 0, 0), assetManager->getTileSet("test"), this, 0, {5, 5}, {350, 25}, 1));
-    // bgElements.push_back(UIBackground(game, sf::Color(225, 0, 0), assetManager->getTileSet("test"), this, 0, {5, 35}, {350, 25}, 1));
-    // bgElements.push_back(UIBackground(game, sf::Color(225, 0, 0), assetManager->getTileSet("test"), this, 0, {5, 65}, {350, 25}, 1));
-    // bgElements.push_back(UIBackground(game, sf::Color(225, 0, 0), assetManager->getTileSet("test"), this, 0, {5, 95}, {350, 25}, 1));
-    // bgElements.push_back(UIBackground(game, sf::Color(225, 0, 0), assetManager->getTileSet("test"), this, 0, {25, 175}, {350, 25}, 0));
+    
+    textElements.push_back(UIText(game, assetManager->getFont("White Storm"), "Hello World!\nThis is a test of using SFML\ntext rendering in my ui system.", 30, this, 4, {0, 0}, 1));
 }
 
 UIElement* UILayer::getElement(int index)
@@ -46,7 +42,12 @@ void UILayer::reset()
 
     for (int i = 0; i < bgElements.size(); i++)
     {
-        bgElements[i].resize();
+        bgElements[i].updateSize();
+    }
+
+    for (int i = 0; i < textElements.size(); i++)
+    {
+        textElements[i].updateSize();
     }
 }
 
@@ -63,19 +64,36 @@ void UILayer::draw()
             if (game->getInput()->getControl("INTERACT"))
             {
                 bgElements[i].resize({bgElements[i].getSize().x + 5.f, bgElements[i].getSize().y + 1.f});
+
+                for (int j = 0; j < bgElements.size(); j++) bgElements[j].updateSize();
+                for (int j = 0; j < textElements.size(); j++) textElements[j].updateSize();
             }
+
             if (game->getInput()->getControl("MENU"))
             {
                 bgElements[i].resize({bgElements[i].getSize().x - 5.f, bgElements[i].getSize().y - 1.f});
+
+                for (int j = 0; j < bgElements.size(); j++) bgElements[j].updateSize();
+                for (int j = 0; j < textElements.size(); j++) textElements[j].updateSize();
             }
         }
-        else
-        {
-            if (game->getInput()->getControl("INTERACT") || game->getInput()->getControl("MENU"))
-            {
-                bgElements[i].resize();
-            }
-        }
+
+        // sf::CircleShape circle(5.f);
+        // circle.setFillColor(sf::Color::Red);
+        // circle.setOrigin({5.f, 5.f});
+        // circle.setPosition(bgElements[i].getScreenCenter());
+        // game->getWindow()->getWindow().draw(circle);
+    }
+
+    for (int i = 0; i < textElements.size(); i++)
+    {
+        textElements[i].draw();
+
+        // sf::CircleShape circle(5.f);
+        // circle.setFillColor(sf::Color::Red);
+        // circle.setOrigin({5.f, 5.f});
+        // circle.setPosition(textElements[i].getScreenCenter());
+        // game->getWindow()->getWindow().draw(circle);
     }
 
     game->getWindow()->setView(camera->getView());

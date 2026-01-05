@@ -33,8 +33,12 @@ public:
 
     sf::Vector2f getSize();
 
-    virtual void resize();
+    int getParentIndex();
 
+    // updates everything without changing size.
+    void updateSize();
+
+    // If posSet is -1, then the element's posSet will not change.
     virtual void resize(sf::Vector2f newSize, int posSet = -1);
 
     virtual void draw();

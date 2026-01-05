@@ -53,7 +53,6 @@ sf::Texture* AssetManager::getTexture(std::string name, std::string pathFromAsse
                     return nullptr;
                 }
             }
-
         }
 
         textureMap[name] = newTexture;
@@ -267,5 +266,51 @@ TileSet* AssetManager::getTileSet(std::string name)
         tileSetMap[name] = newSet;
 
         return &tileSetMap[name];
+    }
+}
+
+sf::Font* AssetManager::getFont(std::string name)
+{
+    auto entry = fontMap.find(name);
+
+    if (entry != fontMap.end())
+    {
+        return &entry->second;
+    }
+    else
+    {
+        sf::Font newFont;
+
+        if (!std::filesystem::exists("../../assets/text/" + name + ".otf"))
+        {
+            if (!std::filesystem::exists("../../assets/text/" + name + ".ttf"))
+            {
+                std::cout << "Error loading " << name << " font. No ttf or otf file in assets/text/ with that name.\n";   
+    
+                return nullptr;
+            }
+            else
+            {
+                if (!newFont.openFromFile("../../assets/text/" + name + ".ttf"))
+                {
+                    std::cout << "error loading " << name << ".ttf\n";
+                    
+                    return nullptr;
+                }
+            }
+        }
+        else
+        {
+            if (!newFont.openFromFile("../../assets/text/" + name + ".otf"))
+            {
+                std::cout << "error loading " << name << ".otf\n";
+                
+                return nullptr;
+            }
+        }
+
+        fontMap[name] = newFont;
+
+        return &fontMap[name];
     }
 }

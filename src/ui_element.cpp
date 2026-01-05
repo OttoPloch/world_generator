@@ -110,7 +110,12 @@ sf::Vector2f UIElement::getSize() { return size; }
 
 UIElement* UIElement::getParent() { return uiLayer->getElement(parentIndex); }
 
-void UIElement::resize() {}
+int UIElement::getParentIndex() { return parentIndex; }
+
+void UIElement::updateSize()
+{
+    resize(size);
+}
 
 void UIElement::resize(sf::Vector2f newSize, int posSet)
 {

@@ -20,10 +20,7 @@ void UIBackground::init(Game* game, sf::Color color, TileSet* tileSet)
     
     background.setFillColor(color);
 
-    background.setPosition({left(), top()});
-    background.setSize(size);
-
-    createBorderVertices();
+    updateSize();
 }
 
 void UIBackground::createBorderVertices()
@@ -189,11 +186,6 @@ void UIBackground::createBorderVertices()
 }
 
 sf::Color UIBackground::getColor() { return color; }
-
-void UIBackground::resize()
-{
-    resize(size);
-}
 
 void UIBackground::resize(sf::Vector2f newSize, int posSet)
 {

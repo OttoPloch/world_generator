@@ -22,6 +22,8 @@ public:
     AnimationSet* getAnimSet(std::string name);
 
     TileSet* getTileSet(std::string name);
+
+    sf::Font* getFont(std::string name);
 private:
     std::unordered_map<std::string, sf::Texture> textureMap;
 
@@ -30,4 +32,6 @@ private:
     std::unordered_map<std::string, AnimationSet> animSetMap;
 
     std::unordered_map<std::string, TileSet> tileSetMap;
+
+    std::unordered_map<std::string, sf::Font> fontMap;
 };

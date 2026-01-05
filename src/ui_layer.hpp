@@ -5,6 +5,7 @@
 #include "asset_manager.hpp"
 #include "ui_element.hpp"
 #include "ui_background.hpp"
+#include "ui_text.hpp"
 
 #include <vector>
 
@@ -34,4 +35,6 @@ private:
     sf::View UIView;
 
     std::vector<UIBackground> bgElements;
+
+    std::vector<UIText> textElements;
 };
