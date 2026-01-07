@@ -14,9 +14,10 @@ void UILayer::init(Game* game, Camera* camera)
     reset();
 
     bgElements.push_back(UIBackground(game, sf::Color(15, 15, 15, 220), assetManager->getTileSet("test"), this, 0, {50, 50}, {500, 300}));
-    bgElements.push_back(UIBackground(game, sf::Color(255, 255, 255, 200), assetManager->getTileSet("test"), this, 4, {0, 0}, {400, 200}, 0));
-    
-    textElements.push_back(UIText(game, assetManager->getFont("White Storm"), "Hello World!\nThis is a test of using SFML\ntext rendering in my ui system.", 30, this, 4, {0, 0}, 1));
+    // bgElements.push_back(UIBackground(game, sf::Color(255, 255, 255, 200), assetManager->getTileSet("test"), this, 4, {0, 0}, {400, 200}, 0));
+    bgElements.push_back(UIBackground(game, sf::Color(255, 198, 163), assetManager->getTileSet("scroll"), this, 0, {75, 75}, {350, 150}, 0));
+
+    textElements.push_back(UIText(game, assetManager->getFont("White Storm"), "Hello World!", 30, this, 4, {0, 0}, 1));
 }
 
 UIElement* UILayer::getElement(int index)
@@ -59,7 +60,7 @@ void UILayer::draw()
     {
         bgElements[i].draw();
 
-        if (i == 0)
+        if (i == 1)
         {
             if (game->getInput()->getControl("INTERACT"))
             {

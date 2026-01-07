@@ -20,6 +20,8 @@ public:
     sf::Texture* getTexture();
 
     float getTileSize();
+
+    std::string getName();
 private:
     std::string setName;
 

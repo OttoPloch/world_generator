@@ -1,6 +1,6 @@
-texture ui_gray
-path images/ui_gray.png
-tilesize 16
+texture ui_scroll
+path images/ui_scroll.png
+tilesize 32
 location tl
 xCoord 0
 yCoord 0

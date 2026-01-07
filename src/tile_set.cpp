@@ -51,3 +51,5 @@ std::string TileSet::getKeyFor(sf::Vector2f texCoord)
 sf::Texture* TileSet::getTexture() { return texture; }
 
 float TileSet::getTileSize() { return tileSize; }
+
+std::string TileSet::getName() { return setName; }

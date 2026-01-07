@@ -176,7 +176,7 @@ void UIBackground::createBorderVertices()
     brbl.texCoords = {tileSet->getCoordsFor("br").x, tileSet->getCoordsFor("br").y + TEXTURESIZE};
     sf::Vertex brbr;
     brbr.position = {std::floor(right() + HALFBORDERSIZE), std::floor(bottom() + HALFBORDERSIZE)};
-    brbr.texCoords = {tileSet->getCoordsFor("br").x + TEXTURESIZE, tileSet->getCoordsFor("br").y + 16.f};
+    brbr.texCoords = {tileSet->getCoordsFor("br").x + TEXTURESIZE, tileSet->getCoordsFor("br").y + TEXTURESIZE};
     borderVertices.push_back(brtl);
     borderVertices.push_back(brtr);
     borderVertices.push_back(brbl);

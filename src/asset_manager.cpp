@@ -235,7 +235,7 @@ TileSet* AssetManager::getTileSet(std::string name)
             
             std::string texName;
             std::string texPath;
-            float tileSize;
+            float tileSize = 16;
 
             std::vector<std::string> locations;
             std::vector<float> xCoords;
@@ -249,8 +249,8 @@ TileSet* AssetManager::getTileSet(std::string name)
                 if (line.substr(0, 4) == "path") texPath = line.substr(5);
                 if (line.substr(0, 8) == "tilesize") tileSize = std::stof(line.substr(9));
                 if (line.substr(0, 8) == "location") locations.push_back(line.substr(9));
-                if (line.substr(0, 6) == "xCoord") xCoords.push_back(std::stof(line.substr(7)));
-                if (line.substr(0, 6) == "yCoord") yCoords.push_back(std::stof(line.substr(7)));
+                if (line.substr(0, 6) == "xCoord") xCoords.push_back(tileSize * std::stof(line.substr(7)));
+                if (line.substr(0, 6) == "yCoord") yCoords.push_back(tileSize * std::stof(line.substr(7)));
             }
 
             texture = getTexture(texName, texPath, true);

@@ -16,6 +16,7 @@ void UIText::init(Game* game, sf::Font* font, std::string text, unsigned int fon
 
     displayText->setPosition({left(), top()});
     displayText->setStyle(sf::Text::Bold);
+    displayText->setFillColor(sf::Color::Black);
     
     sf::Vector2f textTL = {0, 0};
     sf::Vector2f textAdjustedTL = textTL + displayText->getLocalBounds().position;
@@ -30,7 +31,7 @@ void UIText::init(Game* game, sf::Font* font, std::string text, unsigned int fon
     sf::Vector2f roundedBL = {std::round(textAdjustedBL.x), std::round(textAdjustedBL.y)};
 
     sf::Vector2f textBR = displayText->getGlobalBounds().size;
-    sf::Vector2f textAdjustedBR = textBR + displayText->getGlobalBounds().position;
+    sf::Vector2f textAdjustedBR = textBR + displayText->getLocalBounds().position;
     sf::Vector2f roundedBR = {std::round(textAdjustedBR.x), std::round(textAdjustedBR.y)};
     
     sf::Vector2f textCenter = displayText->getGlobalBounds().size / 2.f;
