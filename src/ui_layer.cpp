@@ -13,9 +13,9 @@ void UILayer::init(Game* game, Camera* camera)
 
     reset();
 
-    bgElements.push_back(UIBackground(game, sf::Color(15, 15, 15, 220), assetManager->getTileSet("ui_16px"), assetManager->getTexture("ui_gray"), this, 0, {50, 50}, {500, 300}));
+    bgElements.push_back(UIBackground(game, sf::Color(15, 15, 15, 220), assetManager->getTileSet("16px"), assetManager->getTexture("ui_default"), this, 0, {50, 50}, {500, 300}));
     // bgElements.push_back(UIBackground(game, sf::Color(255, 255, 255, 200), assetManager->getTileSet("test"), this, 4, {0, 0}, {400, 200}, 0));
-    bgElements.push_back(UIBackground(game, sf::Color(255, 198, 163), assetManager->getTileSet("ui_32px"), assetManager->getTexture("ui_scroll"), this, 0, {75, 75}, {350, 150}, 0));
+    bgElements.push_back(UIBackground(game, sf::Color(0, 0, 0, 0), assetManager->getTileSet("32px filled"), assetManager->getTexture("ui_scroll"), this, 0, {75, 75}, {350, 150}, 0));
 
     textElements.push_back(UIText(game, assetManager->getFont("White Storm"), "Hello World!", 30, this, 4, {0, 0}, 1));
 }
@@ -52,6 +52,31 @@ void UILayer::reset()
     }
 }
 
+void UILayer::tick()
+{
+    for (int i = 0; i < bgElements.size(); i++)
+    {
+        if (i == 1)
+        {
+            if (game->getInput()->getControl("INTERACT"))
+            {
+                bgElements[i].resize({bgElements[i].getSize().x + 10.f, bgElements[i].getSize().y + 2.f});
+    
+                for (int j = 0; j < bgElements.size(); j++) bgElements[j].updateSize();
+                for (int j = 0; j < textElements.size(); j++) textElements[j].updateSize();
+            }
+    
+            if (game->getInput()->getControl("MENU"))
+            {
+                bgElements[i].resize({bgElements[i].getSize().x - 10.f, bgElements[i].getSize().y - 2.f});
+    
+                for (int j = 0; j < bgElements.size(); j++) bgElements[j].updateSize();
+                for (int j = 0; j < textElements.size(); j++) textElements[j].updateSize();
+            }
+        }
+    }
+}
+
 void UILayer::draw()
 {
     game->getWindow()->setView(UIView);
@@ -59,25 +84,6 @@ void UILayer::draw()
     for (int i = 0; i < bgElements.size(); i++)
     {
         bgElements[i].draw();
-
-        if (i == 1)
-        {
-            if (game->getInput()->getControl("INTERACT"))
-            {
-                bgElements[i].resize({bgElements[i].getSize().x + 5.f, bgElements[i].getSize().y + 1.f});
-
-                for (int j = 0; j < bgElements.size(); j++) bgElements[j].updateSize();
-                for (int j = 0; j < textElements.size(); j++) textElements[j].updateSize();
-            }
-
-            if (game->getInput()->getControl("MENU"))
-            {
-                bgElements[i].resize({bgElements[i].getSize().x - 5.f, bgElements[i].getSize().y - 1.f});
-
-                for (int j = 0; j < bgElements.size(); j++) bgElements[j].updateSize();
-                for (int j = 0; j < textElements.size(); j++) textElements[j].updateSize();
-            }
-        }
 
         // sf::CircleShape circle(5.f);
         // circle.setFillColor(sf::Color::Red);

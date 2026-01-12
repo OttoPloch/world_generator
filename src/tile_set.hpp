@@ -20,6 +20,8 @@ public:
     float getTileSize();
 
     std::string getName();
+
+    bool hasCenter();
 private:
     std::string setName;
 

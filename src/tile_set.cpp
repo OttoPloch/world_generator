@@ -26,7 +26,7 @@ sf::Vector2f TileSet::getCoordsFor(std::string key)
     {
         std::cout << "ERROR loading texture coords for key of " << key << " in tile set name: " << setName << ". No entry in texCoords for that key.\n";
 
-        return texCoords["missing"];
+        return {-tileSize, -tileSize};
     }
 }
 
@@ -49,3 +49,8 @@ std::string TileSet::getKeyFor(sf::Vector2f texCoord)
 float TileSet::getTileSize() { return tileSize; }
 
 std::string TileSet::getName() { return setName; }
+
+bool TileSet::hasCenter()
+{
+    return texCoords.find("c") != texCoords.end();
+}

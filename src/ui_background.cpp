@@ -32,6 +32,28 @@ void UIBackground::createBorderVertices()
 
     borderVertices.clear();
 
+    if (tileSet->hasCenter())
+    {
+        sf::Vertex ctl;
+        ctl.position = {std::floor(left()), std::floor(top())};
+        ctl.texCoords = {tileSet->getCoordsFor("c").x, tileSet->getCoordsFor("c").y};
+        sf::Vertex ctr;
+        ctr.position = {std::floor(right()), std::floor(top())};
+        ctr.texCoords = {tileSet->getCoordsFor("c").x + TEXTURESIZE, tileSet->getCoordsFor("c").y};
+        sf::Vertex cbl;
+        cbl.position = {std::floor(left()), std::floor(bottom())};
+        cbl.texCoords = {tileSet->getCoordsFor("c").x, tileSet->getCoordsFor("c").y + TEXTURESIZE};
+        sf::Vertex cbr;
+        cbr.position = {std::floor(right()), std::floor(bottom())};
+        cbr.texCoords = {tileSet->getCoordsFor("c").x + TEXTURESIZE, tileSet->getCoordsFor("c").y + TEXTURESIZE};
+        borderVertices.push_back(ctl);
+        borderVertices.push_back(ctr);
+        borderVertices.push_back(cbl);
+        borderVertices.push_back(cbl);
+        borderVertices.push_back(cbr);
+        borderVertices.push_back(ctr);
+    }
+
     sf::Vertex tltl;
     tltl.position = {std::floor(left() - HALFBORDERSIZE), std::floor(top() - HALFBORDERSIZE)};
     tltl.texCoords = {tileSet->getCoordsFor("tl").x, tileSet->getCoordsFor("tl").y};

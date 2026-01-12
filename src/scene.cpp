@@ -29,6 +29,10 @@ void Scene::init(Game* game)
     entityLayer.addEntity(getNewID(), {-400, 550});
     entityLayer.addEntity(getNewID(), {-400, 700});
     entityLayer.addEntity(getNewID(), {-200, 700});
+    entityLayer.addEntity(getNewID(), {0, 1000});
+    entityLayer.addEntity(getNewID(), {200, 1000});
+    entityLayer.addEntity(getNewID(), {400, 1000});
+    entityLayer.addEntity(getNewID(), {600, 1000});
 
     entityLayer.giveEntitySprite(0, assetManager->getTexture("pixel"), {50, 50}, -1);
 
@@ -65,6 +69,18 @@ void Scene::init(Game* game)
     entityLayer.giveEntityMotion(10, 1.f);
     entityLayer.giveEntityCollision(10, "crate", MOVABLE);
 
+    entityLayer.giveEntitySprite(11, assetManager->getTexture("crate"), {200.f, 200.f}, -1);
+    entityLayer.giveEntityCollision(11, "wall", STATIC);
+
+    entityLayer.giveEntitySprite(12, assetManager->getTexture("crate"), {200.f, 200.f}, -1);
+    entityLayer.giveEntityCollision(12, "wall", STATIC);
+
+    entityLayer.giveEntitySprite(13, assetManager->getTexture("crate"), {200.f, 200.f}, -1);
+    entityLayer.giveEntityCollision(13, "wall", STATIC);
+
+    entityLayer.giveEntitySprite(14, assetManager->getTexture("crate"), {200.f, 200.f}, -1);
+    entityLayer.giveEntityCollision(14, "wall", STATIC);
+
     uiLayer.init(game, &camera);
 
     camera.init(game, true, {0, 0}, toV2F(window->getSize()), entityLayer.getEntity(1));
@@ -85,6 +101,8 @@ void Scene::init(Game* game)
 void Scene::tick()
 {
     entityLayer.tick();
+
+    uiLayer.tick();
 }
 
 void Scene::update(float dt)

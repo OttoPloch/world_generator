@@ -155,83 +155,112 @@ void Input::init(Game* game)
 
 bool Input::getKey(std::string key)
 {
-    bool isPressed = false;
-
-    if (sf::Keyboard::isKeyPressed(static_cast<sf::Keyboard::Key>(stringToKey[key]))) isPressed = true;
-
-    if (isPressed) keysPressedThisFrame[key] = true;
-
-    return isPressed;
+    if (game->getWindow()->getWindow().hasFocus())
+    {
+        bool isPressed = false;
+    
+        if (sf::Keyboard::isKeyPressed(static_cast<sf::Keyboard::Key>(stringToKey[key]))) isPressed = true;
+    
+        if (isPressed) keysPressedThisFrame[key] = true;
+    
+        return isPressed;
+    }
+    
+    return false;
 }
 
 bool Input::getButton(std::string key)
 {
-    bool isPressed = false;
-
-    if (sf::Joystick::isConnected(0))
+    if (game->getWindow()->getWindow().hasFocus())
     {
-        if (sf::Joystick::isButtonPressed(0, toUnsignedInt(stringToButton[key]))) isPressed = true;
+        bool isPressed = false;
+
+        if (sf::Joystick::isConnected(0))
+        {
+            if (sf::Joystick::isButtonPressed(0, toUnsignedInt(stringToButton[key]))) isPressed = true;
+        }
+
+        if (isPressed) buttonsPressedThisFrame[key] = true;
+
+        return isPressed;
     }
 
-    if (isPressed) buttonsPressedThisFrame[key] = true;
-
-    return isPressed;
+    return false;
 }
 
 bool Input::getControl(std::string key)
 {
-    bool isPressed = false;
-
-    for (int i = 0; i < controls.size(); i++)
+    if (game->getWindow()->getWindow().hasFocus())
     {
-        if (controls[i].first == key)
+        bool isPressed = false;
+
+        for (int i = 0; i < controls.size(); i++)
         {
-            if (getKey(controls[i].second.first) || getButton(controls[i].second.second)) isPressed = true;
+            if (controls[i].first == key)
+            {
+                if (getKey(controls[i].second.first) || getButton(controls[i].second.second)) isPressed = true;
+            }
         }
+
+        if (isPressed) controlsPressedThisFrame[key] = true;
+
+        return isPressed;
     }
-
-    if (isPressed) controlsPressedThisFrame[key] = true;
-
-    return isPressed;
+    
+    return false;
 }
 
 sf::Vector2f Input::getMovement()
 {
-    sf::Vector2i movement = {0, 0};
-
-    if (getKey("W")) movement.y -= 1;
-    if (getKey("A")) movement.x -= 1;
-    if (getKey("S")) movement.y += 1;
-    if (getKey("D")) movement.x += 1;
-    
-    if (movement == sf::Vector2i(0, 0) && sf::Joystick::isConnected(0))
+    if (game->getWindow()->getWindow().hasFocus())
     {
-        sf::Vector2f joystickMovement;
+        sf::Vector2i movement = {0, 0};
 
-        // TODO: fix the joystick input so that the two values add up to 1, not over.
-        joystickMovement.x = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X) / 100.f;
-        joystickMovement.y = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Y) / 100.f;
+        if (getKey("W")) movement.y -= 1;
+        if (getKey("A")) movement.x -= 1;
+        if (getKey("S")) movement.y += 1;
+        if (getKey("D")) movement.x += 1;
+        
+        if (movement == sf::Vector2i(0, 0) && sf::Joystick::isConnected(0))
+        {
+            sf::Vector2i joystickMovement;
 
-        return joystickMovement;
-    }
+            joystickMovement.x = std::round(sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X) / 100.f);
+            joystickMovement.y = std::round(sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Y) / 100.f);
+            
+            if (joystickMovement.x != 0 && joystickMovement.y != 0)
+            {
+                return {toFloat(joystickMovement.x) / toFloat(sqrt(2.f)), toFloat(joystickMovement.y) / toFloat(sqrt(2.f))};
+            }
 
-    if (movement.x != 0 && movement.y != 0)
-    {
-        return {toFloat(movement.x) / toFloat(sqrt(2.f)), toFloat(movement.y) / toFloat(sqrt(2.f))};
+            return toV2F(joystickMovement.x, joystickMovement.y);
+        }
+
+        if (movement.x != 0 && movement.y != 0)
+        {
+            return {toFloat(movement.x) / toFloat(sqrt(2.f)), toFloat(movement.y) / toFloat(sqrt(2.f))};
+        }
+        else
+        {
+            return toV2F(movement.x, movement.y);
+        }
     }
     else
     {
-        return toV2F(movement.x, movement.y);
+        return {0.f, 0.f};
     }
 }
 
 void Input::update()
 {
-    for (int i = 0; i < controls.size(); i++)
+    if (game->getWindow()->getWindow().hasFocus())
     {
-        if (getControl(controls[i].first) && !controlsPressedLastFrame[controls[i].first])
+        for (int i = 0; i < controls.size(); i++)
         {
-            game->processInput(controls[i].first);
+            if (getControl(controls[i].first) && !controlsPressedLastFrame[controls[i].first])
+            {
+                game->processInput(controls[i].first);
+            }
         }
     }
 

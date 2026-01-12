@@ -24,6 +24,8 @@ public:
 
     void reset();
     
+    void tick();
+
     void draw();
 private:
     Game* game;
