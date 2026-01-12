@@ -13,9 +13,9 @@ void UILayer::init(Game* game, Camera* camera)
 
     reset();
 
-    bgElements.push_back(UIBackground(game, sf::Color(15, 15, 15, 220), assetManager->getTileSet("test"), this, 0, {50, 50}, {500, 300}));
+    bgElements.push_back(UIBackground(game, sf::Color(15, 15, 15, 220), assetManager->getTileSet("ui_16px"), assetManager->getTexture("ui_gray"), this, 0, {50, 50}, {500, 300}));
     // bgElements.push_back(UIBackground(game, sf::Color(255, 255, 255, 200), assetManager->getTileSet("test"), this, 4, {0, 0}, {400, 200}, 0));
-    bgElements.push_back(UIBackground(game, sf::Color(255, 198, 163), assetManager->getTileSet("scroll"), this, 0, {75, 75}, {350, 150}, 0));
+    bgElements.push_back(UIBackground(game, sf::Color(255, 198, 163), assetManager->getTileSet("ui_32px"), assetManager->getTexture("ui_scroll"), this, 0, {75, 75}, {350, 150}, 0));
 
     textElements.push_back(UIText(game, assetManager->getFont("White Storm"), "Hello World!", 30, this, 4, {0, 0}, 1));
 }

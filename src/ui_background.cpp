@@ -3,12 +3,12 @@
 
 UIBackground::UIBackground() : UIElement() {}
 
-UIBackground::UIBackground(Game* game, sf::Color color, TileSet* tileSet, UILayer* uiLayer, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentIndex) : UIElement(uiLayer, posSet, position, size, parentIndex)
+UIBackground::UIBackground(Game* game, sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, UILayer* uiLayer, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentIndex) : UIElement(uiLayer, posSet, position, size, parentIndex)
 {
-    init(game, color, tileSet);
+    init(game, color, tileSet, borderTexture);
 }
 
-void UIBackground::init(Game* game, sf::Color color, TileSet* tileSet)
+void UIBackground::init(Game* game, sf::Color color, TileSet* tileSet, sf::Texture* borderTexture)
 {
     this->game = game;
 
@@ -16,7 +16,7 @@ void UIBackground::init(Game* game, sf::Color color, TileSet* tileSet)
 
     this->tileSet = tileSet;
 
-    borderStates.texture = tileSet->getTexture();
+    borderStates.texture = borderTexture;
     
     background.setFillColor(color);
 

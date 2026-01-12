@@ -12,9 +12,9 @@ class UIBackground : public UIElement
 public:
     UIBackground();
 
-    UIBackground(Game* game, sf::Color color, TileSet* tileSet, UILayer* uiLayer, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentIndex = -1);
+    UIBackground(Game* game, sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, UILayer* uiLayer, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentIndex = -1);
 
-    void init(Game* game, sf::Color color, TileSet* tileSet);
+    void init(Game* game, sf::Color color, TileSet* tileSet, sf::Texture* borderTexture);
 
     void createBorderVertices();
 

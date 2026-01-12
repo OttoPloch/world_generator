@@ -231,10 +231,6 @@ TileSet* AssetManager::getTileSet(std::string name)
 
             std::unordered_map<std::string, sf::Vector2f> texCoords;
 
-            sf::Texture* texture;
-            
-            std::string texName;
-            std::string texPath;
             float tileSize = 16;
 
             std::vector<std::string> locations;
@@ -245,22 +241,18 @@ TileSet* AssetManager::getTileSet(std::string name)
 
             while (std::getline(setFile, line))
             {
-                if (line.substr(0, 7) == "texture") texName = line.substr(8);
-                if (line.substr(0, 4) == "path") texPath = line.substr(5);
                 if (line.substr(0, 8) == "tilesize") tileSize = std::stof(line.substr(9));
                 if (line.substr(0, 8) == "location") locations.push_back(line.substr(9));
                 if (line.substr(0, 6) == "xCoord") xCoords.push_back(tileSize * std::stof(line.substr(7)));
                 if (line.substr(0, 6) == "yCoord") yCoords.push_back(tileSize * std::stof(line.substr(7)));
             }
 
-            texture = getTexture(texName, texPath, true);
-
             for (int i = 0; i < locations.size(); i++)
             {
                 texCoords[locations[i]] = {xCoords[i], yCoords[i]};
             }
 
-            newSet.init(name, texture, texCoords, tileSize);
+            newSet.init(name, texCoords, tileSize);
         }
 
         tileSetMap[name] = newSet;

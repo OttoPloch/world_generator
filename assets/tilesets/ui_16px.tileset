@@ -1,6 +1,4 @@
-texture ui_scroll
-path images/ui_scroll.png
-tilesize 32
+tilesize 16
 location tl
 xCoord 0
 yCoord 0

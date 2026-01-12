@@ -2,16 +2,14 @@
 
 TileSet::TileSet() {}
 
-TileSet::TileSet(std::string setName, sf::Texture* texture, std::unordered_map<std::string, sf::Vector2f> texCoords, float tileSize)
+TileSet::TileSet(std::string setName, std::unordered_map<std::string, sf::Vector2f> texCoords, float tileSize)
 {
-    init(setName, texture, texCoords, tileSize);
+    init(setName, texCoords, tileSize);
 }
 
-void TileSet::init(std::string setName, sf::Texture* texture, std::unordered_map<std::string, sf::Vector2f> texCoords, float tileSize)
+void TileSet::init(std::string setName, std::unordered_map<std::string, sf::Vector2f> texCoords, float tileSize)
 {
     this->setName = setName;
-
-    this->texture = texture;
 
     this->texCoords = texCoords;
 
@@ -47,8 +45,6 @@ std::string TileSet::getKeyFor(sf::Vector2f texCoord)
 
     return "";
 }
-
-sf::Texture* TileSet::getTexture() { return texture; }
 
 float TileSet::getTileSize() { return tileSize; }
 

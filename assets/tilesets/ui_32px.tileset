@@ -1,6 +1,4 @@
-texture ui_gray
-path images/ui_gray.png
-tilesize 16
+tilesize 32
 location tl
 xCoord 0
 yCoord 0
