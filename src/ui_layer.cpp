@@ -11,23 +11,57 @@ void UILayer::init(Game* game, Camera* camera)
 
     this->camera = camera;
 
+    IDCounter = 0;
+
     reset();
 
-    bgElements.push_back(UIBackground(game, sf::Color(15, 15, 15, 220), assetManager->getTileSet("16px"), assetManager->getTexture("ui_default"), this, 0, {50, 50}, {500, 300}));
-    // bgElements.push_back(UIBackground(game, sf::Color(255, 255, 255, 200), assetManager->getTileSet("test"), this, 4, {0, 0}, {400, 200}, 0));
-    bgElements.push_back(UIBackground(game, sf::Color(0, 0, 0, 0), assetManager->getTileSet("32px filled"), assetManager->getTexture("ui_scroll"), this, 0, {75, 75}, {350, 150}, 0));
+    bgElements.push_back(UIBackground(game, this, getNewID(), 8, {0, -50}, {600, 300}, sf::Color(0, 0, 0, 0), assetManager->getTileSet("16px filled"), assetManager->getTexture("ui_tech")));
+    bgElements.push_back(UIBackground(game, this, getNewID(), 4, {0, 0}, {300, 200}, sf::Color(0, 0, 0, 0), assetManager->getTileSet("16px filled"), assetManager->getTexture("ui_tech"), bgElements[0].getID()));
+    bgElements.push_back(UIBackground(game, this, getNewID(), 0, {20, 20}, {50, 50}, sf::Color(0, 0, 255), nullptr, nullptr, bgElements[0].getID()));
+    bgElements.push_back(UIBackground(game, this, getNewID(), 1, {-20, 20}, {50, 50}, sf::Color(0, 0, 255), nullptr, nullptr, bgElements[0].getID()));
+    bgElements.push_back(UIBackground(game, this, getNewID(), 2, {20, -20}, {50, 50}, sf::Color(0, 0, 255), nullptr, nullptr, bgElements[0].getID()));
+    bgElements.push_back(UIBackground(game, this, getNewID(), 3, {-20, -20}, {50, 50}, sf::Color(0, 0, 255), nullptr, nullptr, bgElements[0].getID()));
 
-    textElements.push_back(UIText(game, assetManager->getFont("White Storm"), "Hello World!", 30, this, 4, {0, 0}, 1));
+    textElements.push_back(UIText(game, this, getNewID(), 0, {0, 0}, assetManager->getFont("White Storm"), "Hello Boi!", 50, sf::Color(255, 255, 255), bgElements[0].getID()));
+    textElements.push_back(UIText(game, this, getNewID(), 0, {0, 0}, assetManager->getFont("White Storm"), "Hello Boi!", 50, sf::Color(255, 255, 255), bgElements[1].getID()));
+    textElements.push_back(UIText(game, this, getNewID(), 4, {0, 0}, assetManager->getFont("White Storm"), "Hello Boi!", 50, sf::Color(255, 255, 255), bgElements[1].getID()));
 }
 
-UIElement* UILayer::getElement(int index)
+UIElement* UILayer::getElement(int ID)
 {
-    if (index > -1)
+    if (ID > -1)
     {
-        return &bgElements[index];
+        if (bgElements.size() > 0)
+        {
+            for (int i = 0; i < bgElements.size(); i++)
+            {
+                if (bgElements[i].getID() == ID)
+                {
+                    return &bgElements[i];
+                }
+            }
+        }
+
+        if (textElements.size() > 0)
+        {
+            for (int i = 0; i < textElements.size(); i++)
+            {
+                if (textElements[i].getID() == ID)
+                {
+                    return &textElements[i];
+                }
+            }
+        }
     }
 
     return nullptr;
+}
+
+int UILayer::getNewID()
+{
+    IDCounter++;
+
+    return IDCounter - 1;
 }
 
 sf::Vector2u UILayer::getScreenSize()
@@ -54,24 +88,27 @@ void UILayer::reset()
 
 void UILayer::tick()
 {
-    for (int i = 0; i < bgElements.size(); i++)
+    if (bgElements.size() > 0)
     {
-        if (i == 1)
+        for (int i = 0; i < bgElements.size(); i++)
         {
-            if (game->getInput()->getControl("INTERACT"))
+            if (i == 0)
             {
-                bgElements[i].resize({bgElements[i].getSize().x + 10.f, bgElements[i].getSize().y + 2.f});
-    
-                for (int j = 0; j < bgElements.size(); j++) bgElements[j].updateSize();
-                for (int j = 0; j < textElements.size(); j++) textElements[j].updateSize();
-            }
-    
-            if (game->getInput()->getControl("MENU"))
-            {
-                bgElements[i].resize({bgElements[i].getSize().x - 10.f, bgElements[i].getSize().y - 2.f});
-    
-                for (int j = 0; j < bgElements.size(); j++) bgElements[j].updateSize();
-                for (int j = 0; j < textElements.size(); j++) textElements[j].updateSize();
+                if (game->getInput()->getControl("INTERACT"))
+                {
+                    bgElements[i].resize({bgElements[i].getSize().x + 10.f, bgElements[i].getSize().y + 2.f});
+        
+                    for (int j = 0; j < bgElements.size(); j++) bgElements[j].updateSize();
+                    for (int j = 0; j < textElements.size(); j++) textElements[j].updateSize();
+                }
+        
+                if (game->getInput()->getControl("MENU"))
+                {
+                    bgElements[i].resize({bgElements[i].getSize().x - 10.f, bgElements[i].getSize().y - 2.f});
+        
+                    for (int j = 0; j < bgElements.size(); j++) bgElements[j].updateSize();
+                    for (int j = 0; j < textElements.size(); j++) textElements[j].updateSize();
+                }
             }
         }
     }
@@ -81,26 +118,32 @@ void UILayer::draw()
 {
     game->getWindow()->setView(UIView);
 
-    for (int i = 0; i < bgElements.size(); i++)
+    if (bgElements.size() > 0)
     {
-        bgElements[i].draw();
-
-        // sf::CircleShape circle(5.f);
-        // circle.setFillColor(sf::Color::Red);
-        // circle.setOrigin({5.f, 5.f});
-        // circle.setPosition(bgElements[i].getScreenCenter());
-        // game->getWindow()->getWindow().draw(circle);
+        for (int i = 0; i < bgElements.size(); i++)
+        {
+            bgElements[i].draw();
+    
+            // sf::CircleShape circle(5.f);
+            // circle.setFillColor(sf::Color::Red);
+            // circle.setOrigin({5.f, 5.f});
+            // circle.setPosition(bgElements[i].getScreenCenter());
+            // game->getWindow()->getWindow().draw(circle);
+        }
     }
 
-    for (int i = 0; i < textElements.size(); i++)
+    if (textElements.size() > 0)
     {
-        textElements[i].draw();
-
-        // sf::CircleShape circle(5.f);
-        // circle.setFillColor(sf::Color::Red);
-        // circle.setOrigin({5.f, 5.f});
-        // circle.setPosition(textElements[i].getScreenCenter());
-        // game->getWindow()->getWindow().draw(circle);
+        for (int i = 0; i < textElements.size(); i++)
+        {
+            textElements[i].draw();
+    
+            // sf::CircleShape circle(5.f);
+            // circle.setFillColor(sf::Color::Red);
+            // circle.setOrigin({5.f, 5.f});
+            // circle.setPosition(textElements[i].getScreenCenter());
+            // game->getWindow()->getWindow().draw(circle);
+        }
     }
 
     game->getWindow()->setView(camera->getView());

@@ -3,14 +3,18 @@
 
 UIElement::UIElement() {}
 
-UIElement::UIElement(UILayer* uiLayer, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentIndex)
+UIElement::UIElement(Game* game, UILayer* uiLayer, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentID)
 {
-    init(uiLayer, posSet, position, size, parentIndex);
+    init(game, uiLayer, ID, posSet, position, size, parentID);
 }
 
-void UIElement::init(UILayer* uiLayer, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentIndex)
+void UIElement::init(Game* game, UILayer* uiLayer, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentID)
 {
+    this->game = game;
+
     this->uiLayer = uiLayer;
+
+    this->ID = ID;
 
     this->posSet = posSet;
 
@@ -18,7 +22,12 @@ void UIElement::init(UILayer* uiLayer, unsigned int posSet, sf::Vector2f positio
 
     this->size = size;
 
-    this->parentIndex = parentIndex;
+    this->parentID = parentID;
+}
+
+void UIElement::setParent(int parentID)
+{
+    this->parentID = parentID;
 }
 
 sf::Vector2f UIElement::getScreenCenter()
@@ -44,6 +53,18 @@ sf::Vector2f UIElement::getLocalCenter()
         case 3:
             center = {position.x - size.x / 2.f, position.y - size.y / 2.f};
             break;
+        case 4:
+            center = position;
+            break;
+        case 5:
+            center = {position.x, position.y + size.y / 2.f};
+            break;
+        case 6:
+            center = {position.x + size.x / 2.f, position.y};
+            break;
+        case 7:
+            center = {position.x - size.x / 2.f, position.y};
+            break;
         default:
             center = position;
             break;
@@ -60,10 +81,12 @@ float UIElement::left()
     {
         case 0:
         case 2:
+        case 6:
             (getParent()) ? left = getParent()->left() + position.x : left = position.x;
             break;
         case 1:
         case 3:
+        case 7:
             (getParent()) ? left = getParent()->right() + position.x - size.x : left = uiLayer->getScreenSize().x + position.x - size.x;
             break;
         default:
@@ -87,10 +110,12 @@ float UIElement::top()
     {
         case 0:
         case 1:
+        case 5:
             (getParent()) ? top = getParent()->top() + position.y : top = position.y;
             break;
         case 2:
         case 3:
+        case 8:
             (getParent()) ? top = getParent()->bottom() + position.y - size.y : top = uiLayer->getScreenSize().y + position.y - size.y;
             break;
         default:
@@ -108,9 +133,9 @@ float UIElement::bottom()
 
 sf::Vector2f UIElement::getSize() { return size; }
 
-UIElement* UIElement::getParent() { return uiLayer->getElement(parentIndex); }
+UIElement* UIElement::getParent() { return uiLayer->getElement(parentID); }
 
-int UIElement::getParentIndex() { return parentIndex; }
+int UIElement::getID() { return ID; }
 
 void UIElement::updateSize()
 {

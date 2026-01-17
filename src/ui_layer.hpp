@@ -18,8 +18,10 @@ public:
 
     void init(Game* game, Camera* camera);
 
-    UIElement* getElement(int index);
+    UIElement* getElement(int ID);
     
+    int getNewID();
+
     sf::Vector2u getScreenSize();
 
     void reset();
@@ -33,6 +35,8 @@ private:
     AssetManager* assetManager;
 
     Camera* camera;
+
+    int IDCounter;
 
     sf::View UIView;
 

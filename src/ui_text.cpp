@@ -3,20 +3,18 @@
 
 UIText::UIText() : UIElement() {}
 
-UIText::UIText(Game* game, sf::Font* font, std::string text, unsigned int fontSize, UILayer* uiLayer, unsigned int posSet, sf::Vector2f position, int parentIndex) : UIElement(uiLayer, posSet, position, {0, 0}, parentIndex)
+UIText::UIText(Game* game, UILayer* uiLayer, int ID, unsigned int posSet, sf::Vector2f position, sf::Font* font, std::string text, unsigned int fontSize, sf::Color fontColor, int parentID) : UIElement(game, uiLayer, ID, posSet, position, {0, 0}, parentID)
 {
-    init(game, font, text, fontSize);
+    init(font, text, fontSize, fontColor);
 }
 
-void UIText::init(Game* game, sf::Font* font, std::string text, unsigned int fontSize)
+void UIText::init(sf::Font* font, std::string text, unsigned int fontSize, sf::Color fontColor)
 {
-    this->game = game;
-
     displayText = std::make_unique<sf::Text>(*font, text, fontSize);
 
     displayText->setPosition({left(), top()});
     displayText->setStyle(sf::Text::Bold);
-    displayText->setFillColor(sf::Color::Black);
+    displayText->setFillColor(fontColor);
     
     sf::Vector2f textTL = {0, 0};
     sf::Vector2f textAdjustedTL = textTL + displayText->getLocalBounds().position;
@@ -51,6 +49,21 @@ void UIText::init(Game* game, sf::Font* font, std::string text, unsigned int fon
             break;
         case 3:
             displayText->setOrigin(roundedBR);
+            break;
+        case 4:
+            displayText->setOrigin(roundedCenter);
+            break;
+        case 5:
+            displayText->setOrigin({roundedCenter.x, roundedTL.y});
+            break;
+        case 6:
+            displayText->setOrigin({roundedTL.x, roundedCenter.y});
+            break;
+        case 7:
+            displayText->setOrigin({roundedTR.x, roundedCenter.y});
+            break;
+        case 8:
+            displayText->setOrigin({roundedCenter.x, roundedBL.y});
             break;
         default:
             displayText->setOrigin(roundedCenter);

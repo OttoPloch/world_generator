@@ -3,15 +3,13 @@
 
 UIBackground::UIBackground() : UIElement() {}
 
-UIBackground::UIBackground(Game* game, sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, UILayer* uiLayer, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentIndex) : UIElement(uiLayer, posSet, position, size, parentIndex)
+UIBackground::UIBackground(Game* game, UILayer* uiLayer, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, int parentID) : UIElement(game, uiLayer, ID, posSet, position, size, parentID)
 {
-    init(game, color, tileSet, borderTexture);
+    init(color, tileSet, borderTexture);
 }
 
-void UIBackground::init(Game* game, sf::Color color, TileSet* tileSet, sf::Texture* borderTexture)
+void UIBackground::init(sf::Color color, TileSet* tileSet, sf::Texture* borderTexture)
 {
-    this->game = game;
-
     this->color = color;
 
     this->tileSet = tileSet;
@@ -25,6 +23,8 @@ void UIBackground::init(Game* game, sf::Color color, TileSet* tileSet, sf::Textu
 
 void UIBackground::createBorderVertices()
 {
+    if (tileSet == nullptr) return;
+
     float BORDERSIZE = 98.f;
     float HALFBORDERSIZE = BORDERSIZE / 2.f;
 
@@ -225,5 +225,5 @@ void UIBackground::draw()
 {
     game->getWindow()->draw(background);
 
-    game->getWindow()->getWindow().draw(&borderVertices[0], borderVertices.size(), sf::PrimitiveType::Triangles, borderStates);
+    if (tileSet != nullptr) game->getWindow()->getWindow().draw(&borderVertices[0], borderVertices.size(), sf::PrimitiveType::Triangles, borderStates);
 }

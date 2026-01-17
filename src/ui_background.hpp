@@ -12,9 +12,9 @@ class UIBackground : public UIElement
 public:
     UIBackground();
 
-    UIBackground(Game* game, sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, UILayer* uiLayer, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentIndex = -1);
+    UIBackground(Game* game, UILayer* uiLayer, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, int parentID = -1);
 
-    void init(Game* game, sf::Color color, TileSet* tileSet, sf::Texture* borderTexture);
+    void init(sf::Color color, TileSet* tileSet, sf::Texture* borderTexture);
 
     void createBorderVertices();
 
@@ -24,15 +24,13 @@ public:
     
     void draw() override;
 private:
-    Game* game;
-
     sf::Color color;
 
     TileSet* tileSet;
 
-    sf::RectangleShape background;
-
-    std::vector<sf::Vertex> borderVertices;
-
     sf::RenderStates borderStates;
+    
+    std::vector<sf::Vertex> borderVertices;
+    
+    sf::RectangleShape background;
 };

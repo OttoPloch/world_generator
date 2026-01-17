@@ -10,10 +10,12 @@ public:
     UIElement();
 
     // posSet determines if the given position is the top left, top right, bottom left, bottom right or center of the element
-    UIElement(UILayer* uiLayer, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentIndex = -1);
+    UIElement(Game* game, UILayer* uiLayer, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentID = -1);
 
     // posSet determines if the given position is the top left, top right, bottom left, bottom right or center of the element
-    void init(UILayer* uiLayer, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentIndex = -1);
+    void init(Game* game, UILayer* uiLayer, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentID = -1);
+
+    void setParent(int parentID);
 
     // returns the center of this element on the
     // parent element, if this element has one.
@@ -33,7 +35,7 @@ public:
 
     sf::Vector2f getSize();
 
-    int getParentIndex();
+    int getID();
 
     // updates everything without changing size.
     void updateSize();
@@ -45,13 +47,17 @@ public:
 protected:
     UIElement* getParent();
 
+    Game* game;
+
     UILayer* uiLayer;
 
+    int ID;
+    
     unsigned int posSet;
 
     sf::Vector2f position;
 
     sf::Vector2f size;
 
-    int parentIndex;
+    int parentID;
 };
