@@ -1,20 +1,22 @@
 #include "ui_element.hpp"
+#include "game.hpp"
 #include "ui_layer.hpp"
 #include "ui_background.hpp"
 #include "ui_text.hpp"
+#include "ui_button.hpp"
 
 UIElement::UIElement() {}
 
-UIElement::UIElement(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentID)
+UIElement::UIElement(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::string parentName)
 {
-    init(game, uiLayer, name, ID, posSet, position, size, parentID);
+    init(game, name, ID, posSet, position, size, parentName);
 }
 
-void UIElement::init(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentID)
+void UIElement::init(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::string parentName)
 {
     this->game = game;
 
-    this->uiLayer = uiLayer;
+    this->uiLayer = game->getScene()->getUILayer();
 
     this->name = name;
 
@@ -26,7 +28,12 @@ void UIElement::init(Game* game, UILayer* uiLayer, std::string name, int ID, uns
 
     this->size = size;
 
-    this->parentID = parentID;
+    setParent(parentName);
+}
+
+void UIElement::setParent(std::string parentName)
+{
+    (parentName != "") ? parentID = uiLayer->getElement(parentName)->getID() : parentID = -1;
 }
 
 void UIElement::setParent(int parentID)
@@ -152,11 +159,15 @@ UIBackground* UIElement::getAsBackground() { return nullptr; }
 
 UIText* UIElement::getAsText() { return nullptr; }
 
+UIButton* UIElement::getAsButton() { return nullptr; }
+
 void UIElement::resize(sf::Vector2f newSize, int posSet)
 {
     size = newSize;
     
     if (posSet != -1) this->posSet = posSet;
 }
+
+void UIElement::tick() {}
 
 void UIElement::draw() {}

@@ -12,7 +12,7 @@ class UIBackground : public UIElement
 public:
     UIBackground();
 
-    UIBackground(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, int parentID = -1);
+    UIBackground(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, std::string parentName = "");
 
     void init(sf::Color color, TileSet* tileSet, sf::Texture* borderTexture);
 

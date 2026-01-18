@@ -4,7 +4,7 @@ Game::Game() {}
 
 void Game::init()
 {
-    window.create({800, 800}, "INFINITE", false, 0, sf::Color(10, 10, 12));
+    window.create({800, 800}, "INFINITE", false, 165, sf::Color(10, 10, 12));
 
     input.init(this);
 
@@ -93,12 +93,12 @@ void Game::run()
                 
                 if (std::fmod(gameClock.getElapsedTime().asSeconds(), 1.f) < lastTimeCount)
                 {
-                    std::cout << "dt: " << dt << "; dtick: " << dtick << '\n';
-                    std::cout << "fps: " << fps << "; tps: " << 1.f / dtick << '\n';
-                    std::cout << "average tps: " << averageTps << '\n';
-                    std::cout << "ticks last second: " << ticksLastSecond << '\n';
-                    std::cout << "time: " << gameClock.getElapsedTime().asSeconds() << '\n';
-                    std::cout << "//////////////////////////////////\n";
+                    // std::cout << "dt: " << dt << "; dtick: " << dtick << '\n';
+                    // std::cout << "fps: " << fps << "; tps: " << 1.f / dtick << '\n';
+                    // std::cout << "average tps: " << averageTps << '\n';
+                    // std::cout << "ticks last second: " << ticksLastSecond << '\n';
+                    // std::cout << "time: " << gameClock.getElapsedTime().asSeconds() << '\n';
+                    // std::cout << "//////////////////////////////////\n";
 
                     ticksLastSecond = 0;
                 }
@@ -106,6 +106,8 @@ void Game::run()
                 lastTimeCount = std::fmod(gameClock.getElapsedTime().asSeconds(), 1.f);
 
                 tick();
+
+                input.tick();
 
                 ticksLastSecond++;
 

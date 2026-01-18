@@ -13,6 +13,8 @@ public:
     void init();
 
     gamerule getRule(std::string rule, std::string ruleset = "default");
+    
+    void setRule(std::string rule, gamerule value, std::string ruleset = "default");
 private:
     std::map<std::string, gamerule> rules;
 

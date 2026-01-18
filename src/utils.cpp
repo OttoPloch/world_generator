@@ -1,5 +1,6 @@
 #include "utils.hpp"
 #include "entity.hpp"
+#include "game.hpp"
 
 float getDistance(sf::Vector2f vec1, sf::Vector2f vec2)
 {
@@ -35,4 +36,16 @@ void sortEntitiesByY(std::vector<Entity*>* vec, int low, int high)
         sortEntitiesByY(vec, low, pi - 1);
         sortEntitiesByY(vec, pi + 1, high);
     }
+}
+
+bool mouseRectCollide(Game* game, sf::Vector2f position, sf::Vector2f size)
+{
+    sf::Vector2f mouse = toV2F(sf::Mouse::getPosition(game->getWindow()->getWindow()).x, sf::Mouse::getPosition(game->getWindow()->getWindow()).y);
+
+    if (position.x < mouse.x && position.x + size.x > mouse.x && position.y < mouse.y && position.y + size.y > mouse.y)
+    {
+        return true;
+    }
+
+    return false;
 }

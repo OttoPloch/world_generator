@@ -3,7 +3,7 @@
 
 UIBackground::UIBackground() : UIElement() {}
 
-UIBackground::UIBackground(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, int parentID) : UIElement(game, uiLayer, name, ID, posSet, position, size, parentID)
+UIBackground::UIBackground(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, std::string parentName) : UIElement(game, name, ID, posSet, position, size, parentName)
 {
     init(color, tileSet, borderTexture);
 }

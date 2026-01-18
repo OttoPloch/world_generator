@@ -151,6 +151,8 @@ void Input::init(Game* game)
         {"ZOOMIN", {"NONE", "LBUMPER"}},
         {"ZOOMOUT", {"NONE", "RBUMPER"}}
     };
+
+    leftClickLastTick = false;
 }
 
 bool Input::getKey(std::string key)
@@ -210,6 +212,16 @@ bool Input::getControl(std::string key)
     return false;
 }
 
+bool Input::leftClick()
+{
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && !leftClickLastTick)
+    {
+        return true;
+    }
+
+    return false;
+}
+
 sf::Vector2f Input::getMovement()
 {
     if (game->getWindow()->getWindow().hasFocus())
@@ -248,6 +260,18 @@ sf::Vector2f Input::getMovement()
     else
     {
         return {0.f, 0.f};
+    }
+}
+
+void Input::tick()
+{
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+    {
+        leftClickLastTick = true;
+    }
+    else
+    {
+        leftClickLastTick = false;
     }
 }
 

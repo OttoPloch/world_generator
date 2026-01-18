@@ -3,7 +3,7 @@
 
 UIText::UIText() : UIElement() {}
 
-UIText::UIText(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Font* font, std::string text, unsigned int fontSize, sf::Color fontColor, int parentID) : UIElement(game, uiLayer, name, ID, posSet, position, {0, 0}, parentID)
+UIText::UIText(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Font* font, std::string text, unsigned int fontSize, sf::Color fontColor, std::string parentName) : UIElement(game, name, ID, posSet, position, {0, 0}, parentName)
 {
     init(font, text, fontSize, fontColor);
 }
@@ -19,6 +19,54 @@ void UIText::init(sf::Font* font, std::string text, unsigned int fontSize, sf::C
     baseText = "";
     value = "";
 
+    updateSize();
+}
+
+void UIText::setText(std::string text)
+{
+    displayText->setString(text);
+}
+
+void UIText::setBaseText(std::string baseText)
+{
+    this->baseText = baseText;
+
+    std::string before = baseText.substr(0, baseText.find("###"));
+    std::string after = baseText.substr(baseText.find("###") + 3);
+
+    displayText->setString(before + value + after);
+}
+
+void UIText::setValue(std::string value)
+{
+    this->value = value;
+
+    if (baseText.find("###") != std::string::npos)
+    {
+        std::string before = baseText.substr(0, baseText.find("###"));
+        std::string after = baseText.substr(baseText.find("###") + 3);
+    
+        displayText->setString(before + value + after);
+    }
+    else
+    {
+        std::cout << "ERROR setting value of ui text to " << value << ". Base text of '" << baseText << "' does not have ### to represent the value.\n";
+    }
+}
+
+std::string UIText::getText()
+{
+    return displayText->getString().toAnsiString();
+}
+
+UIText* UIText::getAsText() { return this; }
+
+void UIText::resize(sf::Vector2f newSize, int posSet)
+{
+    size = newSize;
+    
+    if (posSet != -1) this->posSet = posSet;
+    
     sf::Vector2f textTL = {0, 0};
     sf::Vector2f textAdjustedTL = textTL + displayText->getLocalBounds().position;
     sf::Vector2f roundedTL = {std::round(textAdjustedTL.x), std::round(textAdjustedTL.y)};
@@ -39,7 +87,7 @@ void UIText::init(sf::Font* font, std::string text, unsigned int fontSize, sf::C
     sf::Vector2f textAdjustedCenter = textCenter + displayText->getLocalBounds().position;
     sf::Vector2f roundedCenter = {std::round(textAdjustedCenter.x), std::round(textAdjustedCenter.y)};
 
-    switch (posSet)
+    switch (this->posSet)
     {
         case 0:
             displayText->setOrigin(roundedTL);
@@ -73,47 +121,6 @@ void UIText::init(sf::Font* font, std::string text, unsigned int fontSize, sf::C
             break;
     }
 
-    updateSize();
-}
-
-void UIText::setText(std::string text)
-{
-    displayText->setString(text);
-}
-
-void UIText::setBaseText(std::string baseText)
-{
-    this->baseText = baseText;
-
-    std::string before = baseText.substr(0, baseText.find("###"));
-    std::string after = baseText.substr(baseText.find("###") + 3);
-
-    displayText->setString(before + value + after);
-}
-
-void UIText::setValue(std::string value)
-{
-    this->value = value;
-
-    std::string before = baseText.substr(0, baseText.find("###"));
-    std::string after = baseText.substr(baseText.find("###") + 3);
-
-    displayText->setString(before + value + after);
-}
-
-std::string UIText::getText()
-{
-    return displayText->getString().toAnsiString();
-}
-
-UIText* UIText::getAsText() { return this; }
-
-void UIText::resize(sf::Vector2f newSize, int posSet)
-{
-    size = newSize;
-    
-    if (posSet != -1) this->posSet = posSet;
-    
     displayText->setPosition({left(), top()});
 }
 

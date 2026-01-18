@@ -12,7 +12,7 @@ class UIText : public UIElement
 public:
     UIText();
 
-    UIText(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Font* font, std::string text, unsigned int fontSize, sf::Color fontColor = sf::Color(0, 0, 0), int parentID = -1);
+    UIText(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Font* font, std::string text, unsigned int fontSize, sf::Color fontColor = sf::Color(0, 0, 0), std::string parentName = "");
 
     void init(sf::Font* font, std::string text, unsigned int fontSize, sf::Color fontColor);
 

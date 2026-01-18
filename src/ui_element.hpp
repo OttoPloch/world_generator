@@ -5,6 +5,7 @@
 class UILayer;
 class UIBackground;
 class UIText;
+class UIButton;
 
 class UIElement
 {
@@ -12,11 +13,13 @@ public:
     UIElement();
 
     // posSet determines if the given position is the top left, top right, bottom left, bottom right or center of the element
-    UIElement(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentID = -1);
+    UIElement(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::string parentName = "");
 
     // posSet determines if the given position is the top left, top right, bottom left, bottom right or center of the element
-    void init(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentID = -1);
+    void init(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::string parentName = "");
 
+    void setParent(std::string parentName);
+    
     void setParent(int parentID);
 
     // returns the center of this element on the
@@ -49,9 +52,14 @@ public:
     
     // same as above
     virtual UIText* getAsText();
+    
+    // same as above
+    virtual UIButton* getAsButton();
 
     // If posSet is -1, then the element's posSet will not change.
     virtual void resize(sf::Vector2f newSize, int posSet = -1);
+
+    virtual void tick();
 
     virtual void draw();
 protected:

@@ -25,7 +25,7 @@ void MotionAttribute::tick()
     float velocityCutoff = gamerules->getRule("motion_velocityCutoff").valueFloat;
 
     if (controlling)
-    {
+    {   
         sf::Vector2f movement = game->getInput()->getMovement();
 
         // TODO: replace "player" here with

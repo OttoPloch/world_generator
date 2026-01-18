@@ -6,6 +6,7 @@
 #include "ui_element.hpp"
 #include "ui_background.hpp"
 #include "ui_text.hpp"
+#include "ui_button.hpp"
 
 #include <vector>
 #include <map>
@@ -48,4 +49,6 @@ private:
     std::map<int, UIBackground> bgElements;
     
     std::map<int, UIText> textElements;
+    
+    std::map<int, UIButton> buttonElements;
 };

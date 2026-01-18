@@ -43,6 +43,7 @@ src/ui_element.cpp
 src/ui_background.cpp
 src/tile_set.cpp
 src/ui_text.cpp
+src/ui_button.cpp
 )
 
 target_compile_features(app PRIVATE cxx_std_17)

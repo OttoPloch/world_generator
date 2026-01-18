@@ -51,3 +51,21 @@ gamerule Gamerules::getRule(std::string rule, std::string ruleset)
     
     return gamerule(0.f, 0, false, "");
 }
+
+void Gamerules::setRule(std::string rule, gamerule value, std::string ruleset)
+{
+    if (ruleset == "default")
+    {
+        if (rules.find(rule) != rules.end())
+        {
+            rules[rule] = value;
+        }
+    }
+    else if (ruleset == "player")
+    {
+        if (playerRules.find(rule) != playerRules.end())
+        {
+            playerRules[rule] = value;
+        }
+    }
+}

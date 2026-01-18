@@ -17,17 +17,15 @@ void UILayer::init(Game* game, Camera* camera)
 
     int currID;
 
-    currID = getNewID(); bgElements[currID] = UIBackground(game, this, "win 1", currID, 8, {0, -50}, {600, 300}, sf::Color(0, 0, 0, 195), assetManager->getTileSet("16px"), assetManager->getTexture("ui_default"));
-    currID = getNewID(); bgElements[currID] = UIBackground(game, this, "", currID, 4, {0, 0}, {300, 200}, sf::Color(0, 0, 0, 0), assetManager->getTileSet("32px filled"), assetManager->getTexture("ui_scroll"), 0);
-    currID = getNewID(); bgElements[currID] = UIBackground(game, this, "", currID, 0, {20, 20}, {50, 50}, sf::Color(0, 0, 255), nullptr, nullptr, 0);
-    currID = getNewID(); bgElements[currID] = UIBackground(game, this, "", currID, 1, {-20, 20}, {50, 50}, sf::Color(0, 0, 255), nullptr, nullptr, 0);
-    currID = getNewID(); bgElements[currID] = UIBackground(game, this, "", currID, 2, {20, -20}, {50, 50}, sf::Color(0, 0, 255), nullptr, nullptr, 0);
-    currID = getNewID(); bgElements[currID] = UIBackground(game, this, "", currID, 3, {-20, -20}, {50, 50}, sf::Color(0, 0, 255), nullptr, nullptr, 0);
-    
-    currID = getNewID(); textElements[currID] = UIText(game, this, "win 1 text", currID, 0, {0, 0}, assetManager->getFont("White Storm"), "Hello Boi!", 50, sf::Color::White, 0);
-    currID = getNewID(); textElements[currID] = UIText(game, this, "win 2 tl text", currID, 0, {20, 0}, assetManager->getFont("White Storm"), "Hello Boi!", 30, sf::Color::Black, 1);
-    currID = getNewID(); textElements[currID] = UIText(game, this, "win 2 center text", currID, 4, {0, 0}, assetManager->getFont("White Storm"), "Hello Boi!", 30, sf::Color::Black, 1);
-    currID = getNewID(); textElements[currID] = UIText(game, this, "win 2 bl text", currID, 2, {20, -20}, assetManager->getFont("White Storm"), "Hello Boi!", 30, sf::Color::Black, 1);
+    currID = getNewID(); bgElements[currID] = UIBackground(game, "win 2", currID, 0, {80, 80}, {300, 200}, sf::Color(0, 0, 0, 0), assetManager->getTileSet("32px filled"), assetManager->getTexture("ui_scroll"));
+    currID = getNewID(); buttonElements[currID] = UIButton(game, "faster button", currID, 3, {-25, -10}, {50, 50}, {assetManager->getTexture("button_up"), assetManager->getTexture("button_hover"), assetManager->getTexture("button_down")}, "win 2");
+    currID = getNewID(); textElements[currID] = UIText(game, "faster button text", currID, 5, {0, -45}, assetManager->getFont("White Storm"), "Click me\nto go faster!", 20, sf::Color::Black, "faster button");
+    currID = getNewID(); buttonElements[currID] = UIButton(game, "slower button", currID, 2, {25, -10}, {50, 50}, {assetManager->getTexture("button_up"), assetManager->getTexture("button_hover"), assetManager->getTexture("button_down")}, "win 2");
+    currID = getNewID(); textElements[currID] = UIText(game, "slower button text", currID, 5, {0, -45}, assetManager->getFont("White Storm"), "Click me\nto go slower!", 20, sf::Color::Black, "slower button");
+    currID = getNewID(); textElements[currID] = UIText(game, "speed display", currID, 0, {15, 0}, assetManager->getFont("White Storm"), "----", 30, sf::Color::Black, "win 2");
+
+    getElement("speed display")->getAsText()->setBaseText("Speed: ###");
+    getElement("speed display")->getAsText()->setValue(std::to_string(toInt(game->getGamerules()->getRule("moveSpeed", "player").valueFloat)));
 
     for (auto& i : bgElements)
     {
@@ -35,6 +33,11 @@ void UILayer::init(Game* game, Camera* camera)
     }
 
     for (auto& i : textElements)
+    {
+        namesToIDs[i.second.getName()] = i.first;
+    }
+
+    for (auto& i : buttonElements)
     {
         namesToIDs[i.second.getName()] = i.first;
     }
@@ -52,6 +55,11 @@ UIElement* UILayer::getElement(int ID)
         if (textElements.find(ID) != textElements.end())
         {
             return &textElements[ID];
+        }
+
+        if (buttonElements.find(ID) != buttonElements.end())
+        {
+            return &buttonElements[ID];
         }
         
         // if there are no entries with that ID, assume
@@ -73,6 +81,42 @@ UIElement* UILayer::getElement(std::string name)
     if (namesToIDs.find(name) != namesToIDs.end())
     {
         return getElement(namesToIDs[name]);
+    }
+    else
+    {
+        bool found = false;
+
+        for (auto& i : bgElements)
+        {
+            if (i.second.getName() == name)
+            {
+                namesToIDs[i.second.getName()] = i.first;
+
+                found = true;
+            }
+        }
+        
+        for (auto& i : textElements)
+        {
+            if (i.second.getName() == name)
+            {
+                namesToIDs[i.second.getName()] = i.first;
+                
+                found = true;
+            }
+        }
+        
+        for (auto& i : buttonElements)
+        {
+            if (i.second.getName() == name)
+            {
+                namesToIDs[i.second.getName()] = i.first;
+                
+                found = true;
+            }
+        }
+
+        if (found) return getElement(name);
     }
 
     return nullptr;
@@ -105,6 +149,11 @@ void UILayer::reset()
     {
         i.second.updateSize();
     }
+
+    for (auto& i : buttonElements)
+    {
+        i.second.updateSize();
+    }
 }
 
 void UILayer::tick()
@@ -113,6 +162,8 @@ void UILayer::tick()
     {
         for (auto& i : bgElements)
         {
+            i.second.tick();
+
             if (i.first == namesToIDs["win 1"])
             {
                 if (game->getInput()->getControl("INTERACT"))
@@ -121,6 +172,7 @@ void UILayer::tick()
         
                     for (auto& j : bgElements) j.second.updateSize();
                     for (auto& j : textElements) j.second.updateSize();
+                    for (auto& j : buttonElements) j.second.updateSize();
                 }
         
                 if (game->getInput()->getControl("MENU"))
@@ -129,8 +181,25 @@ void UILayer::tick()
         
                     for (auto& j : bgElements) j.second.updateSize();
                     for (auto& j : textElements) j.second.updateSize();
+                    for (auto& j : buttonElements) j.second.updateSize();
                 }
             }
+        }
+    }
+
+    if (textElements.size() > 0)
+    {
+        for (auto& i : textElements)
+        {
+            i.second.tick();
+        }
+    }
+
+    if (buttonElements.size() > 0)
+    {
+        for (auto& i : buttonElements)
+        {
+            i.second.tick();
         }
     }
 }
@@ -156,6 +225,20 @@ void UILayer::draw()
     if (textElements.size() > 0)
     {
         for (auto& i : textElements)
+        {
+            i.second.draw();
+    
+            // sf::CircleShape circle(5.f);
+            // circle.setFillColor(sf::Color::Red);
+            // circle.setOrigin({5.f, 5.f});
+            // circle.setPosition(i.second.getScreenCenter());
+            // game->getWindow()->getWindow().draw(circle);
+        }
+    }
+
+    if (buttonElements.size() > 0)
+    {
+        for (auto& i : buttonElements)
         {
             i.second.draw();
     

@@ -35,6 +35,8 @@ public:
 
     UILayer* getUILayer();
 private:
+    Game* game;
+
     Window* window;
     
     AssetManager* assetManager;    

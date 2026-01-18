@@ -16,13 +16,17 @@ public:
 
     // enter key in all caps
     bool getKey(std::string key);
-
+    
     // enter key in all caps
     bool getButton(std::string key);
-
+    
     bool getControl(std::string key);
 
+    bool leftClick();
+
     sf::Vector2f getMovement();
+
+    void tick();
 
     void update();
 private:
@@ -50,4 +54,6 @@ private:
     
     std::unordered_map<std::string, bool> controlsPressedThisFrame;
     std::unordered_map<std::string, bool> controlsPressedLastFrame;
+
+    bool leftClickLastTick;
 };
