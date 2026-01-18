@@ -108,12 +108,9 @@ void Scene::tick()
 
     if (uiLayer.getElement("faster button")->getAsButton()->getActive())
     {
-        uiLayer.getElement("speed display")->getAsText()->setBaseText("Speed: ###");
-
         game->getGamerules()->setRule("moveSpeed", gamerule(game->getGamerules()->getRule("moveSpeed", "player").valueFloat + 3.f, 0, false, ""), "player");
 
         uiLayer.getElement("speed display")->getAsText()->setValue(std::to_string(toInt(game->getGamerules()->getRule("moveSpeed", "player").valueFloat)));
-        uiLayer.getElement("speed display")->updateSize();
     }
     
     if (uiLayer.getElement("slower button")->getAsButton()->getActive())
@@ -121,7 +118,6 @@ void Scene::tick()
         game->getGamerules()->setRule("moveSpeed", gamerule(std::max(game->getGamerules()->getRule("moveSpeed", "player").valueFloat - 3.f, .1f), 0, false, ""), "player");
         
         uiLayer.getElement("speed display")->getAsText()->setValue(std::to_string(toInt(game->getGamerules()->getRule("moveSpeed", "player").valueFloat)));
-        uiLayer.getElement("speed display")->updateSize();
     }
 }
 

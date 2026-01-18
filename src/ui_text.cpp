@@ -25,6 +25,8 @@ void UIText::init(sf::Font* font, std::string text, unsigned int fontSize, sf::C
 void UIText::setText(std::string text)
 {
     displayText->setString(text);
+
+    updateSize();
 }
 
 void UIText::setBaseText(std::string baseText)
@@ -35,6 +37,8 @@ void UIText::setBaseText(std::string baseText)
     std::string after = baseText.substr(baseText.find("###") + 3);
 
     displayText->setString(before + value + after);
+
+    updateSize();
 }
 
 void UIText::setValue(std::string value)
@@ -47,6 +51,8 @@ void UIText::setValue(std::string value)
         std::string after = baseText.substr(baseText.find("###") + 3);
     
         displayText->setString(before + value + after);
+
+        updateSize();
     }
     else
     {
