@@ -17,7 +17,7 @@ void UILayer::init(Game* game, Camera* camera)
 
     int currID;
 
-    currID = getNewID(); bgElements[currID] = UIBackground(game, "win 2", currID, 0, {80, 80}, {300, 200}, sf::Color(0, 0, 0, 0), assetManager->getTileSet("32px filled"), assetManager->getTexture("ui_scroll"));
+    currID = getNewID(); bgElements[currID] = UIBackground(game, "win 2", currID, 0, {80, 80}, {220, 200}, sf::Color(0, 0, 0, 0), assetManager->getTileSet("32px filled"), assetManager->getTexture("ui_scroll"));
     currID = getNewID(); buttonElements[currID] = UIButton(game, "faster button", currID, 3, {-25, -10}, {50, 50}, {assetManager->getTexture("button_up"), assetManager->getTexture("button_hover"), assetManager->getTexture("button_down")}, "win 2");
     currID = getNewID(); textElements[currID] = UIText(game, "faster button text", currID, 5, {0, -45}, assetManager->getFont("White Storm"), "Click me\nto go faster!", 20, sf::Color::Black, "faster button");
     currID = getNewID(); buttonElements[currID] = UIButton(game, "slower button", currID, 2, {25, -10}, {50, 50}, {assetManager->getTexture("button_up"), assetManager->getTexture("button_hover"), assetManager->getTexture("button_down")}, "win 2");
@@ -163,27 +163,6 @@ void UILayer::tick()
         for (auto& i : bgElements)
         {
             i.second.tick();
-
-            if (i.first == namesToIDs["win 1"])
-            {
-                if (game->getInput()->getControl("INTERACT"))
-                {
-                    i.second.resize({i.second.getSize().x + 10.f, i.second.getSize().y + 2.f});
-        
-                    for (auto& j : bgElements) j.second.updateSize();
-                    for (auto& j : textElements) j.second.updateSize();
-                    for (auto& j : buttonElements) j.second.updateSize();
-                }
-        
-                if (game->getInput()->getControl("MENU"))
-                {
-                    i.second.resize({i.second.getSize().x - 10.f, i.second.getSize().y - 2.f});
-        
-                    for (auto& j : bgElements) j.second.updateSize();
-                    for (auto& j : textElements) j.second.updateSize();
-                    for (auto& j : buttonElements) j.second.updateSize();
-                }
-            }
         }
     }
 
