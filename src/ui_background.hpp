@@ -12,13 +12,15 @@ class UIBackground : public UIElement
 public:
     UIBackground();
 
-    UIBackground(Game* game, UILayer* uiLayer, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, int parentID = -1);
+    UIBackground(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, int parentID = -1);
 
     void init(sf::Color color, TileSet* tileSet, sf::Texture* borderTexture);
 
     void createBorderVertices();
 
     sf::Color getColor();
+
+    UIBackground* getAsBackground() override;
 
     void resize(sf::Vector2f newSize, int posSet = -1) override;
     

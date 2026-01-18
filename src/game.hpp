@@ -30,6 +30,8 @@ public:
     AssetManager* getAssetManager();
 
     Input* getInput();
+
+    Scene* getScene();
 private:
     void run();
 

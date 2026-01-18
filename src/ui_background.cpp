@@ -3,7 +3,7 @@
 
 UIBackground::UIBackground() : UIElement() {}
 
-UIBackground::UIBackground(Game* game, UILayer* uiLayer, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, int parentID) : UIElement(game, uiLayer, ID, posSet, position, size, parentID)
+UIBackground::UIBackground(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, int parentID) : UIElement(game, uiLayer, name, ID, posSet, position, size, parentID)
 {
     init(color, tileSet, borderTexture);
 }
@@ -208,6 +208,8 @@ void UIBackground::createBorderVertices()
 }
 
 sf::Color UIBackground::getColor() { return color; }
+
+UIBackground* UIBackground::getAsBackground() { return this; }
 
 void UIBackground::resize(sf::Vector2f newSize, int posSet)
 {

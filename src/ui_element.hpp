@@ -3,6 +3,8 @@
 #include "common.hpp"
 
 class UILayer;
+class UIBackground;
+class UIText;
 
 class UIElement
 {
@@ -10,10 +12,10 @@ public:
     UIElement();
 
     // posSet determines if the given position is the top left, top right, bottom left, bottom right or center of the element
-    UIElement(Game* game, UILayer* uiLayer, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentID = -1);
+    UIElement(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentID = -1);
 
     // posSet determines if the given position is the top left, top right, bottom left, bottom right or center of the element
-    void init(Game* game, UILayer* uiLayer, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentID = -1);
+    void init(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentID = -1);
 
     void setParent(int parentID);
 
@@ -35,10 +37,18 @@ public:
 
     sf::Vector2f getSize();
 
+    std::string getName();
+
     int getID();
 
     // updates everything without changing size.
     void updateSize();
+
+    // not sure if this is a good way to do this
+    virtual UIBackground* getAsBackground();
+    
+    // same as above
+    virtual UIText* getAsText();
 
     // If posSet is -1, then the element's posSet will not change.
     virtual void resize(sf::Vector2f newSize, int posSet = -1);
@@ -50,6 +60,8 @@ protected:
     Game* game;
 
     UILayer* uiLayer;
+
+    std::string name;
 
     int ID;
     

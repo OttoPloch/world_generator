@@ -15,43 +15,64 @@ void UILayer::init(Game* game, Camera* camera)
 
     reset();
 
-    bgElements.push_back(UIBackground(game, this, getNewID(), 8, {0, -50}, {600, 300}, sf::Color(0, 0, 0, 0), assetManager->getTileSet("16px filled"), assetManager->getTexture("ui_tech")));
-    bgElements.push_back(UIBackground(game, this, getNewID(), 4, {0, 0}, {300, 200}, sf::Color(0, 0, 0, 0), assetManager->getTileSet("16px filled"), assetManager->getTexture("ui_tech"), bgElements[0].getID()));
-    bgElements.push_back(UIBackground(game, this, getNewID(), 0, {20, 20}, {50, 50}, sf::Color(0, 0, 255), nullptr, nullptr, bgElements[0].getID()));
-    bgElements.push_back(UIBackground(game, this, getNewID(), 1, {-20, 20}, {50, 50}, sf::Color(0, 0, 255), nullptr, nullptr, bgElements[0].getID()));
-    bgElements.push_back(UIBackground(game, this, getNewID(), 2, {20, -20}, {50, 50}, sf::Color(0, 0, 255), nullptr, nullptr, bgElements[0].getID()));
-    bgElements.push_back(UIBackground(game, this, getNewID(), 3, {-20, -20}, {50, 50}, sf::Color(0, 0, 255), nullptr, nullptr, bgElements[0].getID()));
+    int currID;
 
-    textElements.push_back(UIText(game, this, getNewID(), 0, {0, 0}, assetManager->getFont("White Storm"), "Hello Boi!", 50, sf::Color(255, 255, 255), bgElements[0].getID()));
-    textElements.push_back(UIText(game, this, getNewID(), 0, {0, 0}, assetManager->getFont("White Storm"), "Hello Boi!", 50, sf::Color(255, 255, 255), bgElements[1].getID()));
-    textElements.push_back(UIText(game, this, getNewID(), 4, {0, 0}, assetManager->getFont("White Storm"), "Hello Boi!", 50, sf::Color(255, 255, 255), bgElements[1].getID()));
+    currID = getNewID(); bgElements[currID] = UIBackground(game, this, "win 1", currID, 8, {0, -50}, {600, 300}, sf::Color(0, 0, 0, 195), assetManager->getTileSet("16px"), assetManager->getTexture("ui_default"));
+    currID = getNewID(); bgElements[currID] = UIBackground(game, this, "", currID, 4, {0, 0}, {300, 200}, sf::Color(0, 0, 0, 0), assetManager->getTileSet("32px filled"), assetManager->getTexture("ui_scroll"), 0);
+    currID = getNewID(); bgElements[currID] = UIBackground(game, this, "", currID, 0, {20, 20}, {50, 50}, sf::Color(0, 0, 255), nullptr, nullptr, 0);
+    currID = getNewID(); bgElements[currID] = UIBackground(game, this, "", currID, 1, {-20, 20}, {50, 50}, sf::Color(0, 0, 255), nullptr, nullptr, 0);
+    currID = getNewID(); bgElements[currID] = UIBackground(game, this, "", currID, 2, {20, -20}, {50, 50}, sf::Color(0, 0, 255), nullptr, nullptr, 0);
+    currID = getNewID(); bgElements[currID] = UIBackground(game, this, "", currID, 3, {-20, -20}, {50, 50}, sf::Color(0, 0, 255), nullptr, nullptr, 0);
+    
+    currID = getNewID(); textElements[currID] = UIText(game, this, "win 1 text", currID, 0, {0, 0}, assetManager->getFont("White Storm"), "Hello Boi!", 50, sf::Color::White, 0);
+    currID = getNewID(); textElements[currID] = UIText(game, this, "win 2 tl text", currID, 0, {20, 0}, assetManager->getFont("White Storm"), "Hello Boi!", 30, sf::Color::Black, 1);
+    currID = getNewID(); textElements[currID] = UIText(game, this, "win 2 center text", currID, 4, {0, 0}, assetManager->getFont("White Storm"), "Hello Boi!", 30, sf::Color::Black, 1);
+    currID = getNewID(); textElements[currID] = UIText(game, this, "win 2 bl text", currID, 2, {20, -20}, assetManager->getFont("White Storm"), "Hello Boi!", 30, sf::Color::Black, 1);
+
+    for (auto& i : bgElements)
+    {
+        namesToIDs[i.second.getName()] = i.first;
+    }
+
+    for (auto& i : textElements)
+    {
+        namesToIDs[i.second.getName()] = i.first;
+    }
 }
 
 UIElement* UILayer::getElement(int ID)
 {
     if (ID > -1)
     {
-        if (bgElements.size() > 0)
+        if (bgElements.find(ID) != bgElements.end())
         {
-            for (int i = 0; i < bgElements.size(); i++)
-            {
-                if (bgElements[i].getID() == ID)
-                {
-                    return &bgElements[i];
-                }
-            }
+            return &bgElements[ID];
         }
 
-        if (textElements.size() > 0)
+        if (textElements.find(ID) != textElements.end())
         {
-            for (int i = 0; i < textElements.size(); i++)
+            return &textElements[ID];
+        }
+        
+        // if there are no entries with that ID, assume
+        // it has been deleted and remove it from namesToIDs
+        for (auto& i : namesToIDs)
+        {
+            if (i.second == ID)
             {
-                if (textElements[i].getID() == ID)
-                {
-                    return &textElements[i];
-                }
+                namesToIDs.erase(i.first);
             }
         }
+    }
+
+    return nullptr;
+}
+
+UIElement* UILayer::getElement(std::string name)
+{
+    if (namesToIDs.find(name) != namesToIDs.end())
+    {
+        return getElement(namesToIDs[name]);
     }
 
     return nullptr;
@@ -75,14 +96,14 @@ void UILayer::reset()
 
     UIView = sf::View({viewSize.x / 2.f, viewSize.y / 2.f}, viewSize);
 
-    for (int i = 0; i < bgElements.size(); i++)
+    for (auto& i : bgElements)
     {
-        bgElements[i].updateSize();
+        i.second.updateSize();
     }
 
-    for (int i = 0; i < textElements.size(); i++)
+    for (auto& i : textElements)
     {
-        textElements[i].updateSize();
+        i.second.updateSize();
     }
 }
 
@@ -90,24 +111,24 @@ void UILayer::tick()
 {
     if (bgElements.size() > 0)
     {
-        for (int i = 0; i < bgElements.size(); i++)
+        for (auto& i : bgElements)
         {
-            if (i == 0)
+            if (i.first == namesToIDs["win 1"])
             {
                 if (game->getInput()->getControl("INTERACT"))
                 {
-                    bgElements[i].resize({bgElements[i].getSize().x + 10.f, bgElements[i].getSize().y + 2.f});
+                    i.second.resize({i.second.getSize().x + 10.f, i.second.getSize().y + 2.f});
         
-                    for (int j = 0; j < bgElements.size(); j++) bgElements[j].updateSize();
-                    for (int j = 0; j < textElements.size(); j++) textElements[j].updateSize();
+                    for (auto& j : bgElements) j.second.updateSize();
+                    for (auto& j : textElements) j.second.updateSize();
                 }
         
                 if (game->getInput()->getControl("MENU"))
                 {
-                    bgElements[i].resize({bgElements[i].getSize().x - 10.f, bgElements[i].getSize().y - 2.f});
+                    i.second.resize({i.second.getSize().x - 10.f, i.second.getSize().y - 2.f});
         
-                    for (int j = 0; j < bgElements.size(); j++) bgElements[j].updateSize();
-                    for (int j = 0; j < textElements.size(); j++) textElements[j].updateSize();
+                    for (auto& j : bgElements) j.second.updateSize();
+                    for (auto& j : textElements) j.second.updateSize();
                 }
             }
         }
@@ -120,28 +141,28 @@ void UILayer::draw()
 
     if (bgElements.size() > 0)
     {
-        for (int i = 0; i < bgElements.size(); i++)
+        for (auto& i : bgElements)
         {
-            bgElements[i].draw();
+            i.second.draw();
     
             // sf::CircleShape circle(5.f);
             // circle.setFillColor(sf::Color::Red);
             // circle.setOrigin({5.f, 5.f});
-            // circle.setPosition(bgElements[i].getScreenCenter());
+            // circle.setPosition(i.second.getScreenCenter());
             // game->getWindow()->getWindow().draw(circle);
         }
     }
 
     if (textElements.size() > 0)
     {
-        for (int i = 0; i < textElements.size(); i++)
+        for (auto& i : textElements)
         {
-            textElements[i].draw();
+            i.second.draw();
     
             // sf::CircleShape circle(5.f);
             // circle.setFillColor(sf::Color::Red);
             // circle.setOrigin({5.f, 5.f});
-            // circle.setPosition(textElements[i].getScreenCenter());
+            // circle.setPosition(i.second.getScreenCenter());
             // game->getWindow()->getWindow().draw(circle);
         }
     }

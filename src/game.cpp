@@ -4,7 +4,7 @@ Game::Game() {}
 
 void Game::init()
 {
-    window.create({800, 800}, "INFINITE", false, 165, sf::Color(10, 10, 12));
+    window.create({800, 800}, "INFINITE", false, 0, sf::Color(10, 10, 12));
 
     input.init(this);
 
@@ -55,6 +55,8 @@ Gamerules* Game::getGamerules() { return &gamerules; }
 AssetManager* Game::getAssetManager() { return &assetManager; }
 
 Input* Game::getInput() { return &input; }
+
+Scene* Game::getScene() { return &scene; }
 
 void Game::run()
 {

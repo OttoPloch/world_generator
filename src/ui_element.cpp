@@ -1,18 +1,22 @@
 #include "ui_element.hpp"
 #include "ui_layer.hpp"
+#include "ui_background.hpp"
+#include "ui_text.hpp"
 
 UIElement::UIElement() {}
 
-UIElement::UIElement(Game* game, UILayer* uiLayer, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentID)
+UIElement::UIElement(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentID)
 {
-    init(game, uiLayer, ID, posSet, position, size, parentID);
+    init(game, uiLayer, name, ID, posSet, position, size, parentID);
 }
 
-void UIElement::init(Game* game, UILayer* uiLayer, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentID)
+void UIElement::init(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, int parentID)
 {
     this->game = game;
 
     this->uiLayer = uiLayer;
+
+    this->name = name;
 
     this->ID = ID;
 
@@ -135,12 +139,18 @@ sf::Vector2f UIElement::getSize() { return size; }
 
 UIElement* UIElement::getParent() { return uiLayer->getElement(parentID); }
 
+std::string UIElement::getName() { return name; }
+
 int UIElement::getID() { return ID; }
 
 void UIElement::updateSize()
 {
     resize(size);
 }
+
+UIBackground* UIElement::getAsBackground() { return nullptr; }
+
+UIText* UIElement::getAsText() { return nullptr; }
 
 void UIElement::resize(sf::Vector2f newSize, int posSet)
 {

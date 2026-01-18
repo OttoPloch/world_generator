@@ -8,6 +8,7 @@
 #include "ui_text.hpp"
 
 #include <vector>
+#include <map>
 
 class Game;
 
@@ -19,7 +20,9 @@ public:
     void init(Game* game, Camera* camera);
 
     UIElement* getElement(int ID);
-    
+
+    UIElement* getElement(std::string name);
+
     int getNewID();
 
     sf::Vector2u getScreenSize();
@@ -36,11 +39,13 @@ private:
 
     Camera* camera;
 
+    std::unordered_map<std::string, int> namesToIDs;
+
     int IDCounter;
 
     sf::View UIView;
 
-    std::vector<UIBackground> bgElements;
-
-    std::vector<UIText> textElements;
+    std::map<int, UIBackground> bgElements;
+    
+    std::map<int, UIText> textElements;
 };
