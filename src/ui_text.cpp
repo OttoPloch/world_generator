@@ -21,7 +21,12 @@ void UIText::init(sf::Font* font, std::string text, unsigned int fontSize, sf::C
 {
     displayText = std::make_unique<sf::Text>(*font, text, fontSize);
 
+    std::cout << "before\n";
+    
     displayText->setPosition({left(), top()});
+    
+    std::cout << "after\n";
+
     displayText->setStyle(sf::Text::Bold);
     displayText->setFillColor(fontColor);
 
