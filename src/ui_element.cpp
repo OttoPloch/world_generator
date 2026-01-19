@@ -16,7 +16,8 @@ void UIElement::baseInit(Game* game, UILayer* uiLayer, std::string name, int ID,
 {
     this->game = game;
 
-    this->uiLayer = uiLayer;
+    this->uiLayer = game->getScene()->getUILayer();
+    std::cout << "uiLayer given: " << uiLayer << ", uiLayer retrieved: " << game->getScene()->getUILayer() << '\n';//". Same ? " (uiLayer == game->getScene()->getUILayer());
 
     this->name = name;
 
@@ -144,7 +145,17 @@ float UIElement::bottom()
 
 sf::Vector2f UIElement::getSize() { return size; }
 
-UIElement* UIElement::getParent() { return uiLayer->getElement(parentID); }
+UIElement* UIElement::getParent()
+{
+    if (uiLayer)
+    {
+        return uiLayer->getElement(parentID);
+    }
+    else
+    {
+        return nullptr;
+    }
+}
 
 std::string UIElement::getName() { return name; }
 

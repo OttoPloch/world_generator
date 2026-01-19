@@ -11,9 +11,9 @@ public:
     // buttonTextures[0] = default texture
     // buttonTextures[1] = hover texture
     // buttonTextures[2] = click texture
-    UIButton(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::string parentName = "");
+    UIButton(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::array<sf::Texture*, 3> buttonTextures, std::string parentName = "");
     
-    void init(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::string parentName = "");
+    void init(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::array<sf::Texture*, 3> buttonTextures, std::string parentName = "");
 
     void init(std::array<sf::Texture*, 3> buttonTextures);
 

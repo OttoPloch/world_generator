@@ -50,6 +50,4 @@ void EventHandler::windowResized()
 {
     camera->setBaseSize(toV2F(window->getSize()));
     scene->getUILayer()->reset();
-
-    std::cout << "REIZED!!!!!!\n";
 }
