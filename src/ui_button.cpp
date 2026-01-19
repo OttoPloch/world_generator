@@ -3,16 +3,16 @@
 
 UIButton::UIButton() : UIElement() {}
 
-UIButton::UIButton(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::array<sf::Texture*, 3> buttonTextures, std::string parentName) : UIElement()
+UIButton::UIButton(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::array<sf::Texture*, 3> buttonTextures, std::string parentName) : UIElement()
 {
-    baseInit(game, uiLayer, name, ID, posSet, position, size, parentName);
+    baseInit(game, name, ID, posSet, position, size, parentName);
 
     init(buttonTextures);
 }
 
-void UIButton::init(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::array<sf::Texture*, 3> buttonTextures, std::string parentName)
+void UIButton::init(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::array<sf::Texture*, 3> buttonTextures, std::string parentName)
 {
-    baseInit(game, uiLayer, name, ID, posSet, position, size, parentName);
+    baseInit(game, name, ID, posSet, position, size, parentName);
 
     init(buttonTextures);
 }

@@ -7,17 +7,16 @@
 
 UIElement::UIElement() {}
 
-UIElement::UIElement(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::string parentName)
+UIElement::UIElement(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::string parentName)
 {
-    baseInit(game, uiLayer, name, ID, posSet, position, size, parentName);
+    baseInit(game, name, ID, posSet, position, size, parentName);
 }
 
-void UIElement::baseInit(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::string parentName)
+void UIElement::baseInit(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::string parentName)
 {
     this->game = game;
 
     this->uiLayer = game->getScene()->getUILayer();
-    std::cout << "uiLayer given: " << uiLayer << ", uiLayer retrieved: " << game->getScene()->getUILayer() << '\n';//". Same ? " (uiLayer == game->getScene()->getUILayer());
 
     this->name = name;
 

@@ -3,16 +3,16 @@
 
 UIBackground::UIBackground() : UIElement() {}
 
-UIBackground::UIBackground(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, float borderSize, std::string parentName)
+UIBackground::UIBackground(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, float borderSize, std::string parentName)
 {
-    baseInit(game, uiLayer, name, ID, posSet, position, size, parentName);
+    baseInit(game, name, ID, posSet, position, size, parentName);
 
     init(color, tileSet, borderTexture, borderSize);
 }
 
-void UIBackground::init(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, float borderSize, std::string parentName)
+void UIBackground::init(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, float borderSize, std::string parentName)
 {
-    baseInit(game, uiLayer, name, ID, posSet, position, size, parentName);
+    baseInit(game, name, ID, posSet, position, size, parentName);
 
     init(color, tileSet, borderTexture, borderSize);
 }
