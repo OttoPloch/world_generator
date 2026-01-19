@@ -1,5 +1,6 @@
 #include "input.hpp"
 #include "game.hpp"
+#include "interactive_ui_manager.hpp"
 
 Input::Input() {}
 
@@ -132,6 +133,12 @@ void Input::init(Game* game)
         "RSTICK",
     };
 
+    // ALSO DPAD LEFT,
+    //      DPAD RIGHT,
+    //      DPAD UP,
+    //      DPAD DOWN
+    // BUT THEY REGISTER AS AXES
+
     for (int i = 0; i < buttons.size(); i++)
     {
         stringToButton[buttons[i]] = i;
@@ -140,8 +147,8 @@ void Input::init(Game* game)
     }
 
     controls = {
-        {"SPRINT", {"LSHIFT", "A"}},
-        {"INTERACT", {"E", "X"}},
+        {"SPRINT", {"LSHIFT", "X"}},
+        {"INTERACT", {"E", "A"}},
         {"MENU", {"Q", "B"}},
         {"EXIT", {"ESCAPE", "Y"}},
         {"PAUSE", {"TAB", "START"}},
@@ -152,7 +159,8 @@ void Input::init(Game* game)
         {"ZOOMOUT", {"NONE", "RBUMPER"}}
     };
 
-    leftClickLastTick = false;
+    leftClickThisFrame = false;
+    leftClickLastFrame = false;
 }
 
 bool Input::getKey(std::string key)
@@ -179,7 +187,33 @@ bool Input::getButton(std::string key)
 
         if (sf::Joystick::isConnected(0))
         {
-            if (sf::Joystick::isButtonPressed(0, toUnsignedInt(stringToButton[key]))) isPressed = true;
+            if (key.substr(0, 4) == "DPAD")
+            {
+                if (key == "DPAD LEFT")
+                {
+                    if (getAxis(sf::Joystick::Axis::PovX) < 0.f) isPressed = true;
+                }
+                else if (key == "DPAD RIGHT")
+                {
+                    if (getAxis(sf::Joystick::Axis::PovX) > 0.f) isPressed = true;
+                }
+                else if (key == "DPAD UP")
+                {
+                    if (getAxis(sf::Joystick::Axis::PovY) < 0.f) isPressed = true;
+                }
+                else if (key == "DPAD DOWN")
+                {
+                    if (getAxis(sf::Joystick::Axis::PovY) > 0.f) isPressed = true;
+                }
+                else
+                {
+                    std::cout << "ERROR in getButton with DPAD key, key is " << key << ". That's not a button!\n";
+                }
+            }
+            else
+            {
+                if (sf::Joystick::isButtonPressed(0, toUnsignedInt(stringToButton[key]))) isPressed = true;
+            }
         }
 
         if (isPressed) buttonsPressedThisFrame[key] = true;
@@ -214,12 +248,32 @@ bool Input::getControl(std::string key)
 
 bool Input::leftClick()
 {
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && !leftClickLastTick)
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && !leftClickLastFrame)
     {
         return true;
     }
 
     return false;
+}
+
+float Input::getAxis(sf::Joystick::Axis axis)
+{
+    if (sf::Joystick::isConnected(0))
+    {
+        return sf::Joystick::getAxisPosition(0, axis);
+    }
+
+    return 0.f;
+}
+
+float Input::getAxis(int axis)
+{
+    if (sf::Joystick::isConnected(0))
+    {
+        return sf::Joystick::getAxisPosition(0, static_cast<sf::Joystick::Axis>(axis));
+    }
+
+    return 0.f;
 }
 
 sf::Vector2f Input::getMovement()
@@ -237,8 +291,8 @@ sf::Vector2f Input::getMovement()
         {
             sf::Vector2i joystickMovement;
 
-            joystickMovement.x = std::round(sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X) / 100.f);
-            joystickMovement.y = std::round(sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Y) / 100.f);
+            joystickMovement.x = std::round(getAxis(0) / 100.f);
+            joystickMovement.y = std::round(getAxis(1) / 100.f);
             
             if (joystickMovement.x != 0 && joystickMovement.y != 0)
             {
@@ -263,18 +317,6 @@ sf::Vector2f Input::getMovement()
     }
 }
 
-void Input::tick()
-{
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
-    {
-        leftClickLastTick = true;
-    }
-    else
-    {
-        leftClickLastTick = false;
-    }
-}
-
 void Input::update()
 {
     if (game->getWindow()->getWindow().hasFocus())
@@ -284,6 +326,50 @@ void Input::update()
             if (getControl(controls[i].first) && !controlsPressedLastFrame[controls[i].first])
             {
                 game->processInput(controls[i].first);
+            }
+        }
+
+
+
+        leftClickLastFrame = leftClickThisFrame;
+        leftClickThisFrame = false;
+
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+        {
+            leftClickThisFrame = true;
+
+            game->getScene()->getUILayer()->interactiveUIManager.disableControllerUI();
+        }
+    
+        if (controllerUI_moveClock.getElapsedTime().asSeconds() >= 0.2f)
+        {
+            sf::Vector2i UIMoveInput;
+        
+            UIMoveInput.x = std::round(getAxis(4) / 100.f);
+            UIMoveInput.y = std::round(getAxis(5) / 100.f);
+            
+            sf::Vector2i moveDirection = {0, 0};
+            
+            if (getButton("DPAD LEFT") || getButton("DPAD RIGHT") || getButton("DPAD UP") || getButton("DPAD DOWN"))
+            {
+                if (getButton("DPAD LEFT")) moveDirection.x = -1;
+                if (getButton("DPAD RIGHT")) moveDirection.x = 1;
+                if (getButton("DPAD UP")) moveDirection.y = -1;
+                if (getButton("DPAD DOWN")) moveDirection.y = 1;
+            }
+            else
+            {
+                if (UIMoveInput.x != 0 || UIMoveInput.y != 0)
+                {
+                    (abs(getAxis(4)) > abs(getAxis(5))) ? moveDirection.x = UIMoveInput.x : moveDirection.y = UIMoveInput.y;
+                }
+            }
+
+            if (UIMoveInput.x != 0 || UIMoveInput.y != 0 || moveDirection.x != 0 || moveDirection.y != 0)
+            {
+                game->getScene()->getUILayer()->interactiveUIManager.moveIndicator(moveDirection);
+                
+                controllerUI_moveClock.restart();
             }
         }
     }

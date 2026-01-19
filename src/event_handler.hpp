@@ -17,6 +17,8 @@ public:
     void processEvents();
 
     void mouseWheelScrolled(const sf::Event::MouseWheelScrolled* scroll);
+
+    void windowResized();
 private:
     Window* window;
 

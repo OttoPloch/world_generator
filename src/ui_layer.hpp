@@ -7,6 +7,7 @@
 #include "ui_background.hpp"
 #include "ui_text.hpp"
 #include "ui_button.hpp"
+#include "interactive_ui_manager.hpp"
 
 #include <vector>
 #include <map>
@@ -28,11 +29,15 @@ public:
 
     sf::Vector2u getScreenSize();
 
+    sf::Vector2f getViewSize();
+
     void reset();
-    
-    void tick();
+
+    void UIUpdate();
 
     void draw();
+    
+    InteractiveUIManager interactiveUIManager;
 private:
     Game* game;
 
@@ -43,12 +48,12 @@ private:
     std::unordered_map<std::string, int> namesToIDs;
 
     int IDCounter;
-
+    
     sf::View UIView;
+    
+    std::map<int, std::unique_ptr<UIBackground>> bgElements;
 
-    std::map<int, UIBackground> bgElements;
+    std::map<int, std::unique_ptr<UIText>> textElements;
     
-    std::map<int, UIText> textElements;
-    
-    std::map<int, UIButton> buttonElements;
+    std::map<int, std::unique_ptr<UIButton>> buttonElements;
 };

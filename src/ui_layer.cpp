@@ -13,62 +13,96 @@ void UILayer::init(Game* game, Camera* camera)
 
     IDCounter = 0;
 
-    reset();
-
     int currID;
+    
+    std::array<sf::Texture*, 3> buttonTextures = {assetManager->getTexture("button_up", "images/ui/"), assetManager->getTexture("button_hover", "images/ui/"), assetManager->getTexture("button_down", "images/ui/")};
+    
+    currID = getNewID();
+    bgElements[currID] = std::make_unique<UIBackground>(game, this, "win 1", currID, 0, toV2F(80, 80), toV2F(220, 200));
+    bgElements[currID]->init(sf::Color(0, 0, 0, 0), assetManager->getTileSet("32px filled"), assetManager->getTexture("ui_scroll", "images/ui/"));
+    currID = getNewID();
+    textElements[currID] = std::make_unique<UIText>(game, this, "win 1 title", currID, 5, toV2F(0, -20), "win 1");
+    textElements[currID]->init(assetManager->getFont("White Storm"), "Speed adjust", 30, sf::Color::Black);
+    // currID = getNewID(); buttonElements[currID] = std::make_unique<UIButton>(game, this, "faster button", currID, 3, toV2F(-25, -10), toV2F(50, 50), buttonTextures, "win 1");
+    // currID = getNewID(); textElements[currID] = std::make_unique<UIText>(game, this, "faster button text", currID, 5, toV2F(0, -45), assetManager->getFont("White Storm"), "Click me\nto go faster!", 20, sf::Color::Black, "faster button");
+    // currID = getNewID(); buttonElements[currID] = std::make_unique<UIButton>(game, this, "slower button", currID, 2, toV2F(25, -10), toV2F(50, 50), buttonTextures, "win 1");
+    // currID = getNewID(); textElements[currID] = std::make_unique<UIText>(game, this, "slower button text", currID, 5, toV2F(0, -45), assetManager->getFont("White Storm"), "Click me\nto go slower!", 20, sf::Color::Black, "slower button");
+    // currID = getNewID(); textElements[currID] = std::make_unique<UIText>(game, this, "speed display", currID, 0, toV2F(15, 30), assetManager->getFont("White Storm"), "----", 30, sf::Color::Black, "win 1");
 
-    currID = getNewID(); bgElements[currID] = UIBackground(game, "win 2", currID, 0, {80, 80}, {220, 200}, sf::Color(0, 0, 0, 0), assetManager->getTileSet("32px filled"), assetManager->getTexture("ui_scroll"));
-    currID = getNewID(); buttonElements[currID] = UIButton(game, "faster button", currID, 3, {-25, -10}, {50, 50}, {assetManager->getTexture("button_up"), assetManager->getTexture("button_hover"), assetManager->getTexture("button_down")}, "win 2");
-    currID = getNewID(); textElements[currID] = UIText(game, "faster button text", currID, 5, {0, -45}, assetManager->getFont("White Storm"), "Click me\nto go faster!", 20, sf::Color::Black, "faster button");
-    currID = getNewID(); buttonElements[currID] = UIButton(game, "slower button", currID, 2, {25, -10}, {50, 50}, {assetManager->getTexture("button_up"), assetManager->getTexture("button_hover"), assetManager->getTexture("button_down")}, "win 2");
-    currID = getNewID(); textElements[currID] = UIText(game, "slower button text", currID, 5, {0, -45}, assetManager->getFont("White Storm"), "Click me\nto go slower!", 20, sf::Color::Black, "slower button");
-    currID = getNewID(); textElements[currID] = UIText(game, "speed display", currID, 0, {15, 0}, assetManager->getFont("White Storm"), "----", 30, sf::Color::Black, "win 2");
-
-    getElement("speed display")->getAsText()->setBaseText("Speed: ###");
-    getElement("speed display")->getAsText()->setValue(std::to_string(toInt(game->getGamerules()->getRule("moveSpeed", "player").valueFloat)));
+    // currID = getNewID(); buttonElements[currID] = std::make_unique<UIButton>(game, this, "", currID, 5, toV2F(0, 0),      toV2F(50, 50), buttonTextures);
+    // currID = getNewID(); buttonElements[currID] = std::make_unique<UIButton>(game, this, "", currID, 5, toV2F(100, 100),  toV2F(50, 50), buttonTextures);
+    // currID = getNewID(); buttonElements[currID] = std::make_unique<UIButton>(game, this, "", currID, 6, toV2F(0, 0),      toV2F(50, 50), buttonTextures);
+    // currID = getNewID(); buttonElements[currID] = std::make_unique<UIButton>(game, this, "", currID, 6, toV2F(100, 100),  toV2F(50, 50), buttonTextures);
+    // currID = getNewID(); buttonElements[currID] = std::make_unique<UIButton>(game, this, "", currID, 7, toV2F(0, 0),      toV2F(50, 50), buttonTextures);
+    // currID = getNewID(); buttonElements[currID] = std::make_unique<UIButton>(game, this, "", currID, 7, toV2F(-100, 10),  toV2F(50, 50), buttonTextures);
+    // currID = getNewID(); buttonElements[currID] = std::make_unique<UIButton>(game, this, "", currID, 8, toV2F(0, 0),      toV2F(50, 50), buttonTextures);
+    // currID = getNewID(); buttonElements[currID] = std::make_unique<UIButton>(game, this, "", currID, 8, toV2F(100, -100), toV2F(50, 50), buttonTextures);
+    
+    // getElement("speed display")->getAsText()->setBaseText("Speed: ###");
+    // getElement("speed display")->getAsText()->setValue(std::to_string(toInt(game->getGamerules()->getRule("moveSpeed", "player").valueFloat)));
 
     for (auto& i : bgElements)
     {
-        namesToIDs[i.second.getName()] = i.first;
+        namesToIDs[i.second->getName()] = i.first;
     }
 
     for (auto& i : textElements)
     {
-        namesToIDs[i.second.getName()] = i.first;
+        namesToIDs[i.second->getName()] = i.first;
     }
 
     for (auto& i : buttonElements)
     {
-        namesToIDs[i.second.getName()] = i.first;
+        namesToIDs[i.second->getName()] = i.first;
     }
+
+    interactiveUIManager.init(game, &buttonElements, UIBackground(game, this, "controller", getNewID(), 0, {0, 0}, {50, 50}));
+    interactiveUIManager.controllerUI_indicator.init(sf::Color::Transparent, assetManager->getTileSet("16px"), assetManager->getTexture("ui_select", "images/ui/"), 36.f);
+    namesToIDs[interactiveUIManager.controllerUI_indicator.getName()] = interactiveUIManager.controllerUI_indicator.getID();
+
+    reset();
 }
 
 UIElement* UILayer::getElement(int ID)
 {
     if (ID > -1)
     {
-        if (bgElements.find(ID) != bgElements.end())
+        if (interactiveUIManager.controllerUI_indicator.getID() == ID) return &interactiveUIManager.controllerUI_indicator;
+
+        if (bgElements.size() > 0)
         {
-            return &bgElements[ID];
+            if (bgElements.find(ID) != bgElements.end())
+            {
+                return bgElements[ID].get();
+            }
         }
 
-        if (textElements.find(ID) != textElements.end())
+        if (textElements.size() > 0)
         {
-            return &textElements[ID];
+            if (textElements.find(ID) != textElements.end())
+            {
+                return textElements[ID].get();
+            }
         }
 
-        if (buttonElements.find(ID) != buttonElements.end())
+        if (buttonElements.size() > 0)
         {
-            return &buttonElements[ID];
+            if (buttonElements.find(ID) != buttonElements.end())
+            {
+                return buttonElements[ID].get();
+            }
         }
         
         // if there are no entries with that ID, assume
         // it has been deleted and remove it from namesToIDs
-        for (auto& i : namesToIDs)
+        if (namesToIDs.size() > 0)
         {
-            if (i.second == ID)
+            for (auto& i : namesToIDs)
             {
-                namesToIDs.erase(i.first);
+                if (i.second == ID)
+                {
+                    namesToIDs.erase(i.first);
+                }
             }
         }
     }
@@ -86,33 +120,42 @@ UIElement* UILayer::getElement(std::string name)
     {
         bool found = false;
 
-        for (auto& i : bgElements)
+        if (bgElements.size() > 0)
         {
-            if (i.second.getName() == name)
+            for (auto& i : bgElements)
             {
-                namesToIDs[i.second.getName()] = i.first;
+                if (i.second->getName() == name)
+                {
+                    namesToIDs[i.second->getName()] = i.first;
 
-                found = true;
+                    found = true;
+                }
             }
         }
         
-        for (auto& i : textElements)
-        {
-            if (i.second.getName() == name)
+        if (textElements.size() > 0)
+        {        
+            for (auto& i : textElements)
             {
-                namesToIDs[i.second.getName()] = i.first;
-                
-                found = true;
+                if (i.second->getName() == name)
+                {
+                    namesToIDs[i.second->getName()] = i.first;
+                    
+                    found = true;
+                }
             }
         }
         
-        for (auto& i : buttonElements)
+        if (buttonElements.size() > 0)
         {
-            if (i.second.getName() == name)
+            for (auto& i : buttonElements)
             {
-                namesToIDs[i.second.getName()] = i.first;
-                
-                found = true;
+                if (i.second->getName() == name)
+                {
+                    namesToIDs[i.second->getName()] = i.first;
+                    
+                    found = true;
+                }
             }
         }
 
@@ -134,35 +177,22 @@ sf::Vector2u UILayer::getScreenSize()
     return game->getWindow()->getSize();
 }
 
+sf::Vector2f UILayer::getViewSize()
+{
+    return game->getWindow()->getWindow().getView().getSize();
+}
+
 void UILayer::reset()
 {
     sf::Vector2f viewSize = toV2F(game->getWindow()->getSize());
 
     UIView = sf::View({viewSize.x / 2.f, viewSize.y / 2.f}, viewSize);
 
-    for (auto& i : bgElements)
-    {
-        i.second.updateSize();
-    }
-
-    for (auto& i : textElements)
-    {
-        i.second.updateSize();
-    }
-
-    for (auto& i : buttonElements)
-    {
-        i.second.updateSize();
-    }
-}
-
-void UILayer::tick()
-{
     if (bgElements.size() > 0)
     {
         for (auto& i : bgElements)
         {
-            i.second.tick();
+            i.second->updateSize();
         }
     }
 
@@ -170,7 +200,7 @@ void UILayer::tick()
     {
         for (auto& i : textElements)
         {
-            i.second.tick();
+            i.second->updateSize();
         }
     }
 
@@ -178,9 +208,40 @@ void UILayer::tick()
     {
         for (auto& i : buttonElements)
         {
-            i.second.tick();
+            i.second->updateSize();
         }
     }
+
+    interactiveUIManager.controllerUI_indicator.updateSize();
+}
+
+void UILayer::UIUpdate()
+{
+    if (bgElements.size() > 0)
+    {
+        for (auto& i : bgElements)
+        {
+            i.second->update();
+        }
+    }
+
+    if (textElements.size() > 0)
+    {
+        for (auto& i : textElements)
+        {
+            i.second->update();
+        }
+    }
+
+    if (buttonElements.size() > 0)
+    {
+        for (auto& i : buttonElements)
+        {
+            i.second->update();
+        }
+    }
+
+    interactiveUIManager.update();
 }
 
 void UILayer::draw()
@@ -191,8 +252,8 @@ void UILayer::draw()
     {
         for (auto& i : bgElements)
         {
-            i.second.draw();
-    
+            i.second->draw();
+
             // sf::CircleShape circle(5.f);
             // circle.setFillColor(sf::Color::Red);
             // circle.setOrigin({5.f, 5.f});
@@ -205,8 +266,8 @@ void UILayer::draw()
     {
         for (auto& i : textElements)
         {
-            i.second.draw();
-    
+            i.second->draw();
+
             // sf::CircleShape circle(5.f);
             // circle.setFillColor(sf::Color::Red);
             // circle.setOrigin({5.f, 5.f});
@@ -219,8 +280,8 @@ void UILayer::draw()
     {
         for (auto& i : buttonElements)
         {
-            i.second.draw();
-    
+            i.second->draw();
+
             // sf::CircleShape circle(5.f);
             // circle.setFillColor(sf::Color::Red);
             // circle.setOrigin({5.f, 5.f});
@@ -228,6 +289,8 @@ void UILayer::draw()
             // game->getWindow()->getWindow().draw(circle);
         }
     }
+
+    interactiveUIManager.draw();
 
     game->getWindow()->setView(camera->getView());
 }

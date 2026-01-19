@@ -3,12 +3,14 @@
 
 UIBackground::UIBackground() : UIElement() {}
 
-UIBackground::UIBackground(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, std::string parentName) : UIElement(game, name, ID, posSet, position, size, parentName)
+UIBackground::UIBackground(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::string parentName) : UIElement(game, uiLayer, name, ID, posSet, position, size, parentName) {}
+
+void UIBackground::init(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::string parentName)
 {
-    init(color, tileSet, borderTexture);
+    baseInit(game, uiLayer, name, ID, posSet, position, size, parentName);
 }
 
-void UIBackground::init(sf::Color color, TileSet* tileSet, sf::Texture* borderTexture)
+void UIBackground::init(sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, float borderSize)
 {
     this->color = color;
 
@@ -16,6 +18,8 @@ void UIBackground::init(sf::Color color, TileSet* tileSet, sf::Texture* borderTe
 
     borderStates.texture = borderTexture;
     
+    this->borderSize = borderSize;
+
     background.setFillColor(color);
 
     updateSize();
@@ -25,7 +29,7 @@ void UIBackground::createBorderVertices()
 {
     if (tileSet == nullptr) return;
 
-    float BORDERSIZE = 98.f;
+    float BORDERSIZE = borderSize;
     float HALFBORDERSIZE = BORDERSIZE / 2.f;
 
     float TEXTURESIZE = tileSet->getTileSize();

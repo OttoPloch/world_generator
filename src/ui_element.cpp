@@ -7,16 +7,16 @@
 
 UIElement::UIElement() {}
 
-UIElement::UIElement(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::string parentName)
+UIElement::UIElement(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::string parentName)
 {
-    init(game, name, ID, posSet, position, size, parentName);
+    baseInit(game, uiLayer, name, ID, posSet, position, size, parentName);
 }
 
-void UIElement::init(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::string parentName)
+void UIElement::baseInit(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::string parentName)
 {
     this->game = game;
 
-    this->uiLayer = game->getScene()->getUILayer();
+    this->uiLayer = uiLayer;
 
     this->name = name;
 
@@ -98,10 +98,10 @@ float UIElement::left()
         case 1:
         case 3:
         case 7:
-            (getParent()) ? left = getParent()->right() + position.x - size.x : left = uiLayer->getScreenSize().x + position.x - size.x;
+            (getParent()) ? left = getParent()->right() + position.x - size.x : left = uiLayer->getViewSize().x + position.x - size.x;
             break;
         default:
-            (getParent()) ? left = getParent()->getScreenCenter().x + position.x - size.x / 2.f : left = (uiLayer->getScreenSize().x / 2.f) + position.x - size.x / 2.f;
+            (getParent()) ? left = getParent()->getScreenCenter().x + position.x - size.x / 2.f : left = (uiLayer->getViewSize().x / 2.f) + position.x - size.x / 2.f;
             break;
     }
 
@@ -127,10 +127,10 @@ float UIElement::top()
         case 2:
         case 3:
         case 8:
-            (getParent()) ? top = getParent()->bottom() + position.y - size.y : top = uiLayer->getScreenSize().y + position.y - size.y;
+            (getParent()) ? top = getParent()->bottom() + position.y - size.y : top = uiLayer->getViewSize().y + position.y - size.y;
             break;
         default:
-            (getParent()) ? top = getParent()->getScreenCenter().y + position.y - size.y / 2.f : top = (uiLayer->getScreenSize().y / 2.f) + position.y - size.y / 2.f;
+            (getParent()) ? top = getParent()->getScreenCenter().y + position.y - size.y / 2.f : top = (uiLayer->getViewSize().y / 2.f) + position.y - size.y / 2.f;
             break;
     }
 
@@ -155,6 +155,21 @@ void UIElement::updateSize()
     resize(size);
 }
 
+void UIElement::setPosition(sf::Vector2f position)
+{
+    this->position = position;
+
+    updateSize();
+}
+
+void UIElement::movePosition(sf::Vector2f amount)
+{
+    position.x += amount.x;
+    position.y += amount.y;
+    
+    updateSize();
+}
+
 UIBackground* UIElement::getAsBackground() { return nullptr; }
 
 UIText* UIElement::getAsText() { return nullptr; }
@@ -168,6 +183,6 @@ void UIElement::resize(sf::Vector2f newSize, int posSet)
     if (posSet != -1) this->posSet = posSet;
 }
 
-void UIElement::tick() {}
+void UIElement::update() {}
 
 void UIElement::draw() {}

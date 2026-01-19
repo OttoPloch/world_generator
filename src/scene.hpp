@@ -23,6 +23,8 @@ public:
 
     void update(float dt);
 
+    void UIUpdate();
+
     void draw();
 
     void sceneInput(std::string control);

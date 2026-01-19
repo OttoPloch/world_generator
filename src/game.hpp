@@ -39,6 +39,8 @@ private:
 
     void update(float dt);
 
+    void UIUpdate();
+
     void draw();
     
     Window window;
@@ -64,4 +66,8 @@ private:
     sf::Clock dtClock;
     sf::Clock tickClock;
     sf::Clock gameClock;
+
+    // this is to detect window resizing that the
+    // event handler doesn't normally catch
+    sf::Vector2u lastWindowSize;
 };

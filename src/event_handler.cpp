@@ -25,8 +25,7 @@ void EventHandler::processEvents()
         }
         else if (event->is<sf::Event::Resized>())
         {
-            camera->setBaseSize(toV2F(window->getSize()));
-            scene->getUILayer()->reset();
+            windowResized();
         }
         else if (const auto scroll = event->getIf<sf::Event::MouseWheelScrolled>())
         {
@@ -45,4 +44,12 @@ void EventHandler::mouseWheelScrolled(const sf::Event::MouseWheelScrolled* scrol
     {
         camera->zoom(toInt(-scroll->delta));
     }
+}
+
+void EventHandler::windowResized()
+{
+    camera->setBaseSize(toV2F(window->getSize()));
+    scene->getUILayer()->reset();
+
+    std::cout << "REIZED!!!!!!\n";
 }

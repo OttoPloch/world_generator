@@ -3,9 +3,11 @@
 
 UIText::UIText() : UIElement() {}
 
-UIText::UIText(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Font* font, std::string text, unsigned int fontSize, sf::Color fontColor, std::string parentName) : UIElement(game, name, ID, posSet, position, {0, 0}, parentName)
+UIText::UIText(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, std::string parentName) : UIElement(game, uiLayer, name, ID, posSet, position, {0, 0}, parentName) {}
+
+void UIText::init(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, std::string parentName)
 {
-    init(font, text, fontSize, fontColor);
+    baseInit(game, uiLayer, name, ID, posSet, position, size, parentName);
 }
 
 void UIText::init(sf::Font* font, std::string text, unsigned int fontSize, sf::Color fontColor)

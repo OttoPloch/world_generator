@@ -101,15 +101,25 @@ void Scene::init(Game* game)
 }
 
 void Scene::tick()
-{
+{   
     entityLayer.tick();
+}
 
-    uiLayer.tick();
+void Scene::update(float dt)
+{
+    camera.update(dt);
+    
+    window->setView(camera.getView());
+    
+    entityLayer.update(dt);
+}
 
+void Scene::UIUpdate()
+{
     if (uiLayer.getElement("faster button")->getAsButton()->getActive())
     {
         game->getGamerules()->setRule("moveSpeed", gamerule(game->getGamerules()->getRule("moveSpeed", "player").valueFloat + 3.f, 0, false, ""), "player");
-
+    
         uiLayer.getElement("speed display")->getAsText()->setValue(std::to_string(toInt(game->getGamerules()->getRule("moveSpeed", "player").valueFloat)));
     }
     
@@ -119,15 +129,8 @@ void Scene::tick()
         
         uiLayer.getElement("speed display")->getAsText()->setValue(std::to_string(toInt(game->getGamerules()->getRule("moveSpeed", "player").valueFloat)));
     }
-}
 
-void Scene::update(float dt)
-{
-    camera.update(dt);
-
-    window->setView(camera.getView());
-
-    entityLayer.update(dt);
+    uiLayer.UIUpdate();
 }
 
 void Scene::draw()
@@ -157,6 +160,10 @@ void Scene::sceneInput(std::string control)
     else if (control == "ZOOMOUT")
     {
         camera.zoom(-1);
+    }
+    else if (control == "INTERACT")
+    {
+        uiLayer.interactiveUIManager.click();
     }
 }
 

@@ -16,6 +16,8 @@ void Game::init()
 
     ticksPerSecond = 60;
 
+    lastWindowSize = window.getSize();
+
     run();
 }
 
@@ -107,14 +109,21 @@ void Game::run()
 
                 tick();
 
-                input.tick();
-
                 ticksLastSecond++;
 
                 ticksToProcess -= 1.f;
             }
 
             update(dt);
+        }
+
+        UIUpdate();
+
+        if (lastWindowSize != window.getSize())
+        {
+            eventHandler.windowResized();
+
+            lastWindowSize = window.getSize();
         }
 
         draw();
@@ -131,6 +140,11 @@ void Game::tick()
 void Game::update(float dt)
 {
     scene.update(dt);
+}
+
+void Game::UIUpdate()
+{
+    scene.UIUpdate();
 }
 
 void Game::draw()

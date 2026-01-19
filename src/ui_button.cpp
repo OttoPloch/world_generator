@@ -3,9 +3,11 @@
 
 UIButton::UIButton() : UIElement() {}
 
-UIButton::UIButton(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::array<sf::Texture*, 3> buttonTextures, std::string parentName) : UIElement(game, name, ID, posSet, position, size, parentName)
+UIButton::UIButton(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::string parentName) : UIElement(game, uiLayer, name, ID, posSet, position, size, parentName) {}
+
+void UIButton::init(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::string parentName)
 {
-    init(buttonTextures);
+    baseInit(game, uiLayer, name, ID, posSet, position, size, parentName);
 }
 
 void UIButton::init(std::array<sf::Texture*, 3> buttonTextures)
@@ -22,12 +24,43 @@ void UIButton::init(std::array<sf::Texture*, 3> buttonTextures)
 
 bool UIButton::hover()
 {
-    return mouseRectCollide(game, {left(), top()}, size);
+    if (uiLayer->interactiveUIManager.isControllerUIActive())
+    {
+        return (uiLayer->interactiveUIManager.getSelectedElementID() == ID);
+    }
+    else
+    {
+        return mouseRectCollide(game, {left(), top()}, size);
+    }
+}
+
+bool UIButton::pressed()
+{
+    if (uiLayer->interactiveUIManager.isControllerUIActive())
+    {
+        return (hover() && game->getInput()->getControl("INTERACT"));
+    }
+    else
+    {
+        return (hover() && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left));
+    }
 }
 
 bool UIButton::clicked()
 {
-    return (hover() && game->getInput()->leftClick());
+    if (uiLayer->interactiveUIManager.isControllerUIActive())
+    {
+        return false;
+    }
+    else
+    {
+        return (hover() && game->getInput()->leftClick());
+    }
+}
+
+void UIButton::activate()
+{
+    active = true;
 }
 
 bool UIButton::getActive() { return active; }
@@ -49,17 +82,17 @@ void UIButton::resize(sf::Vector2f newSize, int posSet)
     button->setPosition({left(), top()});
 }
 
-void UIButton::tick()
+void UIButton::update()
 {
     active = false;
 
-    if (hover() && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+    if (hover() && pressed())
     {
         switchTexture(2);
 
         if (clicked())
         {
-            active = true;
+            activate();
         }
     }
     else if (hover())

@@ -13,10 +13,10 @@ public:
     UIElement();
 
     // posSet determines if the given position is the top left, top right, bottom left, bottom right or center of the element
-    UIElement(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::string parentName = "");
+    UIElement(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::string parentName = "");
 
     // posSet determines if the given position is the top left, top right, bottom left, bottom right or center of the element
-    void init(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::string parentName = "");
+    void baseInit(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::string parentName = "");
 
     void setParent(std::string parentName);
     
@@ -47,6 +47,10 @@ public:
     // updates everything without changing size.
     void updateSize();
 
+    void setPosition(sf::Vector2f position);
+
+    void movePosition(sf::Vector2f amount);
+
     // not sure if this is a good way to do this
     virtual UIBackground* getAsBackground();
     
@@ -59,7 +63,7 @@ public:
     // If posSet is -1, then the element's posSet will not change.
     virtual void resize(sf::Vector2f newSize, int posSet = -1);
 
-    virtual void tick();
+    virtual void update();
 
     virtual void draw();
 protected:

@@ -17,16 +17,21 @@ public:
     // enter key in all caps
     bool getKey(std::string key);
     
-    // enter key in all caps
+    // enter key in all caps.
+    // 'DPAD xxx' works but is
+    // special because they are axes.
+    // could also use getAxis for those.
     bool getButton(std::string key);
     
     bool getControl(std::string key);
 
     bool leftClick();
 
-    sf::Vector2f getMovement();
+    float getAxis(sf::Joystick::Axis axis);
+    
+    float getAxis(int axis);
 
-    void tick();
+    sf::Vector2f getMovement();
 
     void update();
 private:
@@ -55,5 +60,8 @@ private:
     std::unordered_map<std::string, bool> controlsPressedThisFrame;
     std::unordered_map<std::string, bool> controlsPressedLastFrame;
 
-    bool leftClickLastTick;
+    bool leftClickThisFrame;
+    bool leftClickLastFrame;
+
+    sf::Clock controllerUI_moveClock;
 };
