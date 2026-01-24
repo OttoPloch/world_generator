@@ -250,6 +250,8 @@ bool Input::leftClick()
 {
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && !leftClickLastFrame)
     {
+        leftClickThisFrame = true;
+
         return true;
     }
 
@@ -328,8 +330,6 @@ void Input::update()
                 game->processInput(controls[i].first);
             }
         }
-
-
 
         leftClickLastFrame = leftClickThisFrame;
         leftClickThisFrame = false;

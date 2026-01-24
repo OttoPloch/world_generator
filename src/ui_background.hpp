@@ -12,9 +12,9 @@ class UIBackground : public UIElement
 public:
     UIBackground();
 
-    UIBackground(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, float borderSize = 96.f, std::string parentName = "");
+    UIBackground(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, float borderSize = 96.f, UIElement* parent = nullptr);
     
-    void init(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, float borderSize = 96.f, std::string parentName = "");
+    void init(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, float borderSize = 96.f, UIElement* parent = nullptr);
 
     void init(sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, float borderSize = 96.f);
 

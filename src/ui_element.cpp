@@ -7,16 +7,16 @@
 
 UIElement::UIElement() {}
 
-UIElement::UIElement(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::string parentName)
+UIElement::UIElement(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, UIElement* parent)
 {
-    baseInit(game, name, ID, posSet, position, size, parentName);
+    baseInit(game, uiLayer, name, ID, posSet, position, size, parent);
 }
 
-void UIElement::baseInit(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::string parentName)
+void UIElement::baseInit(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, UIElement* parent)
 {
     this->game = game;
 
-    this->uiLayer = game->getScene()->getUILayer();
+    this->uiLayer = uiLayer;
 
     this->name = name;
 
@@ -28,17 +28,12 @@ void UIElement::baseInit(Game* game, std::string name, int ID, unsigned int posS
 
     this->size = size;
 
-    setParent(parentName);
+    this->parent = parent;
 }
 
-void UIElement::setParent(std::string parentName)
+void UIElement::setParent(UIElement* parent)
 {
-    (parentName != "") ? parentID = uiLayer->getElement(parentName)->getID() : parentID = -1;
-}
-
-void UIElement::setParent(int parentID)
-{
-    this->parentID = parentID;
+    this->parent = parent;
 }
 
 sf::Vector2f UIElement::getScreenCenter()
@@ -86,22 +81,22 @@ sf::Vector2f UIElement::getLocalCenter()
 
 float UIElement::left()
 {
-    float left;
-
+    float left = 0.f;
+    
     switch(posSet)
     {
         case 0:
         case 2:
         case 6:
-            (getParent()) ? left = getParent()->left() + position.x : left = position.x;
+            (parent) ? left = parent->left() + position.x : left = position.x;
             break;
         case 1:
         case 3:
         case 7:
-            (getParent()) ? left = getParent()->right() + position.x - size.x : left = uiLayer->getViewSize().x + position.x - size.x;
+            (parent) ? left = parent->right() + position.x - size.x : left = uiLayer->getViewSize().x + position.x - size.x;
             break;
         default:
-            (getParent()) ? left = getParent()->getScreenCenter().x + position.x - size.x / 2.f : left = (uiLayer->getViewSize().x / 2.f) + position.x - size.x / 2.f;
+            (parent) ? left = parent->getScreenCenter().x + position.x - size.x / 2.f : left = (uiLayer->getViewSize().x / 2.f) + position.x - size.x / 2.f;
             break;
     }
 
@@ -115,22 +110,22 @@ float UIElement::right()
 
 float UIElement::top()
 {
-    float top;
+    float top = 0.f;
 
     switch(posSet)
     {
         case 0:
         case 1:
         case 5:
-            (getParent()) ? top = getParent()->top() + position.y : top = position.y;
+            (parent) ? top = parent->top() + position.y : top = position.y;
             break;
         case 2:
         case 3:
         case 8:
-            (getParent()) ? top = getParent()->bottom() + position.y - size.y : top = uiLayer->getViewSize().y + position.y - size.y;
+            (parent) ? top = parent->bottom() + position.y - size.y : top = uiLayer->getViewSize().y + position.y - size.y;
             break;
         default:
-            (getParent()) ? top = getParent()->getScreenCenter().y + position.y - size.y / 2.f : top = (uiLayer->getViewSize().y / 2.f) + position.y - size.y / 2.f;
+            (parent) ? top = parent->getScreenCenter().y + position.y - size.y / 2.f : top = (uiLayer->getViewSize().y / 2.f) + position.y - size.y / 2.f;
             break;
     }
 
@@ -143,18 +138,6 @@ float UIElement::bottom()
 }
 
 sf::Vector2f UIElement::getSize() { return size; }
-
-UIElement* UIElement::getParent()
-{
-    if (uiLayer)
-    {
-        return uiLayer->getElement(parentID);
-    }
-    else
-    {
-        return nullptr;
-    }
-}
 
 std::string UIElement::getName() { return name; }
 

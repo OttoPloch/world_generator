@@ -49,3 +49,15 @@ bool mouseRectCollide(Game* game, sf::Vector2f position, sf::Vector2f size)
 
     return false;
 }
+
+void log(std::string message, bool newLine)
+{
+    if (newLine)
+    {
+        std::cout << message << '\n';
+    }
+    else
+    {
+        std::cout << message;
+    }
+}

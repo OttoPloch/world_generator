@@ -3,40 +3,48 @@
 
 InteractiveUIManager::InteractiveUIManager() {}
 
-InteractiveUIManager::InteractiveUIManager(Game* game, std::map<int, std::unique_ptr<UIButton>>* buttons, UIBackground controllerUI_indicator)
+InteractiveUIManager::InteractiveUIManager(Game* game, std::map<int, std::unique_ptr<UIElement>>* elements, UIElement* controllerUI_indicator)
 {
-    init(game, buttons, controllerUI_indicator);
+    init(game, elements, controllerUI_indicator);
 }
 
-void InteractiveUIManager::init(Game* game, std::map<int, std::unique_ptr<UIButton>>* buttons, UIBackground controllerUI_indicator)
+void InteractiveUIManager::init(Game* game, std::map<int, std::unique_ptr<UIElement>>* elements, UIElement* controllerUI_indicator)
 {
     this->game = game;
     
     uiLayer = game->getScene()->getUILayer();
 
-    this->buttons = buttons;
+    this->elements = elements;
 
     this->controllerUI_indicator = controllerUI_indicator;
 
     indicatorSize = {50.f, 50.f};
 
-    controllerUI_indicator.resize(indicatorSize);
+    controllerUI_indicator->resize(indicatorSize);
 
-    controllerUI_selectedElement = -1;
+    controllerUI_selectedElement = nullptr;
+
+    active = false;
 }
     
 void InteractiveUIManager::moveIndicator(sf::Vector2i direction)
 {
-    if (buttons->size() == 0) return;
+    if (elements->size() <= 1) return;
 
-    UIElement* target = buttons->begin()->second.get();
-    
-    if (controllerUI_selectedElement != -1) target = uiLayer->getElement(controllerUI_selectedElement);
+    if (direction == sf::Vector2i(0, 0)) return;
 
-    sf::Vector2f center = controllerUI_indicator.getScreenCenter();
+    active = true;
 
-    for (auto& i : (*buttons))
+    UIElement* target = elements->begin()->second.get();
+
+    if (controllerUI_selectedElement) target = controllerUI_selectedElement;
+
+    sf::Vector2f center = controllerUI_indicator->getScreenCenter();
+
+    for (auto& i : (*elements))
     {
+        if (i.second->getAsButton() == nullptr) continue;
+
         sf::Vector2f candidateCenter = i.second->getScreenCenter();
         sf::Vector2f targetCenter = target->getScreenCenter();
 
@@ -126,49 +134,32 @@ void InteractiveUIManager::moveIndicator(sf::Vector2i direction)
         }
     }
 
-    if (target->getID() != controllerUI_selectedElement) controllerUI_selectedElement = target->getID();
+    if (target != controllerUI_selectedElement) controllerUI_selectedElement = target;
 
-    controllerUI_indicator.setPosition({target->getScreenCenter().x - indicatorSize.x / 2.f, target->getScreenCenter().y - indicatorSize.y / 2.f});
+    controllerUI_indicator->setPosition({target->getScreenCenter().x - indicatorSize.x / 2.f, target->getScreenCenter().y - indicatorSize.y / 2.f});
 }
 
 void InteractiveUIManager::click()
 {
-    if (controllerUI_selectedElement != -1)
+    if (controllerUI_selectedElement != nullptr && active)
     {
-        UIElement* selectedElement = uiLayer->getElement(controllerUI_selectedElement);
-
-        if (selectedElement != nullptr)
-        {
-            selectedElement->getAsButton()->activate();
-        }
+        controllerUI_selectedElement->getAsButton()->activate();
     }
 }
 
 void InteractiveUIManager::disableControllerUI()
 {
-    controllerUI_selectedElement = -1;
-
-    controllerUI_indicator.setPosition({0, 0});
+    active = false;
 }
 
 bool InteractiveUIManager::isControllerUIActive()
 {
-    return (controllerUI_selectedElement != -1);
+    return active;
 }
 
-int InteractiveUIManager::getSelectedElementID() { return controllerUI_selectedElement; }
-
-void InteractiveUIManager::reset()
-{
-    controllerUI_indicator.updateSize();
-}
-
-void InteractiveUIManager::update()
-{
-    controllerUI_indicator.update();
-}
+UIElement* InteractiveUIManager::getSelectedElement() { return controllerUI_selectedElement; }
 
 void InteractiveUIManager::draw()
 {
-    if (controllerUI_selectedElement != -1) controllerUI_indicator.draw();
+    if (active) controllerUI_indicator->draw();
 }

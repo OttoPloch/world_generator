@@ -13,9 +13,9 @@ class InteractiveUIManager
 public:
     InteractiveUIManager();
     
-    InteractiveUIManager(Game* game, std::map<int, std::unique_ptr<UIButton>>* buttons, UIBackground controllerUI_indicator);
+    InteractiveUIManager(Game* game, std::map<int, std::unique_ptr<UIElement>>* elements, UIElement* controllerUI_indicator);
 
-    void init(Game* game, std::map<int, std::unique_ptr<UIButton>>* buttons, UIBackground controllerUI_indicator);
+    void init(Game* game, std::map<int, std::unique_ptr<UIElement>>* elements, UIElement* controllerUI_indicator);
 
     void moveIndicator(sf::Vector2i direction);
 
@@ -25,23 +25,21 @@ public:
 
     bool isControllerUIActive();
 
-    int getSelectedElementID();
+    UIElement* getSelectedElement();
 
-    void reset();
-
-    void update();
-    
     void draw();
 
-    UIBackground controllerUI_indicator;
+    UIElement* controllerUI_indicator;
 
-    int controllerUI_selectedElement;
+    UIElement* controllerUI_selectedElement;
 private:
     Game* game;
 
     UILayer* uiLayer;
 
-    std::map<int, std::unique_ptr<UIButton>>* buttons;
+    std::map<int, std::unique_ptr<UIElement>>* elements;
+
+    bool active;
 
     sf::Vector2f indicatorSize;
 };

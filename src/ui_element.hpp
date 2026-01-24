@@ -13,14 +13,12 @@ public:
     UIElement();
 
     // posSet determines if the given position is the top left, top right, bottom left, bottom right or center of the element
-    UIElement(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::string parentName = "");
+    UIElement(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, UIElement* parent = nullptr);
 
     // posSet determines if the given position is the top left, top right, bottom left, bottom right or center of the element
-    void baseInit(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::string parentName = "");
+    void baseInit(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, UIElement* parent = nullptr);
 
-    void setParent(std::string parentName);
-    
-    void setParent(int parentID);
+    void setParent(UIElement* parent);
 
     // returns the center of this element on the
     // parent element, if this element has one.
@@ -67,8 +65,6 @@ public:
 
     virtual void draw();
 protected:
-    UIElement* getParent();
-
     Game* game;
 
     UILayer* uiLayer;
@@ -83,5 +79,5 @@ protected:
 
     sf::Vector2f size;
 
-    int parentID;
+    UIElement* parent;
 };

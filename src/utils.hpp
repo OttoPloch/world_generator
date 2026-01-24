@@ -12,3 +12,5 @@ int partition(std::vector<Entity*>* vec, int low, int high);
 void sortEntitiesByY(std::vector<Entity*>* vec, int low, int high);
 
 bool mouseRectCollide(Game* game, sf::Vector2f position, sf::Vector2f size);
+
+void log(std::string message, bool newLine = true);

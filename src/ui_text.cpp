@@ -3,16 +3,14 @@
 
 UIText::UIText() : UIElement() {}
 
-UIText::UIText(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Font* font, std::string text, unsigned int fontSize, sf::Color fontColor, std::string parentName) : UIElement()
+UIText::UIText(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Font* font, std::string text, unsigned int fontSize, sf::Color fontColor, UIElement* parent) : UIElement(game, uiLayer, name, ID, posSet, position, {0.f, 0.f}, parent)
 {
-    baseInit(game, name, ID, posSet, position, {0, 0}, parentName);
-
     init(font, text, fontSize, fontColor);
 }
 
-void UIText::init(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Font* font, std::string text, unsigned int fontSize, sf::Color fontColor, std::string parentName)
+void UIText::init(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Font* font, std::string text, unsigned int fontSize, sf::Color fontColor, UIElement* parent)
 {
-    baseInit(game, name, ID, posSet, position, size, parentName);
+    baseInit(game, uiLayer, name, ID, posSet, position, {0.f, 0.f}, parent);
 
     init(font, text, fontSize, fontColor);
 }
@@ -21,17 +19,12 @@ void UIText::init(sf::Font* font, std::string text, unsigned int fontSize, sf::C
 {
     displayText = std::make_unique<sf::Text>(*font, text, fontSize);
 
-    std::cout << "before\n";
-    
     displayText->setPosition({left(), top()});
-    
-    std::cout << "after\n";
-
     displayText->setStyle(sf::Text::Bold);
     displayText->setFillColor(fontColor);
 
-    baseText = "";
-    value = "";
+    baseText;
+    value;
 
     updateSize();
 }

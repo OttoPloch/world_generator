@@ -20,9 +20,7 @@ public:
     UILayer();
 
     void init(Game* game, Camera* camera);
-
-    UIElement* getElement(int ID);
-
+    
     UIElement* getElement(std::string name);
 
     int getNewID();
@@ -45,15 +43,9 @@ private:
 
     Camera* camera;
 
-    std::unordered_map<std::string, int> namesToIDs;
-
     int IDCounter;
     
     sf::View UIView;
     
-    std::map<int, std::unique_ptr<UIBackground>> bgElements;
-
-    std::map<int, std::unique_ptr<UIText>> textElements;
-    
-    std::map<int, std::unique_ptr<UIButton>> buttonElements;
+    std::map<int, std::unique_ptr<UIElement>> elements;
 };

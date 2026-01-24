@@ -3,16 +3,14 @@
 
 UIButton::UIButton() : UIElement() {}
 
-UIButton::UIButton(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::array<sf::Texture*, 3> buttonTextures, std::string parentName) : UIElement()
+UIButton::UIButton(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::array<sf::Texture*, 3> buttonTextures, UIElement* parent) : UIElement(game, uiLayer, name, ID, posSet, position, size, parent)
 {
-    baseInit(game, name, ID, posSet, position, size, parentName);
-
     init(buttonTextures);
 }
 
-void UIButton::init(Game* game, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::array<sf::Texture*, 3> buttonTextures, std::string parentName)
+void UIButton::init(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::array<sf::Texture*, 3> buttonTextures, UIElement* parent)
 {
-    baseInit(game, name, ID, posSet, position, size, parentName);
+    baseInit(game, uiLayer, name, ID, posSet, position, size, parent);
 
     init(buttonTextures);
 }
@@ -33,7 +31,12 @@ bool UIButton::hover()
 {
     if (uiLayer->interactiveUIManager.isControllerUIActive())
     {
-        return (uiLayer->interactiveUIManager.getSelectedElementID() == ID);
+        if (uiLayer->interactiveUIManager.getSelectedElement())
+        {
+            return (uiLayer->interactiveUIManager.getSelectedElement()->getID() == ID);
+        }
+
+        return false;
     }
     else
     {
@@ -57,6 +60,7 @@ bool UIButton::clicked()
 {
     if (uiLayer->interactiveUIManager.isControllerUIActive())
     {
+        // controller input goes through sceneInput()
         return false;
     }
     else
@@ -92,11 +96,11 @@ void UIButton::resize(sf::Vector2f newSize, int posSet)
 void UIButton::update()
 {
     active = false;
-
+    
     if (hover() && pressed())
     {
         switchTexture(2);
-
+        
         if (clicked())
         {
             activate();
