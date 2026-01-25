@@ -23,8 +23,8 @@ void UIText::init(sf::Font* font, std::string text, unsigned int fontSize, sf::C
     displayText->setStyle(sf::Text::Bold);
     displayText->setFillColor(fontColor);
 
-    baseText;
-    value;
+    baseText = "";
+    value = "";
 
     updateSize();
 }

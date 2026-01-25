@@ -33,7 +33,7 @@ void UILayer::init(Game* game, Camera* camera)
     currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "", currID, 6, toV2F(0, 0),      toV2F(50, 50), buttonTextures);
     currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "", currID, 6, toV2F(100, 100),  toV2F(50, 50), buttonTextures);
     currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "", currID, 7, toV2F(0, 0),      toV2F(50, 50), buttonTextures);
-    currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "", currID, 7, toV2F(-100, 10),  toV2F(50, 50), buttonTextures);
+    currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "", currID, 7, toV2F(-100, 100),  toV2F(50, 50), buttonTextures);
     currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "", currID, 8, toV2F(0, 0),      toV2F(50, 50), buttonTextures);
     currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "", currID, 8, toV2F(100, -100), toV2F(50, 50), buttonTextures);
     

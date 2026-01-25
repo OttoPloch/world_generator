@@ -4,7 +4,7 @@ Game::Game() {}
 
 void Game::init()
 {
-    window.create({800, 800}, "INFINITE", false, 165, sf::Color(10, 10, 12));
+    window.create({800, 800}, "INFINITE", false, 60, sf::Color(10, 10, 12));
 
     input.init(this);
 
@@ -121,6 +121,8 @@ void Game::run()
 
         if (lastWindowSize != window.getSize())
         {
+            std::cout << lastWindowSize.x << ", " << lastWindowSize.y << " old new: " << window.getSize().x << ", " << window.getSize().y << '\n';
+
             eventHandler.windowResized();
 
             lastWindowSize = window.getSize();
