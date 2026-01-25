@@ -121,8 +121,6 @@ void Game::run()
 
         if (lastWindowSize != window.getSize())
         {
-            std::cout << lastWindowSize.x << ", " << lastWindowSize.y << " old new: " << window.getSize().x << ", " << window.getSize().y << '\n';
-
             eventHandler.windowResized();
 
             lastWindowSize = window.getSize();
