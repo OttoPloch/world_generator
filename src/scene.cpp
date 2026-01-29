@@ -137,7 +137,7 @@ void Scene::UIUpdate(float dt)
     
     if (uiLayer.getElement("animation button 2")->getAsButton()->getActive())
     {
-        uiLayer.getElement("win 1")->setAnimation({0, 0}, {-50, 0}, -1, 7, true);
+        uiLayer.getElement("win 1")->setAnimation({0, 0}, {-300, 80}, -1, 0, true);
     }
 
     uiLayer.UIUpdate(dt);
