@@ -54,6 +54,8 @@ Window* Game::getWindow() { return &window; }
 
 Gamerules* Game::getGamerules() { return &gamerules; }
 
+Settings* Game::getSettings() { return &settings; }
+
 AssetManager* Game::getAssetManager() { return &assetManager; }
 
 Input* Game::getInput() { return &input; }
@@ -92,15 +94,15 @@ void Game::run()
                 averageTps += (1.f / dtick);
                 tpsCount++;
                 averageTps /= tpsCount;
-                
+
                 if (std::fmod(gameClock.getElapsedTime().asSeconds(), 1.f) < lastTimeCount)
                 {
-                    // std::cout << "dt: " << dt << "; dtick: " << dtick << '\n';
-                    // std::cout << "fps: " << fps << "; tps: " << 1.f / dtick << '\n';
-                    // std::cout << "average tps: " << averageTps << '\n';
-                    // std::cout << "ticks last second: " << ticksLastSecond << '\n';
-                    // std::cout << "time: " << gameClock.getElapsedTime().asSeconds() << '\n';
-                    // std::cout << "//////////////////////////////////\n";
+                    std::cout << "dt: " << dt << "; dtick: " << dtick << '\n';
+                    std::cout << "fps: " << fps << "; tps: " << 1.f / dtick << '\n';
+                    std::cout << "average tps: " << averageTps << '\n';
+                    std::cout << "ticks last second: " << ticksLastSecond << '\n';
+                    std::cout << "time: " << gameClock.getElapsedTime().asSeconds() << '\n';
+                    std::cout << "//////////////////////////////////\n";
 
                     ticksLastSecond = 0;
                 }
@@ -117,7 +119,7 @@ void Game::run()
             update(dt);
         }
 
-        UIUpdate();
+        UIUpdate(dt);
 
         if (lastWindowSize != window.getSize())
         {
@@ -142,9 +144,9 @@ void Game::update(float dt)
     scene.update(dt);
 }
 
-void Game::UIUpdate()
+void Game::UIUpdate(float dt)
 {
-    scene.UIUpdate();
+    scene.UIUpdate(dt);
 }
 
 void Game::draw()

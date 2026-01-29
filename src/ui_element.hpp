@@ -77,7 +77,7 @@ public:
     // this is used so that all the elements attached to one with an animation stay together.
     bool isMoving();
 
-    void baseUpdate();
+    void baseUpdate(float dt);
 
     // not sure if this is a good way to do this
     virtual UIBackground* getAsBackground();

@@ -31,7 +31,7 @@ public:
 
     void reset();
 
-    void UIUpdate();
+    void UIUpdate(float dt);
 
     void draw();
     

@@ -6,6 +6,7 @@
 #include <SFML/Graphics.hpp>
 
 class UILayer;
+class Game;
 
 class UIAnimation
 {
@@ -16,7 +17,7 @@ public:
     
     void init(sf::Vector2f startCenter, sf::Vector2f endCenter, int endPosSet);
 
-    sf::Vector2f step();
+    sf::Vector2f step(float dt, Game* game);
 
     bool isDone();
 
@@ -26,6 +27,7 @@ public:
     
     sf::Vector2f startCenter;
 private:
+    Game* game;
 
     sf::Vector2f endCenter;
 

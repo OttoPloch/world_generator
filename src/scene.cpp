@@ -114,7 +114,7 @@ void Scene::update(float dt)
     entityLayer.update(dt);
 }
 
-void Scene::UIUpdate()
+void Scene::UIUpdate(float dt)
 {
     if (uiLayer.getElement("faster button")->getAsButton()->getActive())
     {
@@ -137,10 +137,10 @@ void Scene::UIUpdate()
     
     if (uiLayer.getElement("animation button 2")->getAsButton()->getActive())
     {
-        uiLayer.getElement("win 1")->setAnimation({0, 0}, {-80, 80}, -1, 1, true);
+        uiLayer.getElement("win 1")->setAnimation({0, 0}, {-50, 0}, -1, 7, true);
     }
 
-    uiLayer.UIUpdate();
+    uiLayer.UIUpdate(dt);
 }
 
 void Scene::draw()

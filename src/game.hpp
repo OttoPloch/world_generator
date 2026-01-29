@@ -27,6 +27,8 @@ public:
     
     Gamerules* getGamerules();
 
+    Settings* getSettings();
+
     AssetManager* getAssetManager();
 
     Input* getInput();
@@ -39,7 +41,7 @@ private:
 
     void update(float dt);
 
-    void UIUpdate();
+    void UIUpdate(float dt);
 
     void draw();
     

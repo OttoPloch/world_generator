@@ -24,7 +24,7 @@ public:
 
     void update(float dt);
 
-    void UIUpdate();
+    void UIUpdate(float dt);
 
     void draw();
 

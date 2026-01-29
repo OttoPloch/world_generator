@@ -12,7 +12,7 @@ public:
 
     void init();
 
-    setting getSetting(std::string setting, std::string set = "default");
+    setting getSetting(std::string option);
 private:
     std::map<std::string, setting> settings;
 };

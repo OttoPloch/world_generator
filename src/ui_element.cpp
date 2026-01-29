@@ -241,11 +241,11 @@ bool UIElement::isMoving()
     return false;
 }
 
-void UIElement::baseUpdate()
+void UIElement::baseUpdate(float dt)
 {
     if (animation.get() != nullptr)
     {
-        setPosition(animation->step());
+        setPosition(animation->step(dt, game));
 
         if (animation->isDone())
         {

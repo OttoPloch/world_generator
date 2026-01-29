@@ -17,7 +17,7 @@ void UILayer::init(Game* game, Camera* camera)
     
     std::array<sf::Texture*, 3> buttonTextures = {assetManager->getTexture("button_up", "images/ui/"), assetManager->getTexture("button_hover", "images/ui/"), assetManager->getTexture("button_down", "images/ui/")};
     std::array<sf::Texture*, 3> blueButtonTextures = {assetManager->getTexture("blue_button_up", "images/ui/"), assetManager->getTexture("blue_button_hover", "images/ui/"), assetManager->getTexture("blue_button_down", "images/ui/")};
-    
+
     currID = getNewID(); elements[currID] = std::make_unique<UIBackground>(game, this, "win 1", currID, 0, toV2F(80, 80), toV2F(220, 200), sf::Color(0, 0, 0, 0), assetManager->getTileSet("32px filled"), assetManager->getTexture("ui_scroll", "images/ui/"));
     currID = getNewID(); elements[currID] = std::make_unique<UIText>(game, this, "win 1 title", currID, 5, toV2F(0, -20), assetManager->getFont("White Storm"), "Speed adjust", 30, sf::Color::Black, getElement("win 1"));
     
@@ -28,13 +28,13 @@ void UILayer::init(Game* game, Camera* camera)
     currID = getNewID(); elements[currID] = std::make_unique<UIText>(game, this, "speed display", currID, 0, toV2F(15, 30), assetManager->getFont("White Storm"), "----", 30, sf::Color::Black, getElement("win 1"));
 
     currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "animation button 2", currID, 5, toV2F(0, 0), toV2F(50, 50), blueButtonTextures);
-    currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "", currID, 5, toV2F(100, 100), toV2F(50, 50), buttonTextures);
+    currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "animation button", currID, 5, toV2F(100, 100), toV2F(50, 50), blueButtonTextures);
     currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "", currID, 6, toV2F(0, 0), toV2F(50, 50), buttonTextures);
     currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "", currID, 6, toV2F(100, 100), toV2F(50, 50), buttonTextures);
     currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "", currID, 7, toV2F(0, 0), toV2F(50, 50), buttonTextures);
     currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "", currID, 7, toV2F(-100, 100), toV2F(50, 50), buttonTextures);
     currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "", currID, 8, toV2F(0, 0), toV2F(50, 50), buttonTextures);
-    currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "animation button", currID, 8, toV2F(100, -100), toV2F(50, 50), blueButtonTextures);
+    currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "", currID, 8, toV2F(100, -100), toV2F(50, 50), buttonTextures);
     
     getElement("speed display")->getAsText()->setBaseText("Speed: ###");
     getElement("speed display")->getAsText()->setValue(std::to_string(toInt(game->getGamerules()->getRule("moveSpeed", "player").valueFloat)));
@@ -93,13 +93,13 @@ void UILayer::reset()
     }
 }
 
-void UILayer::UIUpdate()
+void UILayer::UIUpdate(float dt)
 {
     if (elements.size() > 0)
     {
         for (auto& i : elements)
         {
-            i.second->baseUpdate();
+            i.second->baseUpdate(dt);
         }
     }
 }

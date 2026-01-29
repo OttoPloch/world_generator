@@ -17,4 +17,8 @@ bool mouseRectCollide(Game* game, sf::Vector2f position, sf::Vector2f size);
 
 void log(std::string message, bool newLine = true);
 
+void log(sf::Vector2f value, bool newLine = false);
+
+void log(sf::Vector2i value, bool newLine = false);
+
 sf::Vector2f UIPositionToScreenCenter(UILayer* uiLayer, UIElement* element, sf::Vector2f pos, int posSet = -1, bool useElementPosition = false);
