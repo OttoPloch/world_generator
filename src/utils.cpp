@@ -1,6 +1,8 @@
 #include "utils.hpp"
 #include "entity.hpp"
 #include "game.hpp"
+#include "ui_layer.hpp"
+#include "ui_element.hpp"
 
 float getDistance(sf::Vector2f vec1, sf::Vector2f vec2)
 {
@@ -60,4 +62,62 @@ void log(std::string message, bool newLine)
     {
         std::cout << message;
     }
+}
+
+sf::Vector2f UIPositionToScreenCenter(UILayer* uiLayer, UIElement* element, sf::Vector2f pos, int posSet, bool useElementPosition)
+{
+    int set = posSet;
+    if (posSet == -1) set = element->getPosSet();
+    
+    sf::Vector2f position = pos;
+    if (useElementPosition) position = element->getPosition();
+
+    UIElement* parent = element->getParent();
+    sf::Vector2f size = element->getSize();
+
+    float posX = 0.f;
+
+    switch(set)
+    {
+        case 0:
+        case 2:
+        case 6:
+            (parent) ? posX = parent->left() + position.x + size.x / 2.f : posX = position.x + size.x / 2.f;
+            break;
+        case 1:
+        case 3:
+        case 7:
+            (parent) ? posX = parent->right() + position.x - size.x / 2.f : posX = uiLayer->getViewSize().x + position.x - size.x / 2.f;
+            break;
+        case 9:
+            (parent) ? posX = parent->left() + position.x : posX = position.x;
+            break;
+        default:
+            (parent) ? posX = parent->getScreenCenter().x + position.x : posX = (uiLayer->getViewSize().x / 2.f) + position.x;
+            break;
+    }
+
+    float posY = 0.f;
+
+    switch(set)
+    {
+        case 0:
+        case 1:
+        case 5:
+            (parent) ? posY = parent->top() + position.y + size.y / 2.f: posY = position.y + size.y / 2.f;
+            break;
+        case 2:
+        case 3:
+        case 8:
+            (parent) ? posY = parent->bottom() + position.y - size.y / 2.f : posY = uiLayer->getViewSize().y + position.y - size.y / 2.f;
+            break;
+        case 9:
+            (parent) ? posY = parent->top() + position.y : posY = position.y;
+            break;
+        default:
+            (parent) ? posY = parent->getScreenCenter().y + position.y : posY = (uiLayer->getViewSize().y / 2.f) + position.y;
+            break;
+    }
+
+    return {posX, posY};
 }

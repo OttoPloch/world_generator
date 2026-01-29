@@ -130,6 +130,16 @@ void Scene::UIUpdate()
         uiLayer.getElement("speed display")->getAsText()->setValue(std::to_string(toInt(game->getGamerules()->getRule("moveSpeed", "player").valueFloat)));
     }
 
+    if (uiLayer.getElement("animation button")->getAsButton()->getActive())
+    {
+        uiLayer.getElement("win 1")->setAnimation({0, 0}, {80, 80}, -1, 0, true);
+    }
+    
+    if (uiLayer.getElement("animation button 2")->getAsButton()->getActive())
+    {
+        uiLayer.getElement("win 1")->setAnimation({0, 0}, {-80, 80}, -1, 1, true);
+    }
+
     uiLayer.UIUpdate();
 }
 

@@ -7,6 +7,7 @@
 #include "collision_attribute.hpp"
 #include "entity_layer.hpp"
 #include "ui_layer.hpp"
+#include "ui_animation.hpp"
 
 #include <vector>
 
