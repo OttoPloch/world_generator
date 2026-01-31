@@ -23,8 +23,15 @@ void UIText::init(sf::Font* font, std::string text, unsigned int fontSize, sf::C
     displayText->setStyle(sf::Text::Bold);
     displayText->setFillColor(fontColor);
 
-    baseText = "";
     value = "";
+    if (text.find("###") != std::string::npos)
+    {
+        setBaseText(text);
+    }
+    else
+    {
+        baseText = "";
+    }
 
     updateSize();
 }

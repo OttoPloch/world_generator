@@ -4,7 +4,7 @@ Game::Game() {}
 
 void Game::init()
 {
-    window.create({800, 800}, "INFINITE", false, 60, sf::Color(10, 10, 12));
+    window.create({800, 800}, "INFINITE", false, 0, sf::Color(10, 10, 12));
 
     input.init(this);
 
@@ -103,6 +103,8 @@ void Game::run()
                     std::cout << "ticks last second: " << ticksLastSecond << '\n';
                     std::cout << "time: " << gameClock.getElapsedTime().asSeconds() << '\n';
                     std::cout << "//////////////////////////////////\n";
+
+                    scene.getUILayer()->getElement("fps display")->getAsText()->setValue(std::to_string(toInt(fps)));
 
                     ticksLastSecond = 0;
                 }
