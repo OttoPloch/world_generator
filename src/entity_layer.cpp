@@ -238,7 +238,15 @@ void EntityLayer::draw()
     
             for (int j = 0; j < entityVec.size(); j++)
             {
-                entityVec[j]->draw(game->getWindow()->getWindow());
+                Entity* curr = entityVec[j];
+
+                sf::Vector2f center = curr->getPosition();
+                sf::Vector2f size = curr->getSprite()->getSize();
+
+                if (isOnScreen(game, {center.x - size.x / 2.f, center.y - size.y / 2.f}, size))
+                {
+                    curr->draw(game->getWindow()->getWindow());
+                }
     
                 // Entity* entity = entityVec[j];
                 // Sprite* sprite = entity->getSprite();

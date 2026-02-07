@@ -5,9 +5,9 @@
 class Attribute
 {
 public:
-    Attribute(std::string name);
+    Attribute(std::string attributeName);
 
-    std::string getName();
+    std::string getAttributeName();
 private:
-    std::string name;
+    std::string attributeName;
 };

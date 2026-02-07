@@ -1,8 +1,8 @@
 #include "attribute.hpp"
 
-Attribute::Attribute(std::string name)
+Attribute::Attribute(std::string attributeName)
 {
-    this->name = name;
+    this->attributeName = attributeName;
 }
 
-std::string Attribute::getName() { return name; }
+std::string Attribute::getAttributeName() { return attributeName; }
