@@ -113,6 +113,11 @@ void UILayer::UIUpdate(float dt)
             i.second->baseUpdate(dt);
         }
     }
+
+    if (interactiveUIManager.isControllerUIActive())
+    {
+        interactiveUIManager.updateIndicatorPosition();
+    }
 }
 
 void UILayer::draw()
@@ -123,16 +128,21 @@ void UILayer::draw()
     {
         for (auto& i : elements)
         {
-            if (i.second->getName() != "controller indicator")
-            {
-                i.second->draw();
-            }
+            sf::FloatRect bb = i.second->getBoundingBox();
 
-            // sf::CircleShape circle(5.f);
-            // circle.setFillColor(sf::Color::Red);
-            // circle.setOrigin({5.f, 5.f});
-            // circle.setPosition(i.second->getScreenCenter());
-            // game->getWindow()->getWindow().draw(circle);
+            if (isOnScreen(game, bb.position, bb.size, false))
+            {
+                if (i.second->getName() != "controller indicator")
+                {
+                    i.second->draw();
+                }
+    
+                // sf::CircleShape circle(5.f);
+                // circle.setFillColor(sf::Color::Red);
+                // circle.setOrigin({5.f, 5.f});
+                // circle.setPosition(i.second->getScreenCenter());
+                // game->getWindow()->getWindow().draw(circle);
+            }
         }
     }
 

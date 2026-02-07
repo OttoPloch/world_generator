@@ -21,4 +21,12 @@ void log(sf::Vector2f value, bool newLine = false);
 
 void log(sf::Vector2i value, bool newLine = false);
 
+void log(int value, bool newLine = true);
+
 sf::Vector2f UIPositionToScreenCenter(UILayer* uiLayer, UIElement* element, sf::Vector2f pos, int posSet = -1, bool useElementPosition = false);
+
+int getRandInt(int min, int max);
+
+bool isOnScreen(Game* game, sf::Vector2f tl, sf::Vector2f size, bool applyView = true);
+
+bool isOnScreen(Game* game, sf::Vector2f point, bool applyView = true);

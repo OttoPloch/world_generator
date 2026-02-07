@@ -8,6 +8,7 @@
 #include "entity_layer.hpp"
 #include "ui_layer.hpp"
 #include "ui_animation.hpp"
+#include "tile_layer.hpp"
 
 #include <vector>
 
@@ -34,8 +35,6 @@ public:
 
     void toggleFocus();
 
-    int getNewID();
-
     UILayer* getUILayer();
 private:
     Game* game;
@@ -44,11 +43,11 @@ private:
     
     AssetManager* assetManager;    
 
-    int IDCounter;
-    
     EntityLayer entityLayer;
 
     UILayer uiLayer;
+
+    TileLayer tileLayer;
 
     Camera camera;
 

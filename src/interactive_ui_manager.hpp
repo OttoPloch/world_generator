@@ -29,6 +29,8 @@ public:
 
     void draw();
 
+    void updateIndicatorPosition();
+
     UIElement* controllerUI_indicator;
 
     UIElement* controllerUI_selectedElement;

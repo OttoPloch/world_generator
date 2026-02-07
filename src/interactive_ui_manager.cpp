@@ -33,9 +33,24 @@ void InteractiveUIManager::moveIndicator(sf::Vector2i direction)
 
     if (direction == sf::Vector2i(0, 0)) return;
 
+    bool onlySelectButtons = false;
+
     active = true;
 
     UIElement* target = elements->begin()->second.get();
+
+    if (onlySelectButtons && target->getAsButton() == nullptr)
+    {
+        for (auto& i : *elements)
+        {
+            if (i.second->getAsButton() != nullptr)
+            {
+                target = i.second.get();
+
+                break;
+            }
+        }
+    }
 
     if (controllerUI_selectedElement) target = controllerUI_selectedElement;
 
@@ -43,7 +58,7 @@ void InteractiveUIManager::moveIndicator(sf::Vector2i direction)
 
     for (auto& i : (*elements))
     {
-        if (i.second->getAsButton() == nullptr) continue;
+        if (onlySelectButtons && i.second->getAsButton() == nullptr) continue;
 
         sf::Vector2f candidateCenter = i.second->getScreenCenter();
         sf::Vector2f targetCenter = target->getScreenCenter();
@@ -136,12 +151,15 @@ void InteractiveUIManager::moveIndicator(sf::Vector2i direction)
 
     if (target != controllerUI_selectedElement) controllerUI_selectedElement = target;
 
-    controllerUI_indicator->setPosition({target->getScreenCenter().x - indicatorSize.x / 2.f, target->getScreenCenter().y - indicatorSize.y / 2.f});
+    sf::FloatRect bb = target->getBoundingBox();
+
+    controllerUI_indicator->resize(bb.size);
+    controllerUI_indicator->setPosition(bb.position);
 }
 
 void InteractiveUIManager::click()
 {
-    if (controllerUI_selectedElement != nullptr && active)
+    if (controllerUI_selectedElement->getAsButton() && controllerUI_selectedElement != nullptr && active)
     {
         controllerUI_selectedElement->getAsButton()->activate();
     }
@@ -162,4 +180,9 @@ UIElement* InteractiveUIManager::getSelectedElement() { return controllerUI_sele
 void InteractiveUIManager::draw()
 {
     if (active) controllerUI_indicator->draw();
+}
+
+void InteractiveUIManager::updateIndicatorPosition()
+{
+    controllerUI_indicator->setPosition(controllerUI_selectedElement->getBoundingBox().position);
 }

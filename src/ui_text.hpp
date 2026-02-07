@@ -18,6 +18,8 @@ public:
     
     void init(sf::Font* font, std::string text, unsigned int fontSize, sf::Color fontColor);
 
+    sf::FloatRect getBoundingBox() override;
+
     // the full text
     void setText(std::string text);
     

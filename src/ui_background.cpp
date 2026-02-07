@@ -30,6 +30,11 @@ void UIBackground::init(sf::Color color, TileSet* tileSet, sf::Texture* borderTe
     updateSize();
 }
 
+sf::FloatRect UIBackground::getBoundingBox()
+{
+    return sf::FloatRect({left() - borderSize / 2.f, top() - borderSize / 2.f}, {size.x + borderSize, size.y + borderSize});
+}
+
 void UIBackground::createBorderVertices()
 {
     if (tileSet == nullptr) return;
@@ -222,6 +227,8 @@ void UIBackground::createBorderVertices()
 }
 
 sf::Color UIBackground::getColor() { return color; }
+
+float UIBackground::getBorderSize() { return borderSize; }
 
 UIBackground* UIBackground::getAsBackground() { return this; }
 

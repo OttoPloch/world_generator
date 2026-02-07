@@ -156,6 +156,8 @@ float UIElement::bottom()
 
 sf::Vector2f UIElement::getSize() { return size; }
 
+sf::FloatRect UIElement::getBoundingBox() { return sf::FloatRect({left(), top()}, size); }
+
 std::string UIElement::getName() { return name; }
 
 int UIElement::getID() { return ID; }

@@ -1,5 +1,6 @@
 #include "entity_layer.hpp"
 #include "game.hpp"
+#include "rect_types.hpp"
 
 #include <algorithm>
 
@@ -9,8 +10,10 @@ void EntityLayer::init(Game* game, std::vector<std::unique_ptr<Entity>> entities
 {
     this->game = game;
 
-    this->entities.resize(entities.size());
+    IDCounter = 0;
     
+    this->entities.resize(entities.size());
+
     for (int i = 0; i < entities.size(); i++)
     {
         this->entities[i] = std::move(entities[i]);
@@ -26,6 +29,79 @@ void EntityLayer::init(Game* game, std::vector<std::unique_ptr<Entity>> entities
             }
         }
     }
+
+    AssetManager* assetManager = game->getAssetManager();
+
+    addEntity(getNewID(), {475, 475});
+    addEntity(getNewID(), {0, 0});
+    addEntity(getNewID(), {900, 900});
+    addEntity(getNewID(), {100, 500});
+    addEntity(getNewID(), {0, 0});
+    addEntity(getNewID(), {-400, 100});
+    addEntity(getNewID(), {-400, 250});
+    addEntity(getNewID(), {-400, 400});
+    addEntity(getNewID(), {-400, 550});
+    addEntity(getNewID(), {-400, 700});
+    addEntity(getNewID(), {-200, 700});
+    addEntity(getNewID(), {0, 1000});
+    addEntity(getNewID(), {200, 1000});
+    addEntity(getNewID(), {400, 1000});
+    addEntity(getNewID(), {600, 1000});
+
+    giveEntitySprite(0, assetManager->getTexture("pixel"), {50, 50}, -1);
+
+    giveEntitySprite(1, assetManager->getTexture("IDLE_smaller"), {24 * 10, 21 * 10});
+    getEntity(1)->getSprite()->giveAnimationSet(assetManager->getAnimSet("player"));
+    giveEntityMotion(1, 1.f, true);
+    giveEntityCollision(1, "player", ACTIVE, {}, {0, 0.2}, {0.3, 0.3});
+
+    giveEntitySprite(2, assetManager->getTexture("dr bee"), {200, 200});
+    giveEntityCollision(2, "enemy", STATIC);
+
+    giveEntitySprite(3, assetManager->getTexture("bush"), {200, 120});
+    giveEntityCollision(3, "obstacle", STATIC, {}, {0, 0.2f}, {.7f, .6f});
+
+    giveEntitySprite(4, assetManager->getTexture("IDLE_smaller"), {24 * 11, 21 * 11});
+    getEntity(4)->getSprite()->giveAnimation(assetManager->getAnimation("knight_idle"));
+
+    giveEntitySprite(5, assetManager->getTexture("pixel"), {100, 100}, -2);
+    getEntity(5)->getSprite()->giveAnimation(assetManager->getAnimation("dot_left"));
+
+    giveEntitySprite(6, assetManager->getTexture("pixel"), {100, 100}, -2);
+    getEntity(6)->getSprite()->giveAnimation(assetManager->getAnimation("dot_right"));
+
+    giveEntitySprite(7, assetManager->getTexture("pixel"), {100, 100}, -2);
+    getEntity(7)->getSprite()->giveAnimation(assetManager->getAnimation("dot_up"));
+
+    giveEntitySprite(8, assetManager->getTexture("pixel"), {100, 100}, -2);
+    getEntity(8)->getSprite()->giveAnimation(assetManager->getAnimation("dot_down"));
+
+    giveEntitySprite(9, assetManager->getTexture("pixel"), {100, 100}, -2);
+    getEntity(9)->getSprite()->giveAnimation(assetManager->getAnimation("dot_idle"));
+
+    giveEntitySprite(10, assetManager->getTexture("crate"), {150, 150});
+    giveEntityMotion(10, 1.f);
+    giveEntityCollision(10, "crate", MOVABLE);
+
+    giveEntitySprite(11, assetManager->getTexture("crate"), {200.f, 200.f}, -1);
+    giveEntityCollision(11, "wall", STATIC);
+
+    giveEntitySprite(12, assetManager->getTexture("crate"), {200.f, 200.f}, -1);
+    giveEntityCollision(12, "wall", STATIC);
+
+    giveEntitySprite(13, assetManager->getTexture("crate"), {200.f, 200.f}, -1);
+    giveEntityCollision(13, "wall", STATIC);
+
+    giveEntitySprite(14, assetManager->getTexture("crate"), {200.f, 200.f}, -1);
+    giveEntityCollision(14, "wall", STATIC);
+
+}
+
+int EntityLayer::getNewID()
+{
+    IDCounter++;
+
+    return IDCounter - 1;
 }
 
 void EntityLayer::addEntity(int ID, sf::Vector2f position)

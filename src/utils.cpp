@@ -3,6 +3,7 @@
 #include "game.hpp"
 #include "ui_layer.hpp"
 #include "ui_element.hpp"
+#include <random>
 
 float getDistance(sf::Vector2f vec1, sf::Vector2f vec2)
 {
@@ -73,6 +74,13 @@ void log(sf::Vector2i value, bool newLine)
     if (newLine) std::cout << '\n';
 }
 
+void log(int value, bool newLine)
+{
+    std::cout << value;
+
+    if (newLine) std::cout << '\n';
+}
+
 sf::Vector2f UIPositionToScreenCenter(UILayer* uiLayer, UIElement* element, sf::Vector2f pos, int posSet, bool useElementPosition)
 {
     int set = posSet;
@@ -129,4 +137,100 @@ sf::Vector2f UIPositionToScreenCenter(UILayer* uiLayer, UIElement* element, sf::
     }
 
     return {posX, posY};
+}
+
+int getRandInt(int min, int max)
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> dist(min, max);
+
+    return dist(gen);
+}
+
+bool isOnScreen(Game* game, sf::Vector2f tl, sf::Vector2f size, bool applyView)
+{
+    sf::RenderWindow& window = game->getWindow()->getWindow();
+    sf::View view = window.getView();
+
+    float top = tl.y;
+    float bottom = tl.y + size.y;
+    float left = tl.x;
+    float right = tl.x + size.x;
+
+    if (applyView)
+    {
+        if (right >= view.getCenter().x - view.getSize().x / 2.f)
+        {
+            if (left <= view.getCenter().x + view.getSize().x / 2.f)
+            {
+                if (bottom >= view.getCenter().y - view.getSize().y / 2.f)
+                {
+                    if (top <= view.getCenter().y + view.getSize().y / 2.f)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        if (right >= 0)
+        {
+            if (left <= window.getSize().x)
+            {
+                if (bottom >= 0)
+                {
+                    if (top <= window.getSize().y)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
+bool isOnScreen(Game* game, sf::Vector2f point, bool applyView)
+{
+    sf::RenderWindow& window = game->getWindow()->getWindow();
+    sf::View view = window.getView();
+
+    if (applyView)
+    {
+        if (point.x >= view.getCenter().x - view.getSize().x / 2.f)
+        {
+            if (point.x <= view.getCenter().x + view.getSize().x / 2.f)
+            {
+                if (point.y >= view.getCenter().y - view.getSize().y / 2.f)
+                {
+                    if (point.y <= view.getCenter().y + view.getSize().y / 2.f)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        if (point.x >= 0)
+        {
+            if (point.x <= window.getSize().x)
+            {
+                if (point.y >= 0)
+                {
+                    if (point.y <= window.getSize().y)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+
+    return false;
 }

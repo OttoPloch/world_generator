@@ -1,5 +1,4 @@
 #include "scene.hpp"
-#include "rect_types.hpp"
 #include "game.hpp"
 
 #include <memory>
@@ -14,76 +13,13 @@ void Scene::init(Game* game)
 
     assetManager = game->getAssetManager();
     
-    IDCounter = 0;
 
-    
     
     entityLayer.init(game);
 
-    entityLayer.addEntity(getNewID(), {475, 475});
-    entityLayer.addEntity(getNewID(), {0, 0});
-    entityLayer.addEntity(getNewID(), {900, 900});
-    entityLayer.addEntity(getNewID(), {100, 500});
-    entityLayer.addEntity(getNewID(), {0, 0});
-    entityLayer.addEntity(getNewID(), {-400, 100});
-    entityLayer.addEntity(getNewID(), {-400, 250});
-    entityLayer.addEntity(getNewID(), {-400, 400});
-    entityLayer.addEntity(getNewID(), {-400, 550});
-    entityLayer.addEntity(getNewID(), {-400, 700});
-    entityLayer.addEntity(getNewID(), {-200, 700});
-    entityLayer.addEntity(getNewID(), {0, 1000});
-    entityLayer.addEntity(getNewID(), {200, 1000});
-    entityLayer.addEntity(getNewID(), {400, 1000});
-    entityLayer.addEntity(getNewID(), {600, 1000});
-
-    entityLayer.giveEntitySprite(0, assetManager->getTexture("pixel"), {50, 50}, -1);
-
-    entityLayer.giveEntitySprite(1, assetManager->getTexture("IDLE_smaller"), {24 * 10, 21 * 10});
-    entityLayer.getEntity(1)->getSprite()->giveAnimationSet(assetManager->getAnimSet("player"));
-    entityLayer.giveEntityMotion(1, 1.f, true);
-    entityLayer.giveEntityCollision(1, "player", ACTIVE, {}, {0, 0.2}, {0.3, 0.3});
-
-    entityLayer.giveEntitySprite(2, assetManager->getTexture("dr bee"), {200, 200});
-    entityLayer.giveEntityCollision(2, "enemy", STATIC);
-
-    entityLayer.giveEntitySprite(3, assetManager->getTexture("bush"), {200, 120});
-    entityLayer.giveEntityCollision(3, "obstacle", STATIC, {}, {0, 0.2f}, {.7f, .6f});
-
-    entityLayer.giveEntitySprite(4, assetManager->getTexture("IDLE_smaller"), {24 * 11, 21 * 11});
-    entityLayer.getEntity(4)->getSprite()->giveAnimation(assetManager->getAnimation("knight_idle"));
-
-    entityLayer.giveEntitySprite(5, assetManager->getTexture("pixel"), {100, 100}, -2);
-    entityLayer.getEntity(5)->getSprite()->giveAnimation(assetManager->getAnimation("dot_left"));
-
-    entityLayer.giveEntitySprite(6, assetManager->getTexture("pixel"), {100, 100}, -2);
-    entityLayer.getEntity(6)->getSprite()->giveAnimation(assetManager->getAnimation("dot_right"));
-
-    entityLayer.giveEntitySprite(7, assetManager->getTexture("pixel"), {100, 100}, -2);
-    entityLayer.getEntity(7)->getSprite()->giveAnimation(assetManager->getAnimation("dot_up"));
-
-    entityLayer.giveEntitySprite(8, assetManager->getTexture("pixel"), {100, 100}, -2);
-    entityLayer.getEntity(8)->getSprite()->giveAnimation(assetManager->getAnimation("dot_down"));
-
-    entityLayer.giveEntitySprite(9, assetManager->getTexture("pixel"), {100, 100}, -2);
-    entityLayer.getEntity(9)->getSprite()->giveAnimation(assetManager->getAnimation("dot_idle"));
-
-    entityLayer.giveEntitySprite(10, assetManager->getTexture("crate"), {150, 150});
-    entityLayer.giveEntityMotion(10, 1.f);
-    entityLayer.giveEntityCollision(10, "crate", MOVABLE);
-
-    entityLayer.giveEntitySprite(11, assetManager->getTexture("crate"), {200.f, 200.f}, -1);
-    entityLayer.giveEntityCollision(11, "wall", STATIC);
-
-    entityLayer.giveEntitySprite(12, assetManager->getTexture("crate"), {200.f, 200.f}, -1);
-    entityLayer.giveEntityCollision(12, "wall", STATIC);
-
-    entityLayer.giveEntitySprite(13, assetManager->getTexture("crate"), {200.f, 200.f}, -1);
-    entityLayer.giveEntityCollision(13, "wall", STATIC);
-
-    entityLayer.giveEntitySprite(14, assetManager->getTexture("crate"), {200.f, 200.f}, -1);
-    entityLayer.giveEntityCollision(14, "wall", STATIC);
-
     uiLayer.init(game, &camera);
+
+    tileLayer.init(game);
 
     camera.init(game, true, {0, 0}, toV2F(window->getSize()), entityLayer.getEntity(1));
 
@@ -103,6 +39,8 @@ void Scene::init(Game* game)
 void Scene::tick()
 {   
     entityLayer.tick();
+
+    tileLayer.tick();
 }
 
 void Scene::update(float dt)
@@ -147,11 +85,13 @@ void Scene::UIUpdate(float dt)
 
 void Scene::draw()
 {
+    tileLayer.draw();
+
     window->draw(rect);
     window->draw(outline);
-
+    
     entityLayer.draw();
-
+    
     uiLayer.draw();
 }
 
@@ -193,13 +133,6 @@ void Scene::toggleFocus()
         camera.removeFocus();
         entityLayer.getEntity(1)->getMotion()->controlling = false;
     }
-}
-
-int Scene::getNewID()
-{
-    IDCounter++;
-
-    return IDCounter - 1;
 }
 
 UILayer* Scene::getUILayer() { return &uiLayer; }

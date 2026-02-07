@@ -51,6 +51,8 @@ public:
 
     sf::Vector2f getSize();
 
+    virtual sf::FloatRect getBoundingBox();
+
     std::string getName();
 
     int getID();

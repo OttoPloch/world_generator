@@ -16,6 +16,8 @@ public:
 
     void init(Game* game, std::vector<std::unique_ptr<Entity>> entities = {});
 
+    int getNewID();    
+
     void addEntity(int ID, sf::Vector2f position);
 
     void removeEntity(int ID);
@@ -45,6 +47,8 @@ public:
     void draw();
 private:
     Game* game;
+
+    int IDCounter;
 
     std::vector<std::unique_ptr<Entity>> entities;
 

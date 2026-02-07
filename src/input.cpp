@@ -234,7 +234,10 @@ bool Input::getControl(std::string key)
         {
             if (controls[i].first == key)
             {
-                if (getKey(controls[i].second.first) || getButton(controls[i].second.second)) isPressed = true;
+                if ((controls[i].second.first != "NONE" && getKey(controls[i].second.first)) || (controls[i].second.second != "NONE" && getButton(controls[i].second.second)))
+                {
+                    isPressed = true;
+                }
             }
         }
 

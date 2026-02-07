@@ -18,9 +18,13 @@ public:
 
     void init(sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, float borderSize = 96.f);
 
+    sf::FloatRect getBoundingBox() override;
+
     void createBorderVertices();
 
     sf::Color getColor();
+
+    float getBorderSize();
 
     UIBackground* getAsBackground() override;
 
