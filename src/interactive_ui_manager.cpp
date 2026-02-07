@@ -29,13 +29,18 @@ void InteractiveUIManager::init(Game* game, std::map<int, std::unique_ptr<UIElem
     
 void InteractiveUIManager::moveIndicator(sf::Vector2i direction)
 {
+    if (active == false)
+    {
+        active = true;
+
+        if (controllerUI_selectedElement != nullptr) return;
+    }
+
     if (elements->size() <= 1) return;
 
     if (direction == sf::Vector2i(0, 0)) return;
 
-    bool onlySelectButtons = false;
-
-    active = true;
+    bool onlySelectButtons = true;\
 
     UIElement* target = elements->begin()->second.get();
 
