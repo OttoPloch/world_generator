@@ -6,6 +6,7 @@
 #include "motion_attribute.hpp"
 #include "game_position.hpp"
 #include "entity_states.hpp"
+#include "tile.hpp"
 
 #include <memory>
 #include <vector>
@@ -32,7 +33,7 @@ public:
 
     void changeSpriteTexture(sf::Texture* texture);
 
-    void tick();
+    void tick(std::vector<std::unique_ptr<Entity>>* entities = nullptr, std::vector<Tile>* tiles = nullptr);
 
     void update(float dt);
 

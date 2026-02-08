@@ -14,13 +14,22 @@ void TileLayer::init(Game* game)
 
     this->window = game->getWindow();
 
-    int length = 10;
+    int length = 100;
     sf::Vector2f offset = {-500, 1300};
     float tilesize = 150.f;
 
     for (int i = 0; i < length * length; i++)
     {
-        tiles.emplace_back(sf::Vector2f(offset.x + (toFloat(i % length) * tilesize), offset.y + (std::floor(toFloat(i) / length) * tilesize)), sf::Vector2f(tilesize, tilesize), getRandInt(0, 3));
+        int type = getRandInt(0, 3);
+
+        if (type == 3)
+        {
+            tiles.emplace_back(sf::Vector2f(offset.x + (toFloat(i % length) * tilesize), offset.y + (std::floor(toFloat(i) / length) * tilesize)), sf::Vector2f(tilesize, tilesize), type, true, "pink");
+        }
+        else
+        {
+            tiles.emplace_back(sf::Vector2f(offset.x + (toFloat(i % length) * tilesize), offset.y + (std::floor(toFloat(i) / length) * tilesize)), sf::Vector2f(tilesize, tilesize), type);
+        }
     }
 
     for (auto& tile : tiles)
@@ -67,6 +76,8 @@ void TileLayer::init(Game* game)
     }
 }
 
+std::vector<Tile>* TileLayer::getTiles() { return &tiles; }
+
 void TileLayer::tick()
 {
 
@@ -75,4 +86,19 @@ void TileLayer::tick()
 void TileLayer::draw()
 {
     window->getWindow().draw(&vertices[0], vertices.size(), sf::PrimitiveType::Triangles);
+
+    // for (int i = 0; i < tiles.size(); i++)
+    // {
+    //     if (tiles[i].hasCollider())
+    //     {
+    //         sf::RectangleShape rect(tiles[i].getRect().size);
+
+    //         rect.setFillColor(sf::Color::Transparent);
+    //         rect.setOutlineColor(sf::Color::Blue);
+    //         rect.setOutlineThickness(3.f);
+    //         rect.setPosition(tiles[i].getRect().position);
+
+    //         window->draw(rect);
+    //     }
+    // }
 }

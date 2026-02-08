@@ -203,7 +203,7 @@ void EntityLayer::tick()
     {
         for (int i = 0; i < entities.size(); i++)
         {
-            entities[i]->tick();
+            entities[i]->tick(&entities, game->getScene()->getTileLayer()->getTiles());
         }
     }
 }

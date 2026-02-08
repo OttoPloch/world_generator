@@ -36,6 +36,8 @@ public:
     void toggleFocus();
 
     UILayer* getUILayer();
+
+    TileLayer* getTileLayer();
 private:
     Game* game;
 

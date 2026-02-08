@@ -136,3 +136,5 @@ void Scene::toggleFocus()
 }
 
 UILayer* Scene::getUILayer() { return &uiLayer; }
+
+TileLayer* Scene::getTileLayer() { return &tileLayer; }

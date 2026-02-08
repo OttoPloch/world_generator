@@ -5,6 +5,7 @@
 #include "game_position.hpp"
 #include "collision_rect.hpp"
 #include "entity.hpp"
+#include "tile.hpp"
 
 #include <vector>
 #include <utility>
@@ -13,13 +14,19 @@
 class CollisionAttribute : public Attribute
 {
 public:
-    CollisionAttribute(Entity* myEntity, GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::vector<std::unique_ptr<Entity>>* entities, std::string colliderName, int rectType, std::vector<std::string> blacklist);
+    CollisionAttribute();
 
-    void tick();
+    CollisionAttribute(Entity* myEntity, GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::string colliderName, int rectType, std::vector<std::string> blacklist);
+
+    void tick(std::vector<std::unique_ptr<Entity>>* entities, std::vector<Tile>* tiles);
 
     bool collidesWith(CollisionRect* other);
 
-    void resolveCollision(Entity* otherEntity, float pushFraction);
+    bool collidesWith(sf::FloatRect other);
+
+    void resolveCollision(CollisionRect* other, float pushFraction);
+    
+    void resolveCollision(sf::FloatRect other);
 
     void setRect(sf::FloatRect newRect);
     
@@ -32,6 +39,4 @@ private:
     EntityStates* states;
     
     CollisionRect rect;
-    
-    std::vector<std::unique_ptr<Entity>>* entities;
 };

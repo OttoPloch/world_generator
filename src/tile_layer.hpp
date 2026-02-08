@@ -23,6 +23,8 @@ public:
 
     void init(Game* game);
 
+    std::vector<Tile>* getTiles();
+    
     void tick();
 
     void draw();

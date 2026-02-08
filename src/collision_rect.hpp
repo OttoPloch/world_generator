@@ -10,7 +10,7 @@ class CollisionRect
 public:
     CollisionRect();
 
-    void init(GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::string colliderName, int rectType, std::vector<std::string> blacklist);
+    void init(GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::string colliderName, int rectType, std::vector<std::string> blacklist = {});
 
     void updatePosition();
 

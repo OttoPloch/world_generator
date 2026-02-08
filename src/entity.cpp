@@ -62,7 +62,7 @@ void Entity::giveCollision(std::vector<std::unique_ptr<Entity>>* entities, std::
         collRectSize = size;
     }
 
-    collision = std::make_unique<CollisionAttribute>(this, position, offset, collRectSize, entities, name, rectType, blacklist);
+    collision = std::make_unique<CollisionAttribute>(this, position, offset, collRectSize, name, rectType, blacklist);
 }
 
 void Entity::changeSpriteTexture(sf::Texture* texture)
@@ -70,13 +70,13 @@ void Entity::changeSpriteTexture(sf::Texture* texture)
     sprite->setTexture(texture);
 }
 
-void Entity::tick()
+void Entity::tick(std::vector<std::unique_ptr<Entity>>* entities, std::vector<Tile>* tiles)
 {
     states.resetAll();
 
     if (motion) motion->tick();
 
-    if (collision) collision->tick();
+    if (collision) collision->tick(entities, tiles);
     
     if (sprite) sprite->tick();
 }
