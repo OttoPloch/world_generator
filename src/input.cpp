@@ -156,7 +156,11 @@ void Input::init(Game* game)
         {"RESETZOOM", {"ENTER", "SELECT"}},
         {"TOGGLEFOCUS", {"F1", "LSTICK"}},
         {"ZOOMIN", {"NONE", "LBUMPER"}},
-        {"ZOOMOUT", {"NONE", "RBUMPER"}}
+        {"ZOOMOUT", {"NONE", "RBUMPER"}},
+        {"UI LEFT", {"LEFT", "DPAD LEFT"}},
+        {"UI RIGHT", {"RIGHT", "DPAD RIGHT"}},
+        {"UI UP", {"UP", "DPAD UP"}},
+        {"UI DOWN", {"DOWN", "DPAD DOWN"}}
     };
 
     leftClickThisFrame = false;
@@ -353,12 +357,12 @@ void Input::update()
             
             sf::Vector2i moveDirection = {0, 0};
             
-            if (getButton("DPAD LEFT") || getButton("DPAD RIGHT") || getButton("DPAD UP") || getButton("DPAD DOWN"))
+            if (getControl("UI LEFT") || getControl("UI RIGHT") || getControl("UI UP") || getControl("UI DOWN"))
             {
-                if (getButton("DPAD LEFT")) moveDirection.x = -1;
-                if (getButton("DPAD RIGHT")) moveDirection.x = 1;
-                if (getButton("DPAD UP")) moveDirection.y = -1;
-                if (getButton("DPAD DOWN")) moveDirection.y = 1;
+                if (getControl("UI LEFT")) moveDirection.x = -1;
+                if (getControl("UI RIGHT")) moveDirection.x = 1;
+                if (getControl("UI UP")) moveDirection.y = -1;
+                if (getControl("UI DOWN")) moveDirection.y = 1;
             }
             else
             {

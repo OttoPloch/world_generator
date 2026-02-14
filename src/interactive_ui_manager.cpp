@@ -40,19 +40,31 @@ void InteractiveUIManager::moveIndicator(sf::Vector2i direction)
 
     if (direction == sf::Vector2i(0, 0)) return;
 
-    bool onlySelectButtons = true;\
+    bool onlySelectButtons = false;
 
     UIElement* target = elements->begin()->second.get();
 
-    if (onlySelectButtons && target->getAsButton() == nullptr)
+    if ((onlySelectButtons && target->getAsButton() == nullptr) || (!isOnScreen(game, {target->left(), target->top()}, target->getSize(), false)))
     {
         for (auto& i : *elements)
         {
-            if (i.second->getAsButton() != nullptr)
+            if (onlySelectButtons && target->getAsButton() == nullptr)
             {
-                target = i.second.get();
+                if (i.second->getAsButton() != nullptr)
+                {
+                    target = i.second.get();
+    
+                    break;
+                }
+            }
+            else
+            {
+                if (isOnScreen(game, {i.second->left(), i.second->top()}, i.second->getSize(), false))
+                {
+                    target = i.second.get();
 
-                break;
+                    break;
+                }
             }
         }
     }
@@ -64,6 +76,8 @@ void InteractiveUIManager::moveIndicator(sf::Vector2i direction)
     for (auto& i : (*elements))
     {
         if (onlySelectButtons && i.second->getAsButton() == nullptr) continue;
+
+        if (!isOnScreen(game, {i.second->left(), i.second->top()}, i.second->getSize(), false)) continue;
 
         sf::Vector2f candidateCenter = i.second->getScreenCenter();
         sf::Vector2f targetCenter = target->getScreenCenter();
@@ -164,7 +178,7 @@ void InteractiveUIManager::moveIndicator(sf::Vector2i direction)
 
 void InteractiveUIManager::click()
 {
-    if (controllerUI_selectedElement->getAsButton() && controllerUI_selectedElement != nullptr && active)
+    if (controllerUI_selectedElement != nullptr && controllerUI_selectedElement->getAsButton() && controllerUI_selectedElement != nullptr && active)
     {
         controllerUI_selectedElement->getAsButton()->activate();
     }
