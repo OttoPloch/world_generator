@@ -19,7 +19,7 @@ void Scene::init(Game* game)
 
     uiLayer.init(game, &camera);
 
-    tileLayer.init(game);
+    chunkLayer.init(game);
 
     camera.init(game, true, {0, 0}, toV2F(window->getSize()), entityLayer.getEntity(1));
 
@@ -40,7 +40,7 @@ void Scene::tick()
 {   
     entityLayer.tick();
 
-    tileLayer.tick();
+    chunkLayer.tick();
 }
 
 void Scene::update(float dt)
@@ -70,13 +70,17 @@ void Scene::UIUpdate(float dt)
 
     if (uiLayer.getElement("animation button")->getAsButton()->getActive())
     {
-        uiLayer.getElement("win 1")->setAnimation({0, 0}, {80, 120}, -1, 0, true);
+        uiLayer.getElement("win 1")->setAnimation({0, 0}, {80, 200}, -1, 0, true);
+        uiLayer.getElement("animation button")->setAnimation({0, 0}, {-100, 80}, -1, -1, true, false);
+        uiLayer.getElement("animation button 2")->setAnimation({0, 0}, {25, 80}, -1, -1, true, false);
         // uiLayer.getElement("many win parent")->setAnimation({0, 0}, {-50, 50}, -1, 1, true);
     }
     
     if (uiLayer.getElement("animation button 2")->getAsButton()->getActive())
     {
-        uiLayer.getElement("win 1")->setAnimation({0, 0}, {-300, 120}, -1, 0, true);
+        uiLayer.getElement("win 1")->setAnimation({0, 0}, {-300, 200}, -1, 0, true);
+        uiLayer.getElement("animation button")->setAnimation({0, 0}, {25, 80}, -1, -1, true, false);
+        uiLayer.getElement("animation button 2")->setAnimation({0, 0}, {-100, 80}, -1, -1, true, false);
         // uiLayer.getElement("many win parent")->setAnimation({0, 0}, {50, 50}, -1, 0, true);
     }
 
@@ -85,7 +89,7 @@ void Scene::UIUpdate(float dt)
 
 void Scene::draw()
 {
-    tileLayer.draw();
+    chunkLayer.draw();
 
     window->draw(rect);
     window->draw(outline);
@@ -137,4 +141,4 @@ void Scene::toggleFocus()
 
 UILayer* Scene::getUILayer() { return &uiLayer; }
 
-TileLayer* Scene::getTileLayer() { return &tileLayer; }
+ChunkLayer* Scene::getChunkLayer() { return &chunkLayer; }

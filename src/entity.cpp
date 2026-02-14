@@ -70,13 +70,13 @@ void Entity::changeSpriteTexture(sf::Texture* texture)
     sprite->setTexture(texture);
 }
 
-void Entity::tick(std::vector<std::unique_ptr<Entity>>* entities, std::vector<Tile>* tiles)
+void Entity::tick(std::vector<std::unique_ptr<Entity>>* entities, std::vector<std::vector<Tile>*> surroundingTiles)
 {
     states.resetAll();
 
     if (motion) motion->tick();
 
-    if (collision) collision->tick(entities, tiles);
+    if (collision) collision->tick(entities, surroundingTiles);
     
     if (sprite) sprite->tick();
 }

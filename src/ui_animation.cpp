@@ -101,3 +101,5 @@ void UIAnimation::finalize(UILayer* uiLayer, UIElement* element)
     element->setPosSet(endPosSet);
     element->setPosition(convertedPosition);
 }
+
+int UIAnimation::getEndPosSet() { return endPosSet; }

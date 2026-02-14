@@ -8,7 +8,7 @@
 #include "entity_layer.hpp"
 #include "ui_layer.hpp"
 #include "ui_animation.hpp"
-#include "tile_layer.hpp"
+#include "chunk_layer.hpp"
 
 #include <vector>
 
@@ -37,7 +37,7 @@ public:
 
     UILayer* getUILayer();
 
-    TileLayer* getTileLayer();
+    ChunkLayer* getChunkLayer();
 private:
     Game* game;
 
@@ -49,7 +49,7 @@ private:
 
     UILayer uiLayer;
 
-    TileLayer tileLayer;
+    ChunkLayer chunkLayer;
 
     Camera camera;
 

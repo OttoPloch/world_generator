@@ -23,6 +23,8 @@ public:
 
     void finalize(UILayer* uiLayer, UIElement* element);
 
+    int getEndPosSet();
+
     sf::Vector2f currentCenter;
     
     sf::Vector2f startCenter;

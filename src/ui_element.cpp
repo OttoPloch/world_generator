@@ -200,7 +200,17 @@ void UIElement::setAnimation(sf::Vector2f startPosition, sf::Vector2f endPositio
     sf::Vector2f end = endPosition;
     int set = endPosSet;
     
-    if (endPosSet == -1) set = posSet;
+    if (endPosSet == -1)
+    {
+        if (hasAnimation())
+        {
+            set = animation->getEndPosSet();
+        }
+        else
+        {
+            set = posSet;
+        }
+    }
 
     if (useOwnStartPos)
     {
@@ -220,10 +230,10 @@ void UIElement::setAnimation(sf::Vector2f startPosition, sf::Vector2f endPositio
     }
     else
     {
-        end = UIPositionToScreenCenter(uiLayer, this, endPosition, endPosSet);
+        end = UIPositionToScreenCenter(uiLayer, this, endPosition, set);
     }
 
-    this->animation = std::make_unique<UIAnimation>(start, end, set);
+    animation = std::make_unique<UIAnimation>(start, end, set);
 
     posSet = 9;
 }

@@ -33,7 +33,7 @@ public:
 
     void changeSpriteTexture(sf::Texture* texture);
 
-    void tick(std::vector<std::unique_ptr<Entity>>* entities = nullptr, std::vector<Tile>* tiles = nullptr);
+    void tick(std::vector<std::unique_ptr<Entity>>* entities = nullptr, std::vector<std::vector<Tile>*> surroundingTiles = {});
 
     void update(float dt);
 

@@ -13,7 +13,7 @@ CollisionAttribute::CollisionAttribute(Entity* myEntity, GamePosition position, 
     rect.init(position, offset, size, colliderName, rectType, blacklist);
 }
 
-void CollisionAttribute::tick(std::vector<std::unique_ptr<Entity>>* entities, std::vector<Tile>* tiles)
+void CollisionAttribute::tick(std::vector<std::unique_ptr<Entity>>* entities, std::vector<std::vector<Tile>*> surroundingTiles)
 {
     rect.updatePosition();
 
@@ -143,44 +143,47 @@ void CollisionAttribute::tick(std::vector<std::unique_ptr<Entity>>* entities, st
             }
         }
 
-        if (tiles != nullptr)
+        if (surroundingTiles.size() > 0)
         {
-            for (int i = 0; i < tiles->size(); i++)
+            for (int i = 0; i < surroundingTiles.size(); i++)
             {
-                Tile* tile = &(*tiles)[i];
-
-                if (tile->hasCollider())
+                for (int j = 0; j < surroundingTiles[i]->size(); j++)
                 {
-                    sf::FloatRect other = tile->getRect();
-
-                    if (collidesWith(other))
+                    Tile* tile = &(*surroundingTiles[i])[j];
+    
+                    if (tile->hasCollider())
                     {
-                        if (!rect.searchBlacklist(tile->getColliderName()))
+                        sf::FloatRect other = tile->getRect();
+    
+                        if (collidesWith(other))
                         {
-                            resolveCollision(other);
-
-                            states->set("collision", COLL_ANY);
-
-                            float leftDiff = abs(rect.right() - other.position.x);
-                            float rightDiff = abs(rect.left() - other.position.x + other.size.x);
-                            float topDiff = abs(rect.bottom() - other.position.y);
-                            float bottomDiff = abs(rect.top() - other.position.y + other.size.y);
-
-                            if (leftDiff <= rightDiff && leftDiff <= topDiff && leftDiff <= bottomDiff)
+                            if (!rect.searchBlacklist(tile->getColliderName()))
                             {
-                                states->set("collision", COLL_RIGHT);
-                            }
-                            if (rightDiff <= leftDiff && rightDiff <= topDiff && rightDiff <= bottomDiff)
-                            {
-                                states->set("collision", COLL_LEFT);
-                            }
-                            if (topDiff <= leftDiff && topDiff <= rightDiff && topDiff <= bottomDiff)
-                            {
-                                states->set("collision", COLL_BOTTOM);
-                            }
-                            if (bottomDiff <= leftDiff && bottomDiff <= rightDiff && bottomDiff <= topDiff)
-                            {
-                                states->set("collision", COLL_TOP);
+                                resolveCollision(other);
+    
+                                states->set("collision", COLL_ANY);
+    
+                                float leftDiff = abs(rect.right() - other.position.x);
+                                float rightDiff = abs(rect.left() - other.position.x + other.size.x);
+                                float topDiff = abs(rect.bottom() - other.position.y);
+                                float bottomDiff = abs(rect.top() - other.position.y + other.size.y);
+    
+                                if (leftDiff <= rightDiff && leftDiff <= topDiff && leftDiff <= bottomDiff)
+                                {
+                                    states->set("collision", COLL_RIGHT);
+                                }
+                                if (rightDiff <= leftDiff && rightDiff <= topDiff && rightDiff <= bottomDiff)
+                                {
+                                    states->set("collision", COLL_LEFT);
+                                }
+                                if (topDiff <= leftDiff && topDiff <= rightDiff && topDiff <= bottomDiff)
+                                {
+                                    states->set("collision", COLL_BOTTOM);
+                                }
+                                if (bottomDiff <= leftDiff && bottomDiff <= rightDiff && bottomDiff <= topDiff)
+                                {
+                                    states->set("collision", COLL_TOP);
+                                }
                             }
                         }
                     }

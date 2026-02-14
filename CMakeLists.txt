@@ -46,8 +46,9 @@ src/ui_text.cpp
 src/ui_button.cpp
 src/interactive_ui_manager.cpp
 src/ui_animation.cpp
-src/tile_layer.cpp
+src/chunk_layer.cpp
 src/tile.cpp
+src/chunk.cpp
 )
 
 target_compile_features(app PRIVATE cxx_std_17)

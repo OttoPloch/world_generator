@@ -70,7 +70,7 @@ public:
 
     void movePosition(sf::Vector2f amount);
 
-    // endPosSet of -1 means no change
+    // startPosSet/endPosSet of -1 means no change.
     void setAnimation(sf::Vector2f startPosition, sf::Vector2f endPosition, int startPosSet = -1, int endPosSet = -1, bool useOwnStartPos = false, bool useOwnEndPos = false);
 
     bool hasAnimation();
