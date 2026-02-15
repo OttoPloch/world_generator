@@ -71,7 +71,7 @@ void Scene::UIUpdate(float dt)
     if (uiLayer.getElement("animation button")->getAsButton()->getActive())
     {
         uiLayer.getElement("win 1")->setAnimation({0, 0}, {80, 200}, -1, 0, true);
-        uiLayer.getElement("animation button")->setAnimation({0, 0}, {-100, 80}, -1, -1, true, false);
+        uiLayer.getElement("animation button")->setAnimation({0, 0}, {-75, 80}, -1, -1, true, false);
         uiLayer.getElement("animation button 2")->setAnimation({0, 0}, {25, 80}, -1, -1, true, false);
         // uiLayer.getElement("many win parent")->setAnimation({0, 0}, {-50, 50}, -1, 1, true);
     }
@@ -80,7 +80,7 @@ void Scene::UIUpdate(float dt)
     {
         uiLayer.getElement("win 1")->setAnimation({0, 0}, {-300, 200}, -1, 0, true);
         uiLayer.getElement("animation button")->setAnimation({0, 0}, {25, 80}, -1, -1, true, false);
-        uiLayer.getElement("animation button 2")->setAnimation({0, 0}, {-100, 80}, -1, -1, true, false);
+        uiLayer.getElement("animation button 2")->setAnimation({0, 0}, {-75, 80}, -1, -1, true, false);
         // uiLayer.getElement("many win parent")->setAnimation({0, 0}, {50, 50}, -1, 0, true);
     }
 

@@ -8,7 +8,7 @@
 
 #include <memory>
 
-class Animation;
+class SpriteAnimation;
 class Entity;
 class Game;
 
@@ -30,7 +30,7 @@ public:
 
     void giveAnimationSet(AnimationSet* animationSet, bool resetSizeX = true);
 
-    void giveAnimation(Animation* animation, bool resetSizeX = true, bool reverse = false, bool start = true);
+    void giveAnimation(SpriteAnimation* animation, bool resetSizeX = true, bool reverse = false, bool start = true);
 
     void animPlay();
 
@@ -56,7 +56,7 @@ public:
     
     void jumpToTarget();
 private:
-    void changeAnimation(Animation* newAnimation);
+    void changeAnimation(SpriteAnimation* newAnimation);
 
     Gamerules* gamerules;
 
@@ -81,7 +81,7 @@ private:
 
     AnimationSet* animationSet;
 
-    Animation* animation;
+    SpriteAnimation* animation;
     int animTicksPerFrame;
     bool animReverse;
     unsigned int animTicksToNextFrame;

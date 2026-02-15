@@ -1,5 +1,5 @@
 #include "sprite.hpp"
-#include "animation.hpp"
+#include "sprite_animation.hpp"
 #include "entity.hpp"
 #include "collision_attribute.hpp"
 #include "game.hpp"
@@ -65,12 +65,12 @@ void Sprite::giveAnimationSet(AnimationSet* animationSet, bool resetSizeX)
 {
     this->animationSet = animationSet;
 
-    Animation* currentAnimation = animationSet->getAnimationFor(states->getFirstTrue("animation"));
+    SpriteAnimation* currentAnimation = animationSet->getAnimationFor(states->getFirstTrue("animation"));
 
     giveAnimation(currentAnimation, resetSizeX);
 }
 
-void Sprite::giveAnimation(Animation* animation, bool resetSizeX, bool reverse, bool start)
+void Sprite::giveAnimation(SpriteAnimation* animation, bool resetSizeX, bool reverse, bool start)
 {
     if (resetSizeX)
     {
@@ -109,14 +109,14 @@ void Sprite::tick()
         {
             if (animation->getName() != animationSet->getAnimationFor(states->getFirstTrue("animation"))->getName())
             {
-                Animation* currentAnimation = animationSet->getAnimationFor(states->getFirstTrue("animation"));
+                SpriteAnimation* currentAnimation = animationSet->getAnimationFor(states->getFirstTrue("animation"));
 
                 changeAnimation(currentAnimation);
             }
         }
         else
         {
-            Animation* currentAnimation = animationSet->getAnimationFor(states->getFirstTrue("animation"));
+            SpriteAnimation* currentAnimation = animationSet->getAnimationFor(states->getFirstTrue("animation"));
 
             giveAnimation(currentAnimation);
         }
@@ -198,7 +198,7 @@ void Sprite::jumpToTarget()
     spritePosition = position.get();
 }
 
-void Sprite::changeAnimation(Animation* newAnimation)
+void Sprite::changeAnimation(SpriteAnimation* newAnimation)
 {
     animation = newAnimation;
 

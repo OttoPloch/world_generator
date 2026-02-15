@@ -61,7 +61,7 @@ sf::Texture* AssetManager::getTexture(std::string name, std::string pathFromAsse
     }
 }
 
-Animation* AssetManager::getAnimation(std::string name)
+SpriteAnimation* AssetManager::getAnimation(std::string name)
 {
     auto entry = animationMap.find(name);
 
@@ -71,7 +71,7 @@ Animation* AssetManager::getAnimation(std::string name)
     }
     else
     {
-        Animation newAnimation;
+        SpriteAnimation newAnimation;
 
         if (!std::filesystem::exists("../../assets/animations/" + name + ".anim"))
         {
@@ -179,7 +179,7 @@ AnimationSet* AssetManager::getAnimSet(std::string name)
             // load animation set
             std::ifstream setFile("../../assets/animations/sets/" + name + ".animset");
 
-            std::unordered_map<int, Animation*> animations;
+            std::unordered_map<int, SpriteAnimation*> animations;
 
             std::vector<int> states;
             std::vector<std::string> animNames;

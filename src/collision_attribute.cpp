@@ -151,13 +151,20 @@ void CollisionAttribute::tick(std::vector<std::unique_ptr<Entity>>* entities, st
                 {
                     Tile* tile = &(*surroundingTiles[i])[j];
     
-                    if (tile->hasCollider())
+                    if (tile->collides)
                     {
-                        sf::FloatRect other = tile->getRect();
+                        sf::FloatRect other = tile->getCollRect();
     
+                        if (rect.getColliderName() == "player") log("tile rect: ", false);
+                        if (rect.getColliderName() == "player") log(other.position, false);
+                        if (rect.getColliderName() == "player") log("; ", false);
+                        if (rect.getColliderName() == "player") log(other.size, true);
+
                         if (collidesWith(other))
                         {
-                            if (!rect.searchBlacklist(tile->getColliderName()))
+                            if (rect.getColliderName() == "player") std::cout << "ahhh\n";
+
+                            if (!rect.searchBlacklist(tile->colliderName))
                             {
                                 resolveCollision(other);
     

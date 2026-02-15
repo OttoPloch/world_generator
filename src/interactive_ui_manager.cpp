@@ -40,7 +40,7 @@ void InteractiveUIManager::moveIndicator(sf::Vector2i direction)
 
     if (direction == sf::Vector2i(0, 0)) return;
 
-    bool onlySelectButtons = false;
+    bool onlySelectButtons = true;
 
     UIElement* target = elements->begin()->second.get();
 

@@ -1,22 +1,22 @@
 #include "animation_set.hpp"
-#include "animation.hpp"
+#include "sprite_animation.hpp"
 #include "states.hpp"
 
 AnimationSet::AnimationSet() {}
 
-AnimationSet::AnimationSet(std::string setName, std::unordered_map<int, Animation*> animations)
+AnimationSet::AnimationSet(std::string setName, std::unordered_map<int, SpriteAnimation*> animations)
 {
     init(setName, animations);
 }
 
-void AnimationSet::init(std::string setName, std::unordered_map<int, Animation*> animations)
+void AnimationSet::init(std::string setName, std::unordered_map<int, SpriteAnimation*> animations)
 {
     this->setName = setName;
 
     this->animations = animations;
 }
 
-Animation* AnimationSet::getAnimationFor(int key)
+SpriteAnimation* AnimationSet::getAnimationFor(int key)
 {
     if (animations.find(key) != animations.end())
     {
@@ -30,7 +30,7 @@ Animation* AnimationSet::getAnimationFor(int key)
     }
 }
 
-int AnimationSet::getKeyFor(Animation* animation)
+int AnimationSet::getKeyFor(SpriteAnimation* animation)
 {
     for (auto entry : animations)
     {

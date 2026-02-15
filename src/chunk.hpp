@@ -13,15 +13,15 @@ class Chunk
 public:
     Chunk();
 
-    Chunk(Game* game, sf::Vector2i chunkPosition);
+    Chunk(Game* game, sf::Vector2i chunkPosition, std::vector<Tile> tiles);
 
-    void init(Game* game, sf::Vector2i chunkPosition);
-
-    void createTiles();
+    void init(Game* game, sf::Vector2i chunkPosition, std::vector<Tile> tiles);
 
     void createTileVerts(int index);
 
     std::vector<Tile>* getTiles();
+
+    sf::FloatRect getTileRect(sf::Vector2i tileLocalPosition);
 
     sf::Vector2i getChunkPosition();
 
@@ -35,7 +35,7 @@ private:
 
     sf::Vector2i chunkPosition;
 
-    int chunkLength;
+    int chunkSize;
 
     float tileSize;
     

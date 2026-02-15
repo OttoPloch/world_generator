@@ -30,7 +30,7 @@ src/scene.cpp
 src/collision_attribute.cpp
 src/collision_rect.cpp
 src/utils.cpp
-src/animation.cpp
+src/sprite_animation.cpp
 src/entity_states.cpp
 src/animation_set.cpp
 src/gamerules.cpp
@@ -49,6 +49,7 @@ src/ui_animation.cpp
 src/chunk_layer.cpp
 src/tile.cpp
 src/chunk.cpp
+src/chunk_generator.cpp
 )
 
 target_compile_features(app PRIVATE cxx_std_17)

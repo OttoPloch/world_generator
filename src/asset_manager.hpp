@@ -1,7 +1,7 @@
 #pragma once
 
 #include "common.hpp"
-#include "animation.hpp"
+#include "sprite_animation.hpp"
 #include "animation_set.hpp"
 #include "tile_set.hpp"
 
@@ -17,7 +17,7 @@ public:
 
     sf::Texture* getTexture(std::string name, std::string pathFromAssets = "images/", bool fullPath = false);
 
-    Animation* getAnimation(std::string name);
+    SpriteAnimation* getAnimation(std::string name);
 
     AnimationSet* getAnimSet(std::string name);
 
@@ -27,7 +27,7 @@ public:
 private:
     std::unordered_map<std::string, sf::Texture> textureMap;
 
-    std::unordered_map<std::string, Animation> animationMap;
+    std::unordered_map<std::string, SpriteAnimation> animationMap;
 
     std::unordered_map<std::string, AnimationSet> animSetMap;
 

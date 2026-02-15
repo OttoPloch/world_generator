@@ -4,12 +4,12 @@
 
 Chunk::Chunk() {}
 
-Chunk::Chunk(Game* game, sf::Vector2i chunkPosition)
+Chunk::Chunk(Game* game, sf::Vector2i chunkPosition, std::vector<Tile> tiles)
 {
-    init(game, chunkPosition);
+    init(game, chunkPosition, tiles);
 }
 
-void Chunk::init(Game* game, sf::Vector2i chunkPosition)
+void Chunk::init(Game* game, sf::Vector2i chunkPosition, std::vector<Tile> tiles)
 {
     this->game = game;
 
@@ -17,30 +17,24 @@ void Chunk::init(Game* game, sf::Vector2i chunkPosition)
 
     this->chunkPosition = chunkPosition;
 
-    this->chunkLength = game->getSettings()->getSetting("chunk_length").valueInt;
+    chunkSize = game->getSettings()->getSetting("chunk_size").valueInt;
 
-    tileSize = game->getSettings()->getSetting("tile_length").valueFloat;
+    tileSize = game->getSettings()->getSetting("tile_size").valueFloat;
 
-    worldPosition = {chunkPosition.x * (chunkLength * tileSize), chunkPosition.y * (chunkLength * tileSize)};
+    std::cout << "IN INIT: " << tileSize << "; " << game->getSettings()->getSetting("tile_size").valueFloat << '\n';
+    std::cout << "TILE TYPE: " << tiles[0].type << '\n';
 
-    tiles.resize(chunkLength * chunkLength);
+    worldPosition = {chunkPosition.x * (chunkSize * tileSize), chunkPosition.y * (chunkSize * tileSize)};
 
-    tileVertices.resize(chunkLength * chunkLength * 6);
+    this->tiles.resize(chunkSize * chunkSize);
 
-    createTiles();
-}
+    tileVertices.resize(chunkSize * chunkSize * 6);
 
-void Chunk::createTiles()
-{
-    for (int i = 0; i < tiles.size(); i++)
+    for (int i = 0; i < this->tiles.size(); i++)
     {
-        sf::Vector2f tilePosition = {worldPosition.x + (tileSize * toFloat(i % chunkLength)), worldPosition.y + (tileSize * (std::floor(toFloat(i / chunkLength))))};
-        
-        int tileType = getRandInt(0, 3);
+        Tile* currTile = &tiles[i % tiles.size()];
 
-        bool tileCollides = (tileType == 3);
-
-        tiles[i] = Tile(tilePosition, {tileSize, tileSize}, tileType, tileCollides, "tile");
+        this->tiles[i] = Tile(game, this, {i % chunkSize, toInt(std::floor(i / chunkSize))}, currTile->type, currTile->collides, currTile->colliderName, currTile->collOffsetFraction, currTile->collSizeFraction);
 
         createTileVerts(i);
     }
@@ -53,16 +47,16 @@ void Chunk::createTileVerts(int index)
     sf::Vertex bl;
     sf::Vertex br;
 
-    sf::Vector2f tilePos = tiles[index].getPosition();
-
-    tl.position = tilePos;
-    tr.position = {tilePos.x + tileSize, tilePos.y};
-    bl.position = {tilePos.x, tilePos.y + tileSize};
-    br.position = {tilePos.x + tileSize, tilePos.y + tileSize};
+    sf::Vector2f tileWorldPos = {worldPosition.x + toFloat(tiles[index].localPosition.x) * tileSize, worldPosition.y + toFloat(tiles[index].localPosition.y) * tileSize};
+    
+    tl.position = tileWorldPos;
+    tr.position = {tileWorldPos.x + tileSize, tileWorldPos.y};
+    bl.position = {tileWorldPos.x, tileWorldPos.y + tileSize};
+    br.position = {tileWorldPos.x + tileSize, tileWorldPos.y + tileSize};
 
     sf::Color tileColor; 
     
-    switch (tiles[index].getType())
+    switch (tiles[index].type)
     {
         case 0:
             tileColor = sf::Color::Green;
@@ -92,6 +86,17 @@ void Chunk::createTileVerts(int index)
 }
 
 std::vector<Tile>* Chunk::getTiles() { return &tiles; }
+
+sf::FloatRect Chunk::getTileRect(sf::Vector2i tileLocalPosition)
+{
+    sf::Vector2f tileWorldPos = {worldPosition.x + tileLocalPosition.x * tileSize, worldPosition.y + tileLocalPosition.y * tileSize};
+
+    std::cout << "TILE POS: " << tileWorldPos.x << ", " << tileWorldPos.y << '\n';
+    std::cout << "CALCULATION: " << worldPosition.x << " + " << tileLocalPosition.x << " * " << tileSize << ", " << worldPosition.y << " + " << tileLocalPosition.y << " * " << tileSize << '\n';
+    std::cout << "IDK: " << game->getSettings()->getSetting("tile_size").valueFloat << '\n'; 
+
+    return sf::FloatRect(tileWorldPos, {tileSize, tileSize});
+}
 
 sf::Vector2i Chunk::getChunkPosition() { return chunkPosition; }
 

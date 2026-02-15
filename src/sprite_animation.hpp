@@ -5,10 +5,10 @@
 
 #include <vector>
 
-class Animation
+class SpriteAnimation
 {
 public:
-    Animation();
+    SpriteAnimation();
 
     void init(std::string name, int baseTicksPerFrame, sf::Texture* texture, sf::Vector2i frameSize, std::vector<sf::Vector2i> frames, sf::FloatRect collisionRect = sf::FloatRect({0, 0}, {0, 0}));
 

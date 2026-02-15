@@ -1,17 +1,32 @@
 #include "tile.hpp"
+#include "game.hpp"
+#include "chunk.hpp"
 
 Tile::Tile() {}
 
-Tile::Tile(sf::Vector2f position, sf::Vector2f size, int type, bool collides, std::string colliderName, sf::Vector2f collOffsetFraction, sf::Vector2f collSizeFraction)
+Tile::Tile(int type, bool collides, std::string colliderName, sf::Vector2f collOffsetFraction, sf::Vector2f collSizeFraction)
 {
-    init(position, size, type, collides, colliderName, collOffsetFraction, collSizeFraction);
+    this->type = type;
+    this->collides = collides;
+    this->colliderName = colliderName;
+    this->collOffsetFraction = collOffsetFraction;
+    this->collSizeFraction = collSizeFraction;
 }
 
-void Tile::init(sf::Vector2f position, sf::Vector2f size, int type, bool collides, std::string colliderName, sf::Vector2f collOffsetFraction, sf::Vector2f collSizeFraction)
+Tile::Tile(Game* game, Chunk* chunk, sf::Vector2i localPosition, int type, bool collides, std::string colliderName, sf::Vector2f collOffsetFraction, sf::Vector2f collSizeFraction)
 {
-    this->position = position;
+    init(game, chunk, localPosition, type, collides, colliderName, collOffsetFraction, collSizeFraction);
+}
 
-    this->size = size;
+void Tile::init(Game* game, Chunk* chunk, sf::Vector2i localPosition, int type, bool collides, std::string colliderName, sf::Vector2f collOffsetFraction, sf::Vector2f collSizeFraction)
+{
+    this->game = game;
+
+    this->chunk = chunk;
+
+    this->localPosition = localPosition;
+
+    size = game->getSettings()->getSetting("tile_size").valueFloat;
 
     this->type = type;
 
@@ -24,26 +39,27 @@ void Tile::init(sf::Vector2f position, sf::Vector2f size, int type, bool collide
     this->collSizeFraction = collSizeFraction;
 }
 
-sf::Vector2f Tile::getPosition() { return position; }
-
-sf::Vector2f Tile::getSize() { return size; }
-
-int Tile::getType() { return type; }
-
-bool Tile::hasCollider() { return collides; }
-
-sf::FloatRect Tile::getRect()
+sf::FloatRect Tile::getCollRect()
 {
     if (collides)
     {
-        sf::Vector2f collSize = {size.x * collSizeFraction.x, size.y * collSizeFraction.y};
+        if (chunk)
+        {
+            sf::Vector2f collSize = {size * collSizeFraction.x, size * collSizeFraction.y};
+            
+            sf::FloatRect tileRect = chunk->getTileRect(localPosition);
+    
+            return sf::FloatRect({tileRect.position.x + size / 2.f - collSize.x / 2.f, tileRect.position.y + size / 2.f - collSize.y / 2.f}, collSize);
+        }
+        else
+        {
+            std::cout << "ERROR tile could not get collision rect because it doesn't have a chunk ptr.\n";
 
-        return sf::FloatRect({(position.x + size.x / 2.f - collSize.x / 2.f) + size.x * collOffsetFraction.x, (position.y + size.y / 2.f - collSize.y / 2.f) + size.y * collOffsetFraction.y}, collSize);
+            return sf::FloatRect({0.f, 0.f}, {-1.f, -1.f});
+        }
     }
     else
     {
         return sf::FloatRect({0.f, 0.f}, {-1.f, -1.f});
     }
 }
-
-std::string Tile::getColliderName() { return colliderName; }

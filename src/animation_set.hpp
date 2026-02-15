@@ -4,22 +4,22 @@
 
 #include <map>
 
-class Animation;
+class SpriteAnimation;
 
 class AnimationSet
 {
 public:
     AnimationSet();
 
-    AnimationSet(std::string setName, std::unordered_map<int, Animation*> animations);
+    AnimationSet(std::string setName, std::unordered_map<int, SpriteAnimation*> animations);
 
-    void init(std::string setName, std::unordered_map<int, Animation*> animations);
+    void init(std::string setName, std::unordered_map<int, SpriteAnimation*> animations);
 
-    Animation* getAnimationFor(int key);
+    SpriteAnimation* getAnimationFor(int key);
 
-    int getKeyFor(Animation* animation);
+    int getKeyFor(SpriteAnimation* animation);
 private:
     std::string setName;
 
-    std::unordered_map<int, Animation*> animations;
+    std::unordered_map<int, SpriteAnimation*> animations;
 };

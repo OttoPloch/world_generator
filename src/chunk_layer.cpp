@@ -15,13 +15,15 @@ void ChunkLayer::init(Game* game)
 
     this->window = game->getWindow();
 
-    int chunksLength = 2;
+    chunkGenerator.init(game, &chunks);
 
-    for (int y = 0; y < chunksLength; y++)
+    int chunksToLoad = 4;
+
+    for (int y = 0; y < chunksToLoad; y++)
     {
-        for (int x = 0; x < chunksLength; x++)
+        for (int x = 0; x < chunksToLoad; x++)
         {
-            loadChunk({-1 + x, 1 + y});
+            loadChunk({-1 + x, -1 + y});
         }
     }
 }
@@ -30,7 +32,7 @@ bool ChunkLayer::loadChunk(sf::Vector2i chunkPosition)
 {   
     if (chunks.find(chunkPosition) == chunks.end())
     {
-        chunks[chunkPosition] = Chunk(game, chunkPosition);
+        chunkGenerator.generate(chunkPosition);
 
         return true;
     }
@@ -52,7 +54,7 @@ bool ChunkLayer::unloadChunk(sf::Vector2i chunkPosition)
 
 std::vector<std::vector<Tile>*> ChunkLayer::getSurroundingTiles(sf::Vector2f position)
 {
-    float chunkSize = game->getSettings()->getSetting("tile_length").valueFloat * toFloat(game->getSettings()->getSetting("chunk_length").valueInt);
+    float chunkSize = game->getSettings()->getSetting("tile_size").valueFloat * toFloat(game->getSettings()->getSetting("chunk_size").valueInt);
 
     sf::Vector2i convertedPosition = {toInt(std::floor(position.x / chunkSize)), toInt(std::floor(position.y / chunkSize))};
 

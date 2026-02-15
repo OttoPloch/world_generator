@@ -3,21 +3,11 @@
 #include "common.hpp"
 #include "window.hpp"
 #include "chunk.hpp"
+#include "chunk_generator.hpp"
 
 #include <unordered_map>
 
 class Game;
-
-struct Vector2iHash
-{
-    std::size_t operator()(const sf::Vector2i& v) const noexcept
-    {
-        // Simple hash combine
-        std::size_t h1 = std::hash<int>()(v.x);
-        std::size_t h2 = std::hash<int>()(v.y);
-        return h1 ^ (h2 << 1);
-    }
-};
 
 class ChunkLayer
 {
@@ -43,4 +33,6 @@ private:
     Window* window;
     
     std::unordered_map<sf::Vector2i, Chunk, Vector2iHash> chunks;
+
+    ChunkGenerator chunkGenerator;
 };

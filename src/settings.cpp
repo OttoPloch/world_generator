@@ -10,8 +10,8 @@ void Settings::init()
     settings = {
         {"ui_scale", setting(1.f, 0, false, "")},
         {"ui_animation_speed", setting(0.3f, 0, false, "")},
-        {"chunk_length", setting(0.f, 8, false, "")},
-        {"tile_length", setting(150.f, 0, false, "")}
+        {"chunk_size", setting(0.f, 8, false, "")},
+        {"tile_size", setting(150.f, 0, false, "")}
     };
 }
 
