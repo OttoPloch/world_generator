@@ -32,7 +32,7 @@ private:
 
     Window* window;
     
-    std::unordered_map<sf::Vector2i, Chunk, Vector2iHash> chunks;
+    std::unordered_map<sf::Vector2i, std::unique_ptr<Chunk>, Vector2iHash> chunks;
 
     ChunkGenerator chunkGenerator;
 };

@@ -23,7 +23,7 @@ void ChunkLayer::init(Game* game)
     {
         for (int x = 0; x < chunksToLoad; x++)
         {
-            loadChunk({-1 + x, -1 + y});
+            loadChunk({-1 + x, 1 + y});
         }
     }
 }
@@ -32,7 +32,7 @@ bool ChunkLayer::loadChunk(sf::Vector2i chunkPosition)
 {   
     if (chunks.find(chunkPosition) == chunks.end())
     {
-        chunkGenerator.generate(chunkPosition);
+        chunkGenerator.generate(chunkPosition, 1);
 
         return true;
     }
@@ -76,7 +76,7 @@ std::vector<std::vector<Tile>*> ChunkLayer::getSurroundingTiles(sf::Vector2f pos
     {
         if (chunks.find(chunksToSearch[i]) != chunks.end())
         {
-            surroundingTiles.push_back(chunks[chunksToSearch[i]].getTiles());
+            surroundingTiles.push_back(chunks[chunksToSearch[i]]->getTiles());
         }
     }
 
@@ -87,7 +87,7 @@ void ChunkLayer::tick()
 {
     for (auto& i : chunks)
     {
-        i.second.tick();
+        i.second->tick();
     }
 }
 
@@ -95,6 +95,6 @@ void ChunkLayer::draw()
 {
     for (auto& i : chunks)
     {
-        i.second.draw();
+        i.second->draw();
     }
 }

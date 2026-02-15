@@ -1,6 +1,7 @@
 #include "collision_attribute.hpp"
 #include "states.hpp"
 #include "rect_types.hpp"
+#include <cstdlib>
 
 CollisionAttribute::CollisionAttribute() : Attribute("collision") {}
 
@@ -106,10 +107,10 @@ void CollisionAttribute::tick(std::vector<std::unique_ptr<Entity>>* entities, st
 
                                     states->set("collision", COLL_ANY);
 
-                                    float leftDiff = abs(rect.right() - other->left());
-                                    float rightDiff = abs(rect.left() - other->right());
-                                    float topDiff = abs(rect.bottom() - other->top());
-                                    float bottomDiff = abs(rect.top() - other->bottom());
+                                    float leftDiff = std::fabs(rect.right() - other->left());
+                                    float rightDiff = std::fabs(rect.left() - other->right());
+                                    float topDiff = std::fabs(rect.bottom() - other->top());
+                                    float bottomDiff = std::fabs(rect.top() - other->bottom());
 
                                     if (leftDiff <= rightDiff && leftDiff <= topDiff && leftDiff <= bottomDiff)
                                     {
@@ -154,11 +155,6 @@ void CollisionAttribute::tick(std::vector<std::unique_ptr<Entity>>* entities, st
                     if (tile->collides)
                     {
                         sf::FloatRect other = tile->getCollRect();
-    
-                        if (rect.getColliderName() == "player") log("tile rect: ", false);
-                        if (rect.getColliderName() == "player") log(other.position, false);
-                        if (rect.getColliderName() == "player") log("; ", false);
-                        if (rect.getColliderName() == "player") log(other.size, true);
 
                         if (collidesWith(other))
                         {
@@ -170,10 +166,10 @@ void CollisionAttribute::tick(std::vector<std::unique_ptr<Entity>>* entities, st
     
                                 states->set("collision", COLL_ANY);
     
-                                float leftDiff = abs(rect.right() - other.position.x);
-                                float rightDiff = abs(rect.left() - other.position.x + other.size.x);
-                                float topDiff = abs(rect.bottom() - other.position.y);
-                                float bottomDiff = abs(rect.top() - other.position.y + other.size.y);
+                                float leftDiff = std::fabs(rect.right() - other.position.x);
+                                float rightDiff = std::fabs(rect.left() - other.position.x + other.size.x);
+                                float topDiff = std::fabs(rect.bottom() - other.position.y);
+                                float bottomDiff = std::fabs(rect.top() - other.position.y + other.size.y);
     
                                 if (leftDiff <= rightDiff && leftDiff <= topDiff && leftDiff <= bottomDiff)
                                 {
@@ -214,10 +210,10 @@ bool CollisionAttribute::collidesWith(sf::FloatRect other)
 
 void CollisionAttribute::resolveCollision(CollisionRect* other, float pushFraction)
 {
-    float leftDiff = abs(rect.right() - other->left());
-    float rightDiff = abs(rect.left() - other->right());
-    float topDiff = abs(rect.bottom() - other->top());
-    float bottomDiff = abs(rect.top() - other->bottom());
+    float leftDiff = std::fabs(rect.right() - other->left());
+    float rightDiff = std::fabs(rect.left() - other->right());
+    float topDiff = std::fabs(rect.bottom() - other->top());
+    float bottomDiff = std::fabs(rect.top() - other->bottom());
 
     if (leftDiff < rightDiff && leftDiff < topDiff && leftDiff < bottomDiff)
     {
@@ -263,10 +259,10 @@ void CollisionAttribute::resolveCollision(CollisionRect* other, float pushFracti
 
 void CollisionAttribute::resolveCollision(sf::FloatRect other)
 {
-    float leftDiff = abs(rect.right() - other.position.x);
-    float rightDiff = abs(rect.left() - (other.position.x + other.size.x));
-    float topDiff = abs(rect.bottom() - other.position.y);
-    float bottomDiff = abs(rect.top() - (other.position.y + other.size.y));
+    float leftDiff = std::fabs(rect.right() - other.position.x);
+    float rightDiff = std::fabs(rect.left() - (other.position.x + other.size.x));
+    float topDiff = std::fabs(rect.bottom() - other.position.y);
+    float bottomDiff = std::fabs(rect.top() - (other.position.y + other.size.y));
 
     if (leftDiff < rightDiff && leftDiff < topDiff && leftDiff < bottomDiff)
     {

@@ -21,9 +21,6 @@ void Chunk::init(Game* game, sf::Vector2i chunkPosition, std::vector<Tile> tiles
 
     tileSize = game->getSettings()->getSetting("tile_size").valueFloat;
 
-    std::cout << "IN INIT: " << tileSize << "; " << game->getSettings()->getSetting("tile_size").valueFloat << '\n';
-    std::cout << "TILE TYPE: " << tiles[0].type << '\n';
-
     worldPosition = {chunkPosition.x * (chunkSize * tileSize), chunkPosition.y * (chunkSize * tileSize)};
 
     this->tiles.resize(chunkSize * chunkSize);
@@ -90,10 +87,6 @@ std::vector<Tile>* Chunk::getTiles() { return &tiles; }
 sf::FloatRect Chunk::getTileRect(sf::Vector2i tileLocalPosition)
 {
     sf::Vector2f tileWorldPos = {worldPosition.x + tileLocalPosition.x * tileSize, worldPosition.y + tileLocalPosition.y * tileSize};
-
-    std::cout << "TILE POS: " << tileWorldPos.x << ", " << tileWorldPos.y << '\n';
-    std::cout << "CALCULATION: " << worldPosition.x << " + " << tileLocalPosition.x << " * " << tileSize << ", " << worldPosition.y << " + " << tileLocalPosition.y << " * " << tileSize << '\n';
-    std::cout << "IDK: " << game->getSettings()->getSetting("tile_size").valueFloat << '\n'; 
 
     return sf::FloatRect(tileWorldPos, {tileSize, tileSize});
 }
