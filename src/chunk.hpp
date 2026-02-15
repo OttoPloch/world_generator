@@ -26,7 +26,7 @@ public:
 
     void tick();
 
-    void draw();
+    void draw(bool debug = false);
 private:
     Game* game;
 

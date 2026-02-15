@@ -4,7 +4,7 @@ Game::Game() {}
 
 void Game::init()
 {
-    window.create({800, 800}, "INFINITE", false, 0, sf::Color(10, 10, 12));
+    window.create({800, 800}, "INFINITE", false, 60, sf::Color(10, 10, 12));
 
     input.init(this);
 
@@ -84,7 +84,7 @@ void Game::run()
 
         if (!paused)
         {
-            ticksToProcess += (dt * 1000) / (1000 / ticksPerSecond);
+            ticksToProcess += (dt * 1000.f) / (1000.f / ticksPerSecond);
 
             while (ticksToProcess >= 1.f)
             {
@@ -121,7 +121,9 @@ void Game::run()
             update(dt);
         }
 
-        UIUpdate(dt);
+        scene.UIUpdate(dt);
+
+        scene.chunkUpdate();
 
         if (lastWindowSize != window.getSize())
         {
@@ -144,11 +146,6 @@ void Game::tick()
 void Game::update(float dt)
 {
     scene.update(dt);
-}
-
-void Game::UIUpdate(float dt)
-{
-    scene.UIUpdate(dt);
 }
 
 void Game::draw()

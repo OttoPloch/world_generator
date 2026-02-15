@@ -50,6 +50,7 @@ void EntityLayer::init(Game* game, std::vector<std::unique_ptr<Entity>> entities
 
     giveEntitySprite(0, assetManager->getTexture("pixel"), {50, 50}, -1);
 
+    playerID = 1;
     giveEntitySprite(1, assetManager->getTexture("IDLE_smaller"), {24 * 10, 21 * 10});
     getEntity(1)->getSprite()->giveAnimationSet(assetManager->getAnimSet("player"));
     giveEntityMotion(1, 1.f, true);
@@ -143,6 +144,11 @@ Entity* EntityLayer::getEntity(int ID)
     }
 
     return nullptr;
+}
+
+Entity* EntityLayer::getPlayer()
+{
+    return getEntity(playerID);
 }
 
 void EntityLayer::removeFromZMap(int ID)

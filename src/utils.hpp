@@ -27,6 +27,8 @@ sf::Vector2f UIPositionToScreenCenter(UILayer* uiLayer, UIElement* element, sf::
 
 int getRandInt(int min, int max);
 
+int getRandInt();
+
 bool isOnScreen(Game* game, sf::Vector2f tl, sf::Vector2f size, bool applyView = true);
 
 bool isOnScreen(Game* game, sf::Vector2f point, bool applyView = true);

@@ -41,8 +41,6 @@ private:
 
     void update(float dt);
 
-    void UIUpdate(float dt);
-
     void draw();
     
     Window window;

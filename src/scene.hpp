@@ -27,6 +27,8 @@ public:
 
     void UIUpdate(float dt);
 
+    void chunkUpdate();
+
     void draw();
 
     void sceneInput(std::string control);

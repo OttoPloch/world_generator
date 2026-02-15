@@ -4,6 +4,8 @@
 #include "chunk.hpp"
 #include "tile.hpp"
 
+#include "FastNoiseLite.h"
+
 #include <unordered_map>
 
 class Game;
@@ -22,4 +24,6 @@ private:
     Game* game;
 
     std::unordered_map<sf::Vector2i, std::unique_ptr<Chunk>, Vector2iHash>* chunks;
+
+    FastNoiseLite noise;
 };

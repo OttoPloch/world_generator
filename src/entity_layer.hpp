@@ -26,6 +26,8 @@ public:
     // removeFromZMap() before and addToZMap() after.
     Entity* getEntity(int ID);
 
+    Entity* getPlayer();
+
     // Only use before modifying entity sprite.
     // Call addToZMap after modification.
     void removeFromZMap(int ID);
@@ -53,4 +55,6 @@ private:
     std::vector<std::unique_ptr<Entity>> entities;
 
     std::map<int, std::vector<int>> entitiesZMap;
+
+    int playerID;
 };

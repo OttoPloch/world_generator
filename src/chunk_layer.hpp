@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.hpp"
+#include "entity.hpp"
 #include "window.hpp"
 #include "chunk.hpp"
 #include "chunk_generator.hpp"
@@ -22,11 +23,17 @@ public:
     
     bool unloadChunk(sf::Vector2i chunkPosition);
     
+    sf::Vector2i worldToChunkPosition(sf::Vector2f position);
+    
+    sf::Vector2f chunkToWorldPosition(sf::Vector2i position);
+
     std::vector<std::vector<Tile>*> getSurroundingTiles(sf::Vector2f position);
+
+    void update();
 
     void tick();
 
-    void draw();
+    void draw(bool debug = false);
 private:
     Game* game;
 
@@ -35,4 +42,7 @@ private:
     std::unordered_map<sf::Vector2i, std::unique_ptr<Chunk>, Vector2iHash> chunks;
 
     ChunkGenerator chunkGenerator;
+
+    // for updating the chunk pos display text. Can delete if no longer used
+    sf::Vector2i lastChunkPos;
 };

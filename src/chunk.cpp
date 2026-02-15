@@ -1,6 +1,7 @@
 #include "chunk.hpp"
 #include "game.hpp"
 #include "settings.hpp"
+#include <SFML/Graphics/RectangleShape.hpp>
 
 Chunk::Chunk() {}
 
@@ -31,7 +32,7 @@ void Chunk::init(Game* game, sf::Vector2i chunkPosition, std::vector<Tile> tiles
     {
         Tile* currTile = &tiles[i % tiles.size()];
 
-        this->tiles[i] = Tile(game, this, {i % chunkSize, toInt(std::floor(i / chunkSize))}, currTile->type, currTile->collides, currTile->colliderName, currTile->collOffsetFraction, currTile->collSizeFraction);
+        this->tiles[i] = Tile(game, this, {i % chunkSize, toInt(std::floor(i / chunkSize))}, currTile->type, currTile->color, currTile->collides, currTile->colliderName, currTile->collOffsetFraction, currTile->collSizeFraction);
 
         createTileVerts(i);
     }
@@ -51,28 +52,10 @@ void Chunk::createTileVerts(int index)
     bl.position = {tileWorldPos.x, tileWorldPos.y + tileSize};
     br.position = {tileWorldPos.x + tileSize, tileWorldPos.y + tileSize};
 
-    sf::Color tileColor; 
-    
-    switch (tiles[index].type)
-    {
-        case 0:
-            tileColor = sf::Color::Green;
-            break;
-        case 1:
-            tileColor = sf::Color::Blue;
-            break;
-        case 2:
-            tileColor = sf::Color::Red;
-            break;
-        default:
-            tileColor = sf::Color(255, 60, 220);
-            break;
-    }
-
-    tl.color = tileColor;
-    tr.color = tileColor;
-    bl.color = tileColor;
-    br.color = tileColor;
+    tl.color = tiles[index].color;
+    tr.color = tiles[index].color;
+    bl.color = tiles[index].color;
+    br.color = tiles[index].color;
 
     tileVertices[index * 6] = tl;
     tileVertices[index * 6 + 1] = tr;
@@ -98,7 +81,25 @@ void Chunk::tick()
 
 }
 
-void Chunk::draw()
+void Chunk::draw(bool debug)
 {
     window->getWindow().draw(&tileVertices[0], tileVertices.size(), sf::PrimitiveType::Triangles);
+
+    if (debug)
+    {
+        for (int i = 0; i < tiles.size(); i++)
+        {
+            if (tiles[i].collides)
+            {
+                sf::RectangleShape rect(tiles[i].getCollRect().size);
+
+                rect.setPosition(tiles[i].getCollRect().position);
+                rect.setFillColor(sf::Color::Transparent);
+                rect.setOutlineColor(sf::Color::Red);
+                rect.setOutlineThickness(10.f);
+
+                window->draw(rect);
+            }
+        }
+    }
 }

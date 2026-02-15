@@ -158,8 +158,6 @@ void CollisionAttribute::tick(std::vector<std::unique_ptr<Entity>>* entities, st
 
                         if (collidesWith(other))
                         {
-                            if (rect.getColliderName() == "player") std::cout << "ahhh\n";
-
                             if (!rect.searchBlacklist(tile->colliderName))
                             {
                                 resolveCollision(other);

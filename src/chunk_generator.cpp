@@ -1,4 +1,7 @@
 #include "chunk_generator.hpp"
+#include "FastNoiseLite.h"
+#include "chunk.hpp"
+#include "conversions.hpp"
 #include "game.hpp"
 #include "chunk_layer.hpp"
 #include "utils.hpp"
@@ -15,6 +18,12 @@ void ChunkGenerator::init(Game* game, std::unordered_map<sf::Vector2i, std::uniq
     this->game = game;
 
     this->chunks = chunks;
+
+    noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+    noise.SetFrequency(.02f);
+    int rand = getRandInt();
+    noise.SetSeed(rand);
+    std::cout << "random: " << rand << '\n';
 }
 
 void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
@@ -28,19 +37,21 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
     {
         int tileType = getRandInt(0, 3);
 
-        Tile tile;
-
         switch (tileType)
         {
-            case 3:
-                tile = Tile(tileType, true, "tile");
+            case 0:
+                newTiles = {Tile(tileType, sf::Color::Blue)};
                 break;
-            default:
-                tile = Tile(tileType);
+            case 1:
+                newTiles = {Tile(tileType, sf::Color::Green)};
+                break;
+            case 2:
+                newTiles = {Tile(tileType, sf::Color::Red)};
+                break;
+            case 3:
+                newTiles = {Tile(tileType, sf::Color(255, 60, 220), true, "tile")};
                 break;
         }
-
-        newTiles = {tile};
     }
     else if (genMode == 1)
     {
@@ -48,19 +59,57 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
         {
             int tileType = getRandInt(0, 3);
 
-            Tile tile;
-
             switch (tileType)
             {
-                case 3:
-                    tile = Tile(tileType, true, "tile");
+                case 0:
+                    newTiles.emplace_back(tileType, sf::Color::Blue);
                     break;
-                default:
-                    tile = Tile(tileType);
+                case 1:
+                    newTiles.emplace_back(tileType, sf::Color::Green);
+                    break;
+                case 2:
+                    newTiles.emplace_back(tileType, sf::Color::Red);
+                    break;
+                case 3:
+                    newTiles.emplace_back(tileType, sf::Color(255, 60, 220), true, "tile");
                     break;
             }
+        }
+    }
+    else if (genMode == 2)
+    {
+        std::vector<float> noiseData(chunkSize * chunkSize);
 
-            newTiles.push_back(tile);
+        int index = 0;
+
+        for (int y = 0; y < chunkSize; y++)
+        {
+            for (int x = 0; x < chunkSize; x++)
+            {
+                noiseData[index++] = (noise.GetNoise(chunkPosition.x * chunkSize + toFloat(x), chunkPosition.y * chunkSize + toFloat(y)) + 1.f) / 2.f;
+            }
+        }
+
+        for (int i = 0; i < noiseData.size(); i++)
+        {
+            int tileType;
+            sf::Color tileColor;
+
+            sf::Vector2i tilePosition = {i % chunkSize, toInt(std::floor(i / chunkSize))};
+
+            if (getDistance(toV2F(0, 0), toV2F(chunkPosition.x * chunkSize + tilePosition.x, chunkPosition.y * chunkSize + tilePosition.y)) < 10)
+            {
+                // newTiles.emplace_back(4, sf::Color(110, 60, 30));
+                newTiles.emplace_back(4, sf::Color(20, 20, 20));
+            }
+            else
+            {
+                if (noiseData[i] >= .92f) { newTiles.emplace_back(3, sf::Color::Red); }
+                else if (noiseData[i] >= .8f) { newTiles.emplace_back(2, sf::Color(150, 150, 150), true, "rock"); }
+                else if (noiseData[i] >= .3f) { newTiles.emplace_back(1, sf::Color::Green); }
+                else if (noiseData[i] - .3f > -.1f) { newTiles.emplace_back(0, sf::Color::Blue, true, "water"); }
+                else { newTiles.emplace_back(0, sf::Color::Blue); }
+            }
         }
     }
 

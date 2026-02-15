@@ -68,28 +68,38 @@ void Scene::UIUpdate(float dt)
         uiLayer.getElement("speed display")->getAsText()->setValue(std::to_string(toInt(game->getGamerules()->getRule("moveSpeed", "player").valueFloat)));
     }
 
+    if (uiLayer.getElement("reset button")->getAsButton()->getActive())
+    {
+        game->getGamerules()->setRule("moveSpeed", gamerule(5.f, 0, false, ""), "player");
+
+        uiLayer.getElement("speed display")->getAsText()->setValue(std::to_string(toInt(game->getGamerules()->getRule("moveSpeed", "player").valueFloat)));
+    }
+
     if (uiLayer.getElement("animation button")->getAsButton()->getActive())
     {
-        uiLayer.getElement("win 1")->setAnimation({0, 0}, {80, 200}, -1, 0, true);
-        uiLayer.getElement("animation button")->setAnimation({0, 0}, {-75, 80}, -1, -1, true, false);
-        uiLayer.getElement("animation button 2")->setAnimation({0, 0}, {25, 80}, -1, -1, true, false);
-        // uiLayer.getElement("many win parent")->setAnimation({0, 0}, {-50, 50}, -1, 1, true);
+        uiLayer.getElement("win 1")->setAnimation({0, 0}, {60, 250}, -1, 0, true);
+        uiLayer.getElement("animation button")->setAnimation({0, 0}, {-75, 130}, -1, -1, true, false);
+        uiLayer.getElement("animation button 2")->setAnimation({0, 0}, {25, 130}, -1, -1, true, false);
     }
     
     if (uiLayer.getElement("animation button 2")->getAsButton()->getActive())
     {
-        uiLayer.getElement("win 1")->setAnimation({0, 0}, {-300, 200}, -1, 0, true);
-        uiLayer.getElement("animation button")->setAnimation({0, 0}, {25, 80}, -1, -1, true, false);
-        uiLayer.getElement("animation button 2")->setAnimation({0, 0}, {-75, 80}, -1, -1, true, false);
-        // uiLayer.getElement("many win parent")->setAnimation({0, 0}, {50, 50}, -1, 0, true);
+        uiLayer.getElement("win 1")->setAnimation({0, 0}, {-280, 250}, -1, 0, true);
+        uiLayer.getElement("animation button")->setAnimation({0, 0}, {25, 130}, -1, -1, true, false);
+        uiLayer.getElement("animation button 2")->setAnimation({0, 0}, {-75, 130}, -1, -1, true, false);
     }
 
     uiLayer.UIUpdate(dt);
 }
 
+void Scene::chunkUpdate()
+{
+    chunkLayer.update();
+}
+
 void Scene::draw()
 {
-    chunkLayer.draw();
+    chunkLayer.draw(false);
 
     window->draw(rect);
     window->draw(outline);

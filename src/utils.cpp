@@ -7,7 +7,7 @@
 
 float getDistance(sf::Vector2f vec1, sf::Vector2f vec2)
 {
-    return abs(sqrt(pow(vec2.x - vec1.x, 2) + pow(vec2.y - vec1.y, 2)));
+    return std::fabs(sqrt(pow(vec2.x - vec1.x, 2) + pow(vec2.y - vec1.y, 2)));
 }
 
 int partition(std::vector<Entity*>* vec, int low, int high)
@@ -144,6 +144,15 @@ int getRandInt(int min, int max)
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<int> dist(min, max);
+
+    return dist(gen);
+}
+
+int getRandInt()
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> dist;
 
     return dist(gen);
 }
