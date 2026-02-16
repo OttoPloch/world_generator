@@ -6,6 +6,8 @@ MotionAttribute::MotionAttribute(Game* game, Entity* myEntity, GamePosition posi
 {
     this->game = game;
 
+    this->myEntity = myEntity;
+
     this->gamerules = game->getGamerules();
 
     states = myEntity->getStates();
@@ -48,7 +50,7 @@ void MotionAttribute::tick()
         {
             (std::fabs(velocity.x) > velocityCutoff) ? velocity.x *= friction : velocity.x = 0.f;
         }
-
+        
         if (std::fabs(velocity.y) <= std::fabs(velocity.x))
         {
             if (game->getInput()->getControl("SPRINT"))

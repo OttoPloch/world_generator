@@ -74,7 +74,7 @@ void Sprite::giveAnimation(SpriteAnimation* animation, bool resetSizeX, bool rev
 {
     if (resetSizeX)
     {
-        float ratio = animation->getFrameSize().x / animation->getFrameSize().y;
+        float ratio = toFloat(animation->getFrameSize().x) / toFloat(animation->getFrameSize().y);
         
         size.x = size.y * ratio;
     }
@@ -170,8 +170,8 @@ void Sprite::update(float dt)
 
         if (delay < 1.f) delay = 1.f;
 
-        (abs(xDiff) < 0.001f) ? spritePosition.x = position.get().x : spritePosition.x += xDiff / delay;
-        (abs(yDiff) < 0.001f) ? spritePosition.y = position.get().y : spritePosition.y += yDiff / delay;
+        (std::fabs(xDiff) < 0.001f) ? spritePosition.x = position.get().x : spritePosition.x += xDiff / delay;
+        (std::fabs(yDiff) < 0.001f) ? spritePosition.y = position.get().y : spritePosition.y += yDiff / delay;
     }
     
     sprite->setPosition(spritePosition);

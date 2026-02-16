@@ -35,6 +35,8 @@ public:
 private:
     Game* game;
 
+    Entity* myEntity;
+
     Gamerules* gamerules;
 
     EntityStates* states;

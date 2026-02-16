@@ -43,7 +43,13 @@ void CollisionAttribute::tick(char axis, std::vector<std::unique_ptr<Entity>>* e
 
                 CollisionRect* other = &entity->getCollision()->rect;
 
-                sf::Vector2f relativeMovement = myEntity->getLastTickMovement() - entity->getLastTickMovement();
+                MotionAttribute* myMotion = myEntity->getMotion();
+                MotionAttribute* otherMotion = entity->getMotion();
+
+                sf::Vector2f relativeMovement;
+
+                if (myMotion && otherMotion) relativeMovement = myMotion->getVelocity() - otherMotion->getVelocity();
+                else relativeMovement = myEntity->getLastTickMovement() - entity->getLastTickMovement();
 
                 float diff;
 
@@ -97,7 +103,10 @@ void CollisionAttribute::tick(char axis, std::vector<std::unique_ptr<Entity>>* e
             CollisionRect* other = &entity->getCollision()->rect;            
             MotionAttribute* myMotion = myEntity->getMotion();
             MotionAttribute* otherMotion = entity->getMotion();
-            sf::Vector2f relativeMovement = myEntity->getLastTickMovement() - entity->getLastTickMovement();
+            
+            sf::Vector2f relativeMovement;
+            if (myMotion && otherMotion) relativeMovement = myMotion->getVelocity() - otherMotion->getVelocity();
+            else relativeMovement = myEntity->getLastTickMovement() - entity->getLastTickMovement();
 
             bool advancedCollision = (myMotion && otherMotion);
             bool pushingObject = false;
@@ -267,8 +276,6 @@ void CollisionAttribute::resolveCollision(char axis, CollisionRect* other, sf::V
 
             rect.setRight(rect.right() - diff * (invA / sum));
             other->setLeft(other->left() + diff * (invB / sum));
-
-            if (myMotion) myMotion->setVelocity('x', 0.f);
         }
         else if (relMove.x < 0.f)
         {
@@ -277,8 +284,6 @@ void CollisionAttribute::resolveCollision(char axis, CollisionRect* other, sf::V
 
             rect.setLeft(rect.left() + diff * (invA / sum));
             other->setRight(other->right() - diff * (invB / sum));
-
-            if (myMotion) myMotion->setVelocity('x', 0.f);
         }
     }
     else if (axis == 'y')
@@ -290,8 +295,6 @@ void CollisionAttribute::resolveCollision(char axis, CollisionRect* other, sf::V
 
             rect.setBottom(rect.bottom() - diff * (invA / sum));
             other->setTop(other->top() + diff * (invB / sum));
-
-            if (myMotion) myMotion->setVelocity('y', 0.f);
         }
         else if (relMove.y < 0.f)
         {
@@ -300,8 +303,6 @@ void CollisionAttribute::resolveCollision(char axis, CollisionRect* other, sf::V
 
             rect.setTop(rect.top() + diff * (invA / sum));
             other->setBottom(other->bottom() - diff * (invB / sum));
-
-            if (myMotion) myMotion->setVelocity('y', 0.f);
         }
     }
 }
