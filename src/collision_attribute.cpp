@@ -272,17 +272,17 @@ void CollisionAttribute::resolveCollision(char axis, CollisionRect* other, sf::V
         if (relMove.x > 0.f)
         {
             float diff = rect.right() - other->left();
-            if (diff <= 0.f) return;
+            if (diff < 0.01f) return;
 
-            rect.setRight(rect.right() - diff * (invA / sum));
+            rect.setRight(rect.right() - diff * (invA / sum) - .01f);
             other->setLeft(other->left() + diff * (invB / sum));
         }
         else if (relMove.x < 0.f)
         {
             float diff = other->right() - rect.left();
-            if (diff <= 0.f) return;
+            if (diff < 0.01f) return;
 
-            rect.setLeft(rect.left() + diff * (invA / sum));
+            rect.setLeft(rect.left() + diff * (invA / sum) + .01f);
             other->setRight(other->right() - diff * (invB / sum));
         }
     }
@@ -291,17 +291,17 @@ void CollisionAttribute::resolveCollision(char axis, CollisionRect* other, sf::V
         if (relMove.y > 0.f)
         {
             float diff = rect.bottom() - other->top();
-            if (diff <= 0.f) return;
+            if (diff < 0.01f) return;
 
-            rect.setBottom(rect.bottom() - diff * (invA / sum));
+            rect.setBottom(rect.bottom() - diff * (invA / sum) - .01f);
             other->setTop(other->top() + diff * (invB / sum));
         }
         else if (relMove.y < 0.f)
         {
             float diff = other->bottom() - rect.top();
-            if (diff <= 0.f) return;
+            if (diff < 0.01f) return;
 
-            rect.setTop(rect.top() + diff * (invA / sum));
+            rect.setTop(rect.top() + diff * (invA / sum) + .01f);
             other->setBottom(other->bottom() - diff * (invB / sum));
         }
     }
@@ -309,28 +309,28 @@ void CollisionAttribute::resolveCollision(char axis, CollisionRect* other, sf::V
 
 void CollisionAttribute::resolveCollision(char axis, sf::FloatRect other)
 {
-    if (axis == 'x')
-    {
-        if (myEntity->getLastTickMovement().x > 0.f)
-        {
-            rect.setRight(other.position.x);
-        }
-        else if (myEntity->getLastTickMovement().x < 0.f)
-        {
-            rect.setLeft(other.position.x + other.size.x);
-        }
-    }
-    else if (axis == 'y')
-    {
-        if (myEntity->getLastTickMovement().y > 0.f)
-        {
-            rect.setBottom(other.position.y);
-        }
-        else if (myEntity->getLastTickMovement().y < 0.f)
-        {
-            rect.setTop(other.position.y + other.size.y);
-        }
-    }
+    // if (axis == 'x')
+    // {
+    //     if (myEntity->getLastTickMovement().x > 0.f)
+    //     {
+    //         rect.setRight(other.position.x);
+    //     }
+    //     else if (myEntity->getLastTickMovement().x < 0.f)
+    //     {
+    //         rect.setLeft(other.position.x + other.size.x);
+    //     }
+    // }
+    // else if (axis == 'y')
+    // {
+    //     if (myEntity->getLastTickMovement().y > 0.f)
+    //     {
+    //         rect.setBottom(other.position.y);
+    //     }
+    //     else if (myEntity->getLastTickMovement().y < 0.f)
+    //     {
+    //         rect.setTop(other.position.y + other.size.y);
+    //     }
+    // }
 }
 
 void CollisionAttribute::setRect(sf::FloatRect newRect)
