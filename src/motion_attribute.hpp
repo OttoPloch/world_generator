@@ -15,6 +15,8 @@ public:
 
     void tick();
 
+    void updateAxis(char axis);
+
     sf::Vector2f getVelocity();
 
     void setVelocity(sf::Vector2f newVelocity);
@@ -46,4 +48,8 @@ private:
     float rotationalVelocity;
 
     float mass;
+
+    // stores this in tick(), then applies
+    // to that axis in updateAxis().
+    sf::Vector2f posChange;
 };

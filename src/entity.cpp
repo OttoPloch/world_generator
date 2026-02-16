@@ -1,6 +1,7 @@
 #include "entity.hpp"
 #include "collision_attribute.hpp"
 #include "game.hpp"
+#include <SFML/System/Vector2.hpp>
 
 Entity::Entity() {}
 
@@ -20,6 +21,8 @@ void Entity::create(Game* game, int ID, sf::Vector2f position)
     rotation = 0;
 
     states.init();
+
+    lastPos = this->position.get();
 }
 
 int Entity::getID() { return ID; }
@@ -76,9 +79,15 @@ void Entity::tick(std::vector<std::unique_ptr<Entity>>* entities, std::vector<st
 
     if (motion) motion->tick();
 
-    if (collision) collision->tick(entities, surroundingTiles);
+    if (motion) motion->updateAxis('x');
+    if (collision) collision->tick('x', entities, surroundingTiles);
+
+    if (motion) motion->updateAxis('y');
+    if (collision) collision->tick('y', entities, surroundingTiles);
     
     if (sprite) sprite->tick();
+
+    lastPos = position.get();
 }
 
 void Entity::update(float dt)
@@ -100,3 +109,8 @@ Sprite* Entity::getSprite() { return sprite.get(); }
 MotionAttribute* Entity::getMotion() { return motion.get(); }
 
 CollisionAttribute* Entity::getCollision() { return collision.get(); }
+
+sf::Vector2f Entity::getLastTickMovement()
+{
+    return {position.get().x - lastPos.x, position.get().y - lastPos.y};;
+}

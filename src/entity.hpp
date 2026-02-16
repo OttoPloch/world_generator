@@ -48,6 +48,8 @@ public:
     MotionAttribute* getMotion();
 
     CollisionAttribute* getCollision();
+
+    sf::Vector2f getLastTickMovement();
 private:
     int ID;
 
@@ -64,4 +66,6 @@ private:
     std::unique_ptr<CollisionAttribute> collision;
 
     EntityStates states;
+
+    sf::Vector2f lastPos;
 };

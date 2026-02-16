@@ -15,11 +15,14 @@ MotionAttribute::MotionAttribute(Game* game, Entity* myEntity, GamePosition posi
     this->mass = mass;
 
     this->controlling = controlling;
+
+    posChange = {0.f, 0.f};
 }
 
 void MotionAttribute::tick()
 {
-    position.change(velocity);
+    posChange = velocity;
+    // position.change(velocity);
 
     float friction = gamerules->getRule("motion_friction").valueFloat;
     float velocityCutoff = gamerules->getRule("motion_velocityCutoff").valueFloat;
@@ -43,10 +46,10 @@ void MotionAttribute::tick()
         }
         else
         {
-            (abs(velocity.x) > velocityCutoff) ? velocity.x *= friction : velocity.x = 0.f;
+            (std::fabs(velocity.x) > velocityCutoff) ? velocity.x *= friction : velocity.x = 0.f;
         }
 
-        if (abs(velocity.y) <= abs(velocity.x))
+        if (std::fabs(velocity.y) <= std::fabs(velocity.x))
         {
             if (game->getInput()->getControl("SPRINT"))
             {
@@ -68,7 +71,7 @@ void MotionAttribute::tick()
         }
         else
         {
-            (abs(velocity.y) > velocityCutoff) ? velocity.y *= friction : velocity.y = 0.f;
+            (std::fabs(velocity.y) > velocityCutoff) ? velocity.y *= friction : velocity.y = 0.f;
         }
 
         if (game->getInput()->getControl("SPRINT"))
@@ -84,9 +87,15 @@ void MotionAttribute::tick()
     }
     else
     {
-        (abs(velocity.x) > velocityCutoff) ? velocity.x *= friction : velocity.x = 0.f;
-        (abs(velocity.y) > velocityCutoff) ? velocity.y *= friction : velocity.y = 0.f;
+        (std::fabs(velocity.x) > velocityCutoff) ? velocity.x *= friction : velocity.x = 0.f;
+        (std::fabs(velocity.y) > velocityCutoff) ? velocity.y *= friction : velocity.y = 0.f;
     }
+}
+
+void MotionAttribute::updateAxis(char axis)
+{
+    if (axis == 'x') position.change('x', posChange.x);
+    if (axis == 'y') position.change('y', posChange.y);
 }
 
 sf::Vector2f MotionAttribute::getVelocity() { return velocity; }
