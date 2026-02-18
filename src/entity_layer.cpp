@@ -47,6 +47,9 @@ void EntityLayer::init(Game* game, std::vector<std::unique_ptr<Entity>> entities
     addEntity(getNewID(), {200, 1000});
     addEntity(getNewID(), {400, 1000});
     addEntity(getNewID(), {600, 1000});
+    addEntity(getNewID(), {0, 1200});
+    addEntity(getNewID(), {0, 1400});
+    addEntity(getNewID(), {0, 1600});
 
     giveEntitySprite(0, assetManager->getTexture("pixel"), {50, 50}, -1);
 
@@ -95,6 +98,15 @@ void EntityLayer::init(Game* game, std::vector<std::unique_ptr<Entity>> entities
 
     giveEntitySprite(14, assetManager->getTexture("crate"), {200.f, 200.f}, -1);
     giveEntityCollision(14, "wall", STATIC);
+
+    giveEntitySprite(15, assetManager->getTexture("crate"), {200.f, 200.f}, -1);
+    giveEntityCollision(15, "wall", STATIC);
+
+    giveEntitySprite(16, assetManager->getTexture("crate"), {200.f, 200.f}, -1);
+    giveEntityCollision(16, "wall", STATIC);
+
+    giveEntitySprite(17, assetManager->getTexture("crate"), {200.f, 200.f}, -1);
+    giveEntityCollision(17, "wall", STATIC);
 
 }
 
