@@ -3,6 +3,7 @@
 #include "motion_attribute.hpp"
 #include "states.hpp"
 #include "rect_types.hpp"
+#include "utils.hpp"
 #include <cmath>
 #include <cstdlib>
 
@@ -17,7 +18,7 @@ CollisionAttribute::CollisionAttribute(Entity* myEntity, GamePosition position, 
     rect.init(position, offset, size, colliderName, rectType, blacklist);
 }
 
-void CollisionAttribute::tick(char axis, std::vector<std::unique_ptr<Entity>>* entities, std::vector<std::vector<Tile>*> surroundingTiles)
+void CollisionAttribute::tick(std::vector<std::unique_ptr<Entity>>* entities, std::vector<std::vector<Tile>*> surroundingTiles)
 {
     rect.updatePosition();
 
@@ -29,151 +30,55 @@ void CollisionAttribute::tick(char axis, std::vector<std::unique_ptr<Entity>>* e
         std::vector<Tile*> tileCollisions;
         if (surroundingTiles.size() > 0) tileCollisions = getTileCollisions(&surroundingTiles);
 
-        int iterations = 0;
-        while (entityCollisions.size() > 0 && iterations < 8)
+        MotionAttribute* myMotion = myEntity->getMotion();
+
+        if (entityCollisions.size() > 0) states->set("collision", COLL_ANY);
+
+        for (auto entity : entityCollisions)
         {
-            iterations++;
-
-            float smallestDiff = INFINITY;
-            int closestEntityIndex = -1;
-
-            for (int i = 0; i < entityCollisions.size(); i++)
-            {
-                Entity* entity = entityCollisions[i];
-
-                CollisionRect* other = &entity->getCollision()->rect;
-
-                MotionAttribute* myMotion = myEntity->getMotion();
-                MotionAttribute* otherMotion = entity->getMotion();
-
-                sf::Vector2f relativeMovement;
-
-                if (myMotion && otherMotion) relativeMovement = myMotion->getVelocity() - otherMotion->getVelocity();
-                else relativeMovement = myEntity->getLastTickMovement() - entity->getLastTickMovement();
-
-                float diff;
-
-                if (axis == 'x')
-                {
-                    if (relativeMovement.x > 0.f)
-                    {
-                        diff = rect.right() - other->left();
-                    }
-                    else if (relativeMovement.x < 0.f)
-                    {
-                        diff = other->right() - rect.left();
-                    }
-                    else
-                    {
-                        if (rect.center().x < other->center().x) diff = rect.right() - other->left();
-                        else diff = other->right() - rect.left();
-                    }
-                }
-                else if (axis == 'y')
-                {
-                    if (relativeMovement.y > 0.f)
-                    {
-                        diff = rect.bottom() - other->top();
-                    }
-                    else if (relativeMovement.y < 0.f)
-                    {
-                        diff = other->bottom() - rect.top();
-                    }
-                    else
-                    {
-                        if (rect.center().y < other->center().y) diff = rect.bottom() - other->top();
-                        else diff = other->bottom() - rect.top();
-                    }
-                }
-
-                if (diff > 0 && diff < smallestDiff)
-                {
-                    smallestDiff = diff;
-
-                    closestEntityIndex = i;
-                }
-            }
-
-            if (closestEntityIndex == -1) break;
-
-            Entity* entity = entityCollisions[closestEntityIndex];
-
-            entityCollisions.erase(entityCollisions.begin() + closestEntityIndex);
-
-            CollisionRect* other = &entity->getCollision()->rect;            
-            MotionAttribute* myMotion = myEntity->getMotion();
+            CollisionRect* other = entity->getCollision()->getRect();
             MotionAttribute* otherMotion = entity->getMotion();
-            
-            sf::Vector2f relativeMovement;
-            if (myMotion && otherMotion) relativeMovement = myMotion->getVelocity() - otherMotion->getVelocity();
-            else relativeMovement = myEntity->getLastTickMovement() - entity->getLastTickMovement();
 
             bool advancedCollision = (myMotion && otherMotion);
-            bool pushingObject = false;
+
+            float myMass;
+            float otherMass;
+
+            if (advancedCollision)
+            {
+                myMass = myMotion->getMass();
+                otherMass = otherMotion->getMass();
+            }
+            else
+            {
+                myMass = 1.f;
+                otherMass = 1.f;
+            }
+
+            bool pushingObject = other->getType() == MOVABLE;
 
             if (rect.getType() == ACTIVE)
             {
-                if (other->getType() == ACTIVE)
-                {   
-                    if (advancedCollision) resolveCollision(axis, other, relativeMovement, myMotion->getMass(), otherMotion->getMass());
-                    else resolveCollision(axis, other, relativeMovement, 0.3f, 0.7f);
+                if (other->getType() == ACTIVE || other->getType() == MOVABLE)
+                {
+                    resolveCollision(other, pushingObject, myMass, otherMass);
                 }
                 else if (other->getType() == STATIC)
                 {
-                    resolveCollision(axis, other, relativeMovement, myMotion->getMass(), INFINITY);
-                }
-                else if (other->getType() == MOVABLE)
-                {
-                    pushingObject = true;
-
-                    if (advancedCollision) resolveCollision(axis, other, relativeMovement, myMotion->getMass(), otherMotion->getMass());
-                    else resolveCollision(axis, other, relativeMovement, .5f, .5f);
+                    resolveCollision(other, pushingObject, myMass, INFINITY);
                 }
             }
             else if (rect.getType() == MOVABLE)
             {
-                if (other->getType() == STATIC) resolveCollision(axis, other, relativeMovement, myMotion->getMass(), INFINITY);
-                else if (other->getType() == MOVABLE)
+                if (other->getType() == MOVABLE)
                 {
-                    if (advancedCollision) resolveCollision(axis, other, relativeMovement, myMotion->getMass(), otherMotion->getMass());
-                    else resolveCollision(axis, other, relativeMovement, .5f, .5f);
+                    resolveCollision(other, pushingObject, myMass, otherMass);
+                }
+                else if (other->getType() == STATIC)
+                {
+                    resolveCollision(other, pushingObject, myMass, INFINITY);
                 }
             }
-
-            states->set("collision", COLL_ANY);
-
-            if (axis == 'x')
-            {
-                if (relativeMovement.x > 0.f)
-                {
-                    states->set("collision", COLL_RIGHT);
-
-                    if (pushingObject) states->set("animation", ANIM_PUSHINGRIGHT);
-                }
-                else if (relativeMovement.x < 0.f)
-                {
-                    states->set("collision", COLL_LEFT);
-
-                    if (pushingObject) states->set("animation", ANIM_PUSHINGLEFT);
-                }
-            }
-            else if (axis == 'y')
-            {
-                if (relativeMovement.y > 0.f)
-                {
-                    states->set("collision", COLL_BOTTOM);
-
-                    if (pushingObject) states->set("animation", ANIM_PUSHINGDOWN);
-                }
-                else if (relativeMovement.y < 0.f)
-                {
-                    states->set("collision", COLL_TOP);
-
-                    if (pushingObject) states->set("animation", ANIM_PUSHINGUP);
-                }
-            }
-
-            entityCollisions = getEntityCollisions(entities);
         }
 
         // while (tileCollisions.size() > 0)
@@ -259,55 +164,81 @@ bool CollisionAttribute::collidesWith(sf::FloatRect other)
     return (rect.left() < other.position.x + other.size.x && rect.right() > other.position.x && rect.top() < other.position.y + other.size.y && rect.bottom() > other.position.y);
 }
 
-void CollisionAttribute::resolveCollision(char axis, CollisionRect* other, sf::Vector2f relMove, float myMass, float otherMass)
+void CollisionAttribute::resolveCollision(CollisionRect* other, bool pushingObject, float myMass, float otherMass)
 {
     float invA = 1 / myMass;
     float invB = 1 / otherMass;
     float sum = invA + invB;
 
-    MotionAttribute* myMotion = myEntity->getMotion();
+    float leftDiff = rect.right() - other->left();
+    float rightDiff = other->right() - rect.left();
+    float topDiff = rect.bottom() - other->top();
+    float bottomDiff = other->bottom() - rect.top();
 
-    if (axis == 'x')
+    float thisMove;
+    float otherMove;
+
+    int side;
+
+    if (leftDiff < rightDiff && leftDiff < topDiff && leftDiff < bottomDiff)
     {
-        if (relMove.x > 0.f)
-        {
-            float diff = rect.right() - other->left();
-            if (diff < 0.01f) return;
-
-            rect.setRight(rect.right() - diff * (invA / sum) - .01f);
-            other->setLeft(other->left() + diff * (invB / sum));
-        }
-        else if (relMove.x < 0.f)
-        {
-            float diff = other->right() - rect.left();
-            if (diff < 0.01f) return;
-
-            rect.setLeft(rect.left() + diff * (invA / sum) + .01f);
-            other->setRight(other->right() - diff * (invB / sum));
-        }
+        side = 0;
     }
-    else if (axis == 'y')
+    else if (rightDiff < leftDiff && rightDiff < topDiff && rightDiff < bottomDiff)
     {
-        if (relMove.y > 0.f)
-        {
-            float diff = rect.bottom() - other->top();
-            if (diff < 0.01f) return;
+        side = 1;
+    }
+    else if (topDiff < leftDiff && topDiff < rightDiff && topDiff < bottomDiff)
+    {
+        side = 2;
+    }
+    else if (bottomDiff < leftDiff && bottomDiff < rightDiff && bottomDiff < topDiff)
+    {
+        side = 3;
+    }
+    else
+    {
+        side = getRandInt(0, 3);
+    }
 
-            rect.setBottom(rect.bottom() - diff * (invA / sum) - .01f);
-            other->setTop(other->top() + diff * (invB / sum));
-        }
-        else if (relMove.y < 0.f)
-        {
-            float diff = other->bottom() - rect.top();
-            if (diff < 0.01f) return;
-
-            rect.setTop(rect.top() + diff * (invA / sum) + .01f);
-            other->setBottom(other->bottom() - diff * (invB / sum));
-        }
+    switch (side)
+    {
+        case 0:
+            thisMove = leftDiff * (invA / sum);
+            otherMove = leftDiff * (invB / sum);
+            rect.setRight(rect.right() - thisMove);
+            other->setLeft(other->left() + otherMove);
+            states->set("collision", COLL_RIGHT);
+            if (pushingObject) states->set("animation", ANIM_PUSHINGRIGHT);
+            break;
+        case 1:
+            thisMove = rightDiff * (invA / sum);
+            otherMove = rightDiff * (invB / sum);
+            rect.setLeft(rect.left() + thisMove);
+            other->setRight(other->right() - otherMove);
+            states->set("collision", COLL_LEFT);
+            if (pushingObject) states->set("animation", ANIM_PUSHINGLEFT);
+            break;
+        case 2:
+            thisMove = topDiff * (invA / sum);
+            otherMove = topDiff * (invB / sum);
+            rect.setBottom(rect.bottom() - thisMove);
+            other->setTop(other->top() + otherMove);
+            states->set("collision", COLL_BOTTOM);
+            if (pushingObject) states->set("animation", ANIM_PUSHINGDOWN);
+            break;
+        case 3:
+            thisMove = bottomDiff * (invA / sum);
+            otherMove = bottomDiff * (invB / sum);
+            rect.setTop(rect.top() + thisMove);
+            other->setBottom(other->bottom() - otherMove);
+            states->set("collision", COLL_TOP);
+            if (pushingObject) states->set("animation", ANIM_PUSHINGUP);
+            break;
     }
 }
 
-void CollisionAttribute::resolveCollision(char axis, sf::FloatRect other)
+void CollisionAttribute::resolveCollision(sf::FloatRect other)
 {
     // if (axis == 'x')
     // {

@@ -78,12 +78,8 @@ void Entity::tick(std::vector<std::unique_ptr<Entity>>* entities, std::vector<st
     states.resetAll();
 
     if (motion) motion->tick();
-
-    if (motion) motion->updateAxis('x');
-    if (collision) collision->tick('x', entities, surroundingTiles);
-
-    if (motion) motion->updateAxis('y');
-    if (collision) collision->tick('y', entities, surroundingTiles);
+    
+    if (collision) collision->tick(entities, surroundingTiles);
     
     if (sprite) sprite->tick();
 
