@@ -1,6 +1,7 @@
 #include "scene.hpp"
 #include "game.hpp"
 
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <memory>
 
 Scene::Scene() {}
@@ -21,19 +22,7 @@ void Scene::init(Game* game)
 
     chunkLayer.init(game);
 
-    camera.init(game, true, {0, 0}, toV2F(window->getSize()), entityLayer.getEntity(1));
-
-    rect.setSize({100.f, 100.f});
-    rect.setFillColor(sf::Color::Red);
-    rect.setOrigin({50.f, 50.f});
-    rect.setPosition(toV2F(window->getSize().x / 2, window->getSize().y / 2));
-
-    outline.setSize({480, 480});
-    outline.setOutlineColor(sf::Color::Red);
-    outline.setOutlineThickness(5.f);
-    outline.setFillColor(sf::Color::Transparent);
-    outline.setOrigin({240.f, 240.f});
-    outline.setPosition(toV2F(window->getSize().x / 2, window->getSize().y / 2));
+    camera.init(game, true, {0, 0}, toV2F(window->getSize()));
 }
 
 void Scene::tick()
@@ -99,13 +88,8 @@ void Scene::chunkUpdate()
 
 void Scene::draw()
 {
-    chunkLayer.draw(false);
-
-    window->draw(rect);
-    window->draw(outline);
-    
+    chunkLayer.draw();
     entityLayer.draw();
-    
     uiLayer.draw();
 }
 
@@ -139,13 +123,13 @@ void Scene::toggleFocus()
 {
     if (camera.getFocus() == nullptr)
     {
-        camera.setFocus(entityLayer.getEntity(1));
-        entityLayer.getEntity(1)->getMotion()->controlling = true;
+        //camera.setFocus(entityLayer.getEntity(1));
+        //entityLayer.getEntity(1)->getMotion()->controlling = true;
     }
     else
     {
         camera.removeFocus();
-        entityLayer.getEntity(1)->getMotion()->controlling = false;
+        //entityLayer.getEntity(1)->getMotion()->controlling = false;
     }
 }
 

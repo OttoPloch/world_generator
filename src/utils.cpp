@@ -12,13 +12,13 @@ float getDistance(sf::Vector2f vec1, sf::Vector2f vec2)
 
 int partition(std::vector<Entity*>* vec, int low, int high)
 {
-    int pivot = (*vec)[high]->getSprite()->getBottom();
+    int pivot = (*vec)[high]->getSprite()->bottom();
 
     int i = low - 1;
 
     for (int j = low; j <= high - 1; j++)
     {
-        if ((*vec)[j]->getSprite()->getBottom() <= pivot)
+        if ((*vec)[j]->getSprite()->bottom() <= pivot)
         {
             i++;
             std::swap((*vec)[i], (*vec)[j]);

@@ -1,90 +1,33 @@
 #pragma once
 
 #include "common.hpp"
-#include "game_position.hpp"
-#include "animation_set.hpp"
-#include "entity_states.hpp"
-#include "gamerules.hpp"
+#include "world_position.hpp"
 
+#include <SFML/Graphics/RenderWindow.hpp>
 #include <memory>
-
-class SpriteAnimation;
-class Entity;
-class Game;
 
 class Sprite
 {
 public:
     Sprite();
 
-    // sprite will always be centered if an animation is given, so centerOrigin only truly affects entities with no animations.
-    void create(Game* game, Entity* myEntity, sf::Texture* texture, GamePosition position, sf::Vector2f size, int z, bool centerOrigin);
+    Sprite(WorldPosition position, sf::Texture* texture, sf::Vector2f size = {1.f, 1.f}, bool sizeIsScale = true);
 
-    void centerSprite();
-
-    void setSize(sf::Vector2f newSize);
-
-    void setRotation(float newRotation);
-
-    void setTexture(sf::Texture* newTexture);
-
-    void giveAnimationSet(AnimationSet* animationSet, bool resetSizeX = true);
-
-    void giveAnimation(SpriteAnimation* animation, bool resetSizeX = true, bool reverse = false, bool start = true);
-
-    void animPlay();
-
-    void animStop();
-
-    void animReset();
-
-    void tick();
-
-    void update(float dt);
-
-    void draw(sf::RenderWindow& window);
-    
-    sf::Sprite getSprite();
-
-    sf::Vector2f getSpritePosition();
-
+    sf::Vector2f getPosition();
     sf::Vector2f getSize();
 
-    float getBottom();
+    float left();
+    float right();
+    float top();
+    float bottom();
 
-    int getZ();
-    
-    void jumpToTarget();
+    void draw(sf::RenderWindow& window);
 private:
-    void changeAnimation(SpriteAnimation* newAnimation);
-
-    Gamerules* gamerules;
-
-    Entity* myEntity;
-
-    EntityStates* states;
-
-    GamePosition position;
-
-    sf::Vector2f spritePosition;
+    WorldPosition position;
 
     sf::Vector2f size;
 
-    float rotation;
-
     sf::Texture* texture;
 
-    // needs to be a ptr bc of no default constructor for sf::Sprite
     std::unique_ptr<sf::Sprite> sprite;
-
-    int z;
-
-    AnimationSet* animationSet;
-
-    SpriteAnimation* animation;
-    int animTicksPerFrame;
-    bool animReverse;
-    unsigned int animTicksToNextFrame;
-    unsigned int animFrameIndex;
-    bool animPlaying;
 };

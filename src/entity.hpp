@@ -1,17 +1,11 @@
 #pragma once
 
 #include "common.hpp"
+#include "world_position.hpp"
 #include "sprite.hpp"
-#include "asset_manager.hpp"
-#include "motion_attribute.hpp"
-#include "game_position.hpp"
-#include "entity_states.hpp"
-#include "tile.hpp"
 
-#include <memory>
-#include <vector>
+#include <SFML/Graphics.hpp>
 
-class CollisionAttribute;
 class Game;
 
 class Entity
@@ -21,19 +15,11 @@ public:
 
     Entity(Game* game, int ID, sf::Vector2f position);
 
-    void create(Game* game, int ID, sf::Vector2f position);
+    Entity(Game* game, int ID, WorldPosition position);
 
     int getID();
 
-    void giveSprite(sf::Texture* texture, sf::Vector2f size = {-1.f, -1.f}, int z = 0, bool centerOrigin = true);
-    
-    void giveMotion(float mass, bool controlling = false);
-
-    void giveCollision(std::vector<std::unique_ptr<Entity>>* entities, std::string name, int rectType, std::vector<std::string> blacklist = {}, sf::Vector2f offsetFraction = {0, 0}, sf::Vector2f size = {1, 1}, bool sizeIsFraction = true);
-
-    void changeSpriteTexture(sf::Texture* texture);
-
-    void tick(std::vector<std::unique_ptr<Entity>>* entities = nullptr, std::vector<std::vector<Tile>*> surroundingTiles = {});
+    void tick();
 
     void update(float dt);
 
@@ -41,31 +27,13 @@ public:
 
     sf::Vector2f getPosition();
 
-    EntityStates* getStates();
-
     Sprite* getSprite();
-
-    MotionAttribute* getMotion();
-
-    CollisionAttribute* getCollision();
-
-    sf::Vector2f getLastTickMovement();
 private:
-    int ID;
-
     Game* game;
 
-    GamePosition position;
+    int ID;
 
-    float rotation;
+    WorldPosition position;
 
-    std::unique_ptr<Sprite> sprite;
-
-    std::unique_ptr<MotionAttribute> motion;
-
-    std::unique_ptr<CollisionAttribute> collision;
-
-    EntityStates states;
-
-    sf::Vector2f lastPos;
+    Sprite sprite;
 };

@@ -1,112 +1,35 @@
 #include "entity.hpp"
-#include "collision_attribute.hpp"
 #include "game.hpp"
-#include <SFML/System/Vector2.hpp>
+#include "world_position.hpp"
 
 Entity::Entity() {}
 
-Entity::Entity(Game* game, int ID, sf::Vector2f position)
+Entity::Entity(Game* game, int ID, sf::Vector2f position) : game(game), ID(ID)
 {
-    create(game, ID, position);
+    this->position = WorldPosition(position);
+
+    sprite = Sprite(this->position, game->getAssetManager()->getTexture("bush"));
 }
 
-void Entity::create(Game* game, int ID, sf::Vector2f position)
-{
-    this->game = game;
-
-    this->ID = ID;
-
-    this->position.set(position);
-
-    rotation = 0;
-
-    states.init();
-
-    lastPos = this->position.get();
-}
+Entity::Entity(Game* game, int ID, WorldPosition position) : game(game), ID(ID), position(position) {}
 
 int Entity::getID() { return ID; }
 
-void Entity::giveSprite(sf::Texture* texture, sf::Vector2f size, int z, bool centerOrigin)
+void Entity::tick()
 {
-    sprite = std::make_unique<Sprite>();
 
-    sf::Vector2f spriteSize;
-
-    if (size == sf::Vector2f(-1.f, -1.f))
-    {
-        spriteSize = toV2F(texture->getSize());
-    }
-    else
-    {
-        spriteSize = size;
-    }
-
-    sprite->create(game, this, texture, position, spriteSize, z, centerOrigin);
-}
-
-void Entity::giveMotion(float mass, bool controlling)
-{
-    motion = std::make_unique<MotionAttribute>(game, this, position, mass, controlling);
-}
-
-void Entity::giveCollision(std::vector<std::unique_ptr<Entity>>* entities, std::string name, int rectType, std::vector<std::string> blacklist, sf::Vector2f offsetFraction, sf::Vector2f size, bool sizeIsFraction)
-{
-    sf::Vector2f offset = {sprite->getSize().x * offsetFraction.x, sprite->getSize().y * offsetFraction.y};
-    
-    sf::Vector2f collRectSize;
-
-    if (sizeIsFraction)
-    {
-        collRectSize = {sprite->getSize().x * size.x, sprite->getSize().y * size.y};
-    }
-    else
-    {
-        collRectSize = size;
-    }
-
-    collision = std::make_unique<CollisionAttribute>(this, position, offset, collRectSize, name, rectType, blacklist);
-}
-
-void Entity::changeSpriteTexture(sf::Texture* texture)
-{
-    sprite->setTexture(texture);
-}
-
-void Entity::tick(std::vector<std::unique_ptr<Entity>>* entities, std::vector<std::vector<Tile>*> surroundingTiles)
-{
-    states.resetAll();
-
-    if (motion) motion->tick();
-    
-    if (collision) collision->tick(entities, surroundingTiles);
-    
-    if (sprite) sprite->tick();
-
-    lastPos = position.get();
 }
 
 void Entity::update(float dt)
 {
-    if (sprite) sprite->update(dt);
+
 }
 
 void Entity::draw(sf::RenderWindow& window)
 {
-    if (sprite) sprite->draw(window);
+    sprite.draw(window);
 }
 
-sf::Vector2f Entity::getPosition() { return *(position.position); }
+sf::Vector2f Entity::getPosition() { return position.getPos(); }
 
-EntityStates* Entity::getStates() { return &states; }
-
-Sprite* Entity::getSprite() { return sprite.get(); }
-
-MotionAttribute* Entity::getMotion() { return motion.get(); }
-
-CollisionAttribute* Entity::getCollision() { return collision.get(); }
-
-sf::Vector2f Entity::getLastTickMovement()
-{
-    return {position.get().x - lastPos.x, position.get().y - lastPos.y};;
-}
+Sprite* Entity::getSprite() { return &sprite; }

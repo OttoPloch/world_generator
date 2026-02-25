@@ -23,11 +23,8 @@ src/conversions.cpp
 src/entity.cpp
 src/sprite.cpp
 src/asset_manager.cpp
-src/attribute.cpp
-src/motion_attribute.cpp
 src/game_position.cpp
 src/scene.cpp
-src/collision_attribute.cpp
 src/collision_rect.cpp
 src/utils.cpp
 src/sprite_animation.cpp
@@ -50,6 +47,8 @@ src/chunk_layer.cpp
 src/tile.cpp
 src/chunk.cpp
 src/chunk_generator.cpp
+src/world_position.cpp
+src/screen_position.cpp
 )
 
 target_compile_features(app PRIVATE cxx_std_17)

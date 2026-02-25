@@ -1,234 +1,40 @@
 #include "sprite.hpp"
-#include "sprite_animation.hpp"
-#include "entity.hpp"
-#include "collision_attribute.hpp"
-#include "game.hpp"
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <memory>
 
 Sprite::Sprite() {}
 
-void Sprite::create(Game* game, Entity* myEntity, sf::Texture* texture, GamePosition position, sf::Vector2f size, int z, bool centerOrigin)
-{    
-    gamerules = game->getGamerules();
-
-    this->myEntity = myEntity;
-
-    states = myEntity->getStates();
-
+Sprite::Sprite(WorldPosition position, sf::Texture* texture, sf::Vector2f size, bool sizeIsScale)
+{
     this->position = position;
-
-    spritePosition = position.get();
-    
-    this->size = size;
-
-    rotation = 0.f;
-
     this->texture = texture;
-    
+
     sprite = std::make_unique<sf::Sprite>(*texture);
-    if (centerOrigin) centerSprite();
-    sprite->setScale({size.x / sprite->getTextureRect().size.x, size.y / sprite->getTextureRect().size.y});
-    sprite->setPosition(spritePosition);
 
-    this->z = z;
+    sprite->setPosition(position.getPos());
 
-    animationSet = nullptr;
-    animation = nullptr;
-}
-
-void Sprite::centerSprite()
-{
-    sprite->setOrigin({sprite->getTextureRect().size.x / 2.f, sprite->getTextureRect().size.y / 2.f});
-}
-
-void Sprite::setSize(sf::Vector2f newSize)
-{
-    sprite->setScale({newSize.x / sprite->getTextureRect().size.x, newSize.y / sprite->getTextureRect().size.y});
-
-    size = newSize;
-}
-
-void Sprite::setRotation(float newRotation)
-{
-    sprite->setRotation(sf::degrees(newRotation));
-
-    rotation = newRotation;
-}
-
-void Sprite::setTexture(sf::Texture* newTexture)
-{
-    sprite->setTexture(*newTexture);
-    
-    texture = newTexture;
-}
-
-void Sprite::giveAnimationSet(AnimationSet* animationSet, bool resetSizeX)
-{
-    this->animationSet = animationSet;
-
-    SpriteAnimation* currentAnimation = animationSet->getAnimationFor(states->getFirstTrue("animation"));
-
-    giveAnimation(currentAnimation, resetSizeX);
-}
-
-void Sprite::giveAnimation(SpriteAnimation* animation, bool resetSizeX, bool reverse, bool start)
-{
-    if (resetSizeX)
+    if (sizeIsScale)
     {
-        float ratio = toFloat(animation->getFrameSize().x) / toFloat(animation->getFrameSize().y);
-        
-        size.x = size.y * ratio;
+        sprite->setScale(size);
+        this->size = {texture->getSize().x * size.x, texture->getSize().y * size.y};
     }
-
-    animReverse = reverse;
-    animPlaying = start;
-
-    changeAnimation(animation);
-}
-
-void Sprite::animPlay()
-{
-    animPlaying = true;
-}
-
-void Sprite::animStop()
-{
-    animPlaying = false;
-}
-
-void Sprite::animReset()
-{
-    animFrameIndex = 0;
-    animTicksToNextFrame = animTicksPerFrame;
-}
-
-void Sprite::tick()
-{
-    if (animationSet)
+    else
     {
-        if (animation)
-        {
-            if (animation->getName() != animationSet->getAnimationFor(states->getFirstTrue("animation"))->getName())
-            {
-                SpriteAnimation* currentAnimation = animationSet->getAnimationFor(states->getFirstTrue("animation"));
-
-                changeAnimation(currentAnimation);
-            }
-        }
-        else
-        {
-            SpriteAnimation* currentAnimation = animationSet->getAnimationFor(states->getFirstTrue("animation"));
-
-            giveAnimation(currentAnimation);
-        }
-
-    }
-
-    if (animation)
-    {
-        if (animPlaying)
-        {
-            animTicksToNextFrame--;
-
-            if (animTicksToNextFrame <= 0)
-            {
-                animTicksToNextFrame = animTicksPerFrame;
-        
-                if (animReverse)
-                {
-                    (animFrameIndex == 0) ? animFrameIndex = animation->getFrameCount() - 1 : animFrameIndex--;
-                }
-                else
-                {
-                    (animFrameIndex == animation->getFrameCount() - 1) ? animFrameIndex = 0 : animFrameIndex++;
-                }
-
-                sprite->setTextureRect(sf::IntRect(animation->getFrameCoords(animFrameIndex), animation->getFrameSize()));
-            }
-
-            if (animationSet)
-            {
-                float stateStrength = states->getEntry("animation", states->getFirstTrue("animation"))->second;
-                
-                if (stateStrength != 0.f) animTicksPerFrame = fabs(stateStrength) * animation->getBaseTicksPerFrame();
-            }
-        }
+        sprite->setScale({size.x / texture->getSize().x, size.y / texture->getSize().y});
+        this->size = size;
     }
 }
 
-void Sprite::update(float dt)
-{
-    if (spritePosition != position.get())
-    {
-        float xDiff = position.get().x - spritePosition.x;
-        float yDiff = position.get().y - spritePosition.y;
-
-        // note: the follow delay is divided by 100 to make the gamerule
-        // more readable, not sure if this is a bad practice or not.
-        float followDelay = gamerules->getRule("sprite_followDelay").valueFloat / 100;
-
-        float delay = followDelay / dt;
-
-        if (delay < 1.f) delay = 1.f;
-
-        (std::fabs(xDiff) < 0.001f) ? spritePosition.x = position.get().x : spritePosition.x += xDiff / delay;
-        (std::fabs(yDiff) < 0.001f) ? spritePosition.y = position.get().y : spritePosition.y += yDiff / delay;
-    }
-    
-    sprite->setPosition(spritePosition);
-}
-
-void Sprite::draw(sf::RenderWindow& window)
-{
-    window.draw(*sprite);
-}
-
-sf::Sprite Sprite::getSprite() { return *sprite; }
-
-sf::Vector2f Sprite::getSpritePosition() { return spritePosition; }
+sf::Vector2f Sprite::getPosition() { return position.getPos(); }
 
 sf::Vector2f Sprite::getSize() { return size; }
 
-float Sprite::getBottom() { return spritePosition.y + (size.y / 2.f); }
+float Sprite::left() { return position.getPos().x; }
 
-int Sprite::getZ() { return z; }
+float Sprite::right() { return position.getPos().x + size.x; }
 
-void Sprite::jumpToTarget()
-{
-    sprite->setPosition(position.get());
-    spritePosition = position.get();
-}
+float Sprite::top() { return position.getPos().y; }
 
-void Sprite::changeAnimation(SpriteAnimation* newAnimation)
-{
-    animation = newAnimation;
+float Sprite::bottom() { return position.getPos().y + size.y; }
 
-    animTicksPerFrame = animation->getBaseTicksPerFrame();
-
-    animTicksToNextFrame = animTicksPerFrame;
-    animFrameIndex = 0;
-
-    sprite->setTexture(*animation->getTexture());
-    sprite->setTextureRect(sf::IntRect(animation->getFrameCoords(0), animation->getFrameSize()));
-    centerSprite();
-    setSize(size);
-
-    if (myEntity->getCollision())
-    {
-        if (animation->hasCollisionRect())
-        {
-            sf::FloatRect collisionRect = animation->getCollisionRect();
-
-            collisionRect.position.x *= size.x;
-            collisionRect.position.y *= size.y;
-
-            collisionRect.size.x *= size.x;
-            collisionRect.size.y *= size.y;
-            
-            myEntity->getCollision()->setRect(collisionRect);
-        }
-        else
-        {
-            myEntity->getCollision()->getRect()->setToDefault();
-        }
-    }
-}
+void Sprite::draw(sf::RenderWindow& window) { window.draw(*sprite.get()); }

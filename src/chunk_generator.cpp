@@ -23,7 +23,6 @@ void ChunkGenerator::init(Game* game, std::unordered_map<sf::Vector2i, std::uniq
     noise.SetFrequency(.02f);
     int rand = getRandInt();
     noise.SetSeed(rand);
-    std::cout << "random: " << rand << '\n';
 }
 
 void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)

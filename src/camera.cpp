@@ -70,7 +70,7 @@ void Camera::update(float dt)
     {
         sf::Vector2f targetPosition;
         
-        (focus->getSprite() != nullptr) ? targetPosition = focus->getSprite()->getSpritePosition() : targetPosition = focus->getPosition();
+        targetPosition = focus->getPosition();
 
         // note: the follow delay is divided by 100 to make the gamerule
         // more readable, not sure if this is a bad practice or not.

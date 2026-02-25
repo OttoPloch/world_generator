@@ -4,7 +4,6 @@
 #include "camera.hpp"
 #include "window.hpp"
 #include "asset_manager.hpp"
-#include "collision_attribute.hpp"
 #include "entity_layer.hpp"
 #include "ui_layer.hpp"
 #include "ui_animation.hpp"
@@ -42,19 +41,12 @@ public:
     ChunkLayer* getChunkLayer();
 private:
     Game* game;
-
     Window* window;
-    
     AssetManager* assetManager;    
 
     EntityLayer entityLayer;
-
     UILayer uiLayer;
-
     ChunkLayer chunkLayer;
 
     Camera camera;
-
-    sf::RectangleShape rect;
-    sf::RectangleShape outline;
 };

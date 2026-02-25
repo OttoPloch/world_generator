@@ -66,9 +66,6 @@ void Game::run()
 {
     float ticksToProcess = 0.f;
     
-    float averageTps = 0.f;
-    int tpsCount = 0;
-
     float lastTimeCount = 0.f;
     int ticksLastSecond = 0;
 
@@ -90,16 +87,10 @@ void Game::run()
             {
                 float dtick = tickClock.restart().asSeconds();
 
-                averageTps *= tpsCount;
-                averageTps += (1.f / dtick);
-                tpsCount++;
-                averageTps /= tpsCount;
-
                 if (std::fmod(gameClock.getElapsedTime().asSeconds(), 1.f) < lastTimeCount)
                 {
                     std::cout << "dt: " << dt << "; dtick: " << dtick << '\n';
                     std::cout << "fps: " << fps << "; tps: " << 1.f / dtick << '\n';
-                    std::cout << "average tps: " << averageTps << '\n';
                     std::cout << "ticks last second: " << ticksLastSecond << '\n';
                     std::cout << "time: " << gameClock.getElapsedTime().asSeconds() << '\n';
                     std::cout << "//////////////////////////////////\n";
