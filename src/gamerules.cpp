@@ -15,7 +15,7 @@ void Gamerules::init()
         {"camera_bigZoomFactor", gamerule(bigZoomFactor, 0, false, "")},
         {"camera_smallZoomAmount", gamerule(0.1f, 0, false, "")},
         {"camera_minZoomFactor", gamerule(0.1f, 0, false, "")},
-        {"camera_maxZoomFactor", gamerule(pow(bigZoomFactor, 4), 0, false, "")},
+        {"camera_maxZoomFactor", gamerule(pow(bigZoomFactor, 8), 0, false, "")},
         {"camera_focusFollowDelay", gamerule(20.f, 0, false, "")},
         {"sprite_followDelay", gamerule(3.f, 0, false, "")},
         {"motion_friction", gamerule(0.8f, 0, false, "")},

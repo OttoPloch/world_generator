@@ -1,7 +1,6 @@
 #include "chunk.hpp"
 #include "game.hpp"
-#include "settings.hpp"
-#include <SFML/Graphics/RectangleShape.hpp>
+#include "tile_types.hpp"
 
 Chunk::Chunk() {}
 
@@ -36,6 +35,8 @@ void Chunk::init(Game* game, sf::Vector2i chunkPosition, std::vector<Tile> tiles
 
         createTileVerts(i);
     }
+
+    bgObjectStates.texture = game->getAssetManager()->getTexture("foliage");
 }
 
 void Chunk::createTileVerts(int index)
@@ -65,6 +66,49 @@ void Chunk::createTileVerts(int index)
     tileVertices[index * 6 + 5] = br;
 }
 
+void Chunk::createBgObjectVerts(std::vector<BackgroundObject> bgObjects)
+{
+    for (auto obj : bgObjects)
+    {
+        sf::Vertex tl;
+        sf::Vertex tr;
+        sf::Vertex bl;
+        sf::Vertex br;
+
+        sf::Vector2f tlPos(obj.center.x - obj.size.x / 2.f, obj.center.y - obj.size.y / 2.f);
+
+        tl.position = worldPosition + tlPos;
+        tr.position = {worldPosition.x + tlPos.x + obj.size.x, worldPosition.y + tlPos.y};
+        bl.position = {worldPosition.x + tlPos.x, worldPosition.y + tlPos.y + obj.size.y};
+        br.position = {worldPosition.x + tlPos.x + obj.size.x, worldPosition.y + tlPos.y + obj.size.y};
+
+        tl.texCoords = {obj.texCoords.x, obj.texCoords.y};
+        tr.texCoords = {obj.texCoordDimensions.x, obj.texCoords.y};
+        bl.texCoords = {obj.texCoords.x, obj.texCoordDimensions.y};
+        br.texCoords = {obj.texCoordDimensions.x, obj.texCoordDimensions.y};
+
+        bgObjectVertices.push_back(tl);
+        bgObjectVertices.push_back(tr);
+        bgObjectVertices.push_back(bl);
+        bgObjectVertices.push_back(bl);
+        bgObjectVertices.push_back(tr);
+        bgObjectVertices.push_back(br);
+    }
+}
+
+Tile* Chunk::getTile(int column, int row)
+{
+    int x = column;
+    int y = row;
+
+    while (x > chunkSize - 1) x -= chunkSize;
+    while (x < 0) x += chunkSize;
+    while (y > chunkSize - 1) y -= chunkSize;
+    while (y < 0) y += chunkSize;
+
+    return &tiles[y * chunkSize + x];
+}
+
 std::vector<Tile>* Chunk::getTiles() { return &tiles; }
 
 sf::FloatRect Chunk::getTileRect(sf::Vector2i tileLocalPosition)
@@ -81,11 +125,12 @@ void Chunk::tick()
 
 }
 
-void Chunk::draw(bool debug)
+void Chunk::draw(int layer, bool debug)
 {
-    window->getWindow().draw(&tileVertices[0], tileVertices.size(), sf::PrimitiveType::Triangles);
-
-    if (debug)
+    if (layer == 0) window->getWindow().draw(&tileVertices[0], tileVertices.size(), sf::PrimitiveType::Triangles);
+    if (layer == 1) window->getWindow().draw(&bgObjectVertices[0], bgObjectVertices.size(), sf::PrimitiveType::Triangles, bgObjectStates);
+    
+    if (layer == 2)
     {
         for (int i = 0; i < tiles.size(); i++)
         {

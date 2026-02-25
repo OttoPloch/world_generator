@@ -141,22 +141,35 @@ void ChunkLayer::tick()
 
 void ChunkLayer::draw(bool debug)
 {
-    for (auto& i : chunks)
+    int end = 1;
+    if (debug) end = 2;
+
+    for (int i = 0; i <= end; i++)
     {
-        i.second->draw(debug);
-
-        if (debug)
+        for (auto& chunk : chunks)
         {
-            sf::RectangleShape rect({
-                toFloat(game->getSettings()->getSetting("chunk_size").valueInt) * game->getSettings()->getSetting("tile_size").valueFloat,
-                toFloat(game->getSettings()->getSetting("chunk_size").valueInt) * game->getSettings()->getSetting("tile_size").valueFloat
-            });
-
-            rect.setPosition(chunkToWorldPosition(i.second->getChunkPosition()));
-            rect.setFillColor(sf::Color::Transparent);
-            rect.setOutlineThickness(15.f);
-
-            window->draw(rect);
+            chunk.second->draw(i);
         }
     }
+
+
+
+    // for (auto& i : chunks)
+    // {
+    //     i.second->draw(debug);
+
+    //     if (debug)
+    //     {
+    //         sf::RectangleShape rect({
+    //             toFloat(game->getSettings()->getSetting("chunk_size").valueInt) * game->getSettings()->getSetting("tile_size").valueFloat,
+    //             toFloat(game->getSettings()->getSetting("chunk_size").valueInt) * game->getSettings()->getSetting("tile_size").valueFloat
+    //         });
+
+    //         rect.setPosition(chunkToWorldPosition(i.second->getChunkPosition()));
+    //         rect.setFillColor(sf::Color::Transparent);
+    //         rect.setOutlineThickness(15.f);
+
+    //         window->draw(rect);
+    //     }
+    // }
 }

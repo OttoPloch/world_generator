@@ -1,9 +1,8 @@
 #include "chunk_generator.hpp"
-#include "FastNoiseLite.h"
-#include "chunk.hpp"
-#include "conversions.hpp"
 #include "game.hpp"
-#include "chunk_layer.hpp"
+#include "FastNoiseLite.h"
+#include "background_object.hpp"
+#include "tile_types.hpp"
 #include "utils.hpp"
 
 ChunkGenerator::ChunkGenerator() {}
@@ -39,16 +38,16 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
         switch (tileType)
         {
             case 0:
-                newTiles = {Tile(tileType, sf::Color::Blue)};
+                newTiles = {Tile(WATER, sf::Color::Blue)};
                 break;
             case 1:
-                newTiles = {Tile(tileType, sf::Color::Green)};
+                newTiles = {Tile(GRASS, sf::Color::Green)};
                 break;
             case 2:
-                newTiles = {Tile(tileType, sf::Color::Red)};
+                newTiles = {Tile(LAVA, sf::Color::Red)};
                 break;
             case 3:
-                newTiles = {Tile(tileType, sf::Color(255, 60, 220), true, "tile")};
+                newTiles = {Tile(PINK, sf::Color(255, 60, 220), true, "tile")};
                 break;
         }
     }
@@ -61,16 +60,16 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
             switch (tileType)
             {
                 case 0:
-                    newTiles.emplace_back(tileType, sf::Color::Blue);
+                    newTiles.emplace_back(WATER, sf::Color::Blue);
                     break;
                 case 1:
-                    newTiles.emplace_back(tileType, sf::Color::Green);
+                    newTiles.emplace_back(GRASS, sf::Color::Green);
                     break;
                 case 2:
-                    newTiles.emplace_back(tileType, sf::Color::Red);
+                    newTiles.emplace_back(LAVA, sf::Color::Red);
                     break;
                 case 3:
-                    newTiles.emplace_back(tileType, sf::Color(255, 60, 220), true, "tile");
+                    newTiles.emplace_back(PINK, sf::Color(255, 60, 220), true, "tile");
                     break;
             }
         }
@@ -103,14 +102,35 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
             }
             else
             {
-                if (noiseData[i] >= .92f) { newTiles.emplace_back(3, sf::Color::Red); }
-                else if (noiseData[i] >= .8f) { newTiles.emplace_back(2, sf::Color(150, 150, 150), true, "rock"); }
-                else if (noiseData[i] >= .3f) { newTiles.emplace_back(1, sf::Color::Green); }
-                else if (noiseData[i] - .3f > -.1f) { newTiles.emplace_back(0, sf::Color::Blue, true, "water"); }
-                else { newTiles.emplace_back(0, sf::Color::Blue); }
+                if (noiseData[i] >= .92f) { newTiles.emplace_back(LAVA, sf::Color::Red); }
+                else if (noiseData[i] >= .8f) { newTiles.emplace_back(ROCK, sf::Color(150, 150, 150), true, "rock"); }
+                else if (noiseData[i] >= .3f) { newTiles.emplace_back(GRASS, sf::Color::Green); }
+                else if (noiseData[i] - .3f > -.1f) { newTiles.emplace_back(WATER, sf::Color::Blue, true, "water"); }
+                else { newTiles.emplace_back(WATER, sf::Color::Blue); }
             }
         }
     }
 
     (*chunks)[chunkPosition] = std::make_unique<Chunk>(game, chunkPosition, newTiles);
+
+    if (genMode == 2)
+    {
+        Chunk* chunk = (*chunks)[chunkPosition].get();
+
+        std::vector<BackgroundObject> bgObjects;
+
+        for (int i = 0; i < 50; i++)
+        {
+            sf::Vector2f objCenter(getRandInt(0, chunkSize * tileSize), getRandInt(0, chunkSize * tileSize));
+            sf::Vector2f objSize(32 * 3, 24 * 3);
+            sf::Vector2f objTexCoords(0, 0);
+            sf::Vector2f objTexCoordDimensions(32, 24);
+
+            if (chunk->getTile(std::floor(objCenter.x / tileSize), std::floor(objCenter.y / tileSize))->type != GRASS) continue;
+
+            bgObjects.emplace_back(objCenter, objSize, objTexCoords, objTexCoordDimensions);
+        }
+
+        chunk->createBgObjectVerts(bgObjects);
+    }
 }
