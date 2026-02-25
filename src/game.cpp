@@ -1,4 +1,7 @@
 #include "game.hpp"
+#include <iomanip>
+#include <ios>
+#include <string>
 
 Game::Game() {}
 
@@ -69,6 +72,9 @@ void Game::run()
     float lastTimeCount = 0.f;
     int ticksLastSecond = 0;
 
+    float averageDt = 0.f;
+    int dtCount = 0;
+
     while (window.getWindow().isOpen())
     {
         dt = dtClock.restart().asSeconds();
@@ -78,6 +84,23 @@ void Game::run()
         eventHandler.processEvents();
 
         float fps = 1.f / dt;
+
+        if (dt > averageDt * 1.5f && dt > 0)
+        {
+            std::cout << "***********************************\n";
+            std::cout << ": : : : LAG SPIKE DETECTED! : : : :\n";
+            std::cout << ": : : : : : : ";
+            std::cout << std::to_string(dt).substr(0, 7);
+            std::cout << " : : : : : : :\n";
+            std::cout << ": : : : : : AVG ";
+            std::cout << std::to_string(averageDt).substr(0, 7);
+            std::cout << " : : : : : :\n";
+            std::cout << "***********************************\n";
+        }
+
+        averageDt *= dtCount++;
+        averageDt += dt;
+        averageDt /= dtCount;
 
         if (!paused)
         {
@@ -89,11 +112,12 @@ void Game::run()
 
                 if (std::fmod(gameClock.getElapsedTime().asSeconds(), 1.f) < lastTimeCount)
                 {
-                    std::cout << "dt: " << dt << "; dtick: " << dtick << '\n';
-                    std::cout << "fps: " << fps << "; tps: " << 1.f / dtick << '\n';
-                    std::cout << "ticks last second: " << ticksLastSecond << '\n';
-                    std::cout << "time: " << gameClock.getElapsedTime().asSeconds() << '\n';
-                    std::cout << "//////////////////////////////////\n";
+                    // std::cout << "dt: " << dt << "; dtick: " << dtick << '\n';
+                    // std::cout << "average dt: " << averageDt << '\n';
+                    // std::cout << "fps: " << fps << "; tps: " << 1.f / dtick << '\n';
+                    // std::cout << "ticks last second: " << ticksLastSecond << '\n';
+                    // std::cout << "time: " << gameClock.getElapsedTime().asSeconds() << '\n';
+                    // std::cout << "///////////////////////////////////\n";
 
                     scene.getUILayer()->getElement("fps display")->getAsText()->setValue(std::to_string(toInt(std::round(fps))));
 
