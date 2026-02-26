@@ -97,7 +97,6 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
 
             if (getDistance(toV2F(0, 0), toV2F(chunkPosition.x * chunkSize + tilePosition.x, chunkPosition.y * chunkSize + tilePosition.y)) < 10)
             {
-                // newTiles.emplace_back(4, sf::Color(110, 60, 30));
                 newTiles.emplace_back(4, sf::Color(20, 20, 20));
             }
             else
@@ -121,10 +120,12 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
 
         for (int i = 0; i < 50; i++)
         {
-            sf::Vector2f objCenter(getRandInt(0, chunkSize * tileSize), getRandInt(0, chunkSize * tileSize));
+            sf::Vector2f objBottom(getRandInt(0, chunkSize * tileSize), getRandInt(0, chunkSize * tileSize));
             sf::Vector2f objSize(32 * 3, 24 * 3);
             sf::Vector2f objTexCoords(0, 0);
             sf::Vector2f objTexCoordDimensions(32, 24);
+            
+            sf::Vector2f objCenter(objBottom.x, objBottom.y - objSize.y / 2.f);
 
             if (chunk->getTile(std::floor(objCenter.x / tileSize), std::floor(objCenter.y / tileSize))->type != GRASS) continue;
 
