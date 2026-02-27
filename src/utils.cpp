@@ -3,6 +3,7 @@
 #include "game.hpp"
 #include "ui_layer.hpp"
 #include "ui_element.hpp"
+#include <cstdlib>
 #include <random>
 
 float getDistance(sf::Vector2f vec1, sf::Vector2f vec2)
@@ -148,6 +149,15 @@ int getRandInt(int min, int max)
     return dist(gen);
 }
 
+int getRandInt(int seed, int min, int max)
+{
+    srand(seed);
+
+    int diff = max - min + 2;
+
+    return rand() % diff + min;
+}
+
 int getRandInt()
 {
     std::random_device rd;
@@ -243,3 +253,34 @@ bool isOnScreen(Game* game, sf::Vector2f point, bool applyView)
 
     return false;
 }
+
+// int partition(std::vector<sf::Vertex>* vertices, int low, int high)
+// {
+//     int pivot = (*vertices)[high]->getSprite()->bottom();
+
+//     int i = low - 1;
+
+//     for (int j = low; j <= high - 1; j++)
+//     {
+//         if ((*vec)[j]->getSprite()->bottom() <= pivot)
+//         {
+//             i++;
+//             std::swap((*vec)[i], (*vec)[j]);
+//         }
+//     }
+
+//     std::swap((*vec)[i + 1], (*vec)[high]);
+
+//     return (i + 1);
+// }
+
+// void sortVertices(std::vector<sf::Vertex>* vertices, int low, int high, sf::PrimitiveType type)
+// {
+//     if (low < high)
+//     {
+//         int pi = partition(vertices, low, high);
+
+//         sortVertices(vertices, low, pi - 1);
+//         sortVertices(vertices, pi + 1, high);
+//     }
+// }

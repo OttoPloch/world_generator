@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.hpp"
+#include <SFML/Graphics/PrimitiveType.hpp>
 
 class Entity;
 class Game;
@@ -27,8 +28,14 @@ sf::Vector2f UIPositionToScreenCenter(UILayer* uiLayer, UIElement* element, sf::
 
 int getRandInt(int min, int max);
 
+int getRandInt(int seed, int min, int max);
+
 int getRandInt();
 
 bool isOnScreen(Game* game, sf::Vector2f tl, sf::Vector2f size, bool applyView = true);
 
 bool isOnScreen(Game* game, sf::Vector2f point, bool applyView = true);
+
+// int partition(std::vector<sf::Vertex>* vertices, int low, int high);
+
+// void sortVertices(std::vector<sf::Vertex>* vertices, int low, int high, sf::PrimitiveType type = sf::PrimitiveType::Triangles);

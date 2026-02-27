@@ -1,4 +1,5 @@
 #include "game.hpp"
+#include "utils.hpp"
 #include <iomanip>
 #include <ios>
 #include <string>
@@ -20,6 +21,11 @@ void Game::init()
     ticksPerSecond = 60;
 
     lastWindowSize = window.getSize();
+
+    for (int i = 0; i < 100; i++)
+    {
+        log(getRandInt(getRandInt(), 10, 15), true);
+    }
 
     run();
 }

@@ -120,14 +120,32 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
 
         for (int i = 0; i < 50; i++)
         {
+            float scale = 3;
+
             sf::Vector2f objBottom(getRandInt(0, chunkSize * tileSize), getRandInt(0, chunkSize * tileSize));
-            sf::Vector2f objSize(32 * 3, 24 * 3);
+            sf::Vector2f objSize(32 * scale, 32 * scale);
             sf::Vector2f objTexCoords(0, 0);
-            sf::Vector2f objTexCoordDimensions(32, 24);
+            sf::Vector2f objTexCoordDimensions(32, 32);
+
+            switch(getRandInt(0, 2))
+            {
+                case 0:
+                    objSize = {48 * scale, 16 * scale};
+                    objTexCoords = {0, 48};
+                    objTexCoordDimensions = {48, 16};
+                    break;
+                case 1:
+                    objSize = {48 * scale, 48 * scale};
+                    objTexCoords = {48, 0};
+                    objTexCoordDimensions = {48, 48};
+                    break;
+                default:
+                    break;
+            }
             
             sf::Vector2f objCenter(objBottom.x, objBottom.y - objSize.y / 2.f);
 
-            if (chunk->getTile(std::floor(objCenter.x / tileSize), std::floor(objCenter.y / tileSize))->type != GRASS) continue;
+            if (chunk->getTile(std::floor(objBottom.x / tileSize), std::floor(objBottom.y / tileSize))->type != GRASS) continue;
 
             bgObjects.emplace_back(objCenter, objSize, objTexCoords, objTexCoordDimensions);
         }

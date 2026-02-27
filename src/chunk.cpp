@@ -36,7 +36,7 @@ void Chunk::init(Game* game, sf::Vector2i chunkPosition, std::vector<Tile> tiles
         createTileVerts(i);
     }
 
-    bgObjectStates.texture = game->getAssetManager()->getTexture("foliage");
+    bgObjectStates.texture = game->getAssetManager()->getTexture("background_foliage");
 }
 
 void Chunk::createTileVerts(int index)
@@ -83,9 +83,9 @@ void Chunk::createBgObjectVerts(std::vector<BackgroundObject> bgObjects)
         br.position = {worldPosition.x + tlPos.x + obj.size.x, worldPosition.y + tlPos.y + obj.size.y};
 
         tl.texCoords = {obj.texCoords.x, obj.texCoords.y};
-        tr.texCoords = {obj.texCoordDimensions.x, obj.texCoords.y};
-        bl.texCoords = {obj.texCoords.x, obj.texCoordDimensions.y};
-        br.texCoords = {obj.texCoordDimensions.x, obj.texCoordDimensions.y};
+        tr.texCoords = {obj.texCoords.x + obj.texCoordDimensions.x, obj.texCoords.y};
+        bl.texCoords = {obj.texCoords.x, obj.texCoords.y + obj.texCoordDimensions.y};
+        br.texCoords = {obj.texCoords.x + obj.texCoordDimensions.x, obj.texCoords.y + obj.texCoordDimensions.y};
 
         bgObjectVertices.push_back(tl);
         bgObjectVertices.push_back(tr);
