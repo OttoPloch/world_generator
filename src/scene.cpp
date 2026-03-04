@@ -1,6 +1,7 @@
 #include "scene.hpp"
 #include "game.hpp"
 
+#include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <memory>
 
@@ -88,7 +89,7 @@ void Scene::chunkUpdate()
 
 void Scene::draw()
 {
-    chunkLayer.draw();
+    chunkLayer.draw(true);
     entityLayer.draw();
     uiLayer.draw();
 }
@@ -132,6 +133,8 @@ void Scene::toggleFocus()
         //entityLayer.getEntity(1)->getMotion()->controlling = false;
     }
 }
+
+EntityLayer* Scene::getEntityLayer() { return &entityLayer; }
 
 UILayer* Scene::getUILayer() { return &uiLayer; }
 

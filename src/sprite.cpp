@@ -23,18 +23,20 @@ Sprite::Sprite(WorldPosition position, sf::Texture* texture, sf::Vector2f size, 
         sprite->setScale({size.x / texture->getSize().x, size.y / texture->getSize().y});
         this->size = size;
     }
+
+    sprite->setOrigin({this->size.x / 2.f, this->size.y / 2.f});
 }
 
 sf::Vector2f Sprite::getPosition() { return position.getPos(); }
 
 sf::Vector2f Sprite::getSize() { return size; }
 
-float Sprite::left() { return position.getPos().x; }
+float Sprite::left() { return position.getPos().x - size.x / 2.f; }
 
-float Sprite::right() { return position.getPos().x + size.x; }
+float Sprite::right() { return position.getPos().x + size.x / 2.f; }
 
-float Sprite::top() { return position.getPos().y; }
+float Sprite::top() { return position.getPos().y - size.y / 2.f; }
 
-float Sprite::bottom() { return position.getPos().y + size.y; }
+float Sprite::bottom() { return position.getPos().y + size.y / 2.f; }
 
 void Sprite::draw(sf::RenderWindow& window) { window.draw(*sprite.get()); }

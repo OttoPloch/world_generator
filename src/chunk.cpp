@@ -1,6 +1,7 @@
 #include "chunk.hpp"
 #include "game.hpp"
 #include "tile_types.hpp"
+#include <SFML/Graphics/PrimitiveType.hpp>
 
 Chunk::Chunk() {}
 
@@ -35,8 +36,6 @@ void Chunk::init(Game* game, sf::Vector2i chunkPosition, std::vector<Tile> tiles
 
         createTileVerts(i);
     }
-
-    bgObjectStates.texture = game->getAssetManager()->getTexture("background_foliage");
 }
 
 void Chunk::createTileVerts(int index)
@@ -64,36 +63,32 @@ void Chunk::createTileVerts(int index)
     tileVertices[index * 6 + 3] = bl;
     tileVertices[index * 6 + 4] = tr;
     tileVertices[index * 6 + 5] = br;
-}
 
-void Chunk::createBgObjectVerts(std::vector<BackgroundObject> bgObjects)
-{
-    for (auto obj : bgObjects)
-    {
-        sf::Vertex tl;
-        sf::Vertex tr;
-        sf::Vertex bl;
-        sf::Vertex br;
+    if (!tiles[index].collides) return;
 
-        sf::Vector2f tlPos(obj.center.x - obj.size.x / 2.f, obj.center.y - obj.size.y / 2.f);
+    sf::Vertex debug_tl;
+    sf::Vertex debug_tr;
+    sf::Vertex debug_bl;
+    sf::Vertex debug_br;
 
-        tl.position = worldPosition + tlPos;
-        tr.position = {worldPosition.x + tlPos.x + obj.size.x, worldPosition.y + tlPos.y};
-        bl.position = {worldPosition.x + tlPos.x, worldPosition.y + tlPos.y + obj.size.y};
-        br.position = {worldPosition.x + tlPos.x + obj.size.x, worldPosition.y + tlPos.y + obj.size.y};
+    debug_tl.position = tl.position;
+    debug_tr.position = tr.position;
+    debug_bl.position = bl.position;
+    debug_br.position = br.position;
 
-        tl.texCoords = {obj.texCoords.x, obj.texCoords.y};
-        tr.texCoords = {obj.texCoords.x + obj.texCoordDimensions.x, obj.texCoords.y};
-        bl.texCoords = {obj.texCoords.x, obj.texCoords.y + obj.texCoordDimensions.y};
-        br.texCoords = {obj.texCoords.x + obj.texCoordDimensions.x, obj.texCoords.y + obj.texCoordDimensions.y};
+    debug_tl.color = sf::Color::Red;
+    debug_tr.color = sf::Color::Red;
+    debug_bl.color = sf::Color::Red;
+    debug_br.color = sf::Color::Red;
 
-        bgObjectVertices.push_back(tl);
-        bgObjectVertices.push_back(tr);
-        bgObjectVertices.push_back(bl);
-        bgObjectVertices.push_back(bl);
-        bgObjectVertices.push_back(tr);
-        bgObjectVertices.push_back(br);
-    }
+    debugVertices.push_back(debug_tl);
+    debugVertices.push_back(debug_tr);
+    debugVertices.push_back(debug_tr);
+    debugVertices.push_back(debug_br);
+    debugVertices.push_back(debug_br);
+    debugVertices.push_back(debug_bl);
+    debugVertices.push_back(debug_bl);
+    debugVertices.push_back(debug_tl);
 }
 
 Tile* Chunk::getTile(int column, int row)
@@ -125,26 +120,9 @@ void Chunk::tick()
 
 }
 
-void Chunk::draw(int layer, bool debug)
+void Chunk::draw(bool debug)
 {
-    if (layer == 0) window->getWindow().draw(&tileVertices[0], tileVertices.size(), sf::PrimitiveType::Triangles);
-    if (layer == 1) window->getWindow().draw(&bgObjectVertices[0], bgObjectVertices.size(), sf::PrimitiveType::Triangles, bgObjectStates);
+    window->getWindow().draw(&tileVertices[0], tileVertices.size(), sf::PrimitiveType::Triangles);
     
-    if (layer == 2)
-    {
-        for (int i = 0; i < tiles.size(); i++)
-        {
-            if (tiles[i].collides)
-            {
-                sf::RectangleShape rect(tiles[i].getCollRect().size);
-
-                rect.setPosition(tiles[i].getCollRect().position);
-                rect.setFillColor(sf::Color::Transparent);
-                rect.setOutlineColor(sf::Color::Red);
-                rect.setOutlineThickness(10.f);
-
-                window->draw(rect);
-            }
-        }
-    }
+    if (debug) window->getWindow().draw(&debugVertices[0], debugVertices.size(), sf::PrimitiveType::Lines);
 }

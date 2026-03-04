@@ -1,6 +1,8 @@
 #include "entity_layer.hpp"
+#include "asset_manager.hpp"
 #include "game.hpp"
 #include "rect_types.hpp"
+#include "utils.hpp"
 
 #include <algorithm>
 
@@ -11,26 +13,8 @@ void EntityLayer::init(Game* game)
     this->game = game;
 
     IDCounter = 0;
-    
-    addEntity(getNewID(), {0, 0});
 
-    // this->entities.resize(entities.size());
-
-    // for (int i = 0; i < entities.size(); i++)
-    // {
-    //     this->entities[i] = std::move(entities[i]);
-    // }
-
-    // if (entities.size() > 0)
-    // {
-    //     for (int i = 0; i < entities.size(); i++)
-    //     {
-    //         if (entities[i]->getSprite())
-    //         {
-    //             entitiesZMap[entities[i]->getSprite()->getZ()].push_back(entities[i]->getID());
-    //         }
-    //     }
-    // }
+    addEntity({0, 0})->spriteInit(game->getAssetManager()->getTexture("bush"));
 
     // AssetManager* assetManager = game->getAssetManager();
 
@@ -119,45 +103,78 @@ int EntityLayer::getNewID()
     return IDCounter - 1;
 }
 
-void EntityLayer::addEntity(int ID, sf::Vector2f position)
+Entity* EntityLayer::addEntity(sf::Vector2f position)
 {
-    entities.push_back(std::make_unique<Entity>(game, ID, position));
+    int ID = getNewID();
+
+    entities[ID] = std::make_unique<Entity>(game, ID, position);
+
+    return entities[ID].get();
 }
 
 void EntityLayer::removeEntity(int ID)
 {
-    if (entities.size() > 0)
+    if (entities.find(ID) != entities.end())
     {
-        for (auto it = entities.begin(); it != entities.end(); it++)
+        entities.erase(ID);
+
+        return;
+    }
+
+    std::cout << "ERROR removing entity with ID of " << ID << ". That entity was not found.\n";
+}
+
+void EntityLayer::removeAllEntitiesInChunk(int chunkX, int chunkY)
+{
+    float chunkLength = toFloat(game->getSettings()->getSetting("chunk_size").valueInt) * game->getSettings()->getSetting("tile_size").valueFloat;
+
+    std::vector<int> entitiesToRemove;
+
+    for (auto& i : entities)
+    {
+        sf::Vector2f entityBottom = {i.second->getSprite()->getPosition().x, i.second->getSprite()->bottom()};
+
+        if (worldToChunkPosition(game, entityBottom) == sf::Vector2i(chunkX, chunkY))
         {
-            if ((*it)->getID() == ID)
-            {
-                // removeFromZMap(ID);
+            entitiesToRemove.push_back(i.second->getID());
 
-                entities.erase(it);
-
-                return;
-            }
+            std::cout << toInt(std::floor(entityBottom.x / (chunkLength))) << ", " << toInt(std::floor(entityBottom.y / (chunkLength))) << '\n';
         }
+    }
 
-        std::cout << "ERROR removing entity with ID of " << ID << ". That entity was not in the list.\n";
+    for (int i = 0; i < entitiesToRemove.size(); i++)
+    {
+        removeEntity(entitiesToRemove[i]);
     }
 }
 
 Entity* EntityLayer::getEntity(int ID)
 {
-    if (entities.size() > 0)
+    if (entities.find(ID) != entities.end())
     {
-        for (int i = 0; i < entities.size(); i++)
-        {
-            if (entities[i]->getID() == ID)
-            {
-                return entities[i].get();
-            }
-        }
+        return entities[ID].get();
     }
 
     return nullptr;
+}
+
+std::vector<Entity*> EntityLayer::getEntitiesInChunk(int chunkX, int chunkY)
+{
+    std::vector<Entity*> entitiesInChunk;
+
+    float chunkLength = toFloat(game->getSettings()->getSetting("chunk_size").valueInt) * game->getSettings()->getSetting("tile_size").valueFloat;
+
+    for (auto& i : entities)
+    {
+        sf::Vector2f entityBottom = i.second->getPosition();
+
+        if (toInt(std::floor(entityBottom.x / (chunkLength))) == chunkX && toInt(std::floor(entityBottom.y / (chunkLength))) == chunkY)
+        {
+            entitiesInChunk.push_back(i.second.get());
+        }
+    }
+
+    return entitiesInChunk;
 }
 
 // Entity* EntityLayer::getPlayer()
@@ -219,33 +236,27 @@ Entity* EntityLayer::getEntity(int ID)
 
 void EntityLayer::tick()
 {
-    if (entities.size() > 0)
+    for (auto& i : entities)
     {
-        for (int i = 0; i < entities.size(); i++)
-        {
-            entities[i]->tick();
+        i.second->tick();
 
-            // entities[i]->tick(&entities, game->getScene()->getChunkLayer()->getSurroundingTiles(entities[i]->getPosition()));
-        }
+        // entities[i]->tick(&entities, game->getScene()->getChunkLayer()->getSurroundingTiles(entities[i]->getPosition()));
     }
 }
 
 void EntityLayer::update(float dt)
 {
-    if (entities.size() > 0)
+    for (auto& i : entities)
     {
-        for (int i = 0; i < entities.size(); i++)
-        {
-            entities[i]->update(dt);
-        }
+        i.second->update(dt);
     }
 }
 
 void EntityLayer::draw()
 {
-    for (int i = 0; i < entities.size(); i++)
+    for (auto& i : entities)
     {
-        entities[i]->draw(game->getWindow()->getWindow());
+        i.second->draw(game->getWindow()->getWindow());
     }
 
     // for (auto i : entitiesZMap)

@@ -36,6 +36,8 @@ public:
 
     void toggleFocus();
 
+    EntityLayer* getEntityLayer();
+
     UILayer* getUILayer();
 
     ChunkLayer* getChunkLayer();

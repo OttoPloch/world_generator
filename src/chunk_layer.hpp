@@ -22,10 +22,6 @@ public:
     bool loadChunk(sf::Vector2i chunkPosition);
     
     bool unloadChunk(sf::Vector2i chunkPosition);
-    
-    sf::Vector2i worldToChunkPosition(sf::Vector2f position);
-    
-    sf::Vector2f chunkToWorldPosition(sf::Vector2i position);
 
     std::vector<std::vector<Tile>*> getSurroundingTiles(sf::Vector2f position);
 

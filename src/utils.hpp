@@ -36,6 +36,6 @@ bool isOnScreen(Game* game, sf::Vector2f tl, sf::Vector2f size, bool applyView =
 
 bool isOnScreen(Game* game, sf::Vector2f point, bool applyView = true);
 
-// int partition(std::vector<sf::Vertex>* vertices, int low, int high);
+sf::Vector2i worldToChunkPosition(Game* game, sf::Vector2f position);
 
-// void sortVertices(std::vector<sf::Vertex>* vertices, int low, int high, sf::PrimitiveType type = sf::PrimitiveType::Triangles);
+sf::Vector2f chunkToWorldPosition(Game* game, sf::Vector2i position);

@@ -3,6 +3,7 @@
 #include "common.hpp"
 #include "entity.hpp"
 
+#include <unordered_map>
 #include <vector>
 #include <map>
 #include <memory>
@@ -18,13 +19,17 @@ public:
 
     int getNewID();    
 
-    void addEntity(int ID, sf::Vector2f position);
+    Entity* addEntity(sf::Vector2f position);
 
     void removeEntity(int ID);
+
+    void removeAllEntitiesInChunk(int chunkX, int chunkY);
 
     // If you are modifying the sprite of this entity, call
     // removeFromZMap() before and addToZMap() after.
     Entity* getEntity(int ID);
+
+    std::vector<Entity*> getEntitiesInChunk(int chunkX, int chunkY);
 
     // Entity* getPlayer();
 
@@ -52,7 +57,7 @@ private:
 
     int IDCounter;
 
-    std::vector<std::unique_ptr<Entity>> entities;
+    std::unordered_map<int, std::unique_ptr<Entity>> entities;
 
     // std::map<int, std::vector<int>> entitiesZMap;
 

@@ -1,5 +1,6 @@
 #include "chunk_layer.hpp"
 #include "chunk.hpp"
+#include "entity_layer.hpp"
 #include "game.hpp"
 #include "utils.hpp"
 #include <array>
@@ -41,29 +42,17 @@ bool ChunkLayer::unloadChunk(sf::Vector2i chunkPosition)
     {
         chunks.erase(chunkPosition);
 
+        game->getScene()->getEntityLayer()->removeAllEntitiesInChunk(chunkPosition.x, chunkPosition.y);
+
         return true;
     }
 
     return false;
 }
 
-sf::Vector2i ChunkLayer::worldToChunkPosition(sf::Vector2f position)
-{
-    float chunkSize = game->getSettings()->getSetting("tile_size").valueFloat * toFloat(game->getSettings()->getSetting("chunk_size").valueInt);
-
-    return {toInt(std::floor(position.x / chunkSize)), toInt(std::floor(position.y / chunkSize))};
-}
-
-sf::Vector2f ChunkLayer::chunkToWorldPosition(sf::Vector2i position)
-{
-    float chunkSize = game->getSettings()->getSetting("tile_size").valueFloat * toFloat(game->getSettings()->getSetting("chunk_size").valueInt);
-
-    return {position.x * chunkSize, position.y * chunkSize};
-}
-
 std::vector<std::vector<Tile>*> ChunkLayer::getSurroundingTiles(sf::Vector2f position)
 {
-    sf::Vector2i convertedPosition = worldToChunkPosition(position);
+    sf::Vector2i convertedPosition = worldToChunkPosition(game, position);
 
     std::array<sf::Vector2i, 9> chunksToSearch = {
         sf::Vector2i(convertedPosition.x - 1, convertedPosition.y - 1),
@@ -94,7 +83,7 @@ void ChunkLayer::update()
 {
     int renderDist = game->getSettings()->getSetting("chunk_render_distance").valueInt;
 
-    sf::Vector2i centerChunk = worldToChunkPosition(window->getWindow().getView().getCenter());
+    sf::Vector2i centerChunk = worldToChunkPosition(game, window->getWindow().getView().getCenter());
 
     for (int y = -renderDist; y <= renderDist; y++)
     {
@@ -129,7 +118,7 @@ void ChunkLayer::tick()
         i.second->tick();
     }
 
-    sf::Vector2i currChunkPos = worldToChunkPosition(window->getWindow().getView().getCenter());
+    sf::Vector2i currChunkPos = worldToChunkPosition(game, window->getWindow().getView().getCenter());
 
     if (currChunkPos != lastChunkPos)
     {
@@ -141,35 +130,22 @@ void ChunkLayer::tick()
 
 void ChunkLayer::draw(bool debug)
 {
-    int end = 1;
-    if (debug) end = 2;
-
-    for (int i = 0; i <= end; i++)
+    for (auto& chunk : chunks)
     {
-        for (auto& chunk : chunks)
+        chunk.second->draw(debug);
+
+        if (false)
         {
-            chunk.second->draw(i);
+            sf::RectangleShape rect({
+                toFloat(game->getSettings()->getSetting("chunk_size").valueInt) * game->getSettings()->getSetting("tile_size").valueFloat,
+                toFloat(game->getSettings()->getSetting("chunk_size").valueInt) * game->getSettings()->getSetting("tile_size").valueFloat
+            });
+
+            rect.setPosition(chunkToWorldPosition(game, chunk.second->getChunkPosition()));
+            rect.setFillColor(sf::Color::Transparent);
+            rect.setOutlineThickness(15.f);
+
+            window->draw(rect);
         }
     }
-
-
-
-    // for (auto& i : chunks)
-    // {
-    //     i.second->draw(debug);
-
-    //     if (debug)
-    //     {
-    //         sf::RectangleShape rect({
-    //             toFloat(game->getSettings()->getSetting("chunk_size").valueInt) * game->getSettings()->getSetting("tile_size").valueFloat,
-    //             toFloat(game->getSettings()->getSetting("chunk_size").valueInt) * game->getSettings()->getSetting("tile_size").valueFloat
-    //         });
-
-    //         rect.setPosition(chunkToWorldPosition(i.second->getChunkPosition()));
-    //         rect.setFillColor(sf::Color::Transparent);
-    //         rect.setOutlineThickness(15.f);
-
-    //         window->draw(rect);
-    //     }
-    // }
 }

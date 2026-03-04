@@ -254,33 +254,16 @@ bool isOnScreen(Game* game, sf::Vector2f point, bool applyView)
     return false;
 }
 
-// int partition(std::vector<sf::Vertex>* vertices, int low, int high)
-// {
-//     int pivot = (*vertices)[high]->getSprite()->bottom();
+sf::Vector2i worldToChunkPosition(Game* game, sf::Vector2f position)
+{
+    float chunkSize = game->getSettings()->getSetting("tile_size").valueFloat * toFloat(game->getSettings()->getSetting("chunk_size").valueInt);
 
-//     int i = low - 1;
+    return {toInt(std::floor(position.x / chunkSize)), toInt(std::floor(position.y / chunkSize))};
+}
 
-//     for (int j = low; j <= high - 1; j++)
-//     {
-//         if ((*vec)[j]->getSprite()->bottom() <= pivot)
-//         {
-//             i++;
-//             std::swap((*vec)[i], (*vec)[j]);
-//         }
-//     }
+sf::Vector2f chunkToWorldPosition(Game* game, sf::Vector2i position)
+{
+    float chunkSize = game->getSettings()->getSetting("tile_size").valueFloat * toFloat(game->getSettings()->getSetting("chunk_size").valueInt);
 
-//     std::swap((*vec)[i + 1], (*vec)[high]);
-
-//     return (i + 1);
-// }
-
-// void sortVertices(std::vector<sf::Vertex>* vertices, int low, int high, sf::PrimitiveType type)
-// {
-//     if (low < high)
-//     {
-//         int pi = partition(vertices, low, high);
-
-//         sortVertices(vertices, low, pi - 1);
-//         sortVertices(vertices, pi + 1, high);
-//     }
-// }
+    return {position.x * chunkSize, position.y * chunkSize};
+}

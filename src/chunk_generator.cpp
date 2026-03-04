@@ -1,7 +1,7 @@
 #include "chunk_generator.hpp"
+#include "entity_layer.hpp"
 #include "game.hpp"
 #include "FastNoiseLite.h"
-#include "background_object.hpp"
 #include "tile_types.hpp"
 #include "utils.hpp"
 
@@ -104,8 +104,45 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
                 if (noiseData[i] >= .92f) { newTiles.emplace_back(LAVA, sf::Color::Red); }
                 else if (noiseData[i] >= .8f) { newTiles.emplace_back(ROCK, sf::Color(150, 150, 150), true, "rock"); }
                 else if (noiseData[i] >= .3f) { newTiles.emplace_back(GRASS, sf::Color::Green); }
-                else if (noiseData[i] - .3f > -.1f) { newTiles.emplace_back(WATER, sf::Color::Blue, true, "water"); }
+                else if (noiseData[i] - .3f > -.1f) { newTiles.emplace_back(WATER, sf::Color::Blue); }
                 else { newTiles.emplace_back(WATER, sf::Color::Blue); }
+            }
+        }
+
+        // water collides if next to non-water tile
+        int end = newTiles.size() - 1;
+        for (int i = 0; i <= end; i++)
+        {
+            if (newTiles[i].type == WATER)
+            {
+                if (
+                    newTiles[i - 1].type != WATER ||
+                    newTiles[i + 1].type != WATER ||
+                    newTiles[i - chunkSize].type != WATER ||
+                    newTiles[i + chunkSize].type != WATER ||
+                    i % chunkSize == 0 ||
+                    i % chunkSize == chunkSize - 1 ||
+                    i < chunkSize ||
+                    i >= newTiles.size() - chunkSize)
+                {
+                    newTiles[i].collides = true;
+                    newTiles[i].colliderName = "water";
+                } 
+
+                // if (i == 0 || newTiles[i - 1].type != WATER)
+                // {
+                //     if (i == end || newTiles[i + 1].type != WATER)
+                //     {
+                //         if (i <= chunkSize || newTiles[i - chunkSize].type != WATER)
+                //         {
+                //             if (i >= end - chunkSize || newTiles[i + chunkSize].type != WATER)
+                //             {
+                //                 newTiles[i].collides = true;
+                //                 newTiles[i].colliderName = "water";
+                //             }
+                //         }
+                //     }
+                // } 
             }
         }
     }
@@ -114,42 +151,23 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
 
     if (genMode == 2)
     {
-        Chunk* chunk = (*chunks)[chunkPosition].get();
+        EntityLayer* entityLayer = game->getScene()->getEntityLayer();
 
-        std::vector<BackgroundObject> bgObjects;
+        Chunk* chunk = (*chunks)[chunkPosition].get();
 
         for (int i = 0; i < 50; i++)
         {
             float scale = 3;
 
-            sf::Vector2f objBottom(getRandInt(0, chunkSize * tileSize), getRandInt(0, chunkSize * tileSize));
-            sf::Vector2f objSize(32 * scale, 32 * scale);
-            sf::Vector2f objTexCoords(0, 0);
-            sf::Vector2f objTexCoordDimensions(32, 32);
+            sf::Vector2f chunkWorldPos(chunkPosition.x * chunkSize * tileSize, chunkPosition.y * chunkSize * tileSize);
+            sf::Vector2f entityBottom(getRandInt(1, chunkSize * tileSize - 1), getRandInt(1, chunkSize * tileSize - 1));
+            sf::Texture* entityTexture = game->getAssetManager()->getTexture("bush");
 
-            switch(getRandInt(0, 2))
-            {
-                case 0:
-                    objSize = {48 * scale, 16 * scale};
-                    objTexCoords = {0, 48};
-                    objTexCoordDimensions = {48, 16};
-                    break;
-                case 1:
-                    objSize = {48 * scale, 48 * scale};
-                    objTexCoords = {48, 0};
-                    objTexCoordDimensions = {48, 48};
-                    break;
-                default:
-                    break;
-            }
-            
-            sf::Vector2f objCenter(objBottom.x, objBottom.y - objSize.y / 2.f);
+            if (chunk->getTile(std::floor(entityBottom.x / tileSize), std::floor(entityBottom.y / tileSize))->type != GRASS) continue;
 
-            if (chunk->getTile(std::floor(objBottom.x / tileSize), std::floor(objBottom.y / tileSize))->type != GRASS) continue;
-
-            bgObjects.emplace_back(objCenter, objSize, objTexCoords, objTexCoordDimensions);
+            entityLayer
+                ->addEntity({chunkWorldPos.x + entityBottom.x, chunkWorldPos.y + entityBottom.y - entityTexture->getSize().y / 2.f})
+                ->spriteInit(game->getAssetManager()->getTexture("bush"));
         }
-
-        chunk->createBgObjectVerts(bgObjects);
     }
 }
