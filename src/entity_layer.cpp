@@ -137,8 +137,6 @@ void EntityLayer::removeAllEntitiesInChunk(int chunkX, int chunkY)
         if (worldToChunkPosition(game, entityBottom) == sf::Vector2i(chunkX, chunkY))
         {
             entitiesToRemove.push_back(i.second->getID());
-
-            std::cout << toInt(std::floor(entityBottom.x / (chunkLength))) << ", " << toInt(std::floor(entityBottom.y / (chunkLength))) << '\n';
         }
     }
 
