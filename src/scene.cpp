@@ -95,7 +95,7 @@ void Scene::chunkUpdate()
 
 void Scene::draw()
 {
-    chunkLayer.draw(true);
+    chunkLayer.draw(false);
     entityLayer.draw();
     uiLayer.draw();
 }

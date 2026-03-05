@@ -134,7 +134,7 @@ void ChunkLayer::draw(bool debug)
     {
         chunk.second->draw(debug);
 
-        if (debug)
+        if (false)
         {
             sf::RectangleShape rect({
                 toFloat(game->getSettings()->getSetting("chunk_size").valueInt) * game->getSettings()->getSetting("tile_size").valueFloat,
