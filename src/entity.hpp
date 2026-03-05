@@ -21,16 +21,16 @@ public:
 
     int getID();
 
-    void tick();
+    virtual void tick();
 
-    void update(float dt);
+    virtual void update(float dt);
 
-    void draw(sf::RenderWindow& window);
+    virtual void draw(sf::RenderWindow& window);
 
     sf::Vector2f getPosition();
 
     Sprite* getSprite();
-private:
+protected:
     Game* game;
 
     int ID;

@@ -24,7 +24,7 @@ int Entity::getID() { return ID; }
 
 void Entity::tick()
 {
-
+    sprite.syncPos();
 }
 
 void Entity::update(float dt)

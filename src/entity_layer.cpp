@@ -4,6 +4,7 @@
 #include "rect_types.hpp"
 #include "utils.hpp"
 
+#include <SFML/System/Vector2.hpp>
 #include <algorithm>
 
 EntityLayer::EntityLayer() {}
@@ -15,6 +16,8 @@ void EntityLayer::init(Game* game)
     IDCounter = 0;
 
     addEntity({0, 0})->spriteInit(game->getAssetManager()->getTexture("bush"));
+
+    addMob({-300, 300})->spriteInit(game->getAssetManager()->getTexture("shaq_time_out"));
 
     // AssetManager* assetManager = game->getAssetManager();
 
@@ -110,6 +113,21 @@ Entity* EntityLayer::addEntity(sf::Vector2f position)
     entities[ID] = std::make_unique<Entity>(game, ID, position);
 
     return entities[ID].get();
+}
+
+Mob* EntityLayer::addMob(sf::Vector2f position)
+{
+    int ID = getNewID();
+    
+    entities[ID] = std::make_unique<Mob>(game, ID, position);
+    
+    Mob* asMob = dynamic_cast<Mob*>(entities[ID].get());
+
+    // TEMP
+    asMob->velocity.x = 1;
+
+    return asMob;
+
 }
 
 void EntityLayer::removeEntity(int ID)

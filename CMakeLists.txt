@@ -49,6 +49,7 @@ src/chunk.cpp
 src/chunk_generator.cpp
 src/world_position.cpp
 src/screen_position.cpp
+src/mob.cpp
 )
 
 target_compile_features(app PRIVATE cxx_std_17)

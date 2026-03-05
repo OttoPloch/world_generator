@@ -96,7 +96,7 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
 
             sf::Vector2i tilePosition = {i % chunkSize, toInt(std::floor(i / chunkSize))};
 
-            if (getDistance(toV2F(0, 0), toV2F(chunkPosition.x * chunkSize + tilePosition.x, chunkPosition.y * chunkSize + tilePosition.y)) < 10)
+            if (getDistance({-tileSize / 2.f, -tileSize / 2.f}, {chunkPosition.x * chunkSize * tileSize + tilePosition.x * tileSize, chunkPosition.y * chunkSize * tileSize + tilePosition.y * tileSize}) <= tileSize * 10)
             {
                 newTiles.emplace_back(4, sf::Color(20, 20, 20));
             }

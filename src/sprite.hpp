@@ -21,6 +21,8 @@ public:
     float top();
     float bottom();
 
+    void syncPos();
+
     void draw(sf::RenderWindow& window);
 
     std::unique_ptr<sf::Sprite> sprite;

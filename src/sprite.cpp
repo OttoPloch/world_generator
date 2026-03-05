@@ -42,4 +42,6 @@ float Sprite::top() { return position.getPos().y - size.y / 2.f; }
 
 float Sprite::bottom() { return position.getPos().y + size.y / 2.f; }
 
+void Sprite::syncPos() { sprite->setPosition(position.getPos()); }
+
 void Sprite::draw(sf::RenderWindow& window) { window.draw(*sprite.get()); }
