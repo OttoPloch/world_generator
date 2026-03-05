@@ -13,9 +13,11 @@ Entity::Entity(Game* game, int ID, sf::Vector2f position) : game(game), ID(ID)
 
 Entity::Entity(Game* game, int ID, WorldPosition position) : game(game), ID(ID), position(position) {}
 
-void Entity::spriteInit(sf::Texture* texture, sf::Vector2f size, bool sizeIsScale)
+Sprite* Entity::spriteInit(sf::Texture* texture, sf::Vector2f size, bool sizeIsScale, bool usingTexCoords, sf::IntRect texCoords)
 {
-    sprite = Sprite(this->position, texture, size, sizeIsScale);
+    sprite = Sprite(this->position, texture, size, sizeIsScale, usingTexCoords, texCoords);
+
+    return &sprite;
 }
 
 int Entity::getID() { return ID; }

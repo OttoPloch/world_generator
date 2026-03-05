@@ -1,10 +1,11 @@
 #include "sprite.hpp"
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <memory>
 
 Sprite::Sprite() {}
 
-Sprite::Sprite(WorldPosition position, sf::Texture* texture, sf::Vector2f size, bool sizeIsScale)
+Sprite::Sprite(WorldPosition position, sf::Texture* texture, sf::Vector2f size, bool sizeIsScale, bool usingTexCoords, sf::IntRect texCoords)
 {
     this->position = position;
     this->texture = texture;
@@ -13,18 +14,20 @@ Sprite::Sprite(WorldPosition position, sf::Texture* texture, sf::Vector2f size, 
 
     sprite->setPosition(position.getPos());
 
+    if (usingTexCoords) sprite->setTextureRect(texCoords);
+
     if (sizeIsScale)
     {
         sprite->setScale(size);
-        this->size = {texture->getSize().x * size.x, texture->getSize().y * size.y};
+        this->size = {sprite->getTextureRect().size.x * size.x, sprite->getTextureRect().size.y * size.y};
     }
     else
     {
-        sprite->setScale({size.x / texture->getSize().x, size.y / texture->getSize().y});
+        sprite->setScale({size.x / sprite->getTextureRect().size.x, size.y / sprite->getTextureRect().size.y});
         this->size = size;
     }
 
-    sprite->setOrigin({this->size.x / 2.f, this->size.y / 2.f});
+    sprite->setOrigin({sprite->getTextureRect().size.x / 2.f, sprite->getTextureRect().size.y / 2.f});
 }
 
 sf::Vector2f Sprite::getPosition() { return position.getPos(); }

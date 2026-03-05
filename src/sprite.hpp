@@ -11,7 +11,7 @@ class Sprite
 public:
     Sprite();
 
-    Sprite(WorldPosition position, sf::Texture* texture, sf::Vector2f size = {1.f, 1.f}, bool sizeIsScale = true);
+    Sprite(WorldPosition position, sf::Texture* texture, sf::Vector2f size = {1.f, 1.f}, bool sizeIsScale = true, bool usingTexCoords = false, sf::IntRect texCoords = sf::IntRect({0, 0}, {0, 0}));
 
     sf::Vector2f getPosition();
     sf::Vector2f getSize();
@@ -22,6 +22,8 @@ public:
     float bottom();
 
     void draw(sf::RenderWindow& window);
+
+    std::unique_ptr<sf::Sprite> sprite;
 private:
     WorldPosition position;
 
@@ -29,5 +31,5 @@ private:
 
     sf::Texture* texture;
 
-    std::unique_ptr<sf::Sprite> sprite;
+    sf::FloatRect texCoords;
 };

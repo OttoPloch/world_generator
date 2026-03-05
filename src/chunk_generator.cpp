@@ -4,6 +4,7 @@
 #include "FastNoiseLite.h"
 #include "tile_types.hpp"
 #include "utils.hpp"
+#include <SFML/Graphics/Rect.hpp>
 
 ChunkGenerator::ChunkGenerator() {}
     
@@ -127,22 +128,7 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
                 {
                     newTiles[i].collides = true;
                     newTiles[i].colliderName = "water";
-                } 
-
-                // if (i == 0 || newTiles[i - 1].type != WATER)
-                // {
-                //     if (i == end || newTiles[i + 1].type != WATER)
-                //     {
-                //         if (i <= chunkSize || newTiles[i - chunkSize].type != WATER)
-                //         {
-                //             if (i >= end - chunkSize || newTiles[i + chunkSize].type != WATER)
-                //             {
-                //                 newTiles[i].collides = true;
-                //                 newTiles[i].colliderName = "water";
-                //             }
-                //         }
-                //     }
-                // } 
+                }
             }
         }
     }
@@ -155,19 +141,33 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
 
         Chunk* chunk = (*chunks)[chunkPosition].get();
 
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < 30; i++)
         {
-            float scale = 3;
-
             sf::Vector2f chunkWorldPos(chunkPosition.x * chunkSize * tileSize, chunkPosition.y * chunkSize * tileSize);
             sf::Vector2f entityBottom(getRandInt(1, chunkSize * tileSize - 1), getRandInt(1, chunkSize * tileSize - 1));
-            sf::Texture* entityTexture = game->getAssetManager()->getTexture("bush");
+            sf::Texture* entityTexture = game->getAssetManager()->getTexture("background_foliage");
+            sf::IntRect entityTexCoords;
+            
+            switch (getRandInt(0, 2))
+            {
+                case 0:
+                    entityTexCoords = sf::IntRect({0, 0}, {32, 32});
+                    break;
+                case 1:
+                    entityTexCoords = sf::IntRect({0, 48}, {64, 16});
+                    break;
+                default:
+                    entityTexCoords = sf::IntRect({48, 0}, {48, 48});
+                    break;
+            }
 
             if (chunk->getTile(std::floor(entityBottom.x / tileSize), std::floor(entityBottom.y / tileSize))->type != GRASS) continue;
 
+            float scale = game->getSettings()->getSetting("generation_foliage_scale").valueFloat;
+
             entityLayer
-                ->addEntity({chunkWorldPos.x + entityBottom.x, chunkWorldPos.y + entityBottom.y - entityTexture->getSize().y / 2.f})
-                ->spriteInit(game->getAssetManager()->getTexture("bush"));
+                ->addEntity({chunkWorldPos.x + entityBottom.x, chunkWorldPos.y + entityBottom.y - (entityTexCoords.size.y * scale) / 2.f})
+                ->spriteInit(entityTexture, {scale, scale}, true, true, entityTexCoords);
         }
     }
 }

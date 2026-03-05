@@ -22,11 +22,6 @@ void Game::init()
 
     lastWindowSize = window.getSize();
 
-    for (int i = 0; i < 100; i++)
-    {
-        log(getRandInt(getRandInt(), 10, 15), true);
-    }
-
     run();
 }
 

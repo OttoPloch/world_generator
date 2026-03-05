@@ -1,8 +1,11 @@
 #include "scene.hpp"
 #include "game.hpp"
+#include "input.hpp"
+#include "utils.hpp"
 
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Window/Mouse.hpp>
 #include <memory>
 
 Scene::Scene() {}
@@ -31,6 +34,9 @@ void Scene::tick()
     entityLayer.tick();
 
     chunkLayer.tick();
+
+    sf::Vector2i mouseChunkPos = worldToChunkPosition(game, window->getWindow().mapPixelToCoords(sf::Mouse::getPosition(window->getWindow())));
+    uiLayer.getElement("mouse chunk pos display")->getAsText()->setValue(std::to_string(mouseChunkPos.x) + ", " + std::to_string(mouseChunkPos.y));
 }
 
 void Scene::update(float dt)

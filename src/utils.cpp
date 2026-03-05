@@ -153,7 +153,7 @@ int getRandInt(int seed, int min, int max)
 {
     srand(seed);
 
-    int diff = max - min + 2;
+    int diff = max - min + 1;
 
     return rand() % diff + min;
 }

@@ -118,7 +118,7 @@ void ChunkLayer::tick()
         i.second->tick();
     }
 
-    sf::Vector2i currChunkPos = worldToChunkPosition(game, window->getWindow().getView().getCenter());
+    sf::Vector2i currChunkPos = worldToChunkPosition(game, game->getScene()->getCamera()->getCenter());
 
     if (currChunkPos != lastChunkPos)
     {
@@ -134,7 +134,7 @@ void ChunkLayer::draw(bool debug)
     {
         chunk.second->draw(debug);
 
-        if (false)
+        if (debug)
         {
             sf::RectangleShape rect({
                 toFloat(game->getSettings()->getSetting("chunk_size").valueInt) * game->getSettings()->getSetting("tile_size").valueFloat,
@@ -143,7 +143,7 @@ void ChunkLayer::draw(bool debug)
 
             rect.setPosition(chunkToWorldPosition(game, chunk.second->getChunkPosition()));
             rect.setFillColor(sf::Color::Transparent);
-            rect.setOutlineThickness(15.f);
+            rect.setOutlineThickness(5.f);
 
             window->draw(rect);
         }

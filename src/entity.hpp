@@ -17,7 +17,7 @@ public:
 
     Entity(Game* game, int ID, WorldPosition position);
 
-    void spriteInit(sf::Texture* texture, sf::Vector2f size = {1.f, 1.f}, bool sizeIsScale = true);
+    Sprite* spriteInit(sf::Texture* texture, sf::Vector2f size = {1.f, 1.f}, bool sizeIsScale = true, bool usingTexCoords = false, sf::IntRect texCoords = sf::IntRect({0, 0}, {0, 0}));
 
     int getID();
 
