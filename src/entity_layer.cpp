@@ -1,7 +1,7 @@
 #include "entity_layer.hpp"
 #include "asset_manager.hpp"
 #include "game.hpp"
-#include "rect_types.hpp"
+#include "rect_type.hpp"
 #include "utils.hpp"
 
 #include <SFML/System/Vector2.hpp>
@@ -124,7 +124,7 @@ Mob* EntityLayer::addMob(sf::Vector2f position)
     Mob* asMob = dynamic_cast<Mob*>(entities[ID].get());
 
     // TEMP
-    asMob->velocity.x = 1;
+    asMob->velocity.x = 5;
 
     return asMob;
 
@@ -243,18 +243,23 @@ std::vector<Entity*> EntityLayer::getEntitiesInChunk(int chunkX, int chunkY)
 //     entity->giveMotion(mass, controlling);
 // }
 
-// void EntityLayer::giveEntityCollision(int ID, std::string name, int rectType, std::vector<std::string> blacklist, sf::Vector2f offsetFraction, sf::Vector2f size, bool sizeIsFraction)
+// void EntityLayer::giveEntityCollision(int ID, std::string name, int RectType, std::vector<std::string> blacklist, sf::Vector2f offsetFraction, sf::Vector2f size, bool sizeIsFraction)
 // {
 //     Entity* entity = getEntity(ID);
 
-//     entity->giveCollision(&entities, name, rectType, blacklist, offsetFraction, size, sizeIsFraction);
+//     entity->giveCollision(&entities, name, RectType, blacklist, offsetFraction, size, sizeIsFraction);
 // }
 
 void EntityLayer::tick()
 {
     for (auto& i : entities)
     {
-        i.second->tick();
+        Chunk* entityChunk = game->getScene()->getChunkLayer()->getChunk(worldToChunkPosition(game, i.second->getPosition()));
+
+        if (entityChunk && entityChunk->state == ChunkState::ACTIVE)
+        {
+            i.second->tick();
+        }
 
         // entities[i]->tick(&entities, game->getScene()->getChunkLayer()->getSurroundingTiles(entities[i]->getPosition()));
     }
@@ -264,7 +269,12 @@ void EntityLayer::update(float dt)
 {
     for (auto& i : entities)
     {
-        i.second->update(dt);
+        Chunk* entityChunk = game->getScene()->getChunkLayer()->getChunk(worldToChunkPosition(game, i.second->getPosition()));
+
+        if (entityChunk && entityChunk->state == ChunkState::ACTIVE)
+        {
+            i.second->update(dt);
+        }
     }
 }
 
@@ -272,7 +282,12 @@ void EntityLayer::draw()
 {
     for (auto& i : entities)
     {
-        i.second->draw(game->getWindow()->getWindow());
+        Chunk* entityChunk = game->getScene()->getChunkLayer()->getChunk(worldToChunkPosition(game, i.second->getPosition()));
+
+        if (entityChunk && entityChunk->state == ChunkState::ACTIVE)
+        {
+            i.second->draw(game->getWindow()->getWindow());
+        }
     }
 
     // for (auto i : entitiesZMap)

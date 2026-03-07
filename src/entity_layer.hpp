@@ -48,7 +48,7 @@ public:
 
     // void giveEntityMotion(int ID, float mass, bool controlling = false);
 
-    // void giveEntityCollision(int ID, std::string name, int rectType, std::vector<std::string> blacklist = {}, sf::Vector2f offsetFraction = {0, 0}, sf::Vector2f size = {1, 1}, bool sizeIsFraction = true);
+    // void giveEntityCollision(int ID, std::string name, int RectType, std::vector<std::string> blacklist = {}, sf::Vector2f offsetFraction = {0, 0}, sf::Vector2f size = {1, 1}, bool sizeIsFraction = true);
 
     void tick();
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.hpp"
+#include "states.hpp"
 
 #include <map>
 
@@ -11,15 +12,15 @@ class AnimationSet
 public:
     AnimationSet();
 
-    AnimationSet(std::string setName, std::unordered_map<int, SpriteAnimation*> animations);
+    AnimationSet(std::string setName, std::unordered_map<AnimationState, SpriteAnimation*> animations);
 
-    void init(std::string setName, std::unordered_map<int, SpriteAnimation*> animations);
+    void init(std::string setName, std::unordered_map<AnimationState, SpriteAnimation*> animations);
 
-    SpriteAnimation* getAnimationFor(int key);
+    SpriteAnimation* getAnimationFor(AnimationState key);
 
     int getKeyFor(SpriteAnimation* animation);
 private:
     std::string setName;
 
-    std::unordered_map<int, SpriteAnimation*> animations;
+    std::unordered_map<AnimationState, SpriteAnimation*> animations;
 };

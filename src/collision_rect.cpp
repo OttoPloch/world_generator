@@ -4,7 +4,7 @@
 
 CollisionRect::CollisionRect() {}
 
-void CollisionRect::init(GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::string colliderName, int rectType, std::vector<std::string> blacklist)
+void CollisionRect::init(GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::string colliderName, RectType rectType, std::vector<std::string> blacklist)
 {
     this->position = position;
     this->offset = offset;
@@ -145,7 +145,7 @@ void CollisionRect::setToDefault()
 
 std::string CollisionRect::getColliderName() { return colliderName; }
 
-int CollisionRect::getType() { return rectType; }
+RectType CollisionRect::getType() { return rectType; }
 
 void CollisionRect::setBlacklist(std::vector<std::string> newList)
 {

@@ -179,16 +179,16 @@ AnimationSet* AssetManager::getAnimSet(std::string name)
             // load animation set
             std::ifstream setFile("../../assets/animations/sets/" + name + ".animset");
 
-            std::unordered_map<int, SpriteAnimation*> animations;
+            std::unordered_map<AnimationState, SpriteAnimation*> animations;
 
-            std::vector<int> states;
+            std::vector<AnimationState> states;
             std::vector<std::string> animNames;
 
             std::string line;
 
             while (std::getline(setFile, line))
             {
-                if (line.substr(0, 5) == "state") states.push_back(animationStringToState[line.substr(6)]);
+                if (line.substr(0, 5) == "state") states.push_back(static_cast<AnimationState>(animationStringToState[line.substr(6)]));
                 if (line.substr(0, 4) == "anim") animNames.push_back(line.substr(5));
             }
 

@@ -1,8 +1,10 @@
 #include "chunk_layer.hpp"
 #include "chunk.hpp"
+#include "chunk_state.hpp"
 #include "entity_layer.hpp"
 #include "game.hpp"
 #include "utils.hpp"
+#include <SFML/Graphics/PrimitiveType.hpp>
 #include <array>
 #include <string>
 
@@ -21,7 +23,37 @@ void ChunkLayer::init(Game* game)
 
     chunkGenerator.init(game, &chunks);
 
-    lastChunkPos = {999, 999};
+    lastChunkPos = {99999, 99999};
+
+    loadNearbyChunks();
+}
+
+void ChunkLayer::loadNearbyChunks()
+{
+    int renderDist = game->getSettings()->getSetting("chunk_render_distance").valueInt;
+    int loadDist = game->getSettings()->getSetting("chunk_load_distance").valueInt;
+ 
+    sf::Vector2i currChunkPos = worldToChunkPosition(game, game->getScene()->getCamera()->getCenter());
+
+    if (currChunkPos != lastChunkPos)
+    {
+        for (int y = -loadDist; y <= loadDist; y++)
+        {
+            for (int x = -loadDist; x <= loadDist; x++)
+            {
+                loadChunk({currChunkPos.x + x, currChunkPos.y + y});
+
+                if (y >= -renderDist && y <= renderDist && x >= -renderDist && x <= renderDist)
+                {
+                    chunks[{currChunkPos.x + x, currChunkPos.y + y}]->state = ChunkState::ACTIVE;
+                }
+                else
+                {
+                    chunks[{currChunkPos.x + x, currChunkPos.y + y}]->state = ChunkState::ASLEEP;
+                }
+            }
+        }
+    }
 }
 
 bool ChunkLayer::loadChunk(sf::Vector2i chunkPosition)
@@ -48,6 +80,16 @@ bool ChunkLayer::unloadChunk(sf::Vector2i chunkPosition)
     }
 
     return false;
+}
+
+Chunk* ChunkLayer::getChunk(sf::Vector2i chunkPosition)
+{
+    if (chunks.find(chunkPosition) != chunks.end())
+    {
+        return chunks[chunkPosition].get();
+    }
+
+    return nullptr;
 }
 
 std::vector<std::vector<Tile>*> ChunkLayer::getSurroundingTiles(sf::Vector2f position)
@@ -79,43 +121,14 @@ std::vector<std::vector<Tile>*> ChunkLayer::getSurroundingTiles(sf::Vector2f pos
     return surroundingTiles;
 }
 
-void ChunkLayer::update()
-{
-    int renderDist = game->getSettings()->getSetting("chunk_render_distance").valueInt;
-
-    sf::Vector2i centerChunk = worldToChunkPosition(game, window->getWindow().getView().getCenter());
-
-    for (int y = -renderDist; y <= renderDist; y++)
-    {
-        for (int x = -renderDist; x <= renderDist; x++)
-        {
-            loadChunk({centerChunk.x + x, centerChunk.y + y});
-        }
-    }
-
-    std::vector<sf::Vector2i> chunksToDelete;
-    for (auto& i : chunks)
-    {
-        if (abs(centerChunk.x - i.second->getChunkPosition().x) > renderDist || abs(centerChunk.y - i.second->getChunkPosition().y) > renderDist)
-        {
-            chunksToDelete.push_back(i.second->getChunkPosition());
-        }
-    }
-
-    if (chunksToDelete.size() > 0)
-    {
-        for (int i = 0; i < chunksToDelete.size(); i++)
-        {
-            unloadChunk(chunksToDelete[i]);
-        }
-    }
-    }
-
 void ChunkLayer::tick()
 {
     for (auto& i : chunks)
     {
-        i.second->tick();
+        if (i.second->state == ChunkState::ACTIVE)
+        {
+            i.second->tick();
+        }
     }
 
     sf::Vector2i currChunkPos = worldToChunkPosition(game, game->getScene()->getCamera()->getCenter());
@@ -128,24 +141,59 @@ void ChunkLayer::tick()
     }
 }
 
+void ChunkLayer::update()
+{
+    int loadDist = game->getSettings()->getSetting("chunk_load_distance").valueInt;
+
+    sf::Vector2i currChunkPos = worldToChunkPosition(game, game->getScene()->getCamera()->getCenter());
+
+    loadNearbyChunks();
+
+    std::vector<sf::Vector2i> chunksToDelete;
+    for (auto& i : chunks)
+    {
+        if (abs(currChunkPos.x - i.second->getChunkPosition().x) > loadDist || abs(currChunkPos.y - i.second->getChunkPosition().y) > loadDist)
+        {
+            chunksToDelete.push_back(i.second->getChunkPosition());
+        }
+    }
+
+    if (chunksToDelete.size() > 0)
+    {
+        for (int i = 0; i < chunksToDelete.size(); i++)
+        {
+            unloadChunk(chunksToDelete[i]);
+        }
+    }
+}
+
 void ChunkLayer::draw(bool debug)
 {
-    for (auto& chunk : chunks)
+    for (auto& i : chunks)
     {
-        chunk.second->draw(debug);
+        if (i.second->state == ChunkState::ACTIVE)
+        {
+            i.second->draw(debug);
+        }
 
         if (debug)
         {
-            sf::RectangleShape rect({
-                toFloat(game->getSettings()->getSetting("chunk_size").valueInt) * game->getSettings()->getSetting("tile_size").valueFloat,
-                toFloat(game->getSettings()->getSetting("chunk_size").valueInt) * game->getSettings()->getSetting("tile_size").valueFloat
-            });
+            float chunkLength = toFloat(game->getSettings()->getSetting("chunk_size").valueInt) * game->getSettings()->getSetting("tile_size").valueFloat;
+            sf::Vector2f chunkPos = chunkToWorldPosition(game, i.second->getChunkPosition());
 
-            rect.setPosition(chunkToWorldPosition(game, chunk.second->getChunkPosition()));
-            rect.setFillColor(sf::Color::Transparent);
-            rect.setOutlineThickness(5.f);
+            sf::Vertex tl;
+            sf::Vertex tr;
+            sf::Vertex bl;
+            sf::Vertex br;
 
-            window->draw(rect);
+            tl.position = chunkPos;
+            tr.position = {chunkPos.x + chunkLength, chunkPos.y};
+            bl.position = {chunkPos.x, chunkPos.y + chunkLength};
+            br.position = {chunkPos.x + chunkLength, chunkPos.y + chunkLength};
+
+            std::vector<sf::Vertex> chunkOutline = {tl, tr, br, bl, tl};
+
+            window->getWindow().draw(&chunkOutline[0], chunkOutline.size(), sf::PrimitiveType::LineStrip);
         }
     }
 }

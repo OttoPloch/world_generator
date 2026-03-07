@@ -16,7 +16,7 @@
 // public:
 //     CollisionAttribute();
 
-//     CollisionAttribute(Entity* myEntity, GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::string colliderName, int rectType, std::vector<std::string> blacklist);
+//     CollisionAttribute(Entity* myEntity, GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::string colliderName, int RectType, std::vector<std::string> blacklist);
 
 //     void tick(std::vector<std::unique_ptr<Entity>>* entities = nullptr, std::vector<std::vector<Tile>*> surroundingTiles = {});
 

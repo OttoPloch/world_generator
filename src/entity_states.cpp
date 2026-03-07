@@ -1,85 +1,76 @@
 #include "entity_states.hpp"
 #include "states.hpp"
 
-std::map<std::string, int> animationStringToState = {
-    {"ANIM_PUSHINGLEFT", 0},
-    {"ANIM_PUSHINGRIGHT", 1},
-    {"ANIM_PUSHINGUP", 2},
-    {"ANIM_PUSHINGDOWN", 3},
-    {"ANIM_RUNNINGLEFT", 4},
-    {"ANIM_RUNNINGRIGHT", 5},
-    {"ANIM_RUNNINGUP", 6},
-    {"ANIM_RUNNINGDOWN", 7},
-    {"ANIM_WALKINGLEFT", 8},
-    {"ANIM_WALKINGRIGHT", 9},
-    {"ANIM_WALKINGUP", 10},
-    {"ANIM_WALKINGDOWN", 11},
-    {"ANIM_MOVING", 12},
-    {"ANIM_IDLE", 13}
+std::map<std::string, AnimationState> animationStringToState = {
+    {"ANIM_PUSHINGLEFT", AnimationState::ANIM_PUSHINGLEFT},
+    {"ANIM_PUSHINGRIGHT", AnimationState::ANIM_PUSHINGRIGHT},
+    {"ANIM_PUSHINGUP", AnimationState::ANIM_PUSHINGUP},
+    {"ANIM_PUSHINGDOWN", AnimationState::ANIM_PUSHINGDOWN},
+    {"ANIM_RUNNINGLEFT", AnimationState::ANIM_RUNNINGLEFT},
+    {"ANIM_RUNNINGRIGHT", AnimationState::ANIM_RUNNINGRIGHT},
+    {"ANIM_RUNNINGUP", AnimationState::ANIM_RUNNINGUP},
+    {"ANIM_RUNNINGDOWN", AnimationState::ANIM_RUNNINGDOWN},
+    {"ANIM_WALKINGLEFT", AnimationState::ANIM_WALKINGLEFT},
+    {"ANIM_WALKINGRIGHT", AnimationState::ANIM_WALKINGRIGHT},
+    {"ANIM_WALKINGUP", AnimationState::ANIM_WALKINGUP},
+    {"ANIM_WALKINGDOWN", AnimationState::ANIM_WALKINGDOWN},
+    {"ANIM_MOVING", AnimationState::ANIM_MOVING},
+    {"ANIM_IDLE", AnimationState::ANIM_IDLE}
 };
 
 EntityStates::EntityStates() { init(); }
 
 void EntityStates::init()
 {
-    stateMapMap = {
-        {"animation", {
-            {ANIM_PUSHINGLEFT, {false, 0.f}},
-            {ANIM_PUSHINGRIGHT, {false, 0.f}},
-            {ANIM_PUSHINGUP, {false, 0.f}},
-            {ANIM_PUSHINGDOWN, {false, 0.f}},
-            {ANIM_RUNNINGLEFT, {false, 0.f}},
-            {ANIM_RUNNINGRIGHT, {false, 0.f}},
-            {ANIM_RUNNINGUP, {false, 0.f}},
-            {ANIM_RUNNINGDOWN, {false, 0.f}},
-            {ANIM_WALKINGLEFT, {false, 0.f}},
-            {ANIM_WALKINGRIGHT, {false, 0.f}},
-            {ANIM_WALKINGUP, {false, 0.f}},
-            {ANIM_WALKINGDOWN, {false, 0.f}},
-            {ANIM_MOVING, {false, 0.f}},
-            {ANIM_IDLE, {true, 0.f}}
-        }},
-        {"collision", {
-            {COLL_ANY, {false, 0.f}},
-            {COLL_LEFT, {false, 0.f}},
-            {COLL_RIGHT, {false, 0.f}},
-            {COLL_TOP, {false, 0.f}},
-            {COLL_BOTTOM, {false, 0.f}}
-        }}
-    };
+    for (int i = 0; i < static_cast<int>(AnimationState::COUNT); i++)
+    {
+        animationStates[static_cast<AnimationState>(i)] = {false, 0.f};
+    }
+
+    for (int i = 0; i < static_cast<int>(CollisionState::COUNT); i++)
+    {
+        collisionStates[static_cast<CollisionState>(i)] = {false, 0.f};
+    }
 }
 
-void EntityStates::set(std::string stateSet, int state, float strength)
+void EntityStates::set(std::string stateSet, AnimationState state, float strength)
 {
-    std::pair<bool, float>* pair = getEntry(stateSet, state);
+    std::pair<bool, float>* pair = getEntry(stateSet, static_cast<int>(state));
 
     *pair = {true, strength};
 }
 
 std::pair<bool, float>* EntityStates::getEntry(std::string stateSet, int state)
 {
-    auto mapEntry = stateMapMap.find(stateSet);
-
-    if (mapEntry != stateMapMap.end())
+    if (stateSet == "animation")
     {
-        auto* map = &mapEntry->second;
+        auto entry = animationStates.find(static_cast<AnimationState>(state));
 
-        auto stateEntry = map->find(state);
-
-        if (stateEntry != map->end())
+        if (entry != animationStates.end())
         {
-            return &(*map)[state];
+            return &animationStates[static_cast<AnimationState>(state)];
         }
         else
         {
-            std::cout << "ERROR getting state with key of " << state << " from state set " << stateSet << ". That state does not exist.\n";
-            assert(false);
+            std::cout << "ERROR could not get state of " << state << " from set " << stateSet << ", that state was not found.\n";
+        }
+    }
+    else if (stateSet == "collision")
+    {
+        auto entry = collisionStates.find(static_cast<CollisionState>(state));
+
+        if (entry != collisionStates.end())
+        {
+            return &collisionStates[static_cast<CollisionState>(state)];
+        }
+        else
+        {
+            std::cout << "ERROR could not get state of " << state << " from set " << stateSet << ", that state was not found.\n";
         }
     }
     else
     {
-        std::cout << "ERROR getting state with key of " << state << " from stateSet " << stateSet << ". The given state set does not exist.\n";
-        assert(false);
+        std::cout << "ERROR could not get state of " << state << " from set " << stateSet << ", that set was not found.\n";
     }
 
     return nullptr;
@@ -87,24 +78,23 @@ std::pair<bool, float>* EntityStates::getEntry(std::string stateSet, int state)
 
 int EntityStates::getFirstTrue(std::string stateSet)
 {
-    auto mapEntry = stateMapMap.find(stateSet);
-
-    if (mapEntry != stateMapMap.end())
+    if (stateSet == "animation")
     {
-        auto map = mapEntry->second;
-
-        for (auto stateEntry : map)
+        for (auto entry : animationStates)
         {
-            if (stateEntry.second.first)
-            {
-                return stateEntry.first;
-            }
+            if (entry.second.first) return static_cast<int>(entry.first);
+        }
+    }
+    else if (stateSet == "collision")
+    {
+        for (auto entry : collisionStates)
+        {
+            if (entry.second.first) return static_cast<int>(entry.first);
         }
     }
     else
     {
-        std::cout << "ERROR getting first true from state set " << stateSet << ". The given state set does not exist.\n";
-        assert(false);
+        std::cout << "ERROR could not first true from set " << stateSet << ", that set was not found.\n";
     }
 
     return -1;
@@ -112,12 +102,12 @@ int EntityStates::getFirstTrue(std::string stateSet)
 
 void EntityStates::resetAll()
 {
-    for (auto& entry : stateMapMap["animation"])
+    for (auto& entry : animationStates)
     {
-        (entry.first != ANIM_IDLE) ? entry.second = {false, 0.f} : entry.second = {true, 0.f};
+        (entry.first != AnimationState::ANIM_IDLE) ? entry.second = {false, 0.f} : entry.second = {true, 0.f};
     }
 
-    for (auto& entry : stateMapMap["collision"])
+    for (auto& entry : collisionStates)
     {
         entry.second = {false, 0.f};
     }

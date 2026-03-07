@@ -4,19 +4,19 @@
 
 AnimationSet::AnimationSet() {}
 
-AnimationSet::AnimationSet(std::string setName, std::unordered_map<int, SpriteAnimation*> animations)
+AnimationSet::AnimationSet(std::string setName, std::unordered_map<AnimationState, SpriteAnimation*> animations)
 {
     init(setName, animations);
 }
 
-void AnimationSet::init(std::string setName, std::unordered_map<int, SpriteAnimation*> animations)
+void AnimationSet::init(std::string setName, std::unordered_map<AnimationState, SpriteAnimation*> animations)
 {
     this->setName = setName;
 
     this->animations = animations;
 }
 
-SpriteAnimation* AnimationSet::getAnimationFor(int key)
+SpriteAnimation* AnimationSet::getAnimationFor(AnimationState key)
 {
     if (animations.find(key) != animations.end())
     {
@@ -24,9 +24,9 @@ SpriteAnimation* AnimationSet::getAnimationFor(int key)
     }
     else
     {
-        std::cout << "ERROR loading animation for key of " << key << " in animation set name: " << setName << ". No entry in animations for that key.\n";
+        std::cout << "ERROR loading animation for key of " << static_cast<int>(key) << " in animation set name: " << setName << ". No entry in animations for that key.\n";
 
-        return animations[ANIM_IDLE];
+        return animations[AnimationState::ANIM_IDLE];
     }
 }
 
@@ -36,7 +36,7 @@ int AnimationSet::getKeyFor(SpriteAnimation* animation)
     {
         if (entry.second == animation)
         {
-            return entry.first;
+            return static_cast<int>(entry.first);
         }
     }
 

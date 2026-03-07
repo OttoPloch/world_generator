@@ -86,7 +86,7 @@ void Game::run()
 
         float fps = 1.f / dt;
 
-        if (dt > averageDt * 1.5f && dt > 0)
+        if (dt > averageDt * 5 && dt > 0)
         {
             std::cout << "***********************************\n";
             std::cout << ": : : : LAG SPIKE DETECTED! : : : :\n";

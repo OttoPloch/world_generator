@@ -2,20 +2,20 @@
 // #include "collision_rect.hpp"
 // #include "motion_attribute.hpp"
 // #include "states.hpp"
-// #include "rect_types.hpp"
+// #include "rect_type.hpp"
 // #include "utils.hpp"
 // #include <cmath>
 // #include <cstdlib>
 
 // CollisionAttribute::CollisionAttribute() : Attribute("collision") {}
 
-// CollisionAttribute::CollisionAttribute(Entity* myEntity, GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::string colliderName, int rectType, std::vector<std::string> blacklist) : Attribute("collision")
+// CollisionAttribute::CollisionAttribute(Entity* myEntity, GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::string colliderName, int RectType, std::vector<std::string> blacklist) : Attribute("collision")
 // {
 //     this->myEntity = myEntity;
 
 //     states = myEntity->getStates();
 
-//     rect.init(position, offset, size, colliderName, rectType, blacklist);
+//     rect.init(position, offset, size, colliderName, RectType, blacklist);
 // }
 
 // void CollisionAttribute::tick(std::vector<std::unique_ptr<Entity>>* entities, std::vector<std::vector<Tile>*> surroundingTiles)

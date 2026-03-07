@@ -36,6 +36,8 @@ void Chunk::init(Game* game, sf::Vector2i chunkPosition, std::vector<Tile> tiles
 
         createTileVerts(i);
     }
+
+    state = ChunkState::ASLEEP;
 }
 
 void Chunk::createTileVerts(int index)

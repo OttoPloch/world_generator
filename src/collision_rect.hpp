@@ -2,6 +2,7 @@
 
 #include "common.hpp"
 #include "game_position.hpp"
+#include "rect_type.hpp"
 
 #include <array>
 
@@ -10,7 +11,7 @@ class CollisionRect
 public:
     CollisionRect();
 
-    void init(GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::string colliderName, int rectType, std::vector<std::string> blacklist = {});
+    void init(GamePosition position, sf::Vector2f offset, sf::Vector2f size, std::string colliderName, RectType rectType, std::vector<std::string> blacklist = {});
 
     void updatePosition();
 
@@ -57,7 +58,7 @@ public:
 
     std::string getColliderName();
 
-    int getType();
+    RectType getType();
 
     void setBlacklist(std::vector<std::string> newList);
     
@@ -83,5 +84,5 @@ private:
 
     std::vector<std::string> blacklist;
 
-    int rectType;
+    RectType rectType;
 };

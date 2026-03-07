@@ -7,12 +7,15 @@ Settings::Settings()
 
 void Settings::init()
 {
+    int renderDistance = 5;
+
     settings = {
         {"ui_scale", setting(1.f, 0, false, "")},
         {"ui_animation_speed", setting(0.3f, 0, false, "")},
         {"tile_size", setting(150.f, 0, false, "")},
         {"chunk_size", setting(0.f, 16, false, "")},
-        {"chunk_render_distance", setting(0.f, 5, false, "")},
+        {"chunk_render_distance", setting(0.f, renderDistance, false, "")}, // distance at which chunks get drawn
+        {"chunk_load_distance", setting(0.f, renderDistance + 1, false, "")}, // distance at which chunks get loaded, chunks in between this and render distance are loaded but not ticked, updated, or drawn.
         {"generation_foliage_scale", setting(3.f, 0, false, "")}
     };
 }

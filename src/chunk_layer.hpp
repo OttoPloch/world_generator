@@ -19,15 +19,19 @@ public:
 
     void init(Game* game);
 
+    void loadNearbyChunks();
+
     bool loadChunk(sf::Vector2i chunkPosition);
     
     bool unloadChunk(sf::Vector2i chunkPosition);
 
+    Chunk* getChunk(sf::Vector2i chunkPosition);
+
     std::vector<std::vector<Tile>*> getSurroundingTiles(sf::Vector2f position);
 
-    void update();
-
     void tick();
+    
+    void update();
 
     void draw(bool debug = false);
 private:

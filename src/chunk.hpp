@@ -1,6 +1,7 @@
 #pragma once
 
 #include "tile.hpp"
+#include "chunk_state.hpp"
 
 #include <SFML/Graphics/RenderStates.hpp>
 #include <vector>
@@ -34,6 +35,8 @@ public:
     void tick();
 
     void draw(bool debug = false);
+
+    ChunkState state;
 private:
     Game* game;
 
