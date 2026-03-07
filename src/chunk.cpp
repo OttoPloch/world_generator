@@ -39,7 +39,7 @@ void Chunk::init(Game* game, sf::Vector2i chunkPosition, std::vector<Tile> tiles
 
     state = ChunkState::ASLEEP;
 
-    tileStates.texture = game->getAssetManager()->getTexture("tiles");
+    tileStates.texture = game->getAssetManager()->getTexture("tiles_better", "texture_atlases/");
 }
 
 void Chunk::createTileVerts(int index)
@@ -126,7 +126,7 @@ void Chunk::tick()
 
 void Chunk::draw(bool debug)
 {
-    window->getWindow().draw(&tileVertices[0], tileVertices.size(), sf::PrimitiveType::Triangles);
+    window->getWindow().draw(&tileVertices[0], tileVertices.size(), sf::PrimitiveType::Triangles, tileStates);
     
     if (debug) window->getWindow().draw(&debugVertices[0], debugVertices.size(), sf::PrimitiveType::Lines);
 }

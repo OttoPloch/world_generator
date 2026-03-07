@@ -27,6 +27,8 @@ void Scene::init(Game* game)
     chunkLayer.init(game);
 
     camera.init(game, true, {0, 0}, toV2F(window->getSize()));
+
+    debugView = false;
 }
 
 void Scene::tick()
@@ -74,15 +76,15 @@ void Scene::UIUpdate(float dt)
     if (uiLayer.getElement("animation button")->getAsButton()->getActive())
     {
         uiLayer.getElement("win 1")->setAnimation({0, 0}, {60, 250}, -1, 0, true);
-        uiLayer.getElement("animation button")->setAnimation({0, 0}, {-75, 130}, -1, -1, true, false);
-        uiLayer.getElement("animation button 2")->setAnimation({0, 0}, {25, 130}, -1, -1, true, false);
+        uiLayer.getElement("animation button")->setAnimation({0, 0}, {-75, 140}, -1, -1, true, false);
+        uiLayer.getElement("animation button 2")->setAnimation({0, 0}, {25, 140}, -1, -1, true, false);
     }
     
     if (uiLayer.getElement("animation button 2")->getAsButton()->getActive())
     {
         uiLayer.getElement("win 1")->setAnimation({0, 0}, {-280, 250}, -1, 0, true);
-        uiLayer.getElement("animation button")->setAnimation({0, 0}, {25, 130}, -1, -1, true, false);
-        uiLayer.getElement("animation button 2")->setAnimation({0, 0}, {-75, 130}, -1, -1, true, false);
+        uiLayer.getElement("animation button")->setAnimation({0, 0}, {25, 140}, -1, -1, true, false);
+        uiLayer.getElement("animation button 2")->setAnimation({0, 0}, {-75, 140}, -1, -1, true, false);
     }
 
     uiLayer.UIUpdate(dt);
@@ -95,7 +97,7 @@ void Scene::chunkUpdate()
 
 void Scene::draw()
 {
-    chunkLayer.draw(false);
+    chunkLayer.draw(debugView);
     entityLayer.draw();
     uiLayer.draw();
 }
@@ -109,6 +111,10 @@ void Scene::sceneInput(std::string control)
     else if (control == "TOGGLEFOCUS")
     {
         toggleFocus();
+    }
+    else if (control == "DEBUG_VIEW")
+    {
+        debugView = !debugView;
     }
     else if (control == "ZOOMIN")
     {
@@ -130,13 +136,13 @@ void Scene::toggleFocus()
 {
     if (camera.getFocus() == nullptr)
     {
-        //camera.setFocus(entityLayer.getEntity(1));
-        //entityLayer.getEntity(1)->getMotion()->controlling = true;
+        camera.setFocus(entityLayer.getEntity(1));
+        // entityLayer.getEntity(1)->getMotion()->controlling = true;
     }
     else
     {
         camera.removeFocus();
-        //entityLayer.getEntity(1)->getMotion()->controlling = false;
+        // entityLayer.getEntity(1)->getMotion()->controlling = false;
     }
 }
 

@@ -33,8 +33,8 @@ void UILayer::init(Game* game, Camera* camera)
     currID = getNewID(); elements[currID] = std::make_unique<UIText>(game, this, "reset button text", currID, 5, toV2F(0, -30), assetManager->getFont("White Storm"), "Reset", 20, sf::Color::Black, getElement("reset button"));
     currID = getNewID(); elements[currID] = std::make_unique<UIText>(game, this, "speed display", currID, 0, toV2F(15, 30), assetManager->getFont("White Storm"), "----", 30, sf::Color::Black, getElement("win 1"));
 
-    currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "animation button 2", currID, 0, toV2F(-75, 130), toV2F(50, 50), blueButtonTextures);
-    currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "animation button", currID, 0, toV2F(25, 130), toV2F(50, 50), blueButtonTextures);
+    currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "animation button 2", currID, 0, toV2F(-75, 140), toV2F(50, 50), blueButtonTextures);
+    currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "animation button", currID, 0, toV2F(25, 140), toV2F(50, 50), blueButtonTextures);
 
     // currID = getNewID(); elements[currID] = std::make_unique<UIBackground>(game, this, "many win parent", currID, 0, toV2F(80, 80), toV2F(50, 50), sf::Color(0, 0, 0, 0), assetManager->getTileSet("16px"), assetManager->getTexture("ui_tech", "images/ui/"));
     // for (int i = 0; i < 100; i++)

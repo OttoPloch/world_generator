@@ -155,6 +155,7 @@ void Input::init(Game* game)
         {"STEP", {"RIGHT", "RSTICK"}},
         {"RESETZOOM", {"ENTER", "SELECT"}},
         {"TOGGLEFOCUS", {"F1", "LSTICK"}},
+        {"DEBUG_VIEW", {"F2", "NONE"}},
         {"ZOOMIN", {"NONE", "LBUMPER"}},
         {"ZOOMOUT", {"NONE", "RBUMPER"}},
         {"UI LEFT", {"LEFT", "DPAD LEFT"}},
@@ -368,7 +369,7 @@ void Input::update()
             {
                 if (UIMoveInput.x != 0 || UIMoveInput.y != 0)
                 {
-                    (abs(getAxis(4)) > abs(getAxis(5))) ? moveDirection.x = UIMoveInput.x : moveDirection.y = UIMoveInput.y;
+                    (std::abs(getAxis(4)) > std::abs(getAxis(5))) ? moveDirection.x = UIMoveInput.x : moveDirection.y = UIMoveInput.y;
                 }
             }
 

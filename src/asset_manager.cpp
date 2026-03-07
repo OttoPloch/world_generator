@@ -5,7 +5,7 @@
 
 AssetManager::AssetManager() {}
 
-sf::Texture* AssetManager::getTexture(std::string name, std::string pathFromAssets, bool fullPath)
+sf::Texture* AssetManager::getTexture(std::string name, std::string pathFromAssets, bool pathIncludesTheFile)
 {
     auto entry = textureMap.find(name);
 
@@ -17,7 +17,7 @@ sf::Texture* AssetManager::getTexture(std::string name, std::string pathFromAsse
     {
         sf::Texture newTexture;
 
-        if (fullPath)
+        if (pathIncludesTheFile)
         {
             if (!newTexture.loadFromFile("../../assets/" + pathFromAssets))
             {
@@ -56,6 +56,8 @@ sf::Texture* AssetManager::getTexture(std::string name, std::string pathFromAsse
                 }
             }
         }
+
+        newTexture.setSmooth(false);
 
         textureMap[name] = newTexture;
 
@@ -356,8 +358,18 @@ TextureAtlas* AssetManager::getTextureAtlas(std::string name)
                 if (line.substr(0, 5) == "ySize") ySizes.push_back(tileSize * std::stof(line.substr(6)));
             }
 
+            sf::Vector2u atlasSize = getTexture("tiles", "texture_atlases/")->getSize();
+
             for (int i = 0; i < items.size(); i++)
             {
+                if (xCoords[i] < 0) xCoords[i] = atlasSize.x + xCoords[i];
+                if (yCoords[i] < 0) yCoords[i] = atlasSize.y + yCoords[i];
+
+                xCoords[i] = std::roundf(xCoords[i]);
+                yCoords[i] = std::roundf(yCoords[i]);
+                xSizes[i] = std::roundf(xSizes[i]);
+                ySizes[i] = std::roundf(ySizes[i]);
+
                 texCoords[items[i]] = sf::FloatRect({xCoords[i], yCoords[i]}, {xSizes[i], ySizes[i]});
             }
 

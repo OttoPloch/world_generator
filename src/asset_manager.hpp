@@ -16,7 +16,7 @@ class AssetManager
 public:
     AssetManager();
 
-    sf::Texture* getTexture(std::string name, std::string pathFromAssets = "images/", bool fullPath = false);
+    sf::Texture* getTexture(std::string name, std::string pathFromAssets = "images/", bool pathIncludesTheFile = false);
 
     SpriteAnimation* getAnimation(std::string name);
 

@@ -51,4 +51,6 @@ private:
     ChunkLayer chunkLayer;
 
     Camera camera;
+
+    bool debugView;
 };

@@ -46,10 +46,6 @@ std::string TileSet::getKeyFor(sf::Vector2f texCoord)
     return "";
 }
 
-float TileSet::getTileSize() { return tileSize; }
-
-std::string TileSet::getName() { return setName; }
-
 bool TileSet::hasCenter()
 {
     return texCoords.find("c") != texCoords.end();

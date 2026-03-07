@@ -104,6 +104,9 @@ void Camera::update(float dt)
     center.x += velocity.x * 100 * dt;
     center.y += velocity.y * 100 * dt;
 
+    center.x = std::roundf(center.x);
+    center.y = std::roundf(center.y);
+
     view.setCenter(center);
 }
 

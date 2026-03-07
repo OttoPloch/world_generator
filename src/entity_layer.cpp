@@ -15,8 +15,6 @@ void EntityLayer::init(Game* game)
 
     IDCounter = 0;
 
-    addEntity({0, 0})->spriteInit(game->getAssetManager()->getTexture("bush"));
-
     addMob({-300, 300})->spriteInit(game->getAssetManager()->getTexture("shaq_time_out"));
 
     // AssetManager* assetManager = game->getAssetManager();

@@ -50,6 +50,8 @@ src/chunk_generator.cpp
 src/world_position.cpp
 src/screen_position.cpp
 src/mob.cpp
+src/vertex_group.cpp
+src/texture_atlas.cpp
 )
 
 target_compile_features(app PRIVATE cxx_std_17)

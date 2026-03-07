@@ -42,7 +42,7 @@ void UIBackground::createBorderVertices()
     float BORDERSIZE = borderSize;
     float HALFBORDERSIZE = BORDERSIZE / 2.f;
 
-    float TEXTURESIZE = tileSet->getTileSize();
+    float TEXTURESIZE = tileSet->tileSize;
 
     float myLeft = left();
     float myRight = right();
