@@ -15,7 +15,7 @@ void Settings::init()
         {"tile_size", setting(150.f, 0, false, "")},
         {"chunk_size", setting(0.f, 16, false, "")},
         {"chunk_render_distance", setting(0.f, renderDistance, false, "")}, // distance at which chunks get drawn
-        {"chunk_load_distance", setting(0.f, renderDistance + 1, false, "")}, // distance at which chunks get loaded, chunks in between this and render distance are loaded but not ticked, updated, or drawn.
+        {"chunk_load_distance", setting(0.f, renderDistance + 2, false, "")}, // distance at which chunks get loaded, chunks in between this and render distance are loaded but not ticked, updated, or drawn.
         {"generation_foliage_scale", setting(3.f, 0, false, "")}
     };
 }
