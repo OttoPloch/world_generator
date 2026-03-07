@@ -258,8 +258,6 @@ void EntityLayer::tick()
         {
             i.second->tick();
         }
-
-        // entities[i]->tick(&entities, game->getScene()->getChunkLayer()->getSurroundingTiles(entities[i]->getPosition()));
     }
 }
 
@@ -284,7 +282,12 @@ void EntityLayer::draw()
 
         if (entityChunk && entityChunk->state == ChunkState::ACTIVE)
         {
-            i.second->draw(game->getWindow()->getWindow());
+            Sprite* entitySprite = i.second->getSprite();
+
+            if (isOnScreen(game, {entitySprite->left(), entitySprite->top()}, entitySprite->getSize()))
+            {
+                i.second->draw(game->getWindow()->getWindow());
+            }
         }
     }
 

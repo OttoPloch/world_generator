@@ -173,7 +173,14 @@ void ChunkLayer::draw(bool debug)
     {
         if (i.second->state == ChunkState::ACTIVE)
         {
-            i.second->draw(debug);
+            sf::Vector2f chunkTl = chunkToWorldPosition(game, i.second->getChunkPosition());
+
+            float chunkLength = toFloat(game->getSettings()->getSetting("chunk_size").valueInt) * game->getSettings()->getSetting("tile_size").valueFloat;
+
+            if (isOnScreen(game, chunkTl, {chunkLength, chunkLength}))
+            {
+                i.second->draw(debug);
+            }
         }
 
         if (debug)
