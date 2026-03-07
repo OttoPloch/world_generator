@@ -1,5 +1,7 @@
 #include "asset_manager.hpp"
 #include "states.hpp"
+#include "texture_atlas.hpp"
+#include <SFML/Graphics/Rect.hpp>
 
 AssetManager::AssetManager() {}
 
@@ -231,7 +233,7 @@ TileSet* AssetManager::getTileSet(std::string name)
 
             std::unordered_map<std::string, sf::Vector2f> texCoords;
 
-            float tileSize = 16;
+            float tileSize;
 
             std::vector<std::string> locations;
             std::vector<float> xCoords;
@@ -304,5 +306,66 @@ sf::Font* AssetManager::getFont(std::string name)
         fontMap[name] = newFont;
 
         return &fontMap[name];
+    }
+}
+
+TextureAtlas* AssetManager::getTextureAtlas(std::string name)
+{
+    auto entry = atlasMap.find(name);
+
+    if (entry != atlasMap.end())
+    {
+        return &entry->second;
+    }
+    else
+    {
+        TextureAtlas newAtlas;
+
+        if (!std::filesystem::exists("../../assets/texture_atlases/" + name + ".atlas"))
+        {
+            std::cout << "error loading " << name << ".atlas\n";
+
+            return nullptr;
+        }
+        else
+        {
+            // load atlas
+            std::ifstream atlasFile("../../assets/texture_atlases/" + name + ".atlas");
+
+            std::unordered_map<std::string, sf::FloatRect> texCoords;
+
+            // makes it simpler to type in the positions of
+            // atlases when making them, reduces to multiples.
+            float tileSize;
+
+            std::vector<std::string> items;
+            std::vector<float> xCoords;
+            std::vector<float> yCoords;
+            std::vector<float> xSizes;
+            std::vector<float> ySizes;
+
+            std::string line;
+
+            while (std::getline(atlasFile, line))
+            {
+                if (line.substr(0, 8) == "tilesize") tileSize = std::stof(line.substr(9));
+                if (line.substr(0, 4) == "item") items.push_back(line.substr(5));
+                if (line.substr(0, 6) == "xCoord") xCoords.push_back(tileSize * std::stof(line.substr(7)));
+                if (line.substr(0, 6) == "yCoord") yCoords.push_back(tileSize * std::stof(line.substr(7)));
+                if (line.substr(0, 5) == "xSize") xSizes.push_back(tileSize * std::stof(line.substr(6)));
+                if (line.substr(0, 5) == "ySize") ySizes.push_back(tileSize * std::stof(line.substr(6)));
+            }
+
+            for (int i = 0; i < items.size(); i++)
+            {
+                texCoords[items[i]] = sf::FloatRect({xCoords[i], yCoords[i]}, {xSizes[i], ySizes[i]});
+            }
+
+            newAtlas = TextureAtlas(name, texCoords);
+        }
+
+        atlasMap[name] = newAtlas;
+
+        return &atlasMap[name];
     }
 }

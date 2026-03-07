@@ -27,7 +27,7 @@ public:
 
     Chunk* getChunk(sf::Vector2i chunkPosition);
 
-    std::vector<std::vector<Tile>*> getSurroundingTiles(sf::Vector2f position);
+    std::vector<std::vector<std::unique_ptr<Tile>>*> getSurroundingTiles(sf::Vector2f position);
 
     void tick();
     

@@ -17,15 +17,9 @@ public:
 
     std::string getKeyFor(sf::Vector2f texCoord);
 
-    float getTileSize();
-
-    std::string getName();
-
     bool hasCenter();
-private:
+    
     std::string setName;
-
     std::unordered_map<std::string, sf::Vector2f> texCoords;
-
     float tileSize;
 };

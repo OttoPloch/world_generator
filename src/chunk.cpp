@@ -32,65 +32,65 @@ void Chunk::init(Game* game, sf::Vector2i chunkPosition, std::vector<Tile> tiles
     {
         Tile* currTile = &tiles[i % tiles.size()];
 
-        this->tiles[i] = Tile(game, this, {i % chunkSize, toInt(std::floor(i / chunkSize))}, currTile->type, currTile->color, currTile->collides, currTile->colliderName, currTile->collOffsetFraction, currTile->collSizeFraction);
+        this->tiles[i] = std::make_unique<Tile>(game, this, sf::Vector2i(i % chunkSize, toInt(std::floor(i / chunkSize))), currTile->type, currTile->myVerts.texCoords, currTile->collides, currTile->colliderName, currTile->collOffsetFraction, currTile->collSizeFraction);
 
         createTileVerts(i);
     }
 
     state = ChunkState::ASLEEP;
+
+    tileStates.texture = game->getAssetManager()->getTexture("tiles");
 }
 
 void Chunk::createTileVerts(int index)
 {
-    sf::Vertex tl;
-    sf::Vertex tr;
-    sf::Vertex bl;
-    sf::Vertex br;
-
-    sf::Vector2f tileWorldPos = {worldPosition.x + toFloat(tiles[index].localPosition.x) * tileSize, worldPosition.y + toFloat(tiles[index].localPosition.y) * tileSize};
+    sf::Vector2f tileWorldPos = {worldPosition.x + toFloat(tiles[index]->localPosition.x) * tileSize, worldPosition.y + toFloat(tiles[index]->localPosition.y) * tileSize};
     
-    tl.position = tileWorldPos;
-    tr.position = {tileWorldPos.x + tileSize, tileWorldPos.y};
-    bl.position = {tileWorldPos.x, tileWorldPos.y + tileSize};
-    br.position = {tileWorldPos.x + tileSize, tileWorldPos.y + tileSize};
+    sf::FloatRect texCoords = tiles[index]->myVerts.texCoords;
 
-    tl.color = tiles[index].color;
-    tr.color = tiles[index].color;
-    bl.color = tiles[index].color;
-    br.color = tiles[index].color;
+    // center on bottom center to allow flexible
+    // sizing for the image of the tile
+    tileWorldPos.x += tileSize / 2.f;
+    tileWorldPos.y += tileSize;
 
-    tileVertices[index * 6] = tl;
-    tileVertices[index * 6 + 1] = tr;
-    tileVertices[index * 6 + 2] = bl;
-    tileVertices[index * 6 + 3] = bl;
-    tileVertices[index * 6 + 4] = tr;
-    tileVertices[index * 6 + 5] = br;
+    float texCoordRatio = texCoords.size.x / texCoords.size.y;
+    sf::Vector2f tileFittedSize;
+    (texCoordRatio >= 1.f) ? tileFittedSize = {tileSize * texCoordRatio, tileSize} : tileFittedSize = {tileSize, tileSize / texCoordRatio};
+    sf::Vector2f tileAdjustedTl = {tileWorldPos.x - tileFittedSize.x / 2.f, tileWorldPos.y - tileFittedSize.y};
 
-    if (!tiles[index].collides) return;
+    std::array<sf::Vertex, 6> verts = VertexGroup::createVerts(tileAdjustedTl, tileFittedSize, texCoords);
+    for (int i = 0; i < 6; i++)
+    {
+        tileVertices[index * 6 + i] = verts[i];
+    }
 
-    sf::Vertex debug_tl;
-    sf::Vertex debug_tr;
-    sf::Vertex debug_bl;
-    sf::Vertex debug_br;
+    tiles[index]->myVerts.start = index * 6;
+    tiles[index]->myVerts.size = 6;
 
-    debug_tl.position = tl.position;
-    debug_tr.position = tr.position;
-    debug_bl.position = bl.position;
-    debug_br.position = br.position;
+    if (!tiles[index]->collides) return;
 
-    debug_tl.color = sf::Color::Red;
-    debug_tr.color = sf::Color::Red;
-    debug_bl.color = sf::Color::Red;
-    debug_br.color = sf::Color::Red;
+    // assuming tl, tr, br, bl as the first 4 vertices of the array,
+    // this adds those to the debug vertex array, which is lines instead
+    // of triangles.
+    for (int i = 0; i < 5; i++)
+    {
+        sf::Vertex debugVertex;
 
-    debugVertices.push_back(debug_tl);
-    debugVertices.push_back(debug_tr);
-    debugVertices.push_back(debug_tr);
-    debugVertices.push_back(debug_br);
-    debugVertices.push_back(debug_br);
-    debugVertices.push_back(debug_bl);
-    debugVertices.push_back(debug_bl);
-    debugVertices.push_back(debug_tl);
+        // goes 0, 1, 2, 3, 0 so that the tl vert
+        // gets added to the beginning and end.
+        debugVertex.position = verts[i % 4].position;
+        debugVertex.color = sf::Color::Red;
+
+        if (i == 0 || i == 4) // if first or last (tl), do once
+        {
+            debugVertices.push_back(debugVertex);
+        }
+        else // otherwise, add twice
+        {
+            debugVertices.push_back(debugVertex);
+            debugVertices.push_back(debugVertex);
+        }
+    }
 }
 
 Tile* Chunk::getTile(int column, int row)
@@ -103,10 +103,10 @@ Tile* Chunk::getTile(int column, int row)
     while (y > chunkSize - 1) y -= chunkSize;
     while (y < 0) y += chunkSize;
 
-    return &tiles[y * chunkSize + x];
+    return tiles[y * chunkSize + x].get();
 }
 
-std::vector<Tile>* Chunk::getTiles() { return &tiles; }
+std::vector<std::unique_ptr<Tile>>* Chunk::getTiles() { return &tiles; }
 
 sf::FloatRect Chunk::getTileRect(sf::Vector2i tileLocalPosition)
 {
@@ -114,6 +114,8 @@ sf::FloatRect Chunk::getTileRect(sf::Vector2i tileLocalPosition)
 
     return sf::FloatRect(tileWorldPos, {tileSize, tileSize});
 }
+
+std::vector<sf::Vertex>* Chunk::getVertices() { return &tileVertices; }
 
 sf::Vector2i Chunk::getChunkPosition() { return chunkPosition; }
 

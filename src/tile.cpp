@@ -1,25 +1,28 @@
 #include "tile.hpp"
 #include "game.hpp"
 #include "chunk.hpp"
+#include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/VertexArray.hpp>
+#include <array>
 
 Tile::Tile() {}
 
-Tile::Tile(int type, sf::Color color, bool collides, std::string colliderName, sf::Vector2f collOffsetFraction, sf::Vector2f collSizeFraction)
+Tile::Tile(int type, sf::FloatRect texCoords, bool collides, std::string colliderName, sf::Vector2f collOffsetFraction, sf::Vector2f collSizeFraction)
 {
     this->type = type;
-    this->color = color;
+    myVerts.texCoords = texCoords;
     this->collides = collides;
     this->colliderName = colliderName;
     this->collOffsetFraction = collOffsetFraction;
     this->collSizeFraction = collSizeFraction;
 }
 
-Tile::Tile(Game* game, Chunk* chunk, sf::Vector2i localPosition, int type, sf::Color color, bool collides, std::string colliderName, sf::Vector2f collOffsetFraction, sf::Vector2f collSizeFraction)
+Tile::Tile(Game* game, Chunk* chunk, sf::Vector2i localPosition, int type, sf::FloatRect texCoords, bool collides, std::string colliderName, sf::Vector2f collOffsetFraction, sf::Vector2f collSizeFraction)
 {
-    init(game, chunk, localPosition, type, color, collides, colliderName, collOffsetFraction, collSizeFraction);
+    init(game, chunk, localPosition, type, texCoords, collides, colliderName, collOffsetFraction, collSizeFraction);
 }
 
-void Tile::init(Game* game, Chunk* chunk, sf::Vector2i localPosition, int type, sf::Color color, bool collides, std::string colliderName, sf::Vector2f collOffsetFraction, sf::Vector2f collSizeFraction)
+void Tile::init(Game* game, Chunk* chunk, sf::Vector2i localPosition, int type, sf::FloatRect texCoords, bool collides, std::string colliderName, sf::Vector2f collOffsetFraction, sf::Vector2f collSizeFraction)
 {
     this->game = game;
 
@@ -31,7 +34,7 @@ void Tile::init(Game* game, Chunk* chunk, sf::Vector2i localPosition, int type, 
 
     this->type = type;
 
-    this->color = color;
+    myVerts.texCoords = texCoords;
 
     this->collides = collides;
 
@@ -40,6 +43,8 @@ void Tile::init(Game* game, Chunk* chunk, sf::Vector2i localPosition, int type, 
     this->collOffsetFraction = collOffsetFraction;
     
     this->collSizeFraction = collSizeFraction;
+
+    this->chunkVertices = chunk->getVertices();
 }
 
 sf::FloatRect Tile::getCollRect()

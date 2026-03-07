@@ -4,6 +4,7 @@
 #include "sprite_animation.hpp"
 #include "animation_set.hpp"
 #include "tile_set.hpp"
+#include "texture_atlas.hpp"
 
 #include <map>
 #include <vector>
@@ -24,6 +25,8 @@ public:
     TileSet* getTileSet(std::string name);
 
     sf::Font* getFont(std::string name);
+
+    TextureAtlas* getTextureAtlas(std::string name);
 private:
     std::unordered_map<std::string, sf::Texture> textureMap;
 
@@ -34,4 +37,6 @@ private:
     std::unordered_map<std::string, TileSet> tileSetMap;
 
     std::unordered_map<std::string, sf::Font> fontMap;
+
+    std::unordered_map<std::string, TextureAtlas> atlasMap;
 };

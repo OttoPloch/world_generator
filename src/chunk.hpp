@@ -26,9 +26,11 @@ public:
     // will get the left
     Tile* getTile(int column, int row);
 
-    std::vector<Tile>* getTiles();
+    std::vector<std::unique_ptr<Tile>>* getTiles();
 
     sf::FloatRect getTileRect(sf::Vector2i tileLocalPosition);
+
+    std::vector<sf::Vertex>* getVertices();
 
     sf::Vector2i getChunkPosition();
 
@@ -50,9 +52,11 @@ private:
     
     sf::Vector2f worldPosition;
     
-    std::vector<Tile> tiles;
+    std::vector<std::unique_ptr<Tile>> tiles;
 
     std::vector<sf::Vertex> tileVertices;
 
     std::vector<sf::Vertex> debugVertices;
+
+    sf::RenderStates tileStates;
 };

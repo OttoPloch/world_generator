@@ -92,7 +92,7 @@ Chunk* ChunkLayer::getChunk(sf::Vector2i chunkPosition)
     return nullptr;
 }
 
-std::vector<std::vector<Tile>*> ChunkLayer::getSurroundingTiles(sf::Vector2f position)
+std::vector<std::vector<std::unique_ptr<Tile>>*> ChunkLayer::getSurroundingTiles(sf::Vector2f position)
 {
     sf::Vector2i convertedPosition = worldToChunkPosition(game, position);
 
@@ -108,7 +108,7 @@ std::vector<std::vector<Tile>*> ChunkLayer::getSurroundingTiles(sf::Vector2f pos
         sf::Vector2i(convertedPosition.x + 1, convertedPosition.y + 1)
     };
 
-    std::vector<std::vector<Tile>*> surroundingTiles;
+    std::vector<std::vector<std::unique_ptr<Tile>>*> surroundingTiles;
 
     for (int i = 0; i < 9; i++)
     {
@@ -185,7 +185,7 @@ void ChunkLayer::draw(bool debug)
             sf::Vertex tr;
             sf::Vertex bl;
             sf::Vertex br;
-
+ 
             tl.position = chunkPos;
             tr.position = {chunkPos.x + chunkLength, chunkPos.y};
             bl.position = {chunkPos.x, chunkPos.y + chunkLength};

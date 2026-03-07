@@ -1,0 +1,18 @@
+#pragma once
+
+#include "common.hpp"
+#include <SFML/Graphics/Rect.hpp>
+
+struct VertexGroup
+{
+    int start;
+    int size;
+
+    sf::FloatRect texCoords;
+
+    VertexGroup();
+
+    VertexGroup(int start, int size, sf::FloatRect texCoords);
+
+    static std::array<sf::Vertex, 6> createVerts(sf::Vector2f tl, sf::Vector2f size, sf::FloatRect texCoords);
+};
