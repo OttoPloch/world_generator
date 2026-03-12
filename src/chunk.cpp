@@ -1,7 +1,9 @@
 #include "chunk.hpp"
 #include "game.hpp"
 #include "tile_types.hpp"
+#include <FLAC/stream_decoder.h>
 #include <SFML/Graphics/PrimitiveType.hpp>
+#include <SFML/Graphics/Texture.hpp>
 
 Chunk::Chunk() {}
 
@@ -93,6 +95,13 @@ void Chunk::createTileVerts(int index)
     }
 }
 
+void Chunk::giveDecorationVerts(std::unique_ptr<std::vector<sf::Vertex>> vertices, sf::Texture* texture)
+{
+    decorationVertices = std::move(vertices);
+
+    decorationStates.texture = texture;
+}
+
 Tile* Chunk::getTile(int column, int row)
 {
     int x = column;
@@ -124,9 +133,16 @@ void Chunk::tick()
 
 }
 
-void Chunk::draw(bool debug)
+void Chunk::draw(int layer, bool debug)
 {
-    window->getWindow().draw(&tileVertices[0], tileVertices.size(), sf::PrimitiveType::Triangles, tileStates);
-    
+    if (layer == 0)
+    {
+        window->getWindow().draw(&tileVertices[0], tileVertices.size(), sf::PrimitiveType::Triangles, tileStates);
+    }
+    else if (layer == 1)
+    {
+        if (decorationVertices->size() > 0) window->getWindow().draw(&(*decorationVertices)[0], decorationVertices->size(), sf::PrimitiveType::Triangles, decorationStates);
+    }
+
     if (debug) window->getWindow().draw(&debugVertices[0], debugVertices.size(), sf::PrimitiveType::Lines);
 }

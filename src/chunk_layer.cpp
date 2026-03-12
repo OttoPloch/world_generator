@@ -5,8 +5,6 @@
 #include "game.hpp"
 #include "utils.hpp"
 #include <SFML/Graphics/PrimitiveType.hpp>
-#include <array>
-#include <string>
 
 ChunkLayer::ChunkLayer() : chunks(0) {}
 
@@ -21,9 +19,13 @@ void ChunkLayer::init(Game* game)
 
     this->window = game->getWindow();
 
+    chunkSize = game->getSettings()->getSetting("chunk_size").valueInt;
+    tileSize = game->getSettings()->getSetting("tile_size").valueFloat;
+    chunkLength = toFloat(chunkSize) * tileSize;
+
     chunkGenerator.init(game, &chunks);
 
-    lastChunkPos = {99999, 99999};
+    lastChunkPos = {INT32_MAX, INT32_MAX};
 
     loadNearbyChunks();
 }
@@ -92,33 +94,111 @@ Chunk* ChunkLayer::getChunk(sf::Vector2i chunkPosition)
     return nullptr;
 }
 
-std::vector<std::vector<std::unique_ptr<Tile>>*> ChunkLayer::getSurroundingTiles(sf::Vector2f position)
+std::array<Tile*, 8> ChunkLayer::getTileNeighbors(sf::Vector2i chunkPos, int column, int row)
 {
-    sf::Vector2i convertedPosition = worldToChunkPosition(game, position);
+    std::array<Tile*, 8> neighbors;
 
-    std::array<sf::Vector2i, 9> chunksToSearch = {
-        sf::Vector2i(convertedPosition.x - 1, convertedPosition.y - 1),
-        sf::Vector2i(convertedPosition.x, convertedPosition.y - 1),
-        sf::Vector2i(convertedPosition.x + 1, convertedPosition.y - 1),
-        sf::Vector2i(convertedPosition.x - 1, convertedPosition.y),
-        convertedPosition,
-        sf::Vector2i(convertedPosition.x + 1, convertedPosition.y),
-        sf::Vector2i(convertedPosition.x - 1, convertedPosition.y + 1),
-        sf::Vector2i(convertedPosition.x, convertedPosition.y + 1),
-        sf::Vector2i(convertedPosition.x + 1, convertedPosition.y + 1)
-    };
+    Chunk* chunk = chunks[chunkPos].get();
 
-    std::vector<std::vector<std::unique_ptr<Tile>>*> surroundingTiles;
-
-    for (int i = 0; i < 9; i++)
+    if (column != 0 && column != chunkSize - 1 && row != 0 && row != chunkSize - 1)
     {
-        if (chunks.find(chunksToSearch[i]) != chunks.end())
+        neighbors[0] = chunk->getTile(column - 1, row - 1);
+        neighbors[1] = chunk->getTile(column, row - 1);
+        neighbors[2] = chunk->getTile(column + 1, row - 1);
+        neighbors[3] = chunk->getTile(column - 1, row);
+        neighbors[4] = chunk->getTile(column + 1, row);
+        neighbors[5] = chunk->getTile(column - 1, row + 1);
+        neighbors[6] = chunk->getTile(column, row + 1);
+        neighbors[7] = chunk->getTile(column + 1, row + 1);
+    }
+    else
+    {
+        if (column != 0)
         {
-            surroundingTiles.push_back(chunks[chunksToSearch[i]]->getTiles());
+            (row != 0) ? neighbors[0] = chunk->getTile(column - 1, row - 1) : neighbors[0] = nullptr;
+            neighbors[3] = chunk->getTile(column - 1, row);
+            (row != chunkSize - 1) ? neighbors[5] = chunk->getTile(column - 1, row + 1) : neighbors[5] = nullptr;
+        }
+        else
+        {
+            Chunk* leftChunk = chunks[{chunkPos.x - 1, chunkPos.y}].get();
+
+            if (leftChunk)
+            {
+                (row != 0) ? neighbors[0] = leftChunk->getTile(-1, row - 1) : neighbors[0] = nullptr;
+                neighbors[3] = leftChunk->getTile(-1, row);
+                (row != chunkSize - 1) ? neighbors[5] = leftChunk->getTile(-1, row + 1) : neighbors[5] = nullptr;
+            }
+            else
+            {
+                neighbors[0] = nullptr;
+                neighbors[3] = nullptr;
+                neighbors[5] = nullptr;
+            }
+        }
+
+        if (column != chunkSize - 1)
+        {
+            (row != 0) ? neighbors[2] = chunk->getTile(column + 1, row - 1) : neighbors[2] = nullptr;
+            neighbors[4] = chunk->getTile(column + 1, row);
+            (row != chunkSize - 1) ? neighbors[7] = chunk->getTile(column + 1, row + 1) : neighbors[7] = nullptr;
+        }
+        else
+        {
+            Chunk* rightChunk = chunks[{chunkPos.x + 1, chunkPos.y}].get();
+
+            if (rightChunk)
+            {
+                (row != 0) ? neighbors[2] = rightChunk->getTile(0, row - 1) : neighbors[2] = nullptr;
+                neighbors[4] = rightChunk->getTile(0, row);
+                (row != chunkSize - 1) ? neighbors[7] = rightChunk->getTile(0, row + 1) : neighbors[7] = nullptr;
+            }
+            else
+            {
+                neighbors[2] = nullptr;
+                neighbors[4] = nullptr;
+                neighbors[7] = nullptr;
+            }
+        }
+
+        if (row != 0)
+        {
+            neighbors[1] = chunk->getTile(column, row - 1);
+        }
+        else
+        {
+            Chunk* topChunk = chunks[{chunkPos.x, chunkPos.y - 1}].get();
+
+            if (topChunk)
+            {
+                neighbors[1] = topChunk->getTile(column, -1);
+            }
+            else
+            {
+                neighbors[1] = nullptr;
+            }
+        }
+
+        if (row != chunkSize - 1)
+        {
+            neighbors[6] = chunk->getTile(column, row + 1);
+        }
+        else
+        {
+            Chunk* bottomChunk = chunks[{chunkPos.x, chunkPos.y + 1}].get();
+
+            if (bottomChunk)
+            {
+                neighbors[6] = bottomChunk->getTile(column, 0);
+            }
+            else
+            {
+                neighbors[6] = nullptr;
+            }
         }
     }
 
-    return surroundingTiles;
+    return neighbors;
 }
 
 void ChunkLayer::tick()
@@ -169,38 +249,38 @@ void ChunkLayer::update()
 
 void ChunkLayer::draw(bool debug)
 {
-    for (auto& i : chunks)
+    for (int layer = 0; layer < 2; layer++)
     {
-        if (i.second->state == ChunkState::ACTIVE)
+        for (auto& i : chunks)
         {
-            sf::Vector2f chunkTl = chunkToWorldPosition(game, i.second->getChunkPosition());
-
-            float chunkLength = toFloat(game->getSettings()->getSetting("chunk_size").valueInt) * game->getSettings()->getSetting("tile_size").valueFloat;
-
-            if (isOnScreen(game, chunkTl, {chunkLength, chunkLength}))
+            if (i.second->state == ChunkState::ACTIVE)
             {
-                i.second->draw(debug);
+                sf::Vector2f chunkTl = chunkToWorldPosition(game, i.second->getChunkPosition());
+    
+                if (isOnScreen(game, chunkTl, {chunkLength, chunkLength}))
+                {
+                    i.second->draw(layer, debug);
+                }
             }
-        }
-
-        if (debug)
-        {
-            float chunkLength = toFloat(game->getSettings()->getSetting("chunk_size").valueInt) * game->getSettings()->getSetting("tile_size").valueFloat;
-            sf::Vector2f chunkPos = chunkToWorldPosition(game, i.second->getChunkPosition());
-
-            sf::Vertex tl;
-            sf::Vertex tr;
-            sf::Vertex bl;
-            sf::Vertex br;
- 
-            tl.position = chunkPos;
-            tr.position = {chunkPos.x + chunkLength, chunkPos.y};
-            bl.position = {chunkPos.x, chunkPos.y + chunkLength};
-            br.position = {chunkPos.x + chunkLength, chunkPos.y + chunkLength};
-
-            std::vector<sf::Vertex> chunkOutline = {tl, tr, br, bl, tl};
-
-            window->getWindow().draw(&chunkOutline[0], chunkOutline.size(), sf::PrimitiveType::LineStrip);
+    
+            if (debug)
+            {
+                sf::Vector2f chunkPos = chunkToWorldPosition(game, i.second->getChunkPosition());
+    
+                sf::Vertex tl;
+                sf::Vertex tr;
+                sf::Vertex bl;
+                sf::Vertex br;
+     
+                tl.position = chunkPos;
+                tr.position = {chunkPos.x + chunkLength, chunkPos.y};
+                bl.position = {chunkPos.x, chunkPos.y + chunkLength};
+                br.position = {chunkPos.x + chunkLength, chunkPos.y + chunkLength};
+    
+                std::vector<sf::Vertex> chunkOutline = {tl, tr, br, bl, tl};
+    
+                window->getWindow().draw(&chunkOutline[0], chunkOutline.size(), sf::PrimitiveType::LineStrip);
+            }
         }
     }
 }

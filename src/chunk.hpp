@@ -4,6 +4,7 @@
 #include "chunk_state.hpp"
 
 #include <SFML/Graphics/RenderStates.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #include <vector>
 
 class Game;
@@ -19,6 +20,8 @@ public:
     void init(Game* game, sf::Vector2i chunkPosition, std::vector<Tile> tiles);
 
     void createTileVerts(int index);
+
+    void giveDecorationVerts(std::unique_ptr<std::vector<sf::Vertex>> vertices, sf::Texture* texture);
 
     // values will wrap, so -1
     // gets the opposite side and
@@ -36,7 +39,7 @@ public:
 
     void tick();
 
-    void draw(bool debug = false);
+    void draw(int layer, bool debug = false);
 
     ChunkState state;
 private:
@@ -47,7 +50,6 @@ private:
     sf::Vector2i chunkPosition;
 
     int chunkSize;
-
     float tileSize;
     
     sf::Vector2f worldPosition;
@@ -58,5 +60,8 @@ private:
 
     std::vector<sf::Vertex> debugVertices;
 
+    std::unique_ptr<std::vector<sf::Vertex>> decorationVertices;
+
     sf::RenderStates tileStates;
+    sf::RenderStates decorationStates;
 };

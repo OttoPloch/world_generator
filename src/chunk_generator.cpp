@@ -5,7 +5,9 @@
 #include "texture_atlas.hpp"
 #include "tile_types.hpp"
 #include "utils.hpp"
+#include "vertex_group.hpp"
 #include <SFML/Graphics/Rect.hpp>
+#include <algorithm>
 
 ChunkGenerator::ChunkGenerator() {}
     
@@ -138,39 +140,69 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
 
     (*chunks)[chunkPosition] = std::make_unique<Chunk>(game, chunkPosition, newTiles);
 
+    // decorations
     if (genMode == 2)
     {
-        EntityLayer* entityLayer = game->getScene()->getEntityLayer();
-
         Chunk* chunk = (*chunks)[chunkPosition].get();
 
-        for (int i = 0; i < 30; i++)
+        sf::Vector2f chunkWorldPos(chunkPosition.x * chunkSize * tileSize, chunkPosition.y * chunkSize * tileSize);
+
+        sf::Texture* decTexture = game->getAssetManager()->getTexture("background_foliage", "texture_atlases/");
+        sf::FloatRect decTexCoords;
+        float scale = game->getSettings()->getSetting("generation_foliage_scale").valueFloat;
+
+        std::vector<std::pair<sf::FloatRect, sf::FloatRect>> decorations;
+        std::unique_ptr<std::vector<sf::Vertex>> decorationVertices = std::make_unique<std::vector<sf::Vertex>>();
+
+        TileType currDecTileType = TileType::GRASS;
+        while (currDecTileType != TileType::COUNT)
         {
-            sf::Vector2f chunkWorldPos(chunkPosition.x * chunkSize * tileSize, chunkPosition.y * chunkSize * tileSize);
-            sf::Vector2f entityBottom(getRandInt(1, chunkSize * tileSize - 1), getRandInt(1, chunkSize * tileSize - 1));
-            sf::Texture* entityTexture = game->getAssetManager()->getTexture("background_foliage", "texture_atlases/");
-            sf::IntRect entityTexCoords;
-            
-            switch (getRandInt(0, 2))
+            for (int i = 0; i < 30; i++)
             {
-                case 0:
-                    entityTexCoords = sf::IntRect({0, 0}, {32, 32});
-                    break;
-                case 1:
-                    entityTexCoords = sf::IntRect({0, 48}, {64, 16});
-                    break;
-                default:
-                    entityTexCoords = sf::IntRect({48, 0}, {48, 48});
-                    break;
+                sf::Vector2f decBottom(getRandInt(1, chunkSize * tileSize - 1), getRandInt(1, chunkSize * tileSize - 1));
+    
+                if (chunk->getTile(std::floor(decBottom.x / tileSize), std::floor(decBottom.y / tileSize))->type != currDecTileType) continue;
+
+                switch(getRandInt(0, 2))
+                {
+                    case 0:
+                        decTexCoords = {{0, 0}, {32, 32}};
+                        break;
+                    case 1:
+                        decTexCoords = {{0, 48}, {64, 16}};
+                        break;
+                    case 2:
+                        decTexCoords = {{48, 0}, {48, 48}};
+                        break;
+                }
+                
+                sf::Vector2f decSize = {decTexCoords.size.x * scale, decTexCoords.size.y * scale};
+                sf::Vector2f decTl = {decBottom.x - decSize.x / 2.f, decBottom.y - decSize.y};
+
+                std::pair<sf::FloatRect, sf::FloatRect> dec;
+                dec.first = {{chunkWorldPos.x + decTl.x, chunkWorldPos.y + decTl.y}, {decSize.x, decSize.y}};
+                dec.second = decTexCoords;
+
+                decorations.push_back(dec);
             }
 
-            if (chunk->getTile(std::floor(entityBottom.x / tileSize), std::floor(entityBottom.y / tileSize))->type != TileType::GRASS) continue;
-
-            float scale = game->getSettings()->getSetting("generation_foliage_scale").valueFloat;
-
-            entityLayer
-                ->addEntity({chunkWorldPos.x + entityBottom.x, chunkWorldPos.y + entityBottom.y - (entityTexCoords.size.y * scale) / 2.f})
-                ->spriteInit(entityTexture, {scale, scale}, true, true, entityTexCoords);
+            if (currDecTileType == TileType::GRASS) currDecTileType = TileType::WATER;
+            if (currDecTileType == TileType::WATER) currDecTileType = TileType::COUNT;
         }
+
+        // sort decorations top to bottom for draw order
+        std::sort(decorations.begin(), decorations.end(), [](std::pair<sf::FloatRect, sf::FloatRect> a, std::pair<sf::FloatRect, sf::FloatRect> b) { return a.first.position.y + a.first.size.y < b.first.position.y + b.first.size.y; });
+
+        for (int i = 0; i < decorations.size(); i++)
+        {
+            std::array<sf::Vertex, 6> currDecVertices = VertexGroup::createVerts(decorations[i].first.position, decorations[i].first.size, decorations[i].second);
+
+            for (int i = 0; i < 6; i++)
+            {
+                decorationVertices->push_back(currDecVertices[i]);
+            }
+        }
+
+        chunk->giveDecorationVerts(std::move(decorationVertices), decTexture);
     }
 }

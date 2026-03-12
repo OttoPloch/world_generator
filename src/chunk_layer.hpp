@@ -27,7 +27,8 @@ public:
 
     Chunk* getChunk(sf::Vector2i chunkPosition);
 
-    std::vector<std::vector<std::unique_ptr<Tile>>*> getSurroundingTiles(sf::Vector2f position);
+    // can get neighbors from other chunks
+    std::array<Tile*, 8> getTileNeighbors(sf::Vector2i chunkPos, int column, int row);
 
     void tick();
     
@@ -39,6 +40,10 @@ private:
 
     Window* window;
     
+    int chunkSize;
+    float tileSize;
+    float chunkLength;
+
     std::unordered_map<sf::Vector2i, std::unique_ptr<Chunk>, Vector2iHash> chunks;
 
     ChunkGenerator chunkGenerator;
