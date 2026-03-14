@@ -1,9 +1,6 @@
 #include "chunk.hpp"
 #include "game.hpp"
 #include "tile_types.hpp"
-#include <FLAC/stream_decoder.h>
-#include <SFML/Graphics/PrimitiveType.hpp>
-#include <SFML/Graphics/Texture.hpp>
 
 Chunk::Chunk() {}
 
