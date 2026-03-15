@@ -54,4 +54,24 @@ void Sprite::syncPos(sf::Vector2f interpolatedPos, bool useInterpolated)
     }
 }
 
+void Sprite::update(float dt)
+{
+    if (animation.name != "")
+    {
+        animation.secondsTillNextFrame -= dt;
+
+        if (animation.secondsTillNextFrame <= 0.f)
+        {
+            (animation.reversed) ? animation.index-- : animation.index++;
+
+            if (animation.index >= animation.frames.size()) animation.index = 0;
+            if (animation.index < 0) animation.index = animation.frames.size() - 1;
+
+            sprite->setTextureRect(animation.frames[animation.index]);
+
+            animation.secondsTillNextFrame = animation.secondsPerFrame;
+        }
+    }
+}
+
 void Sprite::draw(sf::RenderWindow& window) { window.draw(*sprite.get()); }

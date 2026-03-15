@@ -8,13 +8,13 @@ struct VertexGroup
     int start;
     int size;
 
-    sf::FloatRect texCoords;
+    sf::IntRect texCoords;
 
     VertexGroup();
 
-    VertexGroup(int start, int size, sf::FloatRect texCoords);
+    VertexGroup(int start, int size, sf::IntRect texCoords);
 
-    static std::array<sf::Vertex, 6> createTriangleVerts(sf::Vector2f tl, sf::Vector2f size, sf::FloatRect texCoords);
+    static std::array<sf::Vertex, 6> createTriangleVerts(sf::Vector2f tl, sf::Vector2f size, sf::IntRect texCoords);
     
     static std::array<sf::Vertex, 8> createLineVerts(sf::Vector2f tl, sf::Vector2f size, sf::Color color);
 };

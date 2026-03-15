@@ -131,7 +131,7 @@ void Game::run()
         }
 
         scene.UIUpdate(dt);
-        scene.chunkUpdate();
+        scene.chunkLoadUpdate();
         scene.getUILayer()->getElement("fps display")->getAsText()->setValue(std::to_string(toInt(std::round(smoothFps))));
 
         draw();

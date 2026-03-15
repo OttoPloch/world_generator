@@ -2,6 +2,7 @@
 #include "states.hpp"
 #include "texture_atlas.hpp"
 #include <SFML/Graphics/Rect.hpp>
+#include <fstream>
 
 AssetManager::AssetManager() {}
 
@@ -65,7 +66,7 @@ sf::Texture* AssetManager::getTexture(std::string name, std::string pathFromAsse
     }
 }
 
-SpriteAnimation* AssetManager::getAnimation(std::string name)
+Animation* AssetManager::getAnimation(std::string name)
 {
     auto entry = animationMap.find(name);
 
@@ -75,140 +76,129 @@ SpriteAnimation* AssetManager::getAnimation(std::string name)
     }
     else
     {
-        SpriteAnimation newAnimation;
+        Animation newAnimation;
 
         if (!std::filesystem::exists("../../assets/animations/" + name + ".anim"))
         {
-            std::cout << "error loading " << name << ".anim\n";
-
-            return nullptr;
+            std::cout << "error loading " << name << ".anim, doesn't exist.\n";
         }
         else
         {
-            // load animation
             std::ifstream animFile("../../assets/animations/" + name + ".anim");
 
-            std::string textureName;
             std::string texturePath;
-            int texColumns;
-            int texRows;
-            float sizeFractionX;
-            float sizeFractionY;
-            int baseTicksPerFrame;
-            sf::FloatRect collisionRect({0, 0}, {0, 0});
+            std::vector<sf::Vector2i> coords;
+            std::vector<sf::Vector2i> sizes;
 
             std::string line;
 
             while (std::getline(animFile, line))
             {
-                if (line.substr(0, 9) == "tex name ") textureName = line.substr(9);
-                if (line.substr(0, 5) == "path ") texturePath = line.substr(5);
-                if (line.substr(0, 4) == "col ") texColumns = toInt(std::stof(line.substr(4)));
-                if (line.substr(0, 4) == "row ") texRows = toInt(std::stof(line.substr(4)));
-                if (line.substr(0, 6) == "sizex ") sizeFractionX = std::stof(line.substr(6));
-                if (line.substr(0, 6) == "sizey ") sizeFractionY = std::stof(line.substr(6));
-                if (line.substr(0, 18) == "baseticksperframe ") baseTicksPerFrame = toInt(std::stof(line.substr(18)));
-                if (line.substr(0, 11) == "colloffset ")
+                if (line.substr(0, 7) == "texture") texturePath = line.substr(8);
+                if (line.substr(0, 5) == "coord")
                 {
-                    std::string offset = line.substr(11);
-                    int comma = offset.find(',');
-                    float x = std::stof(offset.substr(0, comma));
-                    float y = std::stof(offset.substr(comma + 1));
+                    std::string substr = line.substr(6);
+                    int commaIndex = substr.find(',');
+                    if (commaIndex != std::string::npos)
+                    {
+                        int coordX = toInt(std::stof(substr.substr(0, commaIndex)));
+                        int coordY = toInt(std::stof(substr.substr(commaIndex + 1)));
 
-                    collisionRect.position = {x, y};
+                        coords.push_back({coordX, coordY});
+                    }
+                    else
+                    {
+                        coords.push_back({0, 0});
+
+                        std::cout << "error getting tex coords of a frame in animation called " << name << ". Make sure the animation file has coords typed properly (coord x,y)";
+                    }
                 }
-                if (line.substr(0, 9) == "collsize ")
+                if (line.substr(0, 4) == "size")
                 {
-                    std::string size = line.substr(9);
-                    auto comma = size.find(',');
-                    float x = std::stof(size.substr(0, comma));
-                    float y = std::stof(size.substr(comma + 1));
+                    std::string substr = line.substr(5);
+                    int commaIndex = substr.find(',');
+                    if (commaIndex != std::string::npos)
+                    {
+                        int sizeX = toInt(std::stof(substr.substr(0, commaIndex)));
+                        int sizeY = toInt(std::stof(substr.substr(commaIndex + 1)));
 
-                    collisionRect.size = {x, y};
-                }
-            }
+                        sizes.push_back({sizeX, sizeY});
+                    }
+                    else
+                    {
+                        sizes.push_back({0, 0});
 
-            sf::Texture* animTexture = getTexture(textureName, texturePath, true);
-
-            sf::Vector2u texSize = animTexture->getSize();
-
-            int frameLength = texSize.x / texColumns;
-            int frameHeight = texSize.y / texRows;
-
-            int fittedFrameLength = toInt(frameLength * sizeFractionX);
-            int fittedFrameHeight = toInt(frameHeight * sizeFractionY);
-
-            std::vector<sf::Vector2i> animationFrames;
-
-            for (int y = 0; y < texRows; y++)
-            {
-                for (int x = 0; x < texColumns; x++)
-                {
-                    float xOffset = std::ceil((frameLength * ((1.f - sizeFractionX) / 2.f)));
-                    float yOffset = std::ceil((frameHeight * ((1.f - sizeFractionY) / 2.f)));
-
-                    animationFrames.push_back({toInt(toFloat(frameLength * x) + xOffset), toInt(toFloat(frameHeight * y) + yOffset)});
+                        std::cout << "error getting size of a frame in animation called " << name << ". Make sure the animation file has sizes typed properly (size x,y)";
+                    }
                 }
             }
+            
+            sf::Texture* animTexture = getTexture("", texturePath, true);
 
-            newAnimation.init(name, baseTicksPerFrame, animTexture, {fittedFrameLength, fittedFrameHeight}, animationFrames, collisionRect);
+            std::vector<sf::IntRect> frames;
+
+            for(int i = 0; i < coords.size(); i++) frames.emplace_back(coords[i], sizes[i]);
+
+            newAnimation = Animation(name, animTexture, frames);
         }
 
         animationMap[name] = newAnimation;
 
         return &animationMap[name];
     }
+
+    return nullptr;
 }
 
-AnimationSet* AssetManager::getAnimSet(std::string name)
-{
-    auto entry = animSetMap.find(name);
+// AnimationSet* AssetManager::getAnimSet(std::string name)
+// {
+//     auto entry = animSetMap.find(name);
 
-    if (entry != animSetMap.end())
-    {
-        return &entry->second;        
-    }
-    else
-    {
-        AnimationSet newSet;
+//     if (entry != animSetMap.end())
+//     {
+//         return &entry->second;        
+//     }
+//     else
+//     {
+//         AnimationSet newSet;
 
-        if (!std::filesystem::exists("../../assets/animations/sets/" + name + ".animset"))
-        {
-            std::cout << "error loading " << name << ".animset\n";
+//         if (!std::filesystem::exists("../../assets/animations/sets/" + name + ".animset"))
+//         {
+//             std::cout << "error loading " << name << ".animset\n";
 
-            return nullptr;
-        }
-        else
-        {
-            // load animation set
-            std::ifstream setFile("../../assets/animations/sets/" + name + ".animset");
+//             return nullptr;
+//         }
+//         else
+//         {
+//             // load animation set
+//             std::ifstream setFile("../../assets/animations/sets/" + name + ".animset");
 
-            std::unordered_map<AnimationState, SpriteAnimation*> animations;
+//             std::unordered_map<AnimationState, SpriteAnimation*> animations;
 
-            std::vector<AnimationState> states;
-            std::vector<std::string> animNames;
+//             std::vector<AnimationState> states;
+//             std::vector<std::string> animNames;
 
-            std::string line;
+//             std::string line;
 
-            while (std::getline(setFile, line))
-            {
-                if (line.substr(0, 5) == "state") states.push_back(static_cast<AnimationState>(animationStringToState[line.substr(6)]));
-                if (line.substr(0, 4) == "anim") animNames.push_back(line.substr(5));
-            }
+//             while (std::getline(setFile, line))
+//             {
+//                 if (line.substr(0, 5) == "state") states.push_back(static_cast<AnimationState>(animationStringToState[line.substr(6)]));
+//                 if (line.substr(0, 4) == "anim") animNames.push_back(line.substr(5));
+//             }
 
-            for (int i = 0; i < states.size(); i++)
-            {
-                animations[states[i]] = getAnimation(animNames[i]);
-            }
+//             for (int i = 0; i < states.size(); i++)
+//             {
+//                 animations[states[i]] = getAnimation(animNames[i]);
+//             }
 
-            newSet.init(name, animations);
-        }
+//             newSet.init(name, animations);
+//         }
 
-        animSetMap[name] = newSet;
+//         animSetMap[name] = newSet;
 
-        return &animSetMap[name];
-    }
-}
+//         return &animSetMap[name];
+//     }
+// }
 
 TileSet* AssetManager::getTileSet(std::string name)
 {
@@ -334,17 +324,17 @@ TextureAtlas* AssetManager::getTextureAtlas(std::string name)
             // load atlas
             std::ifstream atlasFile("../../assets/texture_atlases/" + name + ".atlas");
 
-            std::unordered_map<std::string, sf::FloatRect> texCoords;
+            std::unordered_map<std::string, sf::IntRect> texCoords;
 
             // makes it simpler to type in the positions of
             // atlases when making them, reduces to multiples.
             float tileSize;
 
             std::vector<std::string> items;
-            std::vector<float> xCoords;
-            std::vector<float> yCoords;
-            std::vector<float> xSizes;
-            std::vector<float> ySizes;
+            std::vector<int> xCoords;
+            std::vector<int> yCoords;
+            std::vector<int> xSizes;
+            std::vector<int> ySizes;
 
             std::string line;
 
@@ -352,10 +342,10 @@ TextureAtlas* AssetManager::getTextureAtlas(std::string name)
             {
                 if (line.substr(0, 8) == "tilesize") tileSize = std::stof(line.substr(9));
                 if (line.substr(0, 4) == "item") items.push_back(line.substr(5));
-                if (line.substr(0, 6) == "xCoord") xCoords.push_back(tileSize * std::stof(line.substr(7)));
-                if (line.substr(0, 6) == "yCoord") yCoords.push_back(tileSize * std::stof(line.substr(7)));
-                if (line.substr(0, 5) == "xSize") xSizes.push_back(tileSize * std::stof(line.substr(6)));
-                if (line.substr(0, 5) == "ySize") ySizes.push_back(tileSize * std::stof(line.substr(6)));
+                if (line.substr(0, 6) == "xCoord") xCoords.push_back(tileSize * toInt(std::stof(line.substr(7))));
+                if (line.substr(0, 6) == "yCoord") yCoords.push_back(tileSize * toInt(std::stof(line.substr(7))));
+                if (line.substr(0, 5) == "xSize") xSizes.push_back(tileSize * toInt(std::stof(line.substr(6))));
+                if (line.substr(0, 5) == "ySize") ySizes.push_back(tileSize * toInt(std::stof(line.substr(6))));
             }
 
             sf::Vector2u atlasSize = getTexture("tiles", "texture_atlases/")->getSize();
@@ -370,7 +360,7 @@ TextureAtlas* AssetManager::getTextureAtlas(std::string name)
                 xSizes[i] = std::roundf(xSizes[i]);
                 ySizes[i] = std::roundf(ySizes[i]);
 
-                texCoords[items[i]] = sf::FloatRect({xCoords[i], yCoords[i]}, {xSizes[i], ySizes[i]});
+                texCoords[items[i]] = sf::IntRect({xCoords[i], yCoords[i]}, {xSizes[i], ySizes[i]});
             }
 
             newAtlas = TextureAtlas(name, texCoords);

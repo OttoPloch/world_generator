@@ -27,9 +27,7 @@ src/game_position.cpp
 src/scene.cpp
 src/collision_rect.cpp
 src/utils.cpp
-src/sprite_animation.cpp
 src/entity_states.cpp
-src/animation_set.cpp
 src/gamerules.cpp
 src/gamerule.cpp
 src/entity_layer.cpp
@@ -53,6 +51,7 @@ src/mob.cpp
 src/vertex_group.cpp
 src/texture_atlas.cpp
 src/background_object.cpp
+src/animation.cpp
 )
 
 target_compile_features(app PRIVATE cxx_std_17)

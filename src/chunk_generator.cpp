@@ -45,16 +45,16 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
         switch (tileType)
         {
             case 0:
-                newTiles = {Tile(TileType::WATER, atlas->getItemTexCoords("water_basic"))};
+                newTiles.emplace_back(TileType::WATER, atlas->getItemTexCoords("water_basic"));
                 break;
             case 1:
-                newTiles = {Tile(TileType::GRASS, atlas->getItemTexCoords("grass_basic"))};
+                newTiles.emplace_back(TileType::GRASS, atlas->getItemTexCoords("grass_basic"));
                 break;
             case 2:
-                newTiles = {Tile(TileType::LAVA, atlas->getItemTexCoords("lava_basic"))};
+                newTiles.emplace_back(TileType::LAVA, atlas->getItemTexCoords("lava_basic"));
                 break;
             case 3:
-                newTiles = {Tile(TileType::PINK, atlas->getItemTexCoords("pink_basic"), true, "tile")};
+                newTiles.emplace_back(TileType::PINK, atlas->getItemTexCoords("pink_basic"), true, "tile");
                 break;
         }
     }
@@ -123,14 +123,14 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
             if (newTiles[i].type == TileType::WATER)
             {
                 if (
-                    newTiles[i - 1].type != TileType::WATER ||
-                    newTiles[i + 1].type != TileType::WATER ||
-                    newTiles[i - chunkSize].type != TileType::WATER ||
-                    newTiles[i + chunkSize].type != TileType::WATER ||
                     i % chunkSize == 0 ||
                     i % chunkSize == chunkSize - 1 ||
                     i < chunkSize ||
-                    i >= newTiles.size() - chunkSize)
+                    i >= newTiles.size() - chunkSize ||
+                    newTiles[i - 1].type != TileType::WATER ||
+                    newTiles[i + 1].type != TileType::WATER ||
+                    newTiles[i - chunkSize].type != TileType::WATER ||
+                    newTiles[i + chunkSize].type != TileType::WATER)
                 {
                     newTiles[i].collides = true;
                     newTiles[i].colliderName = "water";
@@ -139,7 +139,7 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
         }
     }
 
-    (*chunks)[chunkPosition] = std::make_unique<Chunk>(game, chunkPosition, newTiles);
+    (*chunks)[chunkPosition] = std::make_unique<Chunk>(game, chunkPosition, std::move(newTiles));
 
     // decorations
     if (genMode == 2)
@@ -149,10 +149,8 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
         sf::Vector2f chunkWorldPos(chunkPosition.x * chunkLength, chunkPosition.y * chunkLength);
 
         sf::Texture* decTexture = game->getAssetManager()->getTexture("background_foliage", "texture_atlases/");
-        sf::FloatRect decTexCoords;
+        sf::IntRect decTexCoords;
         float scale = game->getSettings()->getSetting("generation_foliage_scale").valueFloat;
-
-        float padding = 10;
 
         std::vector<BackgroundObject> decorations;
 

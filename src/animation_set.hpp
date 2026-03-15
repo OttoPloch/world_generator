@@ -1,26 +1,26 @@
-#pragma once
+// #pragma once
 
-#include "common.hpp"
-#include "states.hpp"
+// #include "common.hpp"
+// #include "states.hpp"
 
-#include <map>
+// #include <map>
 
-class SpriteAnimation;
+// class SpriteAnimation;
 
-class AnimationSet
-{
-public:
-    AnimationSet();
+// class AnimationSet
+// {
+// public:
+//     AnimationSet();
 
-    AnimationSet(std::string setName, std::unordered_map<AnimationState, SpriteAnimation*> animations);
+//     AnimationSet(std::string setName, std::unordered_map<AnimationState, SpriteAnimation*> animations);
 
-    void init(std::string setName, std::unordered_map<AnimationState, SpriteAnimation*> animations);
+//     void init(std::string setName, std::unordered_map<AnimationState, SpriteAnimation*> animations);
 
-    SpriteAnimation* getAnimationFor(AnimationState key);
+//     SpriteAnimation* getAnimationFor(AnimationState key);
 
-    int getKeyFor(SpriteAnimation* animation);
-private:
-    std::string setName;
+//     int getKeyFor(SpriteAnimation* animation);
+// private:
+//     std::string setName;
 
-    std::unordered_map<AnimationState, SpriteAnimation*> animations;
-};
+//     std::unordered_map<AnimationState, SpriteAnimation*> animations;
+// };

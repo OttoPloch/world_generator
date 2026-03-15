@@ -33,7 +33,9 @@ public:
 
     void tick();
     
-    void update();
+    void loadUpdate();
+
+    void update(float dt);
 
     void draw(bool debug = false);
 private:

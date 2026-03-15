@@ -2,6 +2,7 @@
 
 #include "common.hpp"
 #include "world_position.hpp"
+#include "animation.hpp"
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <memory>
@@ -23,9 +24,13 @@ public:
 
     void syncPos(sf::Vector2f interpolatedPos = {0, 0}, bool useInterpolated = false);
 
+    void update(float dt);
+
     void draw(sf::RenderWindow& window);
 
     std::unique_ptr<sf::Sprite> sprite;
+
+    Animation animation;
 private:
     WorldPosition position;
 

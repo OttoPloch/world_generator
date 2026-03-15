@@ -220,7 +220,7 @@ void ChunkLayer::tick()
     sf::Vector2i currChunkPos = worldToChunkPosition(game, game->getScene()->getCamera()->getCenter());
 }
 
-void ChunkLayer::update()
+void ChunkLayer::loadUpdate()
 {
     int loadDist = game->getSettings()->getSetting("chunk_load_distance").valueInt;
 
@@ -250,6 +250,17 @@ void ChunkLayer::update()
         game->getScene()->getUILayer()->getElement("chunk pos display")->getAsText()->setValue(std::to_string(currChunkPos.x) + ", " + std::to_string(currChunkPos.y));
 
         lastChunkPos = currChunkPos;
+    }
+}
+
+void ChunkLayer::update(float dt)
+{
+    for (auto& i : chunks)
+    {
+        if (i.second->state == ChunkState::ACTIVE)
+        {
+            i.second->update(dt);
+        }
     }
 }
 

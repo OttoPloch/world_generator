@@ -29,7 +29,7 @@ void Entity::tick()
 
 void Entity::update(float dt)
 {
-
+    sprite.update(dt);
 }
 
 void Entity::draw(float alpha, sf::RenderWindow& window)

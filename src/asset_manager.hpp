@@ -1,8 +1,7 @@
 #pragma once
 
 #include "common.hpp"
-#include "sprite_animation.hpp"
-#include "animation_set.hpp"
+#include "animation.hpp"
 #include "tile_set.hpp"
 #include "texture_atlas.hpp"
 
@@ -18,9 +17,9 @@ public:
 
     sf::Texture* getTexture(std::string name, std::string pathFromAssets = "images/", bool pathIncludesTheFile = false);
 
-    SpriteAnimation* getAnimation(std::string name);
+    Animation* getAnimation(std::string name);
 
-    AnimationSet* getAnimSet(std::string name);
+    // AnimationSet* getAnimSet(std::string name);
 
     TileSet* getTileSet(std::string name);
 
@@ -30,9 +29,9 @@ public:
 private:
     std::unordered_map<std::string, sf::Texture> textureMap;
 
-    std::unordered_map<std::string, SpriteAnimation> animationMap;
+    std::unordered_map<std::string, Animation> animationMap;
 
-    std::unordered_map<std::string, AnimationSet> animSetMap;
+    // std::unordered_map<std::string, AnimationSet> animSetMap;
 
     std::unordered_map<std::string, TileSet> tileSetMap;
 

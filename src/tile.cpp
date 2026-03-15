@@ -7,7 +7,7 @@
 
 Tile::Tile() {}
 
-Tile::Tile(TileType type, sf::FloatRect texCoords, bool collides, std::string colliderName, sf::Vector2f collOffsetFraction, sf::Vector2f collSizeFraction)
+Tile::Tile(TileType type, sf::IntRect texCoords, bool collides, std::string colliderName, sf::Vector2f collOffsetFraction, sf::Vector2f collSizeFraction)
 {
     this->type = type;
     myVerts.texCoords = texCoords;
@@ -17,12 +17,12 @@ Tile::Tile(TileType type, sf::FloatRect texCoords, bool collides, std::string co
     this->collSizeFraction = collSizeFraction;
 }
 
-Tile::Tile(Game* game, Chunk* chunk, sf::Vector2i localPosition, TileType type, sf::FloatRect texCoords, bool collides, std::string colliderName, sf::Vector2f collOffsetFraction, sf::Vector2f collSizeFraction)
+Tile::Tile(Game* game, Chunk* chunk, sf::Vector2i localPosition, TileType type, sf::IntRect texCoords, bool collides, std::string colliderName, sf::Vector2f collOffsetFraction, sf::Vector2f collSizeFraction)
 {
     init(game, chunk, localPosition, type, texCoords, collides, colliderName, collOffsetFraction, collSizeFraction);
 }
 
-void Tile::init(Game* game, Chunk* chunk, sf::Vector2i localPosition, TileType type, sf::FloatRect texCoords, bool collides, std::string colliderName, sf::Vector2f collOffsetFraction, sf::Vector2f collSizeFraction)
+void Tile::init(Game* game, Chunk* chunk, sf::Vector2i localPosition, TileType type, sf::IntRect texCoords, bool collides, std::string colliderName, sf::Vector2f collOffsetFraction, sf::Vector2f collSizeFraction)
 {
     this->game = game;
 
@@ -63,11 +63,32 @@ sf::FloatRect Tile::getCollRect()
         {
             std::cout << "ERROR tile could not get collision rect because it doesn't have a chunk ptr.\n";
 
-            return sf::FloatRect({0.f, 0.f}, {-1.f, -1.f});
+            return sf::FloatRect({0, 0}, {-1, -1});
         }
     }
     else
     {
-        return sf::FloatRect({0.f, 0.f}, {-1.f, -1.f});
+        return sf::FloatRect({0, 0}, {-1, -1});
+    }
+}
+
+void Tile::update(float dt)
+{
+    if (animation.name != "")
+    {
+        animation.secondsTillNextFrame -= dt;
+
+        if (animation.secondsTillNextFrame <= 0.f)
+        {
+            (animation.reversed) ? animation.index-- : animation.index++;
+
+            if (animation.index >= animation.frames.size()) animation.index = 0;
+            if (animation.index < 0) animation.index = animation.frames.size() - 1;
+
+            myVerts.texCoords = animation.frames[animation.index];
+            chunk->createTileVerts(localPosition);
+
+            animation.secondsTillNextFrame = animation.secondsPerFrame;
+        }
     }
 }

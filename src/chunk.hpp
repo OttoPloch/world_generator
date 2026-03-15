@@ -24,6 +24,8 @@ public:
 
     void createTileVerts(int index);
 
+    void createTileVerts(sf::Vector2i tilePosition);
+
     // values will wrap, so -1
     // gets the opposite side and
     // 17 (in a chunk of size 16)
@@ -39,6 +41,8 @@ public:
     sf::Vector2i getChunkPosition();
 
     void tick();
+
+    void update(float dt);
 
     void draw(bool debug = false);
 

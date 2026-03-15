@@ -26,7 +26,7 @@ public:
 
     void UIUpdate(float dt);
 
-    void chunkUpdate();
+    void chunkLoadUpdate();
 
     void draw(float alpha);
 

@@ -16,7 +16,11 @@ void EntityLayer::init(Game* game)
 
     IDCounter = 0;
 
-    addMob({0, 0})->spriteInit(game->getAssetManager()->getTexture("shaq_time_out"));
+    addMob({0, 0})
+    ->spriteInit(game->getAssetManager()->getTexture("WALK", "animations/Knight 2D Pixel Art/Sprites/without_outline/"), {10, 10}, true, true, {game->getAssetManager()->getAnimation("knight")->frames[0].position, game->getAssetManager()->getAnimation("knight")->frames[0].size})
+    ->animation = *game->getAssetManager()->getAnimation("knight");
+
+    dynamic_cast<Mob*>(getEntity(0))->getSprite()->animation.adjustSpeed(0.2f);
 
     // AssetManager* assetManager = game->getAssetManager();
 

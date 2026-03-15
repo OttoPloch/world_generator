@@ -2,12 +2,14 @@
 #include "game.hpp"
 #include "tile_types.hpp"
 #include <SFML/Graphics/PrimitiveType.hpp>
+#include <SFML/Graphics/Rect.hpp>
+#include <memory>
 
 Chunk::Chunk() {}
 
 Chunk::Chunk(Game* game, sf::Vector2i chunkPosition, std::vector<Tile> tiles)
 {
-    init(game, chunkPosition, tiles);
+    init(game, chunkPosition, std::move(tiles));
 }
 
 void Chunk::init(Game* game, sf::Vector2i chunkPosition, std::vector<Tile> tiles)
@@ -34,6 +36,11 @@ void Chunk::init(Game* game, sf::Vector2i chunkPosition, std::vector<Tile> tiles
 
         this->tiles[i] = std::make_unique<Tile>(game, this, sf::Vector2i(i % chunkSize, toInt(std::floor(i / chunkSize))), currTile->type, currTile->myVerts.texCoords, currTile->collides, currTile->colliderName, currTile->collOffsetFraction, currTile->collSizeFraction);
 
+        if (this->tiles[i]->type == TileType::WATER)
+        {
+            this->tiles[i]->animation = *game->getAssetManager()->getAnimation("water");
+        }
+
         createTileVerts(i);
     }
 
@@ -46,14 +53,14 @@ void Chunk::createTileVerts(int index)
 {
     sf::Vector2f tileWorldPos = {worldPosition.x + toFloat(tiles[index]->localPosition.x) * tileSize, worldPosition.y + toFloat(tiles[index]->localPosition.y) * tileSize};
     
-    sf::FloatRect texCoords = tiles[index]->myVerts.texCoords;
+    sf::IntRect texCoords = tiles[index]->myVerts.texCoords;
 
     // center on bottom center to allow flexible
     // sizing for the image of the tile
     tileWorldPos.x += tileSize / 2.f;
     tileWorldPos.y += tileSize;
 
-    float texCoordRatio = texCoords.size.x / texCoords.size.y;
+    float texCoordRatio = toFloat(texCoords.size.x) / toFloat(texCoords.size.y);
     sf::Vector2f tileFittedSize;
     (texCoordRatio >= 1.f) ? tileFittedSize = {tileSize * texCoordRatio, tileSize} : tileFittedSize = {tileSize, tileSize / texCoordRatio};
     sf::Vector2f tileAdjustedTl = {tileWorldPos.x - tileFittedSize.x / 2.f, tileWorldPos.y - tileFittedSize.y};
@@ -93,6 +100,11 @@ void Chunk::createTileVerts(int index)
     }
 }
 
+void Chunk::createTileVerts(sf::Vector2i tilePosition)
+{
+    createTileVerts(tilePosition.y * chunkSize + tilePosition.x);
+}
+
 Tile* Chunk::getTile(int column, int row)
 {
     int x = column;
@@ -122,6 +134,14 @@ sf::Vector2i Chunk::getChunkPosition() { return chunkPosition; }
 void Chunk::tick()
 {
 
+}
+
+void Chunk::update(float dt)
+{
+    for (int i = 0; i < tiles.size(); i++)
+    {
+        tiles[i]->update(dt);
+    }
 }
 
 void Chunk::draw(bool debug)

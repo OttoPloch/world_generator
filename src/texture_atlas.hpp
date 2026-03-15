@@ -10,10 +10,10 @@ class TextureAtlas
 public:
     TextureAtlas();
 
-    TextureAtlas(std::string atlasName, std::unordered_map<std::string, sf::FloatRect> itemTexCoords);
+    TextureAtlas(std::string atlasName, std::unordered_map<std::string, sf::IntRect> itemTexCoords);
 
-    sf::FloatRect getItemTexCoords(std::string item);
+    sf::IntRect getItemTexCoords(std::string item);
 
     std::string name;
-    std::unordered_map<std::string, sf::FloatRect> itemTexCoords;
+    std::unordered_map<std::string, sf::IntRect> itemTexCoords;
 };

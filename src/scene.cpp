@@ -45,6 +45,8 @@ void Scene::tick()
 
 void Scene::update(float dt)
 {       
+    chunkLayer.update(dt);
+    
     entityLayer.update(dt);
 }
 
@@ -88,9 +90,9 @@ void Scene::UIUpdate(float dt)
     uiLayer.UIUpdate(dt);
 }
 
-void Scene::chunkUpdate()
+void Scene::chunkLoadUpdate()
 {
-    chunkLayer.update();
+    chunkLayer.loadUpdate();
 }
 
 void Scene::draw(float alpha)
