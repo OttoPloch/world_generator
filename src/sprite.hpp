@@ -21,7 +21,7 @@ public:
     float top();
     float bottom();
 
-    void syncPos();
+    void syncPos(sf::Vector2f interpolatedPos = {0, 0}, bool useInterpolated = false);
 
     void draw(sf::RenderWindow& window);
 

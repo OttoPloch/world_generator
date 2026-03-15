@@ -248,5 +248,5 @@ void UIBackground::draw()
 {
     game->getWindow()->draw(background);
 
-    if (tileSet != nullptr) game->getWindow()->getWindow().draw(&borderVertices[0], borderVertices.size(), sf::PrimitiveType::Triangles, borderStates);
+    if (tileSet != nullptr) game->getWindow()->getWindow().draw(borderVertices.data(), borderVertices.size(), sf::PrimitiveType::Triangles, borderStates);
 }

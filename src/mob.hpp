@@ -3,6 +3,8 @@
 #include "common.hpp"
 #include "entity.hpp"
 
+#include <SFML/Graphics.hpp>
+
 class Mob : public Entity
 {
 public:
@@ -13,6 +15,6 @@ public:
     Mob(Game* game, int ID, WorldPosition position);
 
     void tick() override;
-
+    
     sf::Vector2f velocity;
 };

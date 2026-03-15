@@ -4,6 +4,7 @@
 #include "rect_type.hpp"
 #include "utils.hpp"
 
+#include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <algorithm>
 
@@ -15,7 +16,7 @@ void EntityLayer::init(Game* game)
 
     IDCounter = 0;
 
-    addMob({-300, 300})->spriteInit(game->getAssetManager()->getTexture("shaq_time_out"));
+    addMob({0, 0})->spriteInit(game->getAssetManager()->getTexture("shaq_time_out"));
 
     // AssetManager* assetManager = game->getAssetManager();
 
@@ -109,7 +110,7 @@ Entity* EntityLayer::addEntity(sf::Vector2f position)
     int ID = getNewID();
 
     entities[ID] = std::make_unique<Entity>(game, ID, position);
-
+    
     return entities[ID].get();
 }
 
@@ -125,7 +126,6 @@ Mob* EntityLayer::addMob(sf::Vector2f position)
     asMob->velocity.x = 5;
 
     return asMob;
-
 }
 
 void EntityLayer::removeEntity(int ID)
@@ -274,7 +274,7 @@ void EntityLayer::update(float dt)
     }
 }
 
-void EntityLayer::draw()
+void EntityLayer::draw(float alpha)
 {
     for (auto& i : entities)
     {
@@ -286,7 +286,7 @@ void EntityLayer::draw()
 
             if (isOnScreen(game, {entitySprite->left(), entitySprite->top()}, entitySprite->getSize()))
             {
-                i.second->draw(game->getWindow()->getWindow());
+                i.second->draw(alpha, game->getWindow()->getWindow());
             }
         }
     }

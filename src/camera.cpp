@@ -1,5 +1,6 @@
 #include "camera.hpp"
 #include "game.hpp"
+#include <SFML/System/Vector2.hpp>
 
 Camera::Camera() {}
 
@@ -64,50 +65,40 @@ sf::Vector2f Camera::getTopLeft()
 
 float Camera::getZoomFactor() { return zoomFactor; }
 
-void Camera::update(float dt)
+void Camera::tick()
 {
+    lastCenter = center;
+
     if (focus != nullptr)
     {
-        sf::Vector2f targetPosition;
-        
-        targetPosition = focus->getPosition();
+        sf::Vector2f targetPosition = focus->getPosition();
 
-        // note: the follow delay is divided by 100 to make the gamerule
-        // more readable, not sure if this is a bad practice or not.
-        float followDelay = gamerules->getRule("camera_focusFollowDelay").valueFloat;
+        velocity.x = (targetPosition.x - center.x);
+        velocity.y = (targetPosition.y - center.y);
 
-        velocity.x = (targetPosition.x - center.x) / followDelay;
-        velocity.y = (targetPosition.y - center.y) / followDelay;
+        center.x += velocity.x;
+        center.y += velocity.y;
     }
     else
     {
-        if (game->getInput()->getMovement().x == 0)
-        {
-            velocity.x *= 1 - (dt * gamerules->getRule("camera_freecamFriction").valueFloat);
-        }
-        else
-        {
-            velocity.x = (gamerules->getRule("camera_freecamMoveSpeedBase").valueInt * zoomFactor) * game->getInput()->getMovement().x;
-        }
-    
-        if (game->getInput()->getMovement().y == 0)
-        {
-            velocity.y *= 1 - (dt * gamerules->getRule("camera_freecamFriction").valueFloat);
-        }
-        else
-        {
-            velocity.y = (gamerules->getRule("camera_freecamMoveSpeedBase").valueInt * zoomFactor) * game->getInput()->getMovement().y;
-        }
-    }
+        velocity.x = (gamerules->getRule("camera_freecamMoveSpeedBase").valueFloat * zoomFactor) * game->getInput()->getMovement().x;
+        velocity.y = (gamerules->getRule("camera_freecamMoveSpeedBase").valueFloat * zoomFactor) * game->getInput()->getMovement().y;
 
-    // the 100 is just to make things go faster, not intended to be changeable
-    center.x += velocity.x * 100 * dt;
-    center.y += velocity.y * 100 * dt;
+        center.x += velocity.x;
+        center.y += velocity.y;
+    }
 
     center.x = std::roundf(center.x);
     center.y = std::roundf(center.y);
 
     view.setCenter(center);
+}
+
+sf::View Camera::getInterpolatedView(float alpha)
+{
+    sf::Vector2f renderPos = center * alpha + lastCenter * (1.f - alpha);
+
+    return sf::View(renderPos, view.getSize());
 }
 
 void Camera::setVelocity(sf::Vector2f newVelocity)

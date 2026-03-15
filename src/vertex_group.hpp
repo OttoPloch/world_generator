@@ -14,5 +14,7 @@ struct VertexGroup
 
     VertexGroup(int start, int size, sf::FloatRect texCoords);
 
-    static std::array<sf::Vertex, 6> createVerts(sf::Vector2f tl, sf::Vector2f size, sf::FloatRect texCoords);
+    static std::array<sf::Vertex, 6> createTriangleVerts(sf::Vector2f tl, sf::Vector2f size, sf::FloatRect texCoords);
+    
+    static std::array<sf::Vertex, 8> createLineVerts(sf::Vector2f tl, sf::Vector2f size, sf::Color color);
 };

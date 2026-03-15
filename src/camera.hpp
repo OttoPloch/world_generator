@@ -26,7 +26,9 @@ public:
 
     float getZoomFactor();
 
-    void update(float dt);
+    void tick();
+
+    sf::View getInterpolatedView(float alpha);
 
     void setVelocity(sf::Vector2f newVelocity);
 
@@ -63,6 +65,7 @@ private:
     float zoomFactor;
 
     sf::Vector2f center;
+    sf::Vector2f lastCenter;
 
     sf::Vector2f velocity;
 

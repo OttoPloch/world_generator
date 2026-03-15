@@ -25,7 +25,7 @@ public:
 
     virtual void update(float dt);
 
-    virtual void draw(sf::RenderWindow& window);
+    virtual void draw(float alpha, sf::RenderWindow& window);
 
     sf::Vector2f getPosition();
 
@@ -36,6 +36,7 @@ protected:
     int ID;
 
     WorldPosition position;
+    sf::Vector2f lastPosition;
 
     Sprite sprite;
 };

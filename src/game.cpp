@@ -8,7 +8,7 @@ Game::Game() {}
 
 void Game::init()
 {
-    window.create({800, 800}, "INFINITE", false, 60, sf::Color(10, 10, 12));
+    window.create({800, 800}, "INFINITE", false, 0, sf::Color(10, 10, 12));
 
     input.init(this);
 
@@ -19,6 +19,7 @@ void Game::init()
     paused = false;
 
     ticksPerSecond = 60;
+    secondsPerTick = 1.f / ticksPerSecond;
 
     lastWindowSize = window.getSize();
 
@@ -45,7 +46,7 @@ void Game::processInput(std::string control)
         if (paused)
         {
             tick();
-            update(dt);
+            update();
         }
     }
     else
@@ -70,83 +71,68 @@ void Game::run()
 {
     float ticksToProcess = 0.f;
     
-    float lastTimeCount = 0.f;
     int ticksLastSecond = 0;
+    float secondsToPrintStats = 1.f;
+    float secondsSinceStatPrint = secondsToPrintStats;
 
-    float averageDt = 0.f;
-    int dtCount = 0;
+    const int sampleSize = 60;
+    float frameTimes[sampleSize];
+    int currentFrame = 0;
 
     while (window.getWindow().isOpen())
     {
         dt = dtClock.restart().asSeconds();
-
-        input.update();
-
-        eventHandler.processEvents();
-
+        secondsSinceStatPrint += dt;
+        frameTimes[currentFrame % sampleSize] = dt;
+        currentFrame++;
+        float averageDt = 0.f;
+        for (float t : frameTimes) averageDt += t;
+        averageDt /= sampleSize;
+        float smoothFps = 1.f / averageDt;
         float fps = 1.f / dt;
+        float dtick = tickClock.restart().asSeconds();
 
-        if (dt > averageDt * 5 && dt > 0)
+        if (secondsSinceStatPrint > secondsToPrintStats)
         {
-            std::cout << "***********************************\n";
-            std::cout << ": : : : LAG SPIKE DETECTED! : : : :\n";
-            std::cout << ": : : : : : : ";
-            std::cout << std::to_string(dt).substr(0, 7);
-            std::cout << " : : : : : : :\n";
-            std::cout << ": : : : : : AVG ";
-            std::cout << std::to_string(averageDt).substr(0, 7);
-            std::cout << " : : : : : :\n";
-            std::cout << "***********************************\n";
+            // std::cout << "dt: " << dt << "; dtick: " << dtick << '\n';
+            // std::cout << "average dt: " << averageDt << '\n';
+            // std::cout << "fps: " << fps << "; tps: " << 1.f / dtick << '\n';
+            // std::cout << "ticks last second: " << ticksLastSecond << '\n';
+            // std::cout << "time: " << gameClock.getElapsedTime().asSeconds() << '\n';
+            // std::cout << "///////////////////////////////////\n";
+
+            ticksLastSecond = 0;
+            secondsSinceStatPrint = 0;
         }
-
-        averageDt *= dtCount++;
-        averageDt += dt;
-        averageDt /= dtCount;
-
-        if (!paused)
-        {
-            ticksToProcess += (dt * 1000.f) / (1000.f / ticksPerSecond);
-
-            while (ticksToProcess >= 1.f)
-            {
-                float dtick = tickClock.restart().asSeconds();
-
-                if (std::fmod(gameClock.getElapsedTime().asSeconds(), 1.f) < lastTimeCount)
-                {
-                    // std::cout << "dt: " << dt << "; dtick: " << dtick << '\n';
-                    // std::cout << "average dt: " << averageDt << '\n';
-                    // std::cout << "fps: " << fps << "; tps: " << 1.f / dtick << '\n';
-                    // std::cout << "ticks last second: " << ticksLastSecond << '\n';
-                    // std::cout << "time: " << gameClock.getElapsedTime().asSeconds() << '\n';
-                    // std::cout << "///////////////////////////////////\n";
-
-                    scene.getUILayer()->getElement("fps display")->getAsText()->setValue(std::to_string(toInt(std::round(fps))));
-
-                    ticksLastSecond = 0;
-                }
-                
-                lastTimeCount = std::fmod(gameClock.getElapsedTime().asSeconds(), 1.f);
-
-                tick();
-
-                ticksLastSecond++;
-
-                ticksToProcess -= 1.f;
-            }
-
-            update(dt);
-        }
-
-        scene.UIUpdate(dt);
-
-        scene.chunkUpdate();
+        
+        input.update();
+        eventHandler.processEvents();
 
         if (lastWindowSize != window.getSize())
         {
             eventHandler.windowResized();
-
             lastWindowSize = window.getSize();
         }
+
+        if (!paused)
+        {
+            ticksToProcess += dt;
+            alpha = ticksToProcess / secondsPerTick;
+
+            while (ticksToProcess >= secondsPerTick)
+            {
+                tick();
+
+                ticksLastSecond++;
+                ticksToProcess -= secondsPerTick;
+            }
+
+            update();
+        }
+
+        scene.UIUpdate(dt);
+        scene.chunkUpdate();
+        scene.getUILayer()->getElement("fps display")->getAsText()->setValue(std::to_string(toInt(std::round(smoothFps))));
 
         draw();
     }
@@ -159,7 +145,7 @@ void Game::tick()
     scene.tick();
 }
 
-void Game::update(float dt)
+void Game::update()
 {
     scene.update(dt);
 }
@@ -168,7 +154,7 @@ void Game::draw()
 {
     window.clear();
 
-    scene.draw();
+    scene.draw(alpha);
 
     window.display();
 }

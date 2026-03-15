@@ -39,7 +39,7 @@ private:
 
     void tick();
 
-    void update(float dt);
+    void update();
 
     void draw();
     
@@ -60,8 +60,10 @@ private:
     bool paused;
     
     int ticksPerSecond;
+    float secondsPerTick;
     
     float dt;
+    float alpha;
 
     sf::Clock dtClock;
     sf::Clock tickClock;

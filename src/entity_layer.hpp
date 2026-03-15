@@ -54,7 +54,7 @@ public:
 
     void update(float dt);
 
-    void draw();
+    void draw(float alpha);
 private:
     Game* game;
 

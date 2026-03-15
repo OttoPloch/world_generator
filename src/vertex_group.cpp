@@ -5,7 +5,7 @@ VertexGroup::VertexGroup() {}
 
 VertexGroup::VertexGroup(int start, int size, sf::FloatRect texCoords) : start(start), size(size), texCoords(texCoords) {}
 
-std::array<sf::Vertex, 6> VertexGroup::createVerts(sf::Vector2f tl, sf::Vector2f size, sf::FloatRect texCoords)
+std::array<sf::Vertex, 6> VertexGroup::createTriangleVerts(sf::Vector2f tl, sf::Vector2f size, sf::FloatRect texCoords)
 {
     std::array<sf::Vertex, 6> vertices;
 
@@ -23,5 +23,23 @@ std::array<sf::Vertex, 6> VertexGroup::createVerts(sf::Vector2f tl, sf::Vector2f
     vertices[4].texCoords = vertices[0].texCoords;                                                                   // tl
     vertices[5].texCoords = vertices[2].texCoords;                                                                   // br
     
+    return vertices;
+}
+
+std::array<sf::Vertex, 8> VertexGroup::createLineVerts(sf::Vector2f tl, sf::Vector2f size, sf::Color color)
+{
+    std::array<sf::Vertex, 8> vertices;
+
+    vertices[0].position = tl;
+    vertices[1].position = {tl.x + size.x, tl.y};
+    vertices[2].position = vertices[1].position;
+    vertices[3].position = {tl.x + size.x, tl.y + size.y};
+    vertices[4].position = vertices[3].position;
+    vertices[5].position = {tl.x, tl.y + size.y};
+    vertices[6].position = vertices[5].position;
+    vertices[7].position = tl;
+
+    for (int i = 0; i < vertices.size(); i++) vertices[i].color = color;
+
     return vertices;
 }

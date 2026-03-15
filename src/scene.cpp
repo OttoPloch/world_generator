@@ -33,6 +33,8 @@ void Scene::init(Game* game)
 
 void Scene::tick()
 {   
+    camera.tick();
+
     entityLayer.tick();
 
     chunkLayer.tick();
@@ -42,11 +44,7 @@ void Scene::tick()
 }
 
 void Scene::update(float dt)
-{
-    camera.update(dt);
-    
-    window->setView(camera.getView());
-    
+{       
     entityLayer.update(dt);
 }
 
@@ -95,10 +93,12 @@ void Scene::chunkUpdate()
     chunkLayer.update();
 }
 
-void Scene::draw()
+void Scene::draw(float alpha)
 {
+    window->setView(camera.getView());
+
     chunkLayer.draw(debugView);
-    entityLayer.draw();
+    entityLayer.draw(alpha);
     uiLayer.draw();
 }
 
@@ -136,13 +136,11 @@ void Scene::toggleFocus()
 {
     if (camera.getFocus() == nullptr)
     {
-        camera.setFocus(entityLayer.getEntity(1));
-        // entityLayer.getEntity(1)->getMotion()->controlling = true;
+        camera.setFocus(entityLayer.getEntity(0));
     }
     else
     {
         camera.removeFocus();
-        // entityLayer.getEntity(1)->getMotion()->controlling = false;
     }
 }
 

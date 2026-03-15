@@ -8,8 +8,8 @@ Mob::Mob(Game* game, int ID, WorldPosition position) : Entity(game, ID, position
 
 void Mob::tick()
 {
+    lastPosition = position.getPos();
+
     position.position->x += velocity.x;
     position.position->y += velocity.y;
-
-    sprite.syncPos();
 }

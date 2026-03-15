@@ -6,6 +6,7 @@
 #include "chunk.hpp"
 #include "chunk_generator.hpp"
 
+#include <SFML/Graphics/RenderStates.hpp>
 #include <unordered_map>
 
 class Game;
@@ -44,9 +45,13 @@ private:
     float tileSize;
     float chunkLength;
 
+    ChunkGenerator chunkGenerator;
+    
     std::unordered_map<sf::Vector2i, std::unique_ptr<Chunk>, Vector2iHash> chunks;
 
-    ChunkGenerator chunkGenerator;
+    // background objects
+    std::vector<sf::Vertex> bgObjectsVertices;
+    sf::RenderStates bgObjectStates;
 
     // for updating the chunk pos display text. Can delete if no longer used
     sf::Vector2i lastChunkPos;

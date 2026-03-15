@@ -6,7 +6,7 @@
 #include "tile_types.hpp"
 #include "utils.hpp"
 #include "vertex_group.hpp"
-#include <SFML/Graphics/Rect.hpp>
+#include "background_object.hpp"
 #include <algorithm>
 
 ChunkGenerator::ChunkGenerator() {}
@@ -34,8 +34,9 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
 
     TextureAtlas* atlas = game->getAssetManager()->getTextureAtlas("tiles_better");
 
-    float tileSize = game->getSettings()->getSetting("tile_size").valueFloat;
     int chunkSize = game->getSettings()->getSetting("chunk_size").valueInt;
+    float tileSize = game->getSettings()->getSetting("tile_size").valueFloat;
+    float chunkLength = toFloat(chunkSize) * tileSize;
 
     if (genMode == 0)
     {
@@ -101,7 +102,7 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
 
             sf::Vector2i tilePosition = {i % chunkSize, toInt(std::floor(i / chunkSize))};
 
-            if (getDistance({-tileSize / 2.f, -tileSize / 2.f}, {chunkPosition.x * chunkSize * tileSize + tilePosition.x * tileSize, chunkPosition.y * chunkSize * tileSize + tilePosition.y * tileSize}) <= tileSize * 10)
+            if (getDistance({-tileSize / 2.f, -tileSize / 2.f}, {chunkPosition.x * chunkLength + tilePosition.x * tileSize, chunkPosition.y * chunkLength + tilePosition.y * tileSize}) <= tileSize * 10)
             {
                 newTiles.emplace_back(TileType::COBBLE, atlas->getItemTexCoords("cobble"));
             }
@@ -145,21 +146,22 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
     {
         Chunk* chunk = (*chunks)[chunkPosition].get();
 
-        sf::Vector2f chunkWorldPos(chunkPosition.x * chunkSize * tileSize, chunkPosition.y * chunkSize * tileSize);
+        sf::Vector2f chunkWorldPos(chunkPosition.x * chunkLength, chunkPosition.y * chunkLength);
 
         sf::Texture* decTexture = game->getAssetManager()->getTexture("background_foliage", "texture_atlases/");
         sf::FloatRect decTexCoords;
         float scale = game->getSettings()->getSetting("generation_foliage_scale").valueFloat;
 
-        std::vector<std::pair<sf::FloatRect, sf::FloatRect>> decorations;
-        std::unique_ptr<std::vector<sf::Vertex>> decorationVertices = std::make_unique<std::vector<sf::Vertex>>();
+        float padding = 10;
+
+        std::vector<BackgroundObject> decorations;
 
         TileType currDecTileType = TileType::GRASS;
         while (currDecTileType != TileType::COUNT)
         {
             for (int i = 0; i < 30; i++)
             {
-                sf::Vector2f decBottom(getRandInt(1, chunkSize * tileSize - 1), getRandInt(1, chunkSize * tileSize - 1));
+                sf::Vector2f decBottom(getRandInt(1, chunkLength - 1), getRandInt(1, chunkLength - 1));
     
                 if (chunk->getTile(std::floor(decBottom.x / tileSize), std::floor(decBottom.y / tileSize))->type != currDecTileType) continue;
 
@@ -179,9 +181,9 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
                 sf::Vector2f decSize = {decTexCoords.size.x * scale, decTexCoords.size.y * scale};
                 sf::Vector2f decTl = {decBottom.x - decSize.x / 2.f, decBottom.y - decSize.y};
 
-                std::pair<sf::FloatRect, sf::FloatRect> dec;
-                dec.first = {{chunkWorldPos.x + decTl.x, chunkWorldPos.y + decTl.y}, {decSize.x, decSize.y}};
-                dec.second = decTexCoords;
+                BackgroundObject dec;
+                dec.rect = {{chunkWorldPos.x + decTl.x, chunkWorldPos.y + decTl.y}, {decSize.x, decSize.y}};
+                dec.texCoords = decTexCoords;
 
                 decorations.push_back(dec);
             }
@@ -190,19 +192,6 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
             if (currDecTileType == TileType::WATER) currDecTileType = TileType::COUNT;
         }
 
-        // sort decorations top to bottom for draw order
-        std::sort(decorations.begin(), decorations.end(), [](std::pair<sf::FloatRect, sf::FloatRect> a, std::pair<sf::FloatRect, sf::FloatRect> b) { return a.first.position.y + a.first.size.y < b.first.position.y + b.first.size.y; });
-
-        for (int i = 0; i < decorations.size(); i++)
-        {
-            std::array<sf::Vertex, 6> currDecVertices = VertexGroup::createVerts(decorations[i].first.position, decorations[i].first.size, decorations[i].second);
-
-            for (int i = 0; i < 6; i++)
-            {
-                decorationVertices->push_back(currDecVertices[i]);
-            }
-        }
-
-        chunk->giveDecorationVerts(std::move(decorationVertices), decTexture);
+        chunk->bgObjects = decorations;
     }
 }

@@ -1,8 +1,11 @@
 #pragma once
 
+#include "background_object.hpp"
 #include "tile.hpp"
 #include "chunk_state.hpp"
+#include "background_object.hpp"
 
+#include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <vector>
@@ -21,8 +24,6 @@ public:
 
     void createTileVerts(int index);
 
-    void giveDecorationVerts(std::unique_ptr<std::vector<sf::Vertex>> vertices, sf::Texture* texture);
-
     // values will wrap, so -1
     // gets the opposite side and
     // 17 (in a chunk of size 16)
@@ -39,9 +40,11 @@ public:
 
     void tick();
 
-    void draw(int layer, bool debug = false);
+    void draw(bool debug = false);
 
     ChunkState state;
+
+    std::vector<BackgroundObject> bgObjects;
 private:
     Game* game;
 
@@ -57,11 +60,7 @@ private:
     std::vector<std::unique_ptr<Tile>> tiles;
 
     std::vector<sf::Vertex> tileVertices;
-
-    std::vector<sf::Vertex> debugVertices;
-
-    std::unique_ptr<std::vector<sf::Vertex>> decorationVertices;
+    std::vector<sf::Vertex> tileDebugVertices;
 
     sf::RenderStates tileStates;
-    sf::RenderStates decorationStates;
 };

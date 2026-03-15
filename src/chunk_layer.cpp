@@ -1,10 +1,14 @@
 #include "chunk_layer.hpp"
+#include "background_object.hpp"
 #include "chunk.hpp"
 #include "chunk_state.hpp"
 #include "entity_layer.hpp"
 #include "game.hpp"
 #include "utils.hpp"
+#include "vertex_group.hpp"
 #include <SFML/Graphics/PrimitiveType.hpp>
+#include <algorithm>
+#include <functional>
 
 ChunkLayer::ChunkLayer() : chunks(0) {}
 
@@ -26,6 +30,8 @@ void ChunkLayer::init(Game* game)
     chunkGenerator.init(game, &chunks);
 
     lastChunkPos = {INT32_MAX, INT32_MAX};
+
+    bgObjectStates.texture = game->getAssetManager()->getTexture("background_foliage", "texture_atlases/");
 
     loadNearbyChunks();
 }
@@ -212,13 +218,6 @@ void ChunkLayer::tick()
     }
 
     sf::Vector2i currChunkPos = worldToChunkPosition(game, game->getScene()->getCamera()->getCenter());
-
-    if (currChunkPos != lastChunkPos)
-    {
-        game->getScene()->getUILayer()->getElement("chunk pos display")->getAsText()->setValue(std::to_string(currChunkPos.x) + ", " + std::to_string(currChunkPos.y));
-
-        lastChunkPos = currChunkPos;
-    }
 }
 
 void ChunkLayer::update()
@@ -245,42 +244,80 @@ void ChunkLayer::update()
             unloadChunk(chunksToDelete[i]);
         }
     }
+
+    if (currChunkPos != lastChunkPos)
+    {
+        game->getScene()->getUILayer()->getElement("chunk pos display")->getAsText()->setValue(std::to_string(currChunkPos.x) + ", " + std::to_string(currChunkPos.y));
+
+        lastChunkPos = currChunkPos;
+    }
 }
 
 void ChunkLayer::draw(bool debug)
 {
-    for (int layer = 0; layer < 2; layer++)
+    std::vector<BackgroundObject*> visibleBgObjects;
+
+    for (auto& i : chunks)
     {
-        for (auto& i : chunks)
+        if (i.second->state == ChunkState::ACTIVE)
         {
-            if (i.second->state == ChunkState::ACTIVE)
+            sf::Vector2f chunkTl = chunkToWorldPosition(game, i.second->getChunkPosition());
+
+            if (isOnScreen(game, chunkTl, {chunkLength, chunkLength}))
             {
-                sf::Vector2f chunkTl = chunkToWorldPosition(game, i.second->getChunkPosition());
-    
-                if (isOnScreen(game, chunkTl, {chunkLength, chunkLength}))
+                i.second->draw(debug);
+
+                for (int j = 0; j < i.second->bgObjects.size(); j++)
                 {
-                    i.second->draw(layer, debug);
+                    BackgroundObject* bgObject = &i.second->bgObjects[j];
+
+                    if (isOnScreen(game, bgObject->rect.position, bgObject->rect.size))
+                    {
+                        visibleBgObjects.push_back(bgObject);
+                    }
                 }
             }
-    
-            if (debug)
-            {
-                sf::Vector2f chunkPos = chunkToWorldPosition(game, i.second->getChunkPosition());
-    
-                sf::Vertex tl;
-                sf::Vertex tr;
-                sf::Vertex bl;
-                sf::Vertex br;
-     
-                tl.position = chunkPos;
-                tr.position = {chunkPos.x + chunkLength, chunkPos.y};
-                bl.position = {chunkPos.x, chunkPos.y + chunkLength};
-                br.position = {chunkPos.x + chunkLength, chunkPos.y + chunkLength};
-    
-                std::vector<sf::Vertex> chunkOutline = {tl, tr, br, bl, tl};
-    
-                window->getWindow().draw(&chunkOutline[0], chunkOutline.size(), sf::PrimitiveType::LineStrip);
-            }
         }
+
+        if (debug)
+        {
+            sf::Vector2f chunkPos = chunkToWorldPosition(game, i.second->getChunkPosition());
+
+            sf::Vertex tl;
+            sf::Vertex tr;
+            sf::Vertex bl;
+            sf::Vertex br;
+    
+            tl.position = chunkPos;
+            tr.position = {chunkPos.x + chunkLength, chunkPos.y};
+            bl.position = {chunkPos.x, chunkPos.y + chunkLength};
+            br.position = {chunkPos.x + chunkLength, chunkPos.y + chunkLength};
+
+            std::vector<sf::Vertex> chunkOutline = {tl, tr, br, bl, tl};
+
+            window->getWindow().draw(chunkOutline.data(), chunkOutline.size(), sf::PrimitiveType::LineStrip);
+        }
+    }
+
+    // sorting, creating vertices for, and drawing all visible background objects
+    if (!visibleBgObjects.empty())
+    {
+        std::sort(visibleBgObjects.begin(), visibleBgObjects.end(), [](BackgroundObject* a, BackgroundObject* b)
+        {
+            return a->rect.position.y + a->rect.size.y < b->rect.position.y + b->rect.size.y;
+        });
+    
+        bgObjectsVertices.clear();
+        bgObjectsVertices.reserve(visibleBgObjects.size() * 6);
+
+        for (int i = 0; i < visibleBgObjects.size(); i++)
+        {
+            BackgroundObject* curr = visibleBgObjects[i];
+
+            std::array<sf::Vertex, 6> currObjVertices = VertexGroup::createTriangleVerts(curr->rect.position, curr->rect.size, curr->texCoords);
+            bgObjectsVertices.insert(bgObjectsVertices.end(), currObjVertices.begin(), currObjVertices.end());
+        }
+
+        window->getWindow().draw(bgObjectsVertices.data(), bgObjectsVertices.size(), sf::PrimitiveType::Triangles, bgObjectStates);
     }
 }

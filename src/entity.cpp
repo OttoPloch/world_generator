@@ -24,7 +24,7 @@ int Entity::getID() { return ID; }
 
 void Entity::tick()
 {
-    sprite.syncPos();
+    lastPosition = position.getPos();
 }
 
 void Entity::update(float dt)
@@ -32,8 +32,12 @@ void Entity::update(float dt)
 
 }
 
-void Entity::draw(sf::RenderWindow& window)
+void Entity::draw(float alpha, sf::RenderWindow& window)
 {
+    sf::Vector2f renderPos = position.getPos() * alpha + lastPosition * (1.f - alpha);
+
+    sprite.syncPos(renderPos);
+
     sprite.draw(window);
 }
 

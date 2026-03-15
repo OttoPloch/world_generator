@@ -28,7 +28,7 @@ public:
 
     void chunkUpdate();
 
-    void draw();
+    void draw(float alpha);
 
     void sceneInput(std::string control);
 

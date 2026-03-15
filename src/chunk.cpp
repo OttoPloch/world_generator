@@ -1,6 +1,7 @@
 #include "chunk.hpp"
 #include "game.hpp"
 #include "tile_types.hpp"
+#include <SFML/Graphics/PrimitiveType.hpp>
 
 Chunk::Chunk() {}
 
@@ -57,7 +58,7 @@ void Chunk::createTileVerts(int index)
     (texCoordRatio >= 1.f) ? tileFittedSize = {tileSize * texCoordRatio, tileSize} : tileFittedSize = {tileSize, tileSize / texCoordRatio};
     sf::Vector2f tileAdjustedTl = {tileWorldPos.x - tileFittedSize.x / 2.f, tileWorldPos.y - tileFittedSize.y};
 
-    std::array<sf::Vertex, 6> verts = VertexGroup::createVerts(tileAdjustedTl, tileFittedSize, texCoords);
+    std::array<sf::Vertex, 6> verts = VertexGroup::createTriangleVerts(tileAdjustedTl, tileFittedSize, texCoords);
     for (int i = 0; i < 6; i++)
     {
         tileVertices[index * 6 + i] = verts[i];
@@ -82,21 +83,14 @@ void Chunk::createTileVerts(int index)
 
         if (i == 0 || i == 4) // if first or last (tl), do once
         {
-            debugVertices.push_back(debugVertex);
+            tileDebugVertices.push_back(debugVertex);
         }
         else // otherwise, add twice
         {
-            debugVertices.push_back(debugVertex);
-            debugVertices.push_back(debugVertex);
+            tileDebugVertices.push_back(debugVertex);
+            tileDebugVertices.push_back(debugVertex);
         }
     }
-}
-
-void Chunk::giveDecorationVerts(std::unique_ptr<std::vector<sf::Vertex>> vertices, sf::Texture* texture)
-{
-    decorationVertices = std::move(vertices);
-
-    decorationStates.texture = texture;
 }
 
 Tile* Chunk::getTile(int column, int row)
@@ -130,16 +124,12 @@ void Chunk::tick()
 
 }
 
-void Chunk::draw(int layer, bool debug)
+void Chunk::draw(bool debug)
 {
-    if (layer == 0)
-    {
-        window->getWindow().draw(&tileVertices[0], tileVertices.size(), sf::PrimitiveType::Triangles, tileStates);
-    }
-    else if (layer == 1)
-    {
-        if (decorationVertices->size() > 0) window->getWindow().draw(&(*decorationVertices)[0], decorationVertices->size(), sf::PrimitiveType::Triangles, decorationStates);
-    }
+    window->getWindow().draw(tileVertices.data(), tileVertices.size(), sf::PrimitiveType::Triangles, tileStates);
 
-    if (debug) window->getWindow().draw(&debugVertices[0], debugVertices.size(), sf::PrimitiveType::Lines);
+    if (debug)
+    {
+        window->getWindow().draw(tileDebugVertices.data(), tileDebugVertices.size(), sf::PrimitiveType::Lines);
+    }
 }
