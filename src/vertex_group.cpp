@@ -3,7 +3,7 @@
 
 VertexGroup::VertexGroup() {}
 
-VertexGroup::VertexGroup(int start, int size, sf::IntRect texCoords) : start(start), size(size), texCoords(texCoords) {}
+VertexGroup::VertexGroup(sf::IntRect texCoords) : texCoords(texCoords) {}
 
 std::array<sf::Vertex, 6> VertexGroup::createTriangleVerts(sf::Vector2f tl, sf::Vector2f size, sf::IntRect texCoords)
 {

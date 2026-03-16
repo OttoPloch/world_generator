@@ -72,11 +72,11 @@ Animation* AssetManager::getAnimation(std::string name)
 
     if (entry != animationMap.end())
     {
-        return &entry->second;        
+        return entry->second.get();
     }
     else
     {
-        Animation newAnimation;
+        std::unique_ptr<Animation> newAnimation;
 
         if (!std::filesystem::exists("../../assets/animations/" + name + ".anim"))
         {
@@ -139,14 +139,41 @@ Animation* AssetManager::getAnimation(std::string name)
 
             for(int i = 0; i < coords.size(); i++) frames.emplace_back(coords[i], sizes[i]);
 
-            newAnimation = Animation(name, animTexture, frames);
+            newAnimation = std::make_unique<Animation>(name, animTexture, frames);
         }
 
-        animationMap[name] = newAnimation;
+        animationMap[name] = std::move(newAnimation);
 
-        return &animationMap[name];
+        return animationMap[name].get();
     }
 
+    return nullptr;
+}
+
+GlobalAnimation* AssetManager::getGlobalAnimation(std::string name)
+{
+    auto entry = globalAnimationMap.find(name);
+
+    if (entry != globalAnimationMap.end())
+    {
+        return entry->second.get();
+    }
+    else
+    {
+        Animation* animation = getAnimation(name);
+
+        if (animation)
+        {
+            globalAnimationMap[name] = std::make_unique<GlobalAnimation>(*animation);
+
+            return globalAnimationMap[name].get();
+        }
+        else
+        {
+            std::cout << "could not create global animation of animation with name " << name << ". That animation could not be retrieved.\n";
+        }
+    }
+    
     return nullptr;
 }
 
@@ -369,5 +396,13 @@ TextureAtlas* AssetManager::getTextureAtlas(std::string name)
         atlasMap[name] = newAtlas;
 
         return &atlasMap[name];
+    }
+}
+
+void AssetManager::updateGlobalAnimations(float dt)
+{
+    for (auto& i : globalAnimationMap)
+    {
+        i.second->update(dt);
     }
 }

@@ -36,6 +36,8 @@ void Tile::init(Game* game, Chunk* chunk, sf::Vector2i localPosition, TileType t
 
     myVerts.texCoords = texCoords;
 
+    animation = nullptr;
+
     this->collides = collides;
 
     this->colliderName = colliderName;
@@ -72,23 +74,19 @@ sf::FloatRect Tile::getCollRect()
     }
 }
 
-void Tile::update(float dt)
+void Tile::update()
 {
-    if (animation.name != "")
+    if (animation)
     {
-        animation.secondsTillNextFrame -= dt;
-
-        if (animation.secondsTillNextFrame <= 0.f)
+        if (animation->animation.name != "")
         {
-            (animation.reversed) ? animation.index-- : animation.index++;
-
-            if (animation.index >= animation.frames.size()) animation.index = 0;
-            if (animation.index < 0) animation.index = animation.frames.size() - 1;
-
-            myVerts.texCoords = animation.frames[animation.index];
-            chunk->createTileVerts(localPosition);
-
-            animation.secondsTillNextFrame = animation.secondsPerFrame;
+            sf::IntRect newTexCoords = animation->animation.frames[animation->animation.index];
+    
+            if (myVerts.texCoords != newTexCoords)
+            {
+                myVerts.texCoords = newTexCoords;
+                chunk->createTileVerts(localPosition);
+            }
         }
     }
 }

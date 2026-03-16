@@ -5,14 +5,11 @@
 
 struct VertexGroup
 {
-    int start;
-    int size;
-
     sf::IntRect texCoords;
 
     VertexGroup();
 
-    VertexGroup(int start, int size, sf::IntRect texCoords);
+    VertexGroup(sf::IntRect texCoords);
 
     static std::array<sf::Vertex, 6> createTriangleVerts(sf::Vector2f tl, sf::Vector2f size, sf::IntRect texCoords);
     

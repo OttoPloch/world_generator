@@ -38,7 +38,11 @@ void Chunk::init(Game* game, sf::Vector2i chunkPosition, std::vector<Tile> tiles
 
         if (this->tiles[i]->type == TileType::WATER)
         {
-            this->tiles[i]->animation = *game->getAssetManager()->getAnimation("water");
+            // std::cout << i << ": " << game->getAssetManager()->getGlobalAnimation("water") << '\n';
+
+            this->tiles[i]->animation = game->getAssetManager()->getGlobalAnimation("water");
+
+            // std::cout << "L " << this->tiles[i]->animation << '\n';
         }
 
         createTileVerts(i);
@@ -51,6 +55,12 @@ void Chunk::init(Game* game, sf::Vector2i chunkPosition, std::vector<Tile> tiles
 
 void Chunk::createTileVerts(int index)
 {
+    if (index * 6 + 5 > tileVertices.size() - 1)
+    {
+        std::cout << "tileVertices size: " << tileVertices.size() << std::endl;
+        std::cout << "max index needed: " << index * 6 + 5 << std::endl;
+    }
+
     sf::Vector2f tileWorldPos = {worldPosition.x + toFloat(tiles[index]->localPosition.x) * tileSize, worldPosition.y + toFloat(tiles[index]->localPosition.y) * tileSize};
     
     sf::IntRect texCoords = tiles[index]->myVerts.texCoords;
@@ -70,9 +80,6 @@ void Chunk::createTileVerts(int index)
     {
         tileVertices[index * 6 + i] = verts[i];
     }
-
-    tiles[index]->myVerts.start = index * 6;
-    tiles[index]->myVerts.size = 6;
 
     if (!tiles[index]->collides) return;
 
@@ -140,7 +147,7 @@ void Chunk::update(float dt)
 {
     for (int i = 0; i < tiles.size(); i++)
     {
-        tiles[i]->update(dt);
+        tiles[i]->update();
     }
 }
 

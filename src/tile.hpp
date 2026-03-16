@@ -1,9 +1,10 @@
 #pragma once
 
 #include "common.hpp"
+#include "global_animation.hpp"
 #include "vertex_group.hpp"
 #include "tile_types.hpp"
-#include "animation.hpp"
+#include "global_animation.hpp"
 #include <SFML/Graphics/Rect.hpp>
 
 class Game;
@@ -23,7 +24,7 @@ public:
 
     sf::FloatRect getCollRect();
 
-    void update(float dt);
+    void update();
 
     Chunk* chunk;
 
@@ -43,7 +44,7 @@ public:
 
     VertexGroup myVerts;
 
-    Animation animation;
+    GlobalAnimation* animation;
 private:
     Game* game;
 
