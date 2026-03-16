@@ -55,12 +55,6 @@ void Chunk::init(Game* game, sf::Vector2i chunkPosition, std::vector<Tile> tiles
 
 void Chunk::createTileVerts(int index)
 {
-    if (index * 6 + 5 > tileVertices.size() - 1)
-    {
-        std::cout << "tileVertices size: " << tileVertices.size() << std::endl;
-        std::cout << "max index needed: " << index * 6 + 5 << std::endl;
-    }
-
     sf::Vector2f tileWorldPos = {worldPosition.x + toFloat(tiles[index]->localPosition.x) * tileSize, worldPosition.y + toFloat(tiles[index]->localPosition.y) * tileSize};
     
     sf::IntRect texCoords = tiles[index]->myVerts.texCoords;
