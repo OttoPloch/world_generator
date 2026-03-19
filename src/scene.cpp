@@ -87,6 +87,31 @@ void Scene::UIUpdate(float dt)
         uiLayer.getElement("animation button 2")->setAnimation({0, 0}, {-75, 140}, -1, -1, true, false);
     }
 
+    if (uiLayer.getElement("up button")->getAsButton()->getActive())
+    {
+        dynamic_cast<Mob*>(entityLayer.getEntity(0))->velocity = {0, -15};
+        entityLayer.getEntity(0)->getSprite()->animSet->setActiveAnimation("UP");
+        entityLayer.getEntity(0)->getSprite()->animSet->getActiveAnimation()->adjustSpeed(0.1);
+    }
+    if (uiLayer.getElement("left button")->getAsButton()->getActive())
+    {
+        dynamic_cast<Mob*>(entityLayer.getEntity(0))->velocity = {-15, 0};
+        entityLayer.getEntity(0)->getSprite()->animSet->setActiveAnimation("LEFT");
+        entityLayer.getEntity(0)->getSprite()->animSet->getActiveAnimation()->adjustSpeed(0.1);
+    }
+    if (uiLayer.getElement("right button")->getAsButton()->getActive())
+    {
+        dynamic_cast<Mob*>(entityLayer.getEntity(0))->velocity = {15, 0};
+        entityLayer.getEntity(0)->getSprite()->animSet->setActiveAnimation("RIGHT");
+        entityLayer.getEntity(0)->getSprite()->animSet->getActiveAnimation()->adjustSpeed(0.1);
+    }
+    if (uiLayer.getElement("down button")->getAsButton()->getActive())
+    {
+        dynamic_cast<Mob*>(entityLayer.getEntity(0))->velocity = {0, 15};
+        entityLayer.getEntity(0)->getSprite()->animSet->setActiveAnimation("DOWN");
+        entityLayer.getEntity(0)->getSprite()->animSet->getActiveAnimation()->adjustSpeed(0.1);
+    }
+
     uiLayer.UIUpdate(dt);
 }
 

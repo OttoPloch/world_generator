@@ -1,26 +1,23 @@
-// #pragma once
+#pragma once
 
-// #include "common.hpp"
-// #include "states.hpp"
+#include "common.hpp"
+#include "animation.hpp"
+#include <SFML/Graphics/Rect.hpp>
 
-// #include <map>
+class AnimationSet
+{
+public:
+    AnimationSet();
 
-// class SpriteAnimation;
+    AnimationSet(std::string setName, std::unordered_map<std::string, Animation> animations);
 
-// class AnimationSet
-// {
-// public:
-//     AnimationSet();
+    void setActiveAnimation(std::string key);
 
-//     AnimationSet(std::string setName, std::unordered_map<AnimationState, SpriteAnimation*> animations);
+    Animation* getActiveAnimation();
+private:
+    std::string setName;
 
-//     void init(std::string setName, std::unordered_map<AnimationState, SpriteAnimation*> animations);
+    Animation* activeAnimation;
 
-//     SpriteAnimation* getAnimationFor(AnimationState key);
-
-//     int getKeyFor(SpriteAnimation* animation);
-// private:
-//     std::string setName;
-
-//     std::unordered_map<AnimationState, SpriteAnimation*> animations;
-// };
+    std::unordered_map<std::string, Animation> animations;
+};

@@ -1,47 +1,33 @@
-// #include "animation_set.hpp"
-// #include "sprite_animation.hpp"
-// #include "states.hpp"
+#include "animation_set.hpp"
+#include "animation.hpp"
+#include <string>
+#include <unordered_map>
 
-// AnimationSet::AnimationSet() {}
+AnimationSet::AnimationSet() {}
 
-// AnimationSet::AnimationSet(std::string setName, std::unordered_map<AnimationState, SpriteAnimation*> animations)
-// {
-//     init(setName, animations);
-// }
+AnimationSet::AnimationSet(std::string setName, std::unordered_map<std::string, Animation> animations)
+{
+    this->setName = setName;
+    this->animations = animations;
 
-// void AnimationSet::init(std::string setName, std::unordered_map<AnimationState, SpriteAnimation*> animations)
-// {
-//     this->setName = setName;
+    activeAnimation = nullptr;
+}
 
-//     this->animations = animations;
-// }
+void AnimationSet::setActiveAnimation(std::string key)
+{
+    if (activeAnimation)
+    {
+        activeAnimation->secondsTillNextFrame = activeAnimation->secondsPerFrame;
+        activeAnimation->index = 0;
+    }
 
-// SpriteAnimation* AnimationSet::getAnimationFor(AnimationState key)
-// {
-//     if (animations.find(key) != animations.end())
-//     {
-//         return animations[key];
-//     }
-//     else
-//     {
-//         std::cout << "ERROR loading animation for key of " << static_cast<int>(key) << " in animation set name: " << setName << ". No entry in animations for that key.\n";
+    auto entry = animations.find(key);
 
-//         return animations[AnimationState::ANIM_IDLE];
-//     }
-// }
+    if (entry != animations.end())
+    {
+        activeAnimation = &entry->second;
+        activeAnimation->secondsTillNextFrame = 0.f;
+    }
+}
 
-// int AnimationSet::getKeyFor(SpriteAnimation* animation)
-// {
-//     for (auto entry : animations)
-//     {
-//         if (entry.second == animation)
-//         {
-//             return static_cast<int>(entry.first);
-//         }
-//     }
-
-//     std::cout << "ERROR in animation set, trying to find key for animation with name of " << animation->getName() << ", no entry in animation map.\n";
-//     assert(false);
-
-//     return -1;
-// }
+Animation* AnimationSet::getActiveAnimation() { return activeAnimation; }

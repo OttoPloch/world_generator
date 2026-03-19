@@ -1,7 +1,5 @@
 #include "asset_manager.hpp"
-#include "states.hpp"
 #include "texture_atlas.hpp"
-#include <SFML/Graphics/Rect.hpp>
 #include <fstream>
 
 AssetManager::AssetManager() {}
@@ -12,15 +10,15 @@ sf::Texture* AssetManager::getTexture(std::string name, std::string pathFromAsse
 
     if (entry != textureMap.end())
     {
-        return &entry->second;        
+        return entry->second.get();
     }
     else
     {
-        sf::Texture newTexture;
+        std::unique_ptr<sf::Texture> newTexture = std::make_unique<sf::Texture>();
 
         if (pathIncludesTheFile)
         {
-            if (!newTexture.loadFromFile("../../assets/" + pathFromAssets))
+            if (!newTexture->loadFromFile("../../assets/" + pathFromAssets))
             {
                 std::cout << "error loading " << name << " texture with FULL PATH of " << pathFromAssets << '\n';
 
@@ -39,7 +37,7 @@ sf::Texture* AssetManager::getTexture(std::string name, std::string pathFromAsse
                 }
                 else
                 {
-                    if (!newTexture.loadFromFile("../../assets/" + pathFromAssets + name + ".png"))
+                    if (!newTexture->loadFromFile("../../assets/" + pathFromAssets + name + ".png"))
                     {
                         std::cout << "error loading " << name << ".png with path from assets of " << pathFromAssets << '\n';
                         
@@ -49,7 +47,7 @@ sf::Texture* AssetManager::getTexture(std::string name, std::string pathFromAsse
             }
             else
             {
-                if (!newTexture.loadFromFile("../../assets/" + pathFromAssets + name + ".jpg"))
+                if (!newTexture->loadFromFile("../../assets/" + pathFromAssets + name + ".jpg"))
                 {
                     std::cout << "error loading " << name << ".jpg with path from assets of " << pathFromAssets << '\n';;
     
@@ -58,15 +56,15 @@ sf::Texture* AssetManager::getTexture(std::string name, std::string pathFromAsse
             }
         }
 
-        newTexture.setSmooth(false);
+        newTexture->setSmooth(false);
 
-        textureMap[name] = newTexture;
+        textureMap[name] = std::move(newTexture);
 
-        return &textureMap[name];
+        return textureMap[name].get();
     }
 }
 
-Animation* AssetManager::getAnimation(std::string name)
+Animation* AssetManager::getAnimation(std::string name, std::string pathFromAssets)
 {
     auto entry = animationMap.find(name);
 
@@ -78,13 +76,13 @@ Animation* AssetManager::getAnimation(std::string name)
     {
         std::unique_ptr<Animation> newAnimation;
 
-        if (!std::filesystem::exists("../../assets/animations/" + name + ".anim"))
+        if (!std::filesystem::exists("../../assets/" + pathFromAssets + name + ".anim"))
         {
-            std::cout << "error loading " << name << ".anim, doesn't exist.\n";
+            std::cout << "error loading " << pathFromAssets << name << ".anim, doesn't exist.\n";
         }
         else
         {
-            std::ifstream animFile("../../assets/animations/" + name + ".anim");
+            std::ifstream animFile("../../assets/" + pathFromAssets + name + ".anim");
 
             std::string texturePath;
             std::vector<sf::Vector2i> coords;
@@ -177,55 +175,57 @@ GlobalAnimation* AssetManager::getGlobalAnimation(std::string name)
     return nullptr;
 }
 
-// AnimationSet* AssetManager::getAnimSet(std::string name)
-// {
-//     auto entry = animSetMap.find(name);
+AnimationSet* AssetManager::getAnimSet(std::string name)
+{
+    auto entry = animSetMap.find(name);
 
-//     if (entry != animSetMap.end())
-//     {
-//         return &entry->second;        
-//     }
-//     else
-//     {
-//         AnimationSet newSet;
+    if (entry != animSetMap.end())
+    {
+        return entry->second.get();
+    }
+    else
+    {
+        std::unique_ptr<AnimationSet> newSet;
 
-//         if (!std::filesystem::exists("../../assets/animations/sets/" + name + ".animset"))
-//         {
-//             std::cout << "error loading " << name << ".animset\n";
+        if (!std::filesystem::exists("../../assets/animations/sets/" + name + ".animset"))
+        {
+            std::cout << "error loading " << name << ".animset\n";
 
-//             return nullptr;
-//         }
-//         else
-//         {
-//             // load animation set
-//             std::ifstream setFile("../../assets/animations/sets/" + name + ".animset");
+            return nullptr;
+        }
+        else
+        {
+            // load animation set
+            std::ifstream setFile("../../assets/animations/sets/" + name + ".animset");
 
-//             std::unordered_map<AnimationState, SpriteAnimation*> animations;
+            std::unordered_map<std::string, Animation> animations;
 
-//             std::vector<AnimationState> states;
-//             std::vector<std::string> animNames;
+            std::string animPath = "";
+            std::vector<std::string> keys;
+            std::vector<std::string> animNames;
 
-//             std::string line;
+            std::string line;
 
-//             while (std::getline(setFile, line))
-//             {
-//                 if (line.substr(0, 5) == "state") states.push_back(static_cast<AnimationState>(animationStringToState[line.substr(6)]));
-//                 if (line.substr(0, 4) == "anim") animNames.push_back(line.substr(5));
-//             }
+            while (std::getline(setFile, line))
+            {
+                if (line.substr(0, 3) == "dir") animPath = line.substr(4);
+                if (line.substr(0, 3) == "key") keys.push_back(line.substr(4));
+                if (line.substr(0, 4) == "anim") animNames.push_back(line.substr(5));
+            }
 
-//             for (int i = 0; i < states.size(); i++)
-//             {
-//                 animations[states[i]] = getAnimation(animNames[i]);
-//             }
+            for (int i = 0; i < keys.size(); i++)
+            {
+                animations[keys[i]] = *getAnimation(animNames[i], animPath);
+            }
 
-//             newSet.init(name, animations);
-//         }
+            newSet = std::make_unique<AnimationSet>(name, animations);
+        }
 
-//         animSetMap[name] = newSet;
+        animSetMap[name] = std::move(newSet);
 
-//         return &animSetMap[name];
-//     }
-// }
+        return animSetMap[name].get();
+    }
+}
 
 TileSet* AssetManager::getTileSet(std::string name)
 {

@@ -53,6 +53,7 @@ src/texture_atlas.cpp
 src/background_object.cpp
 src/animation.cpp
 src/global_animation.cpp
+src/animation_set.cpp
 )
 
 target_compile_features(app PRIVATE cxx_std_17)

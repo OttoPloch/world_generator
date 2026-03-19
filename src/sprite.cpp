@@ -16,18 +16,7 @@ Sprite::Sprite(WorldPosition position, sf::Texture* texture, sf::Vector2f size, 
 
     if (usingTexCoords) sprite->setTextureRect(texCoords);
 
-    if (sizeIsScale)
-    {
-        sprite->setScale(size);
-        this->size = {sprite->getTextureRect().size.x * size.x, sprite->getTextureRect().size.y * size.y};
-    }
-    else
-    {
-        sprite->setScale({size.x / sprite->getTextureRect().size.x, size.y / sprite->getTextureRect().size.y});
-        this->size = size;
-    }
-
-    sprite->setOrigin({sprite->getTextureRect().size.x / 2.f, sprite->getTextureRect().size.y / 2.f});
+    resize(size, sizeIsScale);
 }
 
 sf::Vector2f Sprite::getPosition() { return position.getPos(); }
@@ -41,6 +30,29 @@ float Sprite::right() { return position.getPos().x + size.x / 2.f; }
 float Sprite::top() { return position.getPos().y - size.y / 2.f; }
 
 float Sprite::bottom() { return position.getPos().y + size.y / 2.f; }
+
+void Sprite::resize(sf::Vector2f newSize, bool sizeIsScale)
+{
+    if (sizeIsScale)
+    {
+        sprite->setScale(newSize);
+        this->size = {sprite->getTextureRect().size.x * newSize.x, sprite->getTextureRect().size.y * newSize.y};
+    }
+    else
+    {
+        sprite->setScale({newSize.x / sprite->getTextureRect().size.x, newSize.y / sprite->getTextureRect().size.y});
+        this->size = newSize;
+    }
+
+    sprite->setOrigin({sprite->getTextureRect().size.x / 2.f, sprite->getTextureRect().size.y / 2.f});
+}
+
+void Sprite::setTextureRect(sf::IntRect newTexRect)
+{
+    sprite->setTextureRect(newTexRect);
+
+    resize(size, false);
+}
 
 void Sprite::syncPos(sf::Vector2f interpolatedPos, bool useInterpolated)
 {
@@ -56,20 +68,32 @@ void Sprite::syncPos(sf::Vector2f interpolatedPos, bool useInterpolated)
 
 void Sprite::update(float dt)
 {
-    if (animation.name != "")
+    Animation* activeAnimation = nullptr;
+
+    if (animation.get()) activeAnimation = animation.get();
+    else if (animSet.get()) activeAnimation = animSet->getActiveAnimation();
+
+    if (activeAnimation)
     {
-        animation.secondsTillNextFrame -= dt;
+        activeAnimation->secondsTillNextFrame -= dt;
 
-        if (animation.secondsTillNextFrame <= 0.f)
+        if (activeAnimation->secondsTillNextFrame <= 0.f)
         {
-            (animation.reversed) ? animation.index-- : animation.index++;
+            
+            (activeAnimation->reversed) ? activeAnimation->index-- : activeAnimation->index++;
+            
+            if (activeAnimation->index >= activeAnimation->frames.size()) activeAnimation->index = 0;
+            if (activeAnimation->index < 0) activeAnimation->index = activeAnimation->frames.size() - 1;
+            
+            if (activeAnimation->texture->getNativeHandle() != sprite->getTexture().getNativeHandle())
+            {
+                std::cout << "ACTIVE ANIMATION TEXTURE AND SPRITE CURRENT TEXTURE ARE DIFFERENT, UPDATING SPRITE TEXTURE.\n";
+                sprite->setTexture(*activeAnimation->texture);
+            }
 
-            if (animation.index >= animation.frames.size()) animation.index = 0;
-            if (animation.index < 0) animation.index = animation.frames.size() - 1;
+            setTextureRect(activeAnimation->frames[activeAnimation->index]);
 
-            sprite->setTextureRect(animation.frames[animation.index]);
-
-            animation.secondsTillNextFrame = animation.secondsPerFrame;
+            activeAnimation->secondsTillNextFrame = activeAnimation->secondsPerFrame;
         }
     }
 }

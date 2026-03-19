@@ -1,0 +1,9 @@
+texture texture_atlases/test.png
+coord 0,32
+size 16,16
+coord 16,32
+size 16,16
+coord 32,32
+size 16,16
+coord 48,32
+size 16,16

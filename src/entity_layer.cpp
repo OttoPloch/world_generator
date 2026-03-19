@@ -17,10 +17,14 @@ void EntityLayer::init(Game* game)
     IDCounter = 0;
 
     addMob({0, 0})
-    ->spriteInit(game->getAssetManager()->getTexture("WALK", "animations/Knight 2D Pixel Art/Sprites/without_outline/"), {10, 10}, true, true, {game->getAssetManager()->getAnimation("knight")->frames[0].position, game->getAssetManager()->getAnimation("knight")->frames[0].size})
-    ->animation = *game->getAssetManager()->getAnimation("knight");
+    //->spriteInit(game->getAssetManager()->getTexture("WALK", "animations/Knight 2D Pixel Art/Sprites/without_outline/"), {10, 10}, true, true, {game->getAssetManager()->getAnimation("knight")->frames[0].position, game->getAssetManager()->getAnimation("knight")->frames[0].size})
+    ->spriteInit(game->getAssetManager()->getTexture("test", "texture_atlases/"), {10, 10})
+    //->animation = std::make_unique<Animation>(*game->getAssetManager()->getAnimation("knight"));
+    ->animSet = std::make_unique<AnimationSet>(*game->getAssetManager()->getAnimSet("test"));
 
-    dynamic_cast<Mob*>(getEntity(0))->getSprite()->animation.adjustSpeed(0.2f);
+    getEntity(0)->getSprite()->animSet->setActiveAnimation("RIGHT");
+    getEntity(0)->getSprite()->animSet->getActiveAnimation()->adjustSpeed(0.1f);
+    //getEntity(0)->getSprite()->animation->adjustSpeed(0.2f);
 
     // AssetManager* assetManager = game->getAssetManager();
 
@@ -125,9 +129,6 @@ Mob* EntityLayer::addMob(sf::Vector2f position)
     entities[ID] = std::make_unique<Mob>(game, ID, position);
     
     Mob* asMob = dynamic_cast<Mob*>(entities[ID].get());
-
-    // TEMP
-    asMob->velocity.x = 5;
 
     return asMob;
 }

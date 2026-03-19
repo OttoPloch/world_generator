@@ -1,0 +1,9 @@
+dir animations/test/
+key LEFT
+anim test left
+key RIGHT
+anim test right
+key UP
+anim test up
+key DOWN
+anim test down

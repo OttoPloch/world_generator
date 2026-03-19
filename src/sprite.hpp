@@ -3,7 +3,9 @@
 #include "common.hpp"
 #include "world_position.hpp"
 #include "animation.hpp"
+#include "animation_set.hpp"
 
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <memory>
 
@@ -22,6 +24,9 @@ public:
     float top();
     float bottom();
 
+    void resize(sf::Vector2f newSize, bool sizeIsScale = true);
+    void setTextureRect(sf::IntRect newTexRect);
+
     void syncPos(sf::Vector2f interpolatedPos = {0, 0}, bool useInterpolated = false);
 
     void update(float dt);
@@ -30,13 +35,12 @@ public:
 
     std::unique_ptr<sf::Sprite> sprite;
 
-    Animation animation;
+    std::unique_ptr<Animation> animation;
+    std::unique_ptr<AnimationSet> animSet;
 private:
     WorldPosition position;
 
     sf::Vector2f size;
 
     sf::Texture* texture;
-
-    sf::FloatRect texCoords;
 };

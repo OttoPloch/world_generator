@@ -104,13 +104,13 @@ float UIElement::left()
         case 1:
         case 3:
         case 7:
-            (parent) ? left = parent->right() + position.x - size.x : left = uiLayer->getViewSize().x + position.x - size.x;
+            (parent) ? left = parent->right() + position.x - size.x : left = uiLayer->getScreenSize().x + position.x - size.x;
             break;
         case 9:
             (parent) ? left = parent->left() + position.x - size.x / 2.f : left = position.x - size.x / 2.f;
             break;
         default:
-            (parent) ? left = parent->getScreenCenter().x + position.x - size.x / 2.f : left = (uiLayer->getViewSize().x / 2.f) + position.x - size.x / 2.f;
+            (parent) ? left = parent->getScreenCenter().x + position.x - size.x / 2.f : left = (uiLayer->getScreenSize().x / 2.f) + position.x - size.x / 2.f;
             break;
     }
 
@@ -136,13 +136,13 @@ float UIElement::top()
         case 2:
         case 3:
         case 8:
-            (parent) ? top = parent->bottom() + position.y - size.y : top = uiLayer->getViewSize().y + position.y - size.y;
+            (parent) ? top = parent->bottom() + position.y - size.y : top = uiLayer->getScreenSize().y + position.y - size.y;
             break;
         case 9:
             (parent) ? top = parent->top() + position.y - size.y / 2.f : top = position.y - size.y / 2.f;
             break;
         default:
-            (parent) ? top = parent->getScreenCenter().y + position.y - size.y / 2.f : top = (uiLayer->getViewSize().y / 2.f) + position.y - size.y / 2.f;
+            (parent) ? top = parent->getScreenCenter().y + position.y - size.y / 2.f : top = (uiLayer->getScreenSize().y / 2.f) + position.y - size.y / 2.f;
             break;
     }
 
