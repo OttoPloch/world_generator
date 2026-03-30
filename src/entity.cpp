@@ -13,9 +13,9 @@ Entity::Entity(Game* game, int ID, sf::Vector2f position) : game(game), ID(ID)
 
 Entity::Entity(Game* game, int ID, WorldPosition position) : game(game), ID(ID), position(position) {}
 
-Sprite* Entity::spriteInit(sf::Texture* texture, sf::Vector2f size, bool sizeIsScale, bool usingTexCoords, sf::IntRect texCoords)
+Sprite* Entity::spriteInit(sf::Texture* texture, sf::Vector2f size, bool sizeIsScale, bool usingTexCoords, sf::IntRect texCoords, float animSpeedMult)
 {
-    sprite = Sprite(this->position, texture, size, sizeIsScale, usingTexCoords, texCoords);
+    sprite = Sprite(this->position, texture, size, sizeIsScale, usingTexCoords, texCoords, animSpeedMult);
 
     return &sprite;
 }
@@ -25,11 +25,15 @@ int Entity::getID() { return ID; }
 void Entity::tick()
 {
     lastPosition = position.getPos();
+
+    for (auto& c : components) c->tick();
 }
 
 void Entity::update(float dt)
 {
     sprite.update(dt);
+
+    for (auto& c : components) c->update();
 }
 
 void Entity::draw(float alpha, sf::RenderWindow& window)
@@ -42,5 +46,7 @@ void Entity::draw(float alpha, sf::RenderWindow& window)
 }
 
 sf::Vector2f Entity::getPosition() { return position.getPos(); }
+
+WorldPosition* Entity::getPositionVar() { return &position; }
 
 Sprite* Entity::getSprite() { return &sprite; }

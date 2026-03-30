@@ -1,8 +1,10 @@
 #pragma once
 
 #include "common.hpp"
+#include "entity_component.hpp"
 #include "world_position.hpp"
 #include "sprite.hpp"
+#include "entity_component.hpp"
 
 #include <SFML/Graphics.hpp>
 
@@ -17,9 +19,45 @@ public:
 
     Entity(Game* game, int ID, WorldPosition position);
 
-    Sprite* spriteInit(sf::Texture* texture, sf::Vector2f size = {1.f, 1.f}, bool sizeIsScale = true, bool usingTexCoords = false, sf::IntRect texCoords = sf::IntRect({0, 0}, {0, 0}));
+    Sprite* spriteInit(sf::Texture* texture, sf::Vector2f size = {1.f, 1.f}, bool sizeIsScale = true, bool usingTexCoords = false, sf::IntRect texCoords = sf::IntRect({0, 0}, {0, 0}), float animSpeedMult = 1.f);
 
     int getID();
+
+    template<typename T>
+    T* getComponent()
+    {
+        for (auto& c : components)
+        {
+            if (auto casted = dynamic_cast<T*>(c.get())) return casted;
+        }
+        
+        return nullptr;
+    }
+
+    template<typename T, typename... Args>
+    T& addComponent(Args&&... args)
+    {
+        T* comp = new T(std::forward<Args>(args)...);
+        components.emplace_back(comp);
+        return *comp;
+    }
+
+    template<typename T>
+    void removeComponent()
+    {
+        for (auto i = components.begin(); i != components.end();)
+        {
+            if (auto casted = dynamic_cast<T*>(i->get()))
+            {
+                i = components.erase(i);
+                break;
+            }
+            else
+            {
+                ++i;
+            }
+        }
+    }
 
     virtual void tick();
 
@@ -29,9 +67,12 @@ public:
 
     sf::Vector2f getPosition();
 
+    WorldPosition* getPositionVar();
+
     Sprite* getSprite();
-protected:
+    
     Game* game;
+protected:
 
     int ID;
 
@@ -39,4 +80,6 @@ protected:
     sf::Vector2f lastPosition;
 
     Sprite sprite;
+
+    std::vector<std::unique_ptr<EntityComponent>> components;
 };

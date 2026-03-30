@@ -12,13 +12,12 @@ float getDistance(sf::Vector2f vec1, sf::Vector2f vec2);
 
 bool mouseRectCollide(Game* game, sf::Vector2f position, sf::Vector2f size);
 
-void log(std::string message, bool newLine = true);
-
-void log(sf::Vector2f value, bool newLine = false);
-
-void log(sf::Vector2i value, bool newLine = false);
-
-void log(int value, bool newLine = true);
+template<typename T>
+void log(T message, bool newLine = true)
+{
+    std::cout << message;
+    if (newLine) std::cout << '\n';
+}
 
 sf::Vector2f UIPositionToScreenCenter(UILayer* uiLayer, UIElement* element, sf::Vector2f pos, int posSet = -1, bool useElementPosition = false);
 

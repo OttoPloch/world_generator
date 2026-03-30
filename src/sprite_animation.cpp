@@ -5,15 +5,10 @@ SpriteAnimation::SpriteAnimation() {}
 void SpriteAnimation::init(std::string name, int baseTicksPerFrame, sf::Texture* texture, sf::Vector2i frameSize, std::vector<sf::Vector2i> frames, sf::FloatRect collisionRect)
 {
     this->name = name;
-
     this->baseTicksPerFrame = baseTicksPerFrame;
-
     this->texture = texture;
-
     this->frameSize = frameSize;
-
     this->frames = frames;
-
     this->collisionRect = collisionRect;
 }
 

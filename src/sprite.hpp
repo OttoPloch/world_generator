@@ -14,7 +14,7 @@ class Sprite
 public:
     Sprite();
 
-    Sprite(WorldPosition position, sf::Texture* texture, sf::Vector2f size = {1.f, 1.f}, bool sizeIsScale = true, bool usingTexCoords = false, sf::IntRect texCoords = sf::IntRect({0, 0}, {0, 0}));
+    Sprite(WorldPosition position, sf::Texture* texture, sf::Vector2f size = {1.f, 1.f}, bool sizeIsScale = true, bool usingTexCoords = false, sf::IntRect texCoords = sf::IntRect({0, 0}, {0, 0}), float animSpeedMult = 1.f);
 
     sf::Vector2f getPosition();
     sf::Vector2f getSize();
@@ -37,6 +37,7 @@ public:
 
     std::unique_ptr<Animation> animation;
     std::unique_ptr<AnimationSet> animSet;
+    float animSpeedMult;
 private:
     WorldPosition position;
 

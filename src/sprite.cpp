@@ -5,16 +5,18 @@
 
 Sprite::Sprite() {}
 
-Sprite::Sprite(WorldPosition position, sf::Texture* texture, sf::Vector2f size, bool sizeIsScale, bool usingTexCoords, sf::IntRect texCoords)
+Sprite::Sprite(WorldPosition position, sf::Texture* texture, sf::Vector2f size, bool sizeIsScale, bool usingTexCoords, sf::IntRect texCoords, float animSpeedMult)
 {
     this->position = position;
     this->texture = texture;
 
     sprite = std::make_unique<sf::Sprite>(*texture);
-
+    
     sprite->setPosition(position.getPos());
-
+    
     if (usingTexCoords) sprite->setTextureRect(texCoords);
+    
+    this->animSpeedMult = animSpeedMult;
 
     resize(size, sizeIsScale);
 }
@@ -75,11 +77,10 @@ void Sprite::update(float dt)
 
     if (activeAnimation)
     {
-        activeAnimation->secondsTillNextFrame -= dt;
+        activeAnimation->secondsTillNextFrame -= dt * animSpeedMult;
 
         if (activeAnimation->secondsTillNextFrame <= 0.f)
         {
-            
             (activeAnimation->reversed) ? activeAnimation->index-- : activeAnimation->index++;
             
             if (activeAnimation->index >= activeAnimation->frames.size()) activeAnimation->index = 0;

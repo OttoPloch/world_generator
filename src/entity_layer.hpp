@@ -2,7 +2,6 @@
 
 #include "common.hpp"
 #include "entity.hpp"
-#include "mob.hpp"
 
 #include <unordered_map>
 #include <vector>
@@ -21,8 +20,6 @@ public:
     int getNewID();    
 
     Entity* addEntity(sf::Vector2f position);
-
-    Mob* addMob(sf::Vector2f position);
 
     void removeEntity(int ID);
 

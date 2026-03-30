@@ -3,7 +3,6 @@
 // #include "common.hpp"
 // #include "attribute.hpp"
 // #include "game_position.hpp"
-// #include "entity_states.hpp"
 // #include "gamerules.hpp"
 
 // class Game;
@@ -36,8 +35,6 @@
 //     Entity* myEntity;
 
 //     Gamerules* gamerules;
-
-//     EntityStates* states;
 
 //     GamePosition position;
 

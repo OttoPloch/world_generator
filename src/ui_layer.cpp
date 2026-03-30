@@ -37,14 +37,6 @@ void UILayer::init(Game* game, Camera* camera)
     currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "animation button 2", currID, 0, toV2F(-75, 140), toV2F(50, 50), blueButtonTextures);
     currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "animation button", currID, 0, toV2F(25, 140), toV2F(50, 50), blueButtonTextures);
     
-    //temp
-    currID = getNewID(); elements[currID] = std::make_unique<UIBackground>(game, this, "move buttons anchor", currID, 3, toV2F(-50, -50), toV2F(250, 250), sf::Color(15, 15, 15, 195));
-    currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "up button", currID, 4, toV2F(0, -75), toV2F(75, 75), buttonTextures, getElement("move buttons anchor"));
-    currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "left button", currID, 4, toV2F(-75, 0), toV2F(75, 75), buttonTextures, getElement("move buttons anchor"));
-    currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "right button", currID, 4, toV2F(75, 0), toV2F(75, 75), buttonTextures, getElement("move buttons anchor"));
-    currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "down button", currID, 4, toV2F(0, 75), toV2F(75, 75), buttonTextures, getElement("move buttons anchor"));
-
-
     // currID = getNewID(); elements[currID] = std::make_unique<UIBackground>(game, this, "many win parent", currID, 0, toV2F(80, 80), toV2F(50, 50), sf::Color(0, 0, 0, 0), assetManager->getTileSet("16px"), assetManager->getTexture("ui_tech", "images/ui/"));
     // for (int i = 0; i < 100; i++)
     // {

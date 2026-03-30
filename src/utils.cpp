@@ -23,34 +23,6 @@ bool mouseRectCollide(Game* game, sf::Vector2f position, sf::Vector2f size)
     return false;
 }
 
-void log(std::string message, bool newLine)
-{
-    std::cout << message;
-
-    if (newLine) std::cout << '\n';
-}
-
-void log(sf::Vector2f value, bool newLine)
-{
-    std::cout << value.x << ", " << value.y;
-    
-    if (newLine) std::cout << '\n';
-}
-
-void log(sf::Vector2i value, bool newLine)
-{
-    std::cout << value.x << ", " << value.y;
-    
-    if (newLine) std::cout << '\n';
-}
-
-void log(int value, bool newLine)
-{
-    std::cout << value;
-
-    if (newLine) std::cout << '\n';
-}
-
 sf::Vector2f UIPositionToScreenCenter(UILayer* uiLayer, UIElement* element, sf::Vector2f pos, int posSet, bool useElementPosition)
 {
     int set = posSet;

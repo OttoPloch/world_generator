@@ -5,7 +5,7 @@
 
 AnimationSet::AnimationSet() {}
 
-AnimationSet::AnimationSet(std::string setName, std::unordered_map<std::string, Animation> animations)
+AnimationSet::AnimationSet(std::string setName, std::unordered_map<AnimState, Animation> animations)
 {
     this->setName = setName;
     this->animations = animations;
@@ -13,7 +13,7 @@ AnimationSet::AnimationSet(std::string setName, std::unordered_map<std::string, 
     activeAnimation = nullptr;
 }
 
-void AnimationSet::setActiveAnimation(std::string key)
+void AnimationSet::setActiveAnimation(AnimState key)
 {
     if (activeAnimation)
     {
@@ -25,9 +25,13 @@ void AnimationSet::setActiveAnimation(std::string key)
 
     if (entry != animations.end())
     {
+        activeState = key;
+
         activeAnimation = &entry->second;
         activeAnimation->secondsTillNextFrame = 0.f;
     }
 }
 
 Animation* AnimationSet::getActiveAnimation() { return activeAnimation; }
+
+AnimState AnimationSet::getActiveState() { return activeState; }

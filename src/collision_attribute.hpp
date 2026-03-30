@@ -39,8 +39,6 @@
 //     Entity* getEntity();
 // private:
 //     Entity* myEntity;
-
-//     EntityStates* states;
     
 //     CollisionRect rect;
 // };

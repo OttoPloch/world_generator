@@ -40,10 +40,6 @@ bool UIButton::hover()
     }
     else
     {
-        if (name == "up button")
-        {
-            std::cout << left() << ", " << top() << '\n';
-        }
         return mouseRectCollide(game, {left(), top()}, size);
     }
 }

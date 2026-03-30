@@ -1,7 +1,9 @@
 #include "scene.hpp"
 #include "game.hpp"
 #include "input.hpp"
+#include "states.hpp"
 #include "utils.hpp"
+#include "control_component.hpp"
 
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -87,31 +89,6 @@ void Scene::UIUpdate(float dt)
         uiLayer.getElement("animation button 2")->setAnimation({0, 0}, {-75, 140}, -1, -1, true, false);
     }
 
-    if (uiLayer.getElement("up button")->getAsButton()->getActive())
-    {
-        dynamic_cast<Mob*>(entityLayer.getEntity(0))->velocity = {0, -15};
-        entityLayer.getEntity(0)->getSprite()->animSet->setActiveAnimation("UP");
-        entityLayer.getEntity(0)->getSprite()->animSet->getActiveAnimation()->adjustSpeed(0.1);
-    }
-    if (uiLayer.getElement("left button")->getAsButton()->getActive())
-    {
-        dynamic_cast<Mob*>(entityLayer.getEntity(0))->velocity = {-15, 0};
-        entityLayer.getEntity(0)->getSprite()->animSet->setActiveAnimation("LEFT");
-        entityLayer.getEntity(0)->getSprite()->animSet->getActiveAnimation()->adjustSpeed(0.1);
-    }
-    if (uiLayer.getElement("right button")->getAsButton()->getActive())
-    {
-        dynamic_cast<Mob*>(entityLayer.getEntity(0))->velocity = {15, 0};
-        entityLayer.getEntity(0)->getSprite()->animSet->setActiveAnimation("RIGHT");
-        entityLayer.getEntity(0)->getSprite()->animSet->getActiveAnimation()->adjustSpeed(0.1);
-    }
-    if (uiLayer.getElement("down button")->getAsButton()->getActive())
-    {
-        dynamic_cast<Mob*>(entityLayer.getEntity(0))->velocity = {0, 15};
-        entityLayer.getEntity(0)->getSprite()->animSet->setActiveAnimation("DOWN");
-        entityLayer.getEntity(0)->getSprite()->animSet->getActiveAnimation()->adjustSpeed(0.1);
-    }
-
     uiLayer.UIUpdate(dt);
 }
 
@@ -163,10 +140,14 @@ void Scene::toggleFocus()
 {
     if (camera.getFocus() == nullptr)
     {
-        camera.setFocus(entityLayer.getEntity(0));
+        Entity* e = entityLayer.getEntity(0);
+        e->addComponent<ControlComponent>(e);
+        camera.setFocus(e);
     }
     else
     {
+        Entity* e = entityLayer.getEntity(0);
+        e->removeComponent<ControlComponent>();
         camera.removeFocus();
     }
 }

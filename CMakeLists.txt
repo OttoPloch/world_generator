@@ -27,7 +27,6 @@ src/game_position.cpp
 src/scene.cpp
 src/collision_rect.cpp
 src/utils.cpp
-src/entity_states.cpp
 src/gamerules.cpp
 src/gamerule.cpp
 src/entity_layer.cpp
@@ -47,13 +46,16 @@ src/chunk.cpp
 src/chunk_generator.cpp
 src/world_position.cpp
 src/screen_position.cpp
-src/mob.cpp
 src/vertex_group.cpp
 src/texture_atlas.cpp
 src/background_object.cpp
 src/animation.cpp
 src/global_animation.cpp
 src/animation_set.cpp
+src/entity_component.cpp
+src/movement_component.cpp
+src/control_component.cpp
+src/state_component.cpp
 )
 
 target_compile_features(app PRIVATE cxx_std_17)

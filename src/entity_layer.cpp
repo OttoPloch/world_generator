@@ -2,7 +2,11 @@
 #include "asset_manager.hpp"
 #include "game.hpp"
 #include "rect_type.hpp"
+#include "state_component.hpp"
+#include "states.hpp"
 #include "utils.hpp"
+#include "control_component.hpp"
+#include "movement_component.hpp"
 
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -16,15 +20,15 @@ void EntityLayer::init(Game* game)
 
     IDCounter = 0;
 
-    addMob({0, 0})
+    Entity* e = addEntity({0, 0});
+    e->addComponent<MovementComponent>(e, sf::Vector2f(0, 0));
+    e->addComponent<StateComponent>(e);
     //->spriteInit(game->getAssetManager()->getTexture("WALK", "animations/Knight 2D Pixel Art/Sprites/without_outline/"), {10, 10}, true, true, {game->getAssetManager()->getAnimation("knight")->frames[0].position, game->getAssetManager()->getAnimation("knight")->frames[0].size})
-    ->spriteInit(game->getAssetManager()->getTexture("test", "texture_atlases/"), {10, 10})
+    e->spriteInit(game->getAssetManager()->getTexture("test", "texture_atlases/"), {600, 600}, false)
     //->animation = std::make_unique<Animation>(*game->getAssetManager()->getAnimation("knight"));
     ->animSet = std::make_unique<AnimationSet>(*game->getAssetManager()->getAnimSet("test"));
 
-    getEntity(0)->getSprite()->animSet->setActiveAnimation("RIGHT");
-    getEntity(0)->getSprite()->animSet->getActiveAnimation()->adjustSpeed(0.1f);
-    //getEntity(0)->getSprite()->animation->adjustSpeed(0.2f);
+    e->getSprite()->animSpeedMult = 5.f;
 
     // AssetManager* assetManager = game->getAssetManager();
 
@@ -120,17 +124,6 @@ Entity* EntityLayer::addEntity(sf::Vector2f position)
     entities[ID] = std::make_unique<Entity>(game, ID, position);
     
     return entities[ID].get();
-}
-
-Mob* EntityLayer::addMob(sf::Vector2f position)
-{
-    int ID = getNewID();
-    
-    entities[ID] = std::make_unique<Mob>(game, ID, position);
-    
-    Mob* asMob = dynamic_cast<Mob*>(entities[ID].get());
-
-    return asMob;
 }
 
 void EntityLayer::removeEntity(int ID)

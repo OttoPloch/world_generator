@@ -8,6 +8,8 @@
 #include "ui_layer.hpp"
 #include "ui_animation.hpp"
 #include "chunk_layer.hpp"
+#include "entity_component.hpp"
+#include "movement_component.hpp"
 
 #include <vector>
 

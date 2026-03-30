@@ -1,37 +1,18 @@
 #pragma once
 
-#include <map>
-#include <string>
-
-enum class AnimationState
+template<typename Enum>
+constexpr int enumSize()
 {
-    ANIM_PUSHINGLEFT,
-    ANIM_PUSHINGRIGHT,
-    ANIM_PUSHINGUP,
-    ANIM_PUSHINGDOWN,
-    ANIM_RUNNINGLEFT,
-    ANIM_RUNNINGRIGHT,
-    ANIM_RUNNINGUP,
-    ANIM_RUNNINGDOWN,
-    ANIM_WALKINGLEFT,
-    ANIM_WALKINGRIGHT,
-    ANIM_WALKINGUP,
-    ANIM_WALKINGDOWN,
-    ANIM_MOVING,
-    ANIM_IDLE,
+    return static_cast<int>(Enum::COUNT);
+}
 
-    COUNT
-};
-
-extern std::map<std::string, AnimationState> animationStringToState;
-
-enum class CollisionState
+enum class AnimState
 {
-    COLL_ANY,
-    COLL_LEFT,
-    COLL_RIGHT,
-    COLL_TOP,
-    COLL_BOTTOM,
+    LEFT,
+    RIGHT,
+    UP,
+    DOWN,
+    IDLE,
 
     COUNT
 };

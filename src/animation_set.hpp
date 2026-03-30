@@ -2,6 +2,8 @@
 
 #include "common.hpp"
 #include "animation.hpp"
+#include "states.hpp"
+
 #include <SFML/Graphics/Rect.hpp>
 
 class AnimationSet
@@ -9,15 +11,17 @@ class AnimationSet
 public:
     AnimationSet();
 
-    AnimationSet(std::string setName, std::unordered_map<std::string, Animation> animations);
+    AnimationSet(std::string setName, std::unordered_map<AnimState, Animation> animations);
 
-    void setActiveAnimation(std::string key);
+    void setActiveAnimation(AnimState key);
 
     Animation* getActiveAnimation();
+    AnimState getActiveState();
 private:
     std::string setName;
 
     Animation* activeAnimation;
+    AnimState activeState;
 
-    std::unordered_map<std::string, Animation> animations;
+    std::unordered_map<AnimState, Animation> animations;
 };

@@ -36,13 +36,10 @@ void Chunk::init(Game* game, sf::Vector2i chunkPosition, std::vector<Tile> tiles
 
         this->tiles[i] = std::make_unique<Tile>(game, this, sf::Vector2i(i % chunkSize, toInt(std::floor(i / chunkSize))), currTile->type, currTile->myVerts.texCoords, currTile->collides, currTile->colliderName, currTile->collOffsetFraction, currTile->collSizeFraction);
 
+        // TEMP, TODO: find a better place for this
         if (this->tiles[i]->type == TileType::WATER)
         {
-            // std::cout << i << ": " << game->getAssetManager()->getGlobalAnimation("water") << '\n';
-
             this->tiles[i]->animation = game->getAssetManager()->getGlobalAnimation("water");
-
-            // std::cout << "L " << this->tiles[i]->animation << '\n';
         }
 
         createTileVerts(i);

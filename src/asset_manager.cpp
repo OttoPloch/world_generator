@@ -198,10 +198,10 @@ AnimationSet* AssetManager::getAnimSet(std::string name)
             // load animation set
             std::ifstream setFile("../../assets/animations/sets/" + name + ".animset");
 
-            std::unordered_map<std::string, Animation> animations;
+            std::unordered_map<AnimState, Animation> animations;
 
             std::string animPath = "";
-            std::vector<std::string> keys;
+            std::vector<AnimState> keys;
             std::vector<std::string> animNames;
 
             std::string line;
@@ -209,7 +209,13 @@ AnimationSet* AssetManager::getAnimSet(std::string name)
             while (std::getline(setFile, line))
             {
                 if (line.substr(0, 3) == "dir") animPath = line.substr(4);
-                if (line.substr(0, 3) == "key") keys.push_back(line.substr(4));
+                if (line.substr(0, 3) == "key")
+                {
+                    if (toInt(std::stof(line.substr(4))) < enumSize<AnimState>())
+                    {
+                        keys.push_back(static_cast<AnimState>(toInt(std::stof(line.substr(4)))));
+                    }
+                }
                 if (line.substr(0, 4) == "anim") animNames.push_back(line.substr(5));
             }
 

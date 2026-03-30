@@ -7,7 +7,7 @@ struct Animation
 {
     Animation();
 
-    Animation(std::string name, sf::Texture* texture, std::vector<sf::IntRect> frames);
+    Animation(std::string name, sf::Texture* texture, std::vector<sf::IntRect> frames, float secondsPerFrame = 0.5f);
 
     void adjustSpeed(float newSecondsPerFrame);
 
