@@ -1,6 +1,7 @@
 #include "scene.hpp"
 #include "game.hpp"
 #include "input.hpp"
+#include "movement_component.hpp"
 #include "states.hpp"
 #include "utils.hpp"
 #include "control_component.hpp"
@@ -58,6 +59,11 @@ void Scene::UIUpdate(float dt)
     {
         game->getGamerules()->player_moveSpeed = game->getGamerules()->player_moveSpeed + 3.f;
     
+        if (auto e = entityLayer.getEntity(0)->getComponent<MovementComponent>())
+        {
+            e->speed = game->getGamerules()->player_moveSpeed;
+        }
+
         uiLayer.getElement("speed display")->getAsText()->setValue(std::to_string(toInt(game->getGamerules()->player_moveSpeed)));
     }
     
@@ -65,12 +71,22 @@ void Scene::UIUpdate(float dt)
     {
         game->getGamerules()->player_moveSpeed = std::max(game->getGamerules()->player_moveSpeed - 3.f, .1f);
         
+        if (auto e = entityLayer.getEntity(0)->getComponent<MovementComponent>())
+        {
+            e->speed = game->getGamerules()->player_moveSpeed;
+        }
+
         uiLayer.getElement("speed display")->getAsText()->setValue(std::to_string(toInt(game->getGamerules()->player_moveSpeed)));
     }
 
     if (uiLayer.getElement("reset button")->getAsButton()->getActive())
     {
         game->getGamerules()->player_moveSpeed = 5.f;
+
+        if (auto e = entityLayer.getEntity(0)->getComponent<MovementComponent>())
+        {
+            e->speed = game->getGamerules()->player_moveSpeed;
+        }
 
         uiLayer.getElement("speed display")->getAsText()->setValue(std::to_string(toInt(game->getGamerules()->player_moveSpeed)));
     }

@@ -21,7 +21,7 @@ void EntityLayer::init(Game* game)
     IDCounter = 0;
 
     Entity* e = addEntity({0, 0});
-    e->addComponent<MovementComponent>(e, sf::Vector2f(0, 0));
+    e->addComponent<MovementComponent>(e, sf::Vector2f(0, 0), game->getGamerules()->player_moveSpeed);
     e->addComponent<StateComponent>(e);
     //->spriteInit(game->getAssetManager()->getTexture("WALK", "animations/Knight 2D Pixel Art/Sprites/without_outline/"), {10, 10}, true, true, {game->getAssetManager()->getAnimation("knight")->frames[0].position, game->getAssetManager()->getAnimation("knight")->frames[0].size})
     e->spriteInit(game->getAssetManager()->getTexture("test", "texture_atlases/"), {600, 600}, false)
