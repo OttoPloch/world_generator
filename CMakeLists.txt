@@ -30,7 +30,6 @@ src/utils.cpp
 src/gamerules.cpp
 src/gamerule.cpp
 src/entity_layer.cpp
-src/setting.cpp
 src/settings.cpp
 src/ui_layer.cpp
 src/ui_element.cpp

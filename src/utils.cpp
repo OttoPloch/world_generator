@@ -197,14 +197,14 @@ bool isOnScreen(Game* game, sf::Vector2f point, bool applyView)
 
 sf::Vector2i worldToChunkPosition(Game* game, sf::Vector2f position)
 {
-    float chunkSize = game->getSettings()->getSetting("tile_size").valueFloat * toFloat(game->getSettings()->getSetting("chunk_size").valueInt);
+    float chunkSize = game->getSettings()->tile_size * toFloat(game->getSettings()->chunk_size);
 
     return {toInt(std::floor(position.x / chunkSize)), toInt(std::floor(position.y / chunkSize))};
 }
 
 sf::Vector2f chunkToWorldPosition(Game* game, sf::Vector2i position)
 {
-    float chunkSize = game->getSettings()->getSetting("tile_size").valueFloat * toFloat(game->getSettings()->getSetting("chunk_size").valueInt);
+    float chunkSize = game->getSettings()->tile_size * toFloat(game->getSettings()->chunk_size);
 
     return {position.x * chunkSize, position.y * chunkSize};
 }

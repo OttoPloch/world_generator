@@ -1,7 +1,6 @@
 #pragma once
 
 #include "common.hpp"
-#include "setting.hpp"
 
 #include <map>
 
@@ -12,7 +11,11 @@ public:
 
     void init();
 
-    setting getSetting(std::string option);
-private:
-    std::map<std::string, setting> settings;
+    float ui_scale;
+    float ui_animation_speed;
+    float tile_size;
+    int chunk_size;
+    float chunk_render_distance;
+    float chunk_load_distance;
+    float generation_foliage_scale;
 };

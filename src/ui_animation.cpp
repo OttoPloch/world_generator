@@ -25,7 +25,7 @@ sf::Vector2f UIAnimation::step(float dt, Game* game)
     float xDiff = endCenter.x - currentCenter.x;
     float yDiff = endCenter.y - currentCenter.y;
 
-    float speed = game->getSettings()->getSetting("ui_animation_speed").valueFloat;
+    float speed = game->getSettings()->ui_animation_speed;
 
     currentCenter.x += xDiff * dt / speed;
     currentCenter.y += yDiff * dt / speed;

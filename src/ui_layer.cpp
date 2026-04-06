@@ -53,7 +53,7 @@ void UILayer::init(Game* game, Camera* camera)
     // }
 
     getElement("speed display")->getAsText()->setBaseText("Speed: ###");
-    getElement("speed display")->getAsText()->setValue(std::to_string(toInt(game->getGamerules()->getRule("moveSpeed", "player").valueFloat)));
+    getElement("speed display")->getAsText()->setValue(std::to_string(toInt(game->getGamerules()->player_moveSpeed)));
 
     currID = getNewID(); elements[currID] = std::make_unique<UIBackground>(game, this, "controller indicator", getNewID(), 0, toV2F(0, 0), toV2F(50, 50), sf::Color::Transparent, assetManager->getTileSet("16px"), assetManager->getTexture("ui_select", "images/ui/"), 36.f);
     interactiveUIManager.init(game, &elements, getElement("controller indicator"));

@@ -12,11 +12,14 @@ public:
 
     void init();
 
-    gamerule getRule(std::string rule, std::string ruleset = "default");
-    
-    void setRule(std::string rule, gamerule value, std::string ruleset = "default");
-private:
-    std::map<std::string, gamerule> rules;
+    float camera_freecamMoveSpeedBase;
+    float camera_bigZoomFactor;
+    float camera_smallZoomAmount;
+    float camera_minZoomFactor;
+    float camera_maxZoomFactor;
+    float motion_friction;
+    float motion_velocityCutoff;
 
-    std::map<std::string, gamerule> playerRules;
+    float player_moveSpeed;
+    float player_acceleration;
 };

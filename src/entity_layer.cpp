@@ -140,7 +140,7 @@ void EntityLayer::removeEntity(int ID)
 
 void EntityLayer::removeAllEntitiesInChunk(int chunkX, int chunkY)
 {
-    float chunkLength = toFloat(game->getSettings()->getSetting("chunk_size").valueInt) * game->getSettings()->getSetting("tile_size").valueFloat;
+    float chunkLength = toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size;
 
     std::vector<int> entitiesToRemove;
 
@@ -174,7 +174,7 @@ std::vector<Entity*> EntityLayer::getEntitiesInChunk(int chunkX, int chunkY)
 {
     std::vector<Entity*> entitiesInChunk;
 
-    float chunkLength = toFloat(game->getSettings()->getSetting("chunk_size").valueInt) * game->getSettings()->getSetting("tile_size").valueFloat;
+    float chunkLength = toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size;
 
     for (auto& i : entities)
     {

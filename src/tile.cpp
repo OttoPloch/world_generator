@@ -30,7 +30,7 @@ void Tile::init(Game* game, Chunk* chunk, sf::Vector2i localPosition, TileType t
 
     this->localPosition = localPosition;
 
-    size = game->getSettings()->getSetting("tile_size").valueFloat;
+    size = game->getSettings()->tile_size;
 
     this->type = type;
 

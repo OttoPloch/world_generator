@@ -20,9 +20,9 @@ void Chunk::init(Game* game, sf::Vector2i chunkPosition, std::vector<Tile> tiles
 
     this->chunkPosition = chunkPosition;
 
-    chunkSize = game->getSettings()->getSetting("chunk_size").valueInt;
+    chunkSize = game->getSettings()->chunk_size;
 
-    tileSize = game->getSettings()->getSetting("tile_size").valueFloat;
+    tileSize = game->getSettings()->tile_size;
 
     worldPosition = {chunkPosition.x * (chunkSize * tileSize), chunkPosition.y * (chunkSize * tileSize)};
 
@@ -40,7 +40,7 @@ void Chunk::init(Game* game, sf::Vector2i chunkPosition, std::vector<Tile> tiles
         if (this->tiles[i]->type == TileType::WATER)
         {
             this->tiles[i]->animation = game->getAssetManager()->getGlobalAnimation("water");
-            this->tiles[i]->animation->animation.adjustSpeed(1.f);
+            this->tiles[i]->animation->animation.adjustSpeed(1.5f);
         }
 
         createTileVerts(i);

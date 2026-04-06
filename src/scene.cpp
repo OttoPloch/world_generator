@@ -56,23 +56,23 @@ void Scene::UIUpdate(float dt)
 {
     if (uiLayer.getElement("faster button")->getAsButton()->getActive())
     {
-        game->getGamerules()->setRule("moveSpeed", gamerule(game->getGamerules()->getRule("moveSpeed", "player").valueFloat + 3.f, 0, false, ""), "player");
+        game->getGamerules()->player_moveSpeed = game->getGamerules()->player_moveSpeed + 3.f;
     
-        uiLayer.getElement("speed display")->getAsText()->setValue(std::to_string(toInt(game->getGamerules()->getRule("moveSpeed", "player").valueFloat)));
+        uiLayer.getElement("speed display")->getAsText()->setValue(std::to_string(toInt(game->getGamerules()->player_moveSpeed)));
     }
     
     if (uiLayer.getElement("slower button")->getAsButton()->getActive())
     {
-        game->getGamerules()->setRule("moveSpeed", gamerule(std::max(game->getGamerules()->getRule("moveSpeed", "player").valueFloat - 3.f, .1f), 0, false, ""), "player");
+        game->getGamerules()->player_moveSpeed = std::max(game->getGamerules()->player_moveSpeed - 3.f, .1f);
         
-        uiLayer.getElement("speed display")->getAsText()->setValue(std::to_string(toInt(game->getGamerules()->getRule("moveSpeed", "player").valueFloat)));
+        uiLayer.getElement("speed display")->getAsText()->setValue(std::to_string(toInt(game->getGamerules()->player_moveSpeed)));
     }
 
     if (uiLayer.getElement("reset button")->getAsButton()->getActive())
     {
-        game->getGamerules()->setRule("moveSpeed", gamerule(5.f, 0, false, ""), "player");
+        game->getGamerules()->player_moveSpeed = 5.f;
 
-        uiLayer.getElement("speed display")->getAsText()->setValue(std::to_string(toInt(game->getGamerules()->getRule("moveSpeed", "player").valueFloat)));
+        uiLayer.getElement("speed display")->getAsText()->setValue(std::to_string(toInt(game->getGamerules()->player_moveSpeed)));
     }
 
     if (uiLayer.getElement("animation button")->getAsButton()->getActive())

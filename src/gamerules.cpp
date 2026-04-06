@@ -9,60 +9,14 @@ void Gamerules::init()
 {
     float bigZoomFactor = 1.5f;
 
-    rules = {
-        {"camera_freecamMoveSpeedBase", gamerule(15.f, 0, false, "")},
-        {"camera_bigZoomFactor", gamerule(bigZoomFactor, 0, false, "")},
-        {"camera_smallZoomAmount", gamerule(0.1f, 0, false, "")},
-        {"camera_minZoomFactor", gamerule(0.1f, 0, false, "")},
-        {"camera_maxZoomFactor", gamerule(pow(bigZoomFactor, 8), 0, false, "")},
-        {"motion_friction", gamerule(0.8f, 0, false, "")},
-        {"motion_velocityCutoff", gamerule(0.01f, 0, false, "")}
-    };
+    camera_freecamMoveSpeedBase = 15.f;
+    camera_bigZoomFactor = bigZoomFactor;
+    camera_smallZoomAmount = 0.1f;
+    camera_minZoomFactor = 0.1f;
+    camera_maxZoomFactor = pow(bigZoomFactor, 8);
+    motion_friction = 0.8f;
+    motion_velocityCutoff = 0.01f;
 
-    playerRules = {
-        {"moveSpeed", gamerule(5.f, 0, false, "")},
-        {"acceleration", gamerule(5.f, 0, false, "")}
-    };
-}
-
-gamerule Gamerules::getRule(std::string rule, std::string ruleset)
-{
-    if (ruleset == "default")
-    {
-        if (rules.find(rule) != rules.end())
-        {
-            return rules[rule];
-        }
-    }
-    else if (ruleset == "player")
-    {
-        if (playerRules.find(rule) != playerRules.end())
-        {
-            return playerRules[rule];
-        }
-    }
-
-    std::cout << "ERROR finding gamerule " << rule << " from ruleset " << ruleset << ". Rule does not exist in that set.\n";
-
-    assert(false);
-    
-    return gamerule(0.f, 0, false, "");
-}
-
-void Gamerules::setRule(std::string rule, gamerule value, std::string ruleset)
-{
-    if (ruleset == "default")
-    {
-        if (rules.find(rule) != rules.end())
-        {
-            rules[rule] = value;
-        }
-    }
-    else if (ruleset == "player")
-    {
-        if (playerRules.find(rule) != playerRules.end())
-        {
-            playerRules[rule] = value;
-        }
-    }
+    player_moveSpeed = 5.f;
+    player_acceleration = 5.f;
 }

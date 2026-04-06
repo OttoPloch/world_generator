@@ -23,8 +23,8 @@
 // {
 //     position.change(velocity);
 
-//     float friction = gamerules->getRule("motion_friction").valueFloat;
-//     float velocityCutoff = gamerules->getRule("motion_velocityCutoff").valueFloat;
+//     float friction = gamerules->motion_friction;
+//     float velocityCutoff = gamerules->motion_velocityCutoff;
 
 //     if (controlling)
 //     {   
@@ -32,7 +32,7 @@
 
 //         // TODO: replace "player" here with
 //         // a variable representing the entity's name or type
-//         float baseSpeed = gamerules->getRule("moveSpeed", "player").valueFloat;
+//         float baseSpeed = gamerules->player_moveSpeed;
 //         float speed = baseSpeed;
 
 //         if (game->getInput()->getControl("SPRINT")) speed *= 2.f;

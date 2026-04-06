@@ -34,8 +34,8 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
 
     TextureAtlas* atlas = game->getAssetManager()->getTextureAtlas("tiles_better");
 
-    int chunkSize = game->getSettings()->getSetting("chunk_size").valueInt;
-    float tileSize = game->getSettings()->getSetting("tile_size").valueFloat;
+    int chunkSize = game->getSettings()->chunk_size;
+    float tileSize = game->getSettings()->tile_size;
     float chunkLength = toFloat(chunkSize) * tileSize;
 
     if (genMode == 0)
@@ -150,7 +150,7 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
 
         sf::Texture* decTexture = game->getAssetManager()->getTexture("background_foliage", "texture_atlases/");
         sf::IntRect decTexCoords;
-        float scale = game->getSettings()->getSetting("generation_foliage_scale").valueFloat;
+        float scale = game->getSettings()->generation_foliage_scale;
 
         std::vector<BackgroundObject> decorations;
 

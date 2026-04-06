@@ -23,8 +23,8 @@ void ChunkLayer::init(Game* game)
 
     this->window = game->getWindow();
 
-    chunkSize = game->getSettings()->getSetting("chunk_size").valueInt;
-    tileSize = game->getSettings()->getSetting("tile_size").valueFloat;
+    chunkSize = game->getSettings()->chunk_size;
+    tileSize = game->getSettings()->tile_size;
     chunkLength = toFloat(chunkSize) * tileSize;
 
     chunkGenerator.init(game, &chunks);
@@ -38,8 +38,8 @@ void ChunkLayer::init(Game* game)
 
 void ChunkLayer::loadNearbyChunks()
 {
-    int renderDist = game->getSettings()->getSetting("chunk_render_distance").valueInt;
-    int loadDist = game->getSettings()->getSetting("chunk_load_distance").valueInt;
+    int renderDist = game->getSettings()->chunk_render_distance;
+    int loadDist = game->getSettings()->chunk_load_distance;
  
     sf::Vector2i currChunkPos = worldToChunkPosition(game, game->getScene()->getCamera()->getCenter());
 
@@ -222,7 +222,7 @@ void ChunkLayer::tick()
 
 void ChunkLayer::loadUpdate()
 {
-    int loadDist = game->getSettings()->getSetting("chunk_load_distance").valueInt;
+    int loadDist = game->getSettings()->chunk_load_distance;
 
     sf::Vector2i currChunkPos = worldToChunkPosition(game, game->getScene()->getCamera()->getCenter());
 
