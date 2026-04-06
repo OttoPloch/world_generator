@@ -40,6 +40,7 @@ void Chunk::init(Game* game, sf::Vector2i chunkPosition, std::vector<Tile> tiles
         if (this->tiles[i]->type == TileType::WATER)
         {
             this->tiles[i]->animation = game->getAssetManager()->getGlobalAnimation("water");
+            this->tiles[i]->animation->animation.adjustSpeed(1.f);
         }
 
         createTileVerts(i);
