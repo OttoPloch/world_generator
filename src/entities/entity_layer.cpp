@@ -8,8 +8,6 @@
 #include "components/control_component.hpp"
 #include "components/movement_component.hpp"
 
-#include <SFML/Graphics/CircleShape.hpp>
-#include <SFML/System/Vector2.hpp>
 #include <algorithm>
 
 EntityLayer::EntityLayer() {}
@@ -20,14 +18,15 @@ void EntityLayer::init(Game* game)
 
     IDCounter = 0;
 
-    // TODO: when adding components to entities, entity templates should be available (in this instance, a template for the player would make things easier).
-    Entity* e = addEntity({0, 0});
-    e->addComponent<MovementComponent>(e, sf::Vector2f(0, 0), MovementComponentData({30.f, 1.5f}));
-    e->addComponent<StateComponent>(e);
-    //->spriteInit(game->getAssetManager()->getTexture("WALK", "animations/Knight 2D Pixel Art/Sprites/without_outline/"), {10, 10}, true, true, {game->getAssetManager()->getAnimation("knight")->frames[0].position, game->getAssetManager()->getAnimation("knight")->frames[0].size})
-    e->spriteInit(game->getAssetManager()->getTexture("test", "texture_atlases/"), {600, 600}, false)
-    //->animation = std::make_unique<Animation>(*game->getAssetManager()->getAnimation("knight"));
-    ->animSet = std::make_unique<AnimationSet>(*game->getAssetManager()->getAnimSet("test"));
+    tManager.entityTemplates["player"] = EntityTemplate();
+    auto t = &tManager.entityTemplates["player"];
+
+    t->sprite = {game->getAssetManager()->getTexture("test", "texture_atlases/"), {600, 600}, false, false, {{0, 0}, {0, 0}}, 5.f, nullptr, game->getAssetManager()->getAnimSet("test")};
+    t->movement = {30.f, 1.5f};
+    t->control = ControlComponentData();
+    t->state = StateComponentData();
+
+    Entity* e = addEntity({0, 0}, t);
 
     e->getSprite()->animSpeedMult = 5.f;
 
@@ -118,12 +117,32 @@ int EntityLayer::getNewID()
     return IDCounter - 1;
 }
 
-Entity* EntityLayer::addEntity(sf::Vector2f position)
+Entity* EntityLayer::addEntity(sf::Vector2f position, EntityTemplate* t)
 {
     int ID = getNewID();
 
     entities[ID] = std::make_unique<Entity>(game, ID, position);
     
+    Entity* e = entities[ID].get();
+
+    if (t)
+    {
+        e->spriteInit(t->sprite.texture, t->sprite.size, t->sprite.sizeIsScale, t->sprite.usingTexCoords, t->sprite.texCoords, t->sprite.animSpeedMult);
+
+        if (t->sprite.animation)
+        {
+            e->getSprite()->animation = std::make_unique<Animation>(*t->sprite.animation);
+        }
+        else if (t->sprite.animSet)
+        {
+            e->getSprite()->animSet = std::make_unique<AnimationSet>(*t->sprite.animSet);
+        }
+
+        if (t->movement) e->addComponent<MovementComponent>(e, sf::Vector2f(0, 0), t->movement.value());
+        if (t->control) e->addComponent<ControlComponent>(e);
+        if (t->state) e->addComponent<StateComponent>(e);
+    }
+
     return entities[ID].get();
 }
 

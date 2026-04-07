@@ -5,6 +5,7 @@
 #include "../world/world_position.hpp"
 #include "../graphics/sprite.hpp"
 #include "components/entity_component.hpp"
+#include "entity_template.hpp"
 
 #include <SFML/Graphics.hpp>
 
@@ -18,6 +19,8 @@ public:
     Entity(Game* game, int ID, sf::Vector2f position);
 
     Entity(Game* game, int ID, WorldPosition position);
+
+    void createFromTemplate(EntityTemplate* t);
 
     Sprite* spriteInit(sf::Texture* texture, sf::Vector2f size = {1.f, 1.f}, bool sizeIsScale = true, bool usingTexCoords = false, sf::IntRect texCoords = sf::IntRect({0, 0}, {0, 0}), float animSpeedMult = 1.f);
 

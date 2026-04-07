@@ -130,6 +130,8 @@ Animation* AssetManager::getAnimation(std::string name, std::string pathFromAsse
                     }
                 }
             }
+
+            animFile.close();
             
             sf::Texture* animTexture = getTexture("", texturePath, true);
 
@@ -218,10 +220,12 @@ AnimationSet* AssetManager::getAnimSet(std::string name)
                 }
                 if (line.substr(0, 4) == "anim") animNames.push_back(line.substr(5));
             }
-
+            
+            setFile.close();
+            
             for (int i = 0; i < keys.size(); i++)
             {
-                animations[keys[i]] = *getAnimation(animNames[i], animPath);
+            animations[keys[i]] = *getAnimation(animNames[i], animPath);
             }
 
             newSet = std::make_unique<AnimationSet>(name, animations);
@@ -273,6 +277,8 @@ TileSet* AssetManager::getTileSet(std::string name)
                 if (line.substr(0, 6) == "xCoord") xCoords.push_back(tileSize * std::stof(line.substr(7)));
                 if (line.substr(0, 6) == "yCoord") yCoords.push_back(tileSize * std::stof(line.substr(7)));
             }
+
+            setFile.close();
 
             for (int i = 0; i < locations.size(); i++)
             {
@@ -380,6 +386,8 @@ TextureAtlas* AssetManager::getTextureAtlas(std::string name)
                 if (line.substr(0, 5) == "xSize") xSizes.push_back(tileSize * toInt(std::stof(line.substr(6))));
                 if (line.substr(0, 5) == "ySize") ySizes.push_back(tileSize * toInt(std::stof(line.substr(6))));
             }
+
+            atlasFile.close();
 
             sf::Vector2u atlasSize = getTexture("tiles", "texture_atlases/")->getSize();
 

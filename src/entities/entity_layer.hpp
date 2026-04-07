@@ -1,12 +1,14 @@
 #pragma once
 
-#include "../core/common.hpp"
-#include "entity.hpp"
-
 #include <unordered_map>
 #include <vector>
 #include <map>
 #include <memory>
+
+#include "../core/common.hpp"
+#include "entity.hpp"
+#include "entity_template.hpp"
+#include "template_manager.hpp"
 
 class Game;
 
@@ -19,7 +21,7 @@ public:
 
     int getNewID();    
 
-    Entity* addEntity(sf::Vector2f position);
+    Entity* addEntity(sf::Vector2f position, EntityTemplate* t = nullptr);
 
     void removeEntity(int ID);
 
@@ -36,6 +38,8 @@ public:
     void draw(float alpha);
 private:
     Game* game;
+
+    TemplateManager tManager;
 
     int IDCounter;
 

@@ -42,6 +42,7 @@ void Scene::tick()
 
     chunkLayer.tick();
 
+    // TEMP
     sf::Vector2i mouseChunkPos = worldToChunkPosition(game, window->getWindow().mapPixelToCoords(sf::Mouse::getPosition(window->getWindow())));
     uiLayer.getElement("mouse chunk pos display")->getAsText()->setValue(std::to_string(mouseChunkPos.x) + ", " + std::to_string(mouseChunkPos.y));
 }
@@ -152,7 +153,7 @@ void Scene::toggleFocus()
     if (camera.getFocus() == nullptr)
     {
         Entity* e = entityLayer.getEntity(0);
-        e->addComponent<ControlComponent>(e);
+        if (!e->getComponent<ControlComponent>()) e->addComponent<ControlComponent>(e);
         camera.setFocus(e);
     }
     else

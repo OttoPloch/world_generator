@@ -34,6 +34,7 @@ src/entities/components/entity_component.cpp
 src/entities/components/movement_component.cpp
 src/entities/components/control_component.cpp
 src/entities/components/state_component.cpp
+src/entities/template_manager.cpp
 
 src/graphics/sprite.cpp
 src/graphics/asset_manager.cpp
