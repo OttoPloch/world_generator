@@ -9,8 +9,7 @@ void Settings::init()
 {
     int renderDistance = 5;
 
-    ui_scale = 1.f;
-    ui_animation_speed = 0.2f;
+    ui_animation_speed = 0.15f;
     tile_size = 200.f;
     chunk_size = 16;
     chunk_render_distance = renderDistance;

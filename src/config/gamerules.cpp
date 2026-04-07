@@ -9,6 +9,7 @@ void Gamerules::init()
 {
     float bigZoomFactor = 1.5f;
 
+    camera_defaultZoom = 3.f;
     camera_freecamMoveSpeedBase = 15.f;
     camera_bigZoomFactor = bigZoomFactor;
     camera_smallZoomAmount = 0.1f;

@@ -18,7 +18,8 @@ void Camera::init(Game* game, bool setTopLeftPos, sf::Vector2f position, sf::Vec
 
     this->focus = focus;
 
-    zoomFactor = 1.f;
+    defaultZoom = game->getGamerules()->camera_defaultZoom;
+    zoomFactor = defaultZoom;
 
     velocity = {0, 0};
 
@@ -174,19 +175,16 @@ void Camera::zoom(int amount)
         }
     }
 
-    size = {
-        baseSize.x * zoomFactor,
-        baseSize.y * zoomFactor,
-    };
+    size = baseSize * zoomFactor;
 
     view.setSize(size);
 }
 
 void Camera::resetZoom()
 {
-    zoomFactor = 1.f;
+    zoomFactor = defaultZoom;
 
-    size = baseSize;
+    size = baseSize * zoomFactor;
 
     view.setSize(size);
 }

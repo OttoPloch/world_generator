@@ -11,6 +11,7 @@ public:
 
     void init();
 
+    float camera_defaultZoom;
     float camera_freecamMoveSpeedBase;
     float camera_bigZoomFactor;
     float camera_smallZoomAmount;

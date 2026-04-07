@@ -11,7 +11,6 @@ public:
 
     void init();
 
-    float ui_scale;
     float ui_animation_speed;
     float tile_size;
     int chunk_size;

@@ -63,6 +63,7 @@ private:
     sf::Vector2f size;
     
     float zoomFactor;
+    float defaultZoom;
 
     sf::Vector2f center;
     sf::Vector2f lastCenter;
