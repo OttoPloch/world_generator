@@ -2,6 +2,7 @@
 
 #include "../core/common.hpp"
 #include <SFML/Graphics/PrimitiveType.hpp>
+#include <SFML/Graphics/Rect.hpp>
 
 class Entity;
 class Game;
@@ -9,6 +10,8 @@ class UILayer;
 class UIElement;
 
 float getDistance(sf::Vector2f vec1, sf::Vector2f vec2);
+
+bool rectRectCollide(sf::FloatRect r1, sf::FloatRect r2, bool positionsAreCenter);
 
 bool mouseRectCollide(Game* game, sf::Vector2f position, sf::Vector2f size);
 

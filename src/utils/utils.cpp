@@ -3,12 +3,26 @@
 #include "../entities/entity.hpp"
 #include "../ui/ui_layer.hpp"
 #include "../ui/ui_element.hpp"
+#include <SFML/Graphics/Rect.hpp>
 #include <cstdlib>
 #include <random>
 
 float getDistance(sf::Vector2f vec1, sf::Vector2f vec2)
 {
     return std::fabs(sqrt(pow(vec2.x - vec1.x, 2) + pow(vec2.y - vec1.y, 2)));
+}
+
+bool rectRectCollide(sf::FloatRect r1, sf::FloatRect r2, bool positionsAreCenter)
+{
+    if (positionsAreCenter)
+    {
+        r1.position.x -= r1.size.x / 2.f;
+        r1.position.y -= r1.size.y / 2.f;
+        r2.position.x -= r2.size.x / 2.f;
+        r2.position.y -= r2.size.y / 2.f;
+    }
+
+    return (r1.position.x < r2.position.x + r2.size.x && r1.position.x + r1.size.x > r2.position.x && r1.position.y < r2.position.y + r2.size.y && r1.position.y + r1.size.y > r2.position.y);
 }
 
 bool mouseRectCollide(Game* game, sf::Vector2f position, sf::Vector2f size)

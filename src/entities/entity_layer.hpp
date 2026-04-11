@@ -29,7 +29,10 @@ public:
 
     Entity* getEntity(int ID);
 
-    std::vector<Entity*> getEntitiesInChunk(int chunkX, int chunkY);
+    // chunkRadius controls the distance to scan for entities.
+    // The default of 0 only scans in the chunk position given.
+    std::vector<Entity*> getEntitiesInChunkArea(int chunkX, int chunkY, int chunkRadius = 0);
+    std::vector<Entity*> getEntitiesInChunkArea(sf::Vector2f position, int chunkRadius = 0);
 
     void tick();
 

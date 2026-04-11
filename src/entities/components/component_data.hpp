@@ -3,6 +3,7 @@
 #include "../../core/common.hpp"
 #include "../../graphics/animation.hpp"
 #include "../../graphics/animation_set.hpp"
+#include "../rect_type.hpp"
 
 struct SpriteData
 {
@@ -30,4 +31,11 @@ struct ControlComponentData
 struct StateComponentData
 {
 
+};
+
+struct CollisionComponentData
+{
+    sf::Vector2f size;
+    bool sizeIsScaleOfSprite;
+    RectType type;
 };

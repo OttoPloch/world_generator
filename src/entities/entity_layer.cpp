@@ -1,6 +1,8 @@
 #include "entity_layer.hpp"
 #include "../core/game.hpp"
 #include "../utils/utils.hpp"
+#include "components/collision_component.hpp"
+#include "rect_type.hpp"
 #include "states.hpp"
 #include "../graphics/asset_manager.hpp"
 #include "components/component_data.hpp"
@@ -8,6 +10,8 @@
 #include "components/control_component.hpp"
 #include "components/movement_component.hpp"
 
+#include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <algorithm>
 
 EntityLayer::EntityLayer() {}
@@ -19,16 +23,28 @@ void EntityLayer::init(Game* game)
     IDCounter = 0;
 
     tManager.entityTemplates["player"] = EntityTemplate();
-    auto t = &tManager.entityTemplates["player"];
+    tManager.entityTemplates["box"] = EntityTemplate();
 
-    t->sprite = {game->getAssetManager()->getTexture("test", "texture_atlases/"), {600, 600}, false, false, {{0, 0}, {0, 0}}, 5.f, nullptr, game->getAssetManager()->getAnimSet("test")};
-    t->movement = {30.f, 1.5f};
-    t->control = ControlComponentData();
-    t->state = StateComponentData();
+    auto pt = &tManager.entityTemplates["player"];
+    pt->sprite = {game->getAssetManager()->getTexture("test", "texture_atlases/"), {600, 600}, false, false, {{0, 0}, {0, 0}}, 5.f, nullptr, game->getAssetManager()->getAnimSet("test")};
+    pt->movement = {30.f, 1.5f};
+    pt->control = ControlComponentData();
+    pt->state = StateComponentData();
+    pt->collision = {{1.f, 1.f}, true, RectType::ACTIVE};
 
-    Entity* e = addEntity({0, 0}, t);
+    Entity* e = addEntity({0, 0}, pt);
 
     e->getSprite()->animSpeedMult = 5.f;
+
+    auto bt = &tManager.entityTemplates["box"];
+    bt->sprite = {game->getAssetManager()->getTexture("crate"), {750, 750}, false, false, {{0, 0}, {0, 0}}, 1, nullptr, nullptr};
+    bt->collision = {{1.f, 1.f}, true, RectType::STATIC};
+
+    Entity* b = addEntity({-1000, -1000}, bt);
+
+
+
+
 
     // AssetManager* assetManager = game->getAssetManager();
 
@@ -141,6 +157,7 @@ Entity* EntityLayer::addEntity(sf::Vector2f position, EntityTemplate* t)
         if (t->movement) e->addComponent<MovementComponent>(e, sf::Vector2f(0, 0), t->movement.value());
         if (t->control) e->addComponent<ControlComponent>(e);
         if (t->state) e->addComponent<StateComponent>(e);
+        if (t->collision) e->addComponent<CollisionComponent>(e, *e->getPositionVar(), t->collision->size, t->collision->sizeIsScaleOfSprite, t->collision->type);
     }
 
     return entities[ID].get();
@@ -190,81 +207,42 @@ Entity* EntityLayer::getEntity(int ID)
     return nullptr;
 }
 
-std::vector<Entity*> EntityLayer::getEntitiesInChunk(int chunkX, int chunkY)
+std::vector<Entity*> EntityLayer::getEntitiesInChunkArea(int chunkX, int chunkY, int chunkRadius)
 {
-    std::vector<Entity*> entitiesInChunk;
+    std::vector<Entity*> entitiesWithin;
 
     float chunkLength = toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size;
+
+    sf::Vector2i chunkMin = {chunkX - chunkRadius, chunkY - chunkRadius};
+    sf::Vector2i chunkMax = {chunkX + chunkRadius, chunkY + chunkRadius};
 
     for (auto& i : entities)
     {
         sf::Vector2f entityBottom = i.second->getPosition();
+        int entityChunkBottomX = toInt(std::floor(entityBottom.x / chunkLength));
+        int entityChunkBottomY = toInt(std::floor(entityBottom.y / chunkLength));
 
-        if (toInt(std::floor(entityBottom.x / (chunkLength))) == chunkX && toInt(std::floor(entityBottom.y / (chunkLength))) == chunkY)
+        if (entityChunkBottomX >= chunkMin.x && entityChunkBottomX <= chunkMax.x)
         {
-            entitiesInChunk.push_back(i.second.get());
+            if (entityChunkBottomY >= chunkMin.y && entityChunkBottomY <= chunkMax.y)
+            {
+                entitiesWithin.push_back(i.second.get());
+            }
         }
     }
 
-    return entitiesInChunk;
+    return entitiesWithin;
 }
 
-// Entity* EntityLayer::getPlayer()
-// {
-//     return getEntity(playerID);
-// }
+std::vector<Entity*> EntityLayer::getEntitiesInChunkArea(sf::Vector2f position, int chunkRadius)
+{
+    float chunkLength = toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size;
 
-// void EntityLayer::removeFromZMap(int ID)
-// {
-//     Entity* entity = getEntity(ID);
+    int chunkX = toInt(std::floor(position.x / chunkLength));
+    int chunkY = toInt(std::floor(position.y / chunkLength));
 
-//     if (entity->getSprite())
-//     {
-//         std::vector<int>* zMapVector = &entitiesZMap[entity->getSprite()->getZ()];
-
-//         for (auto it = zMapVector->begin(); it != zMapVector->end(); it++)
-//         {
-//             if (*it == ID)
-//             {
-//                 zMapVector->erase(it);
-
-//                 return;
-//             }
-//         }
-//     }
-// }
-
-// void EntityLayer::addToZMap(int ID)
-// {
-//     Entity* entity = getEntity(ID);
-
-//     // if (entity->getSprite())
-//     // {
-//     //     entitiesZMap[entity->getSprite()->getZ()].push_back(ID);
-//     // }
-// }
-
-// void EntityLayer::giveEntitySprite(int ID, sf::Texture* texture, sf::Vector2f size, int z, bool centerOrigin)
-// {
-//     Entity* entity = getEntity(ID);
-
-//     // entity->giveSprite(texture, size, z, centerOrigin);
-//     addToZMap(ID);
-// }
-
-// void EntityLayer::giveEntityMotion(int ID, float mass, bool controlling)
-// {
-//     Entity* entity = getEntity(ID);
-
-//     entity->giveMotion(mass, controlling);
-// }
-
-// void EntityLayer::giveEntityCollision(int ID, std::string name, int RectType, std::vector<std::string> blacklist, sf::Vector2f offsetFraction, sf::Vector2f size, bool sizeIsFraction)
-// {
-//     Entity* entity = getEntity(ID);
-
-//     entity->giveCollision(&entities, name, RectType, blacklist, offsetFraction, size, sizeIsFraction);
-// }
+    return getEntitiesInChunkArea(chunkX, chunkY, chunkRadius);   
+}
 
 void EntityLayer::tick()
 {
@@ -305,80 +283,24 @@ void EntityLayer::draw(float alpha)
             if (isOnScreen(game, {entitySprite->left(), entitySprite->top()}, entitySprite->getSize()))
             {
                 i.second->draw(alpha, game->getWindow()->getWindow());
+
+                if (auto c = i.second->getComponent<CollisionComponent>())
+                {
+                    sf::RectangleShape rect(c->rect.size);
+
+                    rect.setOrigin({c->rect.size.x / 2.f, c->rect.size.y / 2.f});
+                    rect.setPosition(i.second->getPosition());
+                    rect.setFillColor(sf::Color::Transparent);
+
+                    if (c->rect.type == RectType::ACTIVE) rect.setOutlineColor(sf::Color::Red);
+                    if (c->rect.type == RectType::PASSIVE) rect.setOutlineColor(sf::Color::Green);
+                    if (c->rect.type == RectType::STATIC) rect.setOutlineColor(sf::Color::Blue);
+                    
+                    rect.setOutlineThickness(15.f);
+
+                    game->getWindow()->getWindow().draw(rect);
+                }
             }
         }
     }
-
-    // for (auto i : entitiesZMap)
-    // {
-    //     std::vector<int>* vec = &i.second;
-
-    //     if (vec->size() > 0)
-    //     {
-    //         std::vector<Entity*> entityVec;
-
-    //         for (int j = 0; j < vec->size(); j++)
-    //         {
-    //             entityVec.push_back(getEntity((*vec)[j]));
-    //         }
-
-    //         sortEntitiesByY(&entityVec, 0, entityVec.size() - 1);
-    
-    //         for (int j = 0; j < entityVec.size(); j++)
-    //         {
-    //             Entity* curr = entityVec[j];
-
-    //             sf::Vector2f center = curr->getPosition();
-    //             sf::Vector2f size = curr->getSprite()->getSize();
-
-    //             if (isOnScreen(game, {center.x - size.x / 2.f, center.y - size.y / 2.f}, size))
-    //             {
-    //                 curr->draw(game->getWindow()->getWindow());
-    //             }
-    
-    //             // Entity* entity = entityVec[j];
-    //             // Sprite* sprite = entity->getSprite();
-    //             // sf::Sprite sprite2 = sprite->getSprite();
-    //             // sf::Vector2f size = toV2F(sprite2.getTextureRect().size);
-    //             // sf::Vector2f size2 = sprite->getSize();
-    
-    //             // sf::RectangleShape spriteOutline(size);
-    //             // sf::RectangleShape spriteOutline2(size2);
-    
-    //             // spriteOutline.setOrigin({size.x / 2.f, size.y / 2.f});
-    //             // spriteOutline.setPosition(entityVec[j]->getPosition());
-                
-    //             // spriteOutline2.setOrigin({size2.x / 2.f, size2.y / 2.f});
-    //             // spriteOutline2.setPosition(entityVec[j]->getPosition());
-        
-    //             // spriteOutline.setFillColor(sf::Color::Transparent);
-    //             // spriteOutline.setOutlineColor(sf::Color::Red);
-    //             // spriteOutline.setOutlineThickness(3.f);
-    
-    //             // spriteOutline2.setFillColor(sf::Color::Transparent);
-    //             // spriteOutline2.setOutlineColor(sf::Color::Green);
-    //             // spriteOutline2.setOutlineThickness(3.f);
-                
-    //             // game->getWindow()->draw(spriteOutline);
-    //             // game->getWindow()->draw(spriteOutline2);
-    
-    //             // if (entityVec[j]->getCollision())
-    //             // {
-    //             //     Entity* entity = entityVec[j];
-    //             //     CollisionRect coll = *entity->getCollision()->getRect();
-    
-    //             //     sf::RectangleShape collOutline(coll.getSize());
-    
-    //             //     collOutline.setOrigin({collOutline.getSize().x / 2.f, collOutline.getSize().y});
-    //             //     collOutline.setPosition({coll.center().x, coll.bottom()});
-    
-    //             //     collOutline.setFillColor(sf::Color::Transparent);
-    //             //     collOutline.setOutlineColor(sf::Color::Blue);
-    //             //     collOutline.setOutlineThickness(3.f);
-    
-    //             //     game->getWindow()->draw(collOutline);
-    //             // }
-    //         }
-    //     }
-    // }
 }

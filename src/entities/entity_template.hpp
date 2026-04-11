@@ -11,4 +11,5 @@ struct EntityTemplate
     std::optional<MovementComponentData> movement;
     std::optional<ControlComponentData> control;
     std::optional<StateComponentData> state;
+    std::optional<CollisionComponentData> collision;
 };
