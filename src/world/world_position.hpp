@@ -10,13 +10,13 @@ struct WorldPosition
 {
     WorldPosition();
 
-    WorldPosition(sf::Vector2<double> position);
+    WorldPosition(sf::Vector2f position);
 
-    WorldPosition(std::shared_ptr<sf::Vector2<double>> position);
+    WorldPosition(std::shared_ptr<sf::Vector2f> position);
     
     sf::Vector2f toScreenPosition(Window* window);
 
-    sf::Vector2<double> getPos();
+    sf::Vector2f getPos();
 
-    std::shared_ptr<sf::Vector2<double>> position;
+    std::shared_ptr<sf::Vector2f> position;
 };

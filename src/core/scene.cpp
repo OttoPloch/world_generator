@@ -31,7 +31,7 @@ void Scene::init(Game* game)
 
     chunkLayer.init(game);
 
-    camera.init(game, false, {0, 50000}, toV2F(window->getSize()));
+    camera.init(game, false, {0, 32000}, toV2F(window->getSize()));
 
     debugView = false;
 }
@@ -45,7 +45,7 @@ void Scene::tick()
     chunkLayer.tick();
 
     // TEMP
-    sf::Vector2i mouseChunkPos = worldToChunkPosition(game, static_cast<sf::Vector2<double>>(window->getWindow().mapPixelToCoords(sf::Mouse::getPosition(window->getWindow()))));
+    sf::Vector2i mouseChunkPos = worldToChunkPosition(game, window->getWindow().mapPixelToCoords(sf::Mouse::getPosition(window->getWindow())));
     uiLayer.getElement("mouse chunk pos display")->getAsText()->setValue(std::to_string(mouseChunkPos.x) + ", " + std::to_string(mouseChunkPos.y));
 }
 

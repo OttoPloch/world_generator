@@ -29,7 +29,7 @@ void CollisionComponent::update()
             std::vector<Entity*> entities = myEntity->game->getScene()->getEntityLayer()->getEntitiesInChunkArea(rect.position.getPos(), 1);
         
             std::vector<std::pair<CollisionRect*, float>> z;
-            sf::Vector2<double> contactPoint;
+            sf::Vector2f contactPoint;
             sf::Vector2f contactNormal;
             float contactTime;
     

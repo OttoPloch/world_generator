@@ -26,16 +26,16 @@ bool rectRectCollide(sf::FloatRect r1, sf::FloatRect r2, bool positionsAreCenter
     return (r1.position.x < r2.position.x + r2.size.x && r1.position.x + r1.size.x > r2.position.x && r1.position.y < r2.position.y + r2.size.y && r1.position.y + r1.size.y > r2.position.y);
 }
 
-bool rayRectCollide(sf::Vector2<double> rayOrigin, sf::Vector2f rayDirection, CollisionRect* target, sf::Vector2<double>& contactPoint, sf::Vector2f& contactNormal, float& tHitNear)
+bool rayRectCollide(sf::Vector2f rayOrigin, sf::Vector2f rayDirection, CollisionRect* target, sf::Vector2f& contactPoint, sf::Vector2f& contactNormal, float& tHitNear)
 {
     // STOLEN from javidx9
 
-    sf::Vector2<double> targetPos(target->left(), target->top());
+    sf::Vector2f targetPos(target->left(), target->top());
 
-    sf::Vector2<double> tNear = (targetPos - rayOrigin);
+    sf::Vector2f tNear = (targetPos - rayOrigin);
     tNear = {tNear.x / rayDirection.x, tNear.y / rayDirection.y};
     
-    sf::Vector2<double> tFar = (targetPos + static_cast<sf::Vector2<double>>(target->size) - rayOrigin);
+    sf::Vector2f tFar = (targetPos + static_cast<sf::Vector2f>(target->size) - rayOrigin);
     tFar = {tFar.x / rayDirection.x, tFar.y / rayDirection.y};
 
     if (std::isnan(tFar.y) || std::isnan(tFar.x)) return false;
@@ -52,7 +52,7 @@ bool rayRectCollide(sf::Vector2<double> rayOrigin, sf::Vector2f rayDirection, Co
 
     if (tHitFar < 0) return false;
 
-    contactPoint = rayOrigin + static_cast<double>(tHitNear) * static_cast<sf::Vector2<double>>(rayDirection);
+    contactPoint = rayOrigin + tHitNear * rayDirection;
 
     if (tNear.x > tNear.y)
     {
@@ -68,7 +68,7 @@ bool rayRectCollide(sf::Vector2<double> rayOrigin, sf::Vector2f rayDirection, Co
     return true;
 }
 
-bool dynamicRectRectCollide(CollisionRect* in, sf::Vector2f inVel, CollisionRect* target, sf::Vector2<double>& contactPoint, sf::Vector2f& contactNormal, float& contactTime)
+bool dynamicRectRectCollide(CollisionRect* in, sf::Vector2f inVel, CollisionRect* target, sf::Vector2f& contactPoint, sf::Vector2f& contactNormal, float& contactTime)
 {
     // STOLEN as well from javidx9
 
@@ -273,7 +273,7 @@ bool isOnScreen(Game* game, sf::Vector2f point, bool applyView)
     return false;
 }
 
-sf::Vector2i worldToChunkPosition(Game* game, sf::Vector2<double> position)
+sf::Vector2i worldToChunkPosition(Game* game, sf::Vector2f position)
 {
     float chunkSize = game->getSettings()->tile_size * toFloat(game->getSettings()->chunk_size);
 

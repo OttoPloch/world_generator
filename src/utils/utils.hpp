@@ -14,9 +14,9 @@ float getDistance(sf::Vector2f vec1, sf::Vector2f vec2);
 
 bool rectRectCollide(sf::FloatRect r1, sf::FloatRect r2, bool positionsAreCenter);
 
-bool rayRectCollide(sf::Vector2<double> rayOrigin, sf::Vector2f rayDirection, CollisionRect* target, sf::Vector2<double>& contactPoint, sf::Vector2f& contactNormal, float& tHitNear);
+bool rayRectCollide(sf::Vector2f rayOrigin, sf::Vector2f rayDirection, CollisionRect* target, sf::Vector2f& contactPoint, sf::Vector2f& contactNormal, float& tHitNear);
 
-bool dynamicRectRectCollide(CollisionRect* in, sf::Vector2f inVel, CollisionRect* target, sf::Vector2<double>& contactPoint, sf::Vector2f& contactNormal, float& contactTime);
+bool dynamicRectRectCollide(CollisionRect* in, sf::Vector2f inVel, CollisionRect* target, sf::Vector2f& contactPoint, sf::Vector2f& contactNormal, float& contactTime);
 
 bool mouseRectCollide(Game* game, sf::Vector2f position, sf::Vector2f size);
 
@@ -39,6 +39,6 @@ bool isOnScreen(Game* game, sf::Vector2f tl, sf::Vector2f size, bool applyView =
 
 bool isOnScreen(Game* game, sf::Vector2f point, bool applyView = true);
 
-sf::Vector2i worldToChunkPosition(Game* game, sf::Vector2<double> position);
+sf::Vector2i worldToChunkPosition(Game* game, sf::Vector2f position);
 
 sf::Vector2f chunkToWorldPosition(Game* game, sf::Vector2i position);

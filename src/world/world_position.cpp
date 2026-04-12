@@ -5,21 +5,21 @@
 
 WorldPosition::WorldPosition() {}
 
-WorldPosition::WorldPosition(sf::Vector2<double> position)
+WorldPosition::WorldPosition(sf::Vector2f position)
 {
-    this->position = std::make_shared<sf::Vector2<double>>(position);
+    this->position = std::make_shared<sf::Vector2f>(position);
 }
 
-WorldPosition::WorldPosition(std::shared_ptr<sf::Vector2<double>> position)
+WorldPosition::WorldPosition(std::shared_ptr<sf::Vector2f> position)
 {
     this->position = position;
 }
 
 sf::Vector2f WorldPosition::toScreenPosition(Window* window)
 {
-    sf::Vector2i screenPos(window->getWindow().mapCoordsToPixel({static_cast<float>(position->x), static_cast<float>(position->y)}));
+    sf::Vector2i screenPos(window->getWindow().mapCoordsToPixel(*position));
 
     return toV2F(screenPos.x, screenPos.y);
 }
 
-sf::Vector2<double> WorldPosition::getPos() { return *position.get(); }
+sf::Vector2f WorldPosition::getPos() { return *position.get(); }

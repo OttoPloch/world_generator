@@ -21,7 +21,7 @@ Sprite::Sprite(WorldPosition position, sf::Texture* texture, sf::Vector2f size, 
     resize(size, sizeIsScale);
 }
 
-sf::Vector2<double> Sprite::getPosition() { return position.getPos(); }
+sf::Vector2f Sprite::getPosition() { return position.getPos(); }
 
 sf::Vector2f Sprite::getSize() { return size; }
 
@@ -64,7 +64,7 @@ void Sprite::syncPos(sf::Vector2f interpolatedPos, bool useInterpolated)
     }
     else
     {
-        sprite->setPosition(static_cast<sf::Vector2f>(position.getPos()));
+        sprite->setPosition(position.getPos());
     }
 }
 

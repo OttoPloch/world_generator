@@ -32,7 +32,7 @@ void EntityLayer::init(Game* game)
     pt->state = StateComponentData();
     pt->collision = {{1.f, 1.f}, true, RectType::ACTIVE};
 
-    Entity* e = addEntity({0, 50000}, pt);
+    Entity* e = addEntity({0, 32100}, pt);
 
     e->getSprite()->animSpeedMult = 5.f;
 
@@ -44,7 +44,7 @@ void EntityLayer::init(Game* game)
 
     for (int x = 0; x < 150; x++)
     {
-        addEntity({static_cast<float>(-100 + x * 35), toFloat(50000 + toInt(toFloat(x) / 10.f) * 35)}, bt);
+        addEntity({static_cast<float>(-100 + x * 35), toFloat(32000 + toInt(toFloat(x) / 10.f) * 35)}, bt);
     }
 
     // AssetManager* assetManager = game->getAssetManager();
@@ -134,7 +134,7 @@ int EntityLayer::getNewID()
     return IDCounter - 1;
 }
 
-Entity* EntityLayer::addEntity(sf::Vector2<double> position, EntityTemplate* t)
+Entity* EntityLayer::addEntity(sf::Vector2f position, EntityTemplate* t)
 {
     int ID = getNewID();
 
@@ -184,7 +184,7 @@ void EntityLayer::removeAllEntitiesInChunk(int chunkX, int chunkY)
 
     for (auto& i : entities)
     {
-        sf::Vector2<double> entityBottom = {i.second->getSprite()->getPosition().x, i.second->getSprite()->bottom()};
+        sf::Vector2f entityBottom = {i.second->getSprite()->getPosition().x, i.second->getSprite()->bottom()};
 
         if (worldToChunkPosition(game, entityBottom) == sf::Vector2i(chunkX, chunkY))
         {
@@ -219,7 +219,7 @@ std::vector<Entity*> EntityLayer::getEntitiesInChunkArea(int chunkX, int chunkY,
 
     for (auto& i : entities)
     {
-        sf::Vector2<double> entityBottom = i.second->getPosition();
+        sf::Vector2f entityBottom = i.second->getPosition();
         int entityChunkBottomX = toInt(std::floor(entityBottom.x / chunkLength));
         int entityChunkBottomY = toInt(std::floor(entityBottom.y / chunkLength));
 
@@ -235,7 +235,7 @@ std::vector<Entity*> EntityLayer::getEntitiesInChunkArea(int chunkX, int chunkY,
     return entitiesWithin;
 }
 
-std::vector<Entity*> EntityLayer::getEntitiesInChunkArea(sf::Vector2<double> position, int chunkRadius)
+std::vector<Entity*> EntityLayer::getEntitiesInChunkArea(sf::Vector2f position, int chunkRadius)
 {
     float chunkLength = toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size;
 
