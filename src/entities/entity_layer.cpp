@@ -27,7 +27,7 @@ void EntityLayer::init(Game* game)
 
     auto pt = &tManager.entityTemplates["player"];
     pt->sprite = {game->getAssetManager()->getTexture("test", "texture_atlases/"), {20, 20}, false, false, {{0, 0}, {0, 0}}, 5.f, nullptr, game->getAssetManager()->getAnimSet("test")};
-    pt->movement = {1.f, 1.5f};
+    pt->movement = {2.f, 1.5f};
     pt->control = ControlComponentData();
     pt->state = StateComponentData();
     pt->collision = {{1.f, 1.f}, true, RectType::ACTIVE};
