@@ -27,12 +27,12 @@ void EntityLayer::init(Game* game)
 
     auto pt = &tManager.entityTemplates["player"];
     pt->sprite = {game->getAssetManager()->getTexture("test", "texture_atlases/"), {20, 20}, false, false, {{0, 0}, {0, 0}}, 5.f, nullptr, game->getAssetManager()->getAnimSet("test")};
-    pt->movement = {2.f, 1.5f};
+    pt->movement = {1.f, 1.5f};
     pt->control = ControlComponentData();
     pt->state = StateComponentData();
     pt->collision = {{1.f, 1.f}, true, RectType::ACTIVE};
 
-    Entity* e = addEntity({0, 32100}, pt);
+    Entity* e = addEntity({0, 0}, pt);
 
     e->getSprite()->animSpeedMult = 5.f;
 
@@ -42,10 +42,15 @@ void EntityLayer::init(Game* game)
 
     Entity* b = addEntity({-100, -100}, bt);
 
-    for (int x = 0; x < 150; x++)
+    // PERFORMANCE TEST
+    for (int y = 0; y < 20; y++)
     {
-        addEntity({static_cast<float>(-100 + x * 35), toFloat(32000 + toInt(toFloat(x) / 10.f) * 35)}, bt);
+        for (int x = 0; x < 50; x++)
+        {
+            addEntity({static_cast<float>(-600 + x * bt->sprite.size.x), static_cast<float>(50 + y * bt->sprite.size.y * 2)}, bt);
+        }
     }
+    // // // // // // /
 
     // AssetManager* assetManager = game->getAssetManager();
 
@@ -289,22 +294,22 @@ void EntityLayer::draw(float alpha)
                 {
                     i.second->draw(alpha, game->getWindow()->getWindow());
     
-                    if (auto c = i.second->getComponent<CollisionComponent>())
-                    {
-                        sf::RectangleShape rect(c->rect.size);
+                    // if (auto c = i.second->getComponent<CollisionComponent>())
+                    // {
+                    //     sf::RectangleShape rect(c->rect.size);
     
-                        rect.setOrigin({c->rect.size.x / 2.f, c->rect.size.y / 2.f});
-                        rect.setPosition(static_cast<sf::Vector2f>(i.second->getPosition()));
-                        rect.setFillColor(sf::Color::Transparent);
+                    //     rect.setOrigin({c->rect.size.x / 2.f, c->rect.size.y / 2.f});
+                    //     rect.setPosition(static_cast<sf::Vector2f>(i.second->getPosition()));
+                    //     rect.setFillColor(sf::Color::Transparent);
     
-                        if (c->rect.type == RectType::ACTIVE) rect.setOutlineColor(sf::Color::Red);
-                        if (c->rect.type == RectType::PASSIVE) rect.setOutlineColor(sf::Color::Green);
-                        if (c->rect.type == RectType::STATIC) rect.setOutlineColor(sf::Color::Blue);
+                    //     if (c->rect.type == RectType::ACTIVE) rect.setOutlineColor(sf::Color::Red);
+                    //     if (c->rect.type == RectType::PASSIVE) rect.setOutlineColor(sf::Color::Green);
+                    //     if (c->rect.type == RectType::STATIC) rect.setOutlineColor(sf::Color::Blue);
                         
-                        rect.setOutlineThickness(1.f);
+                    //     rect.setOutlineThickness(1.f);
     
-                        game->getWindow()->getWindow().draw(rect);
-                    }
+                    //     game->getWindow()->getWindow().draw(rect);
+                    // }
                 }
             }
         }

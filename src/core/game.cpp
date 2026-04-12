@@ -5,7 +5,7 @@ Game::Game() {}
 
 void Game::init()
 {
-    window.create({800, 800}, "INFINITE", false, 00, sf::Color(10, 10, 12));
+    window.create({800, 800}, "INFINITE", false, 0, sf::Color(10, 10, 12));
 
     input.init(this);
 
@@ -91,12 +91,12 @@ void Game::run()
 
         if (secondsSinceStatPrint > secondsToPrintStats)
         {
-            // std::cout << "dt: " << dt << "; dtick: " << dtick << '\n';
-            // std::cout << "average dt: " << averageDt << '\n';
-            // std::cout << "fps: " << fps << "; tps: " << 1.f / dtick << '\n';
-            // std::cout << "ticks last second: " << ticksLastSecond << '\n';
-            // std::cout << "time: " << gameClock.getElapsedTime().asSeconds() << '\n';
-            // std::cout << "///////////////////////////////////\n";
+            std::cout << "dt: " << dt << "; dtick: " << dtick << '\n';
+            std::cout << "average dt: " << averageDt << '\n';
+            std::cout << "fps: " << fps << "; tps: " << 1.f / dtick << '\n';
+            std::cout << "ticks last second: " << ticksLastSecond << '\n';
+            std::cout << "time: " << gameClock.getElapsedTime().asSeconds() << '\n';
+            std::cout << "///////////////////////////////////\n";
 
             ticksLastSecond = 0;
             secondsSinceStatPrint = 0;
