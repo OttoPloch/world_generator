@@ -1,0 +1,9 @@
+texture texture_atlases/dog.png
+coord 0,64
+size 16,16
+coord 16,64
+size 16,16
+coord 32,64
+size 16,16
+coord 48,64
+size 16,16

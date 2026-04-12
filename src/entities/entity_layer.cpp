@@ -26,15 +26,13 @@ void EntityLayer::init(Game* game)
     tManager.entityTemplates["box"] = EntityTemplate();
 
     auto pt = &tManager.entityTemplates["player"];
-    pt->sprite = {game->getAssetManager()->getTexture("test", "texture_atlases/"), {20, 20}, false, false, {{0, 0}, {0, 0}}, 5.f, nullptr, game->getAssetManager()->getAnimSet("test")};
+    pt->sprite = {game->getAssetManager()->getTexture("dog", "texture_atlases/"), {20, 20}, false, false, {{0, 0}, {0, 0}}, 2.f, nullptr, game->getAssetManager()->getAnimSet("dog")};
     pt->movement = {2.f, 1.5f};
     pt->control = ControlComponentData();
     pt->state = StateComponentData();
-    pt->collision = {{1.f, 1.f}, true, RectType::ACTIVE};
+    pt->collision = {{.5f, .7f}, true, RectType::ACTIVE};
 
     Entity* e = addEntity({0, 0}, pt);
-
-    e->getSprite()->animSpeedMult = 5.f;
 
     auto bt = &tManager.entityTemplates["box"];
     bt->sprite = {game->getAssetManager()->getTexture("crate"), {35, 35}, false, false, {{0, 0}, {0, 0}}, 1, nullptr, nullptr};
@@ -43,13 +41,13 @@ void EntityLayer::init(Game* game)
     Entity* b = addEntity({-100, -100}, bt);
 
     // PERFORMANCE TEST
-    for (int y = 0; y < 20; y++)
-    {
-        for (int x = 0; x < 50; x++)
-        {
-            addEntity({static_cast<float>(-600 + x * bt->sprite.size.x), static_cast<float>(50 + y * bt->sprite.size.y * 2)}, bt);
-        }
-    }
+    // for (int y = 0; y < 20; y++)
+    // {
+    //     for (int x = 0; x < 50; x++)
+    //     {
+    //         addEntity({static_cast<float>(-600 + x * bt->sprite.size.x), static_cast<float>(50 + y * bt->sprite.size.y * 2)}, bt);
+    //     }
+    // }
     // // // // // // /
 
     // AssetManager* assetManager = game->getAssetManager();

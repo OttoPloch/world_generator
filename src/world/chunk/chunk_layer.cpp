@@ -328,7 +328,8 @@ void ChunkLayer::draw(bool debug)
             std::array<sf::Vertex, 6> currObjVertices = VertexGroup::createTriangleVerts(curr->rect.position, curr->rect.size, curr->texCoords);
             bgObjectsVertices.insert(bgObjectsVertices.end(), currObjVertices.begin(), currObjVertices.end());
         }
-
-        window->getWindow().draw(bgObjectsVertices.data(), bgObjectsVertices.size(), sf::PrimitiveType::Triangles, bgObjectStates);
+        
+        window->getWindow().draw(&bgObjectsVertices[0], bgObjectsVertices.size(), sf::PrimitiveType::Triangles, bgObjectStates);
     }
+
 }

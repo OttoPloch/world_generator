@@ -1,0 +1,11 @@
+dir animations/dog/
+key 0
+anim dog_left
+key 1
+anim dog_right
+key 2
+anim dog_up
+key 3
+anim dog_down
+key 4
+anim dog_idle

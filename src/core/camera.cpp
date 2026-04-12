@@ -151,7 +151,7 @@ void Camera::zoom(int amount)
     if (amount == 0) return;
     if (zoomFactor <= gamerules->camera_minZoomFactor && amount < 0) return;
     if (zoomFactor >= gamerules->camera_maxZoomFactor && amount > 0) return;
-    
+
     if (amount > 0)
     {
         if (zoomFactor >= 1.f)
