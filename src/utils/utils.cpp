@@ -3,6 +3,7 @@
 #include "../entities/entity.hpp"
 #include "../ui/ui_layer.hpp"
 #include "../ui/ui_element.hpp"
+#include "../entities/collision_rect.hpp"
 #include <SFML/Graphics/Rect.hpp>
 #include <cstdlib>
 #include <random>
@@ -24,6 +25,69 @@ bool rectRectCollide(sf::FloatRect r1, sf::FloatRect r2, bool positionsAreCenter
 
     return (r1.position.x < r2.position.x + r2.size.x && r1.position.x + r1.size.x > r2.position.x && r1.position.y < r2.position.y + r2.size.y && r1.position.y + r1.size.y > r2.position.y);
 }
+
+bool rayRectCollide(sf::Vector2<double> rayOrigin, sf::Vector2f rayDirection, CollisionRect* target, sf::Vector2<double>& contactPoint, sf::Vector2f& contactNormal, float& tHitNear)
+{
+    // STOLEN from javidx9
+
+    sf::Vector2<double> targetPos(target->left(), target->top());
+
+    sf::Vector2<double> tNear = (targetPos - rayOrigin);
+    tNear = {tNear.x / rayDirection.x, tNear.y / rayDirection.y};
+    
+    sf::Vector2<double> tFar = (targetPos + static_cast<sf::Vector2<double>>(target->size) - rayOrigin);
+    tFar = {tFar.x / rayDirection.x, tFar.y / rayDirection.y};
+
+    if (std::isnan(tFar.y) || std::isnan(tFar.x)) return false;
+    if (std::isnan(tNear.y) || std::isnan(tNear.x)) return false;
+
+
+    if (tNear.x > tFar.x) std::swap(tNear.x, tFar.x);
+    if (tNear.y > tFar.y) std::swap(tNear.y, tFar.y);
+
+    if (tNear.x > tFar.y || tNear.y > tFar.x) return false;
+
+    tHitNear = std::max(tNear.x, tNear.y);
+    float tHitFar = std::min(tFar.x, tFar.y);
+
+    if (tHitFar < 0) return false;
+
+    contactPoint = rayOrigin + static_cast<double>(tHitNear) * static_cast<sf::Vector2<double>>(rayDirection);
+
+    if (tNear.x > tNear.y)
+    {
+        if (rayDirection.x < 0) contactNormal = {1, 0};
+        else contactNormal = {-1, 0};
+    }
+    else if (tNear.x < tNear.y)
+    {
+        if (rayDirection.y < 0) contactNormal = {0, 1};
+        else contactNormal = {0, -1};
+    }
+
+    return true;
+}
+
+bool dynamicRectRectCollide(CollisionRect* in, sf::Vector2f inVel, CollisionRect* target, sf::Vector2<double>& contactPoint, sf::Vector2f& contactNormal, float& contactTime)
+{
+    // STOLEN as well from javidx9
+
+    if (inVel.x == 0 && inVel.y == 0) return false;
+
+    CollisionRect expandedTarget(
+        target->position,
+        {target->size.x + in->size.x, target->size.y + in->size.y},
+        target->type
+    );
+
+    if (rayRectCollide(*in->position.position, inVel, &expandedTarget, contactPoint, contactNormal, contactTime))
+    {
+        if (contactTime <= 1.f) return true;
+    }
+
+    return false;
+}
+
 
 bool mouseRectCollide(Game* game, sf::Vector2f position, sf::Vector2f size)
 {
@@ -209,7 +273,7 @@ bool isOnScreen(Game* game, sf::Vector2f point, bool applyView)
     return false;
 }
 
-sf::Vector2i worldToChunkPosition(Game* game, sf::Vector2f position)
+sf::Vector2i worldToChunkPosition(Game* game, sf::Vector2<double> position)
 {
     float chunkSize = game->getSettings()->tile_size * toFloat(game->getSettings()->chunk_size);
 

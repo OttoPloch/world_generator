@@ -5,8 +5,10 @@
 #include "../utils/utils.hpp"
 #include "../entities/components/movement_component.hpp"
 #include "../entities/components/control_component.hpp"
+#include "../entities/components/collision_component.hpp"
 
 #include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <memory>
@@ -29,7 +31,7 @@ void Scene::init(Game* game)
 
     chunkLayer.init(game);
 
-    camera.init(game, true, {0, 0}, toV2F(window->getSize()));
+    camera.init(game, false, {0, 50000}, toV2F(window->getSize()));
 
     debugView = false;
 }
@@ -43,7 +45,7 @@ void Scene::tick()
     chunkLayer.tick();
 
     // TEMP
-    sf::Vector2i mouseChunkPos = worldToChunkPosition(game, window->getWindow().mapPixelToCoords(sf::Mouse::getPosition(window->getWindow())));
+    sf::Vector2i mouseChunkPos = worldToChunkPosition(game, static_cast<sf::Vector2<double>>(window->getWindow().mapPixelToCoords(sf::Mouse::getPosition(window->getWindow()))));
     uiLayer.getElement("mouse chunk pos display")->getAsText()->setValue(std::to_string(mouseChunkPos.x) + ", " + std::to_string(mouseChunkPos.y));
 }
 
@@ -60,7 +62,7 @@ void Scene::UIUpdate(float dt)
     {
         if (auto e = entityLayer.getEntity(0)->getComponent<MovementComponent>())
         {
-            e->stats.speed += 5;
+            e->stats.speed += 2;
             
             uiLayer.getElement("speed display")->getAsText()->setValue(std::to_string(toInt(e->stats.speed)));
         }        
@@ -70,7 +72,7 @@ void Scene::UIUpdate(float dt)
     {
         if (auto e = entityLayer.getEntity(0)->getComponent<MovementComponent>())
         {
-            e->stats.speed -= 5;
+            e->stats.speed -= 2;
 
             uiLayer.getElement("speed display")->getAsText()->setValue(std::to_string(toInt(e->stats.speed)));
         }
@@ -81,7 +83,7 @@ void Scene::UIUpdate(float dt)
         if (auto e = entityLayer.getEntity(0)->getComponent<MovementComponent>())
         {
             // TEMP, TODO: replace constant with value from entity template for player.
-            e->stats.speed = 30;
+            e->stats.speed = 2;
 
             uiLayer.getElement("speed display")->getAsText()->setValue(std::to_string(toInt(e->stats.speed)));
         }

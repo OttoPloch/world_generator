@@ -10,17 +10,17 @@ struct CollisionRect
 
     CollisionRect(WorldPosition position, sf::Vector2f size, RectType type);
 
-    float left();
-    float right();
-    float top();
-    float bottom();
+    double left();
+    double right();
+    double top();
+    double bottom();
 
-    void setLeft(float x);
-    void setRight(float x);
-    void setTop(float y);
-    void setBottom(float y);
+    void setLeft(double x);
+    void setRight(double x);
+    void setTop(double y);
+    void setBottom(double y);
 
-    void move(sf::Vector2f dist);
+    void move(sf::Vector2<double> dist);
 
     WorldPosition position;
 

@@ -21,7 +21,7 @@ public:
 
     int getNewID();    
 
-    Entity* addEntity(sf::Vector2f position, EntityTemplate* t = nullptr);
+    Entity* addEntity(sf::Vector2<double> position, EntityTemplate* t = nullptr);
 
     void removeEntity(int ID);
 
@@ -32,7 +32,7 @@ public:
     // chunkRadius controls the distance to scan for entities.
     // The default of 0 only scans in the chunk position given.
     std::vector<Entity*> getEntitiesInChunkArea(int chunkX, int chunkY, int chunkRadius = 0);
-    std::vector<Entity*> getEntitiesInChunkArea(sf::Vector2f position, int chunkRadius = 0);
+    std::vector<Entity*> getEntitiesInChunkArea(sf::Vector2<double> position, int chunkRadius = 0);
 
     void tick();
 
@@ -46,5 +46,5 @@ private:
 
     int IDCounter;
 
-    std::unordered_map<int, std::unique_ptr<Entity>> entities;
+    std::map<int, std::unique_ptr<Entity>> entities;
 };

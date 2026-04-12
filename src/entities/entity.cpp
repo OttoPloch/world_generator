@@ -4,7 +4,7 @@
 
 Entity::Entity() {}
 
-Entity::Entity(Game* game, int ID, sf::Vector2f position) : game(game), ID(ID)
+Entity::Entity(Game* game, int ID, sf::Vector2<double> position) : game(game), ID(ID)
 {
     this->position = WorldPosition(position);
 
@@ -43,14 +43,14 @@ void Entity::update(float dt)
 
 void Entity::draw(float alpha, sf::RenderWindow& window)
 {
-    sf::Vector2f renderPos = position.getPos() * alpha + lastPosition * (1.f - alpha);
+    sf::Vector2f renderPos = static_cast<sf::Vector2f>(position.getPos()) * alpha + static_cast<sf::Vector2f>(lastPosition) * (1.f - alpha);
 
     sprite.syncPos(renderPos);
 
     sprite.draw(window);
 }
 
-sf::Vector2f Entity::getPosition() { return position.getPos(); }
+sf::Vector2<double> Entity::getPosition() { return position.getPos(); }
 
 WorldPosition* Entity::getPositionVar() { return &position; }
 

@@ -18,5 +18,4 @@ public:
     float camera_minZoomFactor;
     float camera_maxZoomFactor;
     float motion_friction;
-    float motion_velocityCutoff;
 };

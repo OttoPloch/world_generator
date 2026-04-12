@@ -2,6 +2,9 @@
 #include "../entity.hpp"
 #include "../../core/game.hpp"
 #include "entity_component.hpp"
+#include "movement_component.hpp"
+#include <cstddef>
+#include <algorithm>
 
 CollisionComponent::CollisionComponent(Entity* myEntity, WorldPosition position, sf::Vector2f size, bool sizeIsScaleOfSprite, RectType type) : EntityComponent(myEntity)
 {
@@ -21,56 +24,41 @@ void CollisionComponent::update()
 {
     if (rect.type == RectType::ACTIVE)
     {
-        auto entities = myEntity->game->getScene()->getEntityLayer()->getEntitiesInChunkArea(rect.position.getPos(), 1);
-    
-        for (auto i : entities)
+        if (auto m = myEntity->getComponent<MovementComponent>())
         {
-            if (i->getID() == myEntity->getID()) continue;
+            std::vector<Entity*> entities = myEntity->game->getScene()->getEntityLayer()->getEntitiesInChunkArea(rect.position.getPos(), 1);
+        
+            std::vector<std::pair<CollisionRect*, float>> z;
+            sf::Vector2<double> contactPoint;
+            sf::Vector2f contactNormal;
+            float contactTime;
     
-            if (auto c = i->getComponent<CollisionComponent>())
+            for (auto i : entities)
             {
-                CollisionRect* other = &c->rect;
-
-                if (rectRectCollide({rect.position.getPos(), rect.size}, {other->position.getPos(), other->size}, true))
+                if (i->getID() == myEntity->getID()) continue;
+        
+                if (auto c = i->getComponent<CollisionComponent>())
                 {
-                    float leftDiff = std::fabs(rect.left() - other->right());
-                    float rightDiff = std::fabs(other->left() - rect.right());
-                    float topDiff = std::fabs(rect.top() - other->bottom());
-                    float bottomDiff = std::fabs(other->top() - rect.bottom());
-
-                    char direction;
-                    float pushFraction;
-
-                    if (other->type == RectType::ACTIVE) pushFraction = .5f;
-                    else if (other->type == RectType::PASSIVE) pushFraction = 1;
-                    else if (other->type == RectType::STATIC) pushFraction = 0;
-
-                    if (leftDiff < rightDiff && leftDiff < topDiff && leftDiff < bottomDiff)
+                    CollisionRect* other = &c->rect;
+    
+                    if (dynamicRectRectCollide(&rect, m->velocity, other, contactPoint, contactNormal, contactTime))
                     {
-                        direction = 'l';
+                        z.emplace_back(std::pair(&c->rect, contactTime));
                     }
-                    else if (rightDiff < leftDiff && rightDiff < topDiff && rightDiff < bottomDiff)
-                    {
-                        direction = 'r';
-                    }
-                    else if (topDiff < leftDiff && topDiff < rightDiff && topDiff < bottomDiff)
-                    {
-                        direction = 't';
-                    }
-                    else if (bottomDiff < leftDiff && bottomDiff < rightDiff && bottomDiff < topDiff)
-                    {
-                        direction = 'b';
-                    }
-                    else
-                    {
-                        std::cout << "diffs: " << leftDiff << ", " << rightDiff << ", " << topDiff << ", " << bottomDiff << '\n';
-                        std::cout << "figure this out\n";
-                        assert(false);
-                    }
-
-                    std::cout << direction << ", " << pushFraction << '\n';
-
-                    resolveCollision(other, direction, pushFraction);
+                }
+            }
+    
+            std::sort(z.begin(), z.end(), [](const std::pair<CollisionRect*, float>& a, const std::pair<CollisionRect*, float>& b)
+            {
+                return a.second < b.second;
+            });
+    
+            for (auto j : z)
+            {
+                if (dynamicRectRectCollide(&rect, m->velocity, j.first, contactPoint, contactNormal, contactTime))
+                {
+                    m->velocity += sf::Vector2f(std::abs(m->velocity.x) * contactNormal.x, std::abs(m->velocity.y) * contactNormal.y) * (1.f - contactTime);
+                    m->velocity += {contactNormal.x * .001f, contactNormal.y * .001f};
                 }
             }
         }

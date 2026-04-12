@@ -26,25 +26,26 @@ void EntityLayer::init(Game* game)
     tManager.entityTemplates["box"] = EntityTemplate();
 
     auto pt = &tManager.entityTemplates["player"];
-    pt->sprite = {game->getAssetManager()->getTexture("test", "texture_atlases/"), {600, 600}, false, false, {{0, 0}, {0, 0}}, 5.f, nullptr, game->getAssetManager()->getAnimSet("test")};
-    pt->movement = {30.f, 1.5f};
+    pt->sprite = {game->getAssetManager()->getTexture("test", "texture_atlases/"), {20, 20}, false, false, {{0, 0}, {0, 0}}, 5.f, nullptr, game->getAssetManager()->getAnimSet("test")};
+    pt->movement = {2.f, 1.5f};
     pt->control = ControlComponentData();
     pt->state = StateComponentData();
     pt->collision = {{1.f, 1.f}, true, RectType::ACTIVE};
 
-    Entity* e = addEntity({0, 0}, pt);
+    Entity* e = addEntity({0, 50000}, pt);
 
     e->getSprite()->animSpeedMult = 5.f;
 
     auto bt = &tManager.entityTemplates["box"];
-    bt->sprite = {game->getAssetManager()->getTexture("crate"), {750, 750}, false, false, {{0, 0}, {0, 0}}, 1, nullptr, nullptr};
-    bt->collision = {{1.f, 1.f}, true, RectType::STATIC};
+    bt->sprite = {game->getAssetManager()->getTexture("crate"), {35, 35}, false, false, {{0, 0}, {0, 0}}, 1, nullptr, nullptr};
+    bt->collision = {{1.f, 1.f}, true, RectType::PASSIVE};
 
-    Entity* b = addEntity({-1000, -1000}, bt);
+    Entity* b = addEntity({-100, -100}, bt);
 
-
-
-
+    for (int x = 0; x < 150; x++)
+    {
+        addEntity({static_cast<float>(-100 + x * 35), toFloat(50000 + toInt(toFloat(x) / 10.f) * 35)}, bt);
+    }
 
     // AssetManager* assetManager = game->getAssetManager();
 
@@ -133,7 +134,7 @@ int EntityLayer::getNewID()
     return IDCounter - 1;
 }
 
-Entity* EntityLayer::addEntity(sf::Vector2f position, EntityTemplate* t)
+Entity* EntityLayer::addEntity(sf::Vector2<double> position, EntityTemplate* t)
 {
     int ID = getNewID();
 
@@ -183,7 +184,7 @@ void EntityLayer::removeAllEntitiesInChunk(int chunkX, int chunkY)
 
     for (auto& i : entities)
     {
-        sf::Vector2f entityBottom = {i.second->getSprite()->getPosition().x, i.second->getSprite()->bottom()};
+        sf::Vector2<double> entityBottom = {i.second->getSprite()->getPosition().x, i.second->getSprite()->bottom()};
 
         if (worldToChunkPosition(game, entityBottom) == sf::Vector2i(chunkX, chunkY))
         {
@@ -218,7 +219,7 @@ std::vector<Entity*> EntityLayer::getEntitiesInChunkArea(int chunkX, int chunkY,
 
     for (auto& i : entities)
     {
-        sf::Vector2f entityBottom = i.second->getPosition();
+        sf::Vector2<double> entityBottom = i.second->getPosition();
         int entityChunkBottomX = toInt(std::floor(entityBottom.x / chunkLength));
         int entityChunkBottomY = toInt(std::floor(entityBottom.y / chunkLength));
 
@@ -234,7 +235,7 @@ std::vector<Entity*> EntityLayer::getEntitiesInChunkArea(int chunkX, int chunkY,
     return entitiesWithin;
 }
 
-std::vector<Entity*> EntityLayer::getEntitiesInChunkArea(sf::Vector2f position, int chunkRadius)
+std::vector<Entity*> EntityLayer::getEntitiesInChunkArea(sf::Vector2<double> position, int chunkRadius)
 {
     float chunkLength = toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size;
 
@@ -272,35 +273,47 @@ void EntityLayer::update(float dt)
 
 void EntityLayer::draw(float alpha)
 {
+    std::vector<int> outOfBoundsEntities;
+
     for (auto& i : entities)
     {
         Chunk* entityChunk = game->getScene()->getChunkLayer()->getChunk(worldToChunkPosition(game, i.second->getPosition()));
 
-        if (entityChunk && entityChunk->state == ChunkState::ACTIVE)
+        if (entityChunk)
         {
-            Sprite* entitySprite = i.second->getSprite();
-
-            if (isOnScreen(game, {entitySprite->left(), entitySprite->top()}, entitySprite->getSize()))
+            if (entityChunk->state == ChunkState::ACTIVE)
             {
-                i.second->draw(alpha, game->getWindow()->getWindow());
-
-                if (auto c = i.second->getComponent<CollisionComponent>())
+                Sprite* entitySprite = i.second->getSprite();
+    
+                if (isOnScreen(game, {entitySprite->left(), entitySprite->top()}, entitySprite->getSize()))
                 {
-                    sf::RectangleShape rect(c->rect.size);
-
-                    rect.setOrigin({c->rect.size.x / 2.f, c->rect.size.y / 2.f});
-                    rect.setPosition(i.second->getPosition());
-                    rect.setFillColor(sf::Color::Transparent);
-
-                    if (c->rect.type == RectType::ACTIVE) rect.setOutlineColor(sf::Color::Red);
-                    if (c->rect.type == RectType::PASSIVE) rect.setOutlineColor(sf::Color::Green);
-                    if (c->rect.type == RectType::STATIC) rect.setOutlineColor(sf::Color::Blue);
-                    
-                    rect.setOutlineThickness(15.f);
-
-                    game->getWindow()->getWindow().draw(rect);
+                    i.second->draw(alpha, game->getWindow()->getWindow());
+    
+                    if (auto c = i.second->getComponent<CollisionComponent>())
+                    {
+                        sf::RectangleShape rect(c->rect.size);
+    
+                        rect.setOrigin({c->rect.size.x / 2.f, c->rect.size.y / 2.f});
+                        rect.setPosition(static_cast<sf::Vector2f>(i.second->getPosition()));
+                        rect.setFillColor(sf::Color::Transparent);
+    
+                        if (c->rect.type == RectType::ACTIVE) rect.setOutlineColor(sf::Color::Red);
+                        if (c->rect.type == RectType::PASSIVE) rect.setOutlineColor(sf::Color::Green);
+                        if (c->rect.type == RectType::STATIC) rect.setOutlineColor(sf::Color::Blue);
+                        
+                        rect.setOutlineThickness(1.f);
+    
+                        game->getWindow()->getWindow().draw(rect);
+                    }
                 }
             }
         }
+        else
+        {
+            // TODO: When chunk saving is implemented, entities unloaded here should be saved.
+            outOfBoundsEntities.push_back(i.second->getID());
+        }
     }
+
+    for (auto i : outOfBoundsEntities) removeEntity(i);
 }

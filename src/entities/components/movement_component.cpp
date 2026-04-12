@@ -8,7 +8,7 @@ MovementComponent::MovementComponent(Entity* myEntity, sf::Vector2f velocity, Mo
 
 void MovementComponent::tick()
 {
-    sf::Vector2f* position = myEntity->getPositionVar()->position.get();
+    sf::Vector2<double>* position = myEntity->getPositionVar()->position.get();
 
     position->x += velocity.x;
     position->y += velocity.y;
@@ -33,7 +33,7 @@ void MovementComponent::update()
     }
     else
     {
-        (std::abs(velocity.x) > 0.001f) ? velocity.x *= 0.8f : velocity.x = 0.f;
-        (std::abs(velocity.y) > 0.001f) ? velocity.y *= 0.8f : velocity.y = 0.f;
+        (std::abs(velocity.x) > 0.001f) ? velocity.x *= myEntity->game->getGamerules()->motion_friction : velocity.x = 0.f;
+        (std::abs(velocity.y) > 0.001f) ? velocity.y *= myEntity->game->getGamerules()->motion_friction : velocity.y = 0.f;
     }
 }

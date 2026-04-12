@@ -72,7 +72,7 @@ void Camera::tick()
 
     if (focus != nullptr)
     {
-        sf::Vector2f targetPosition = focus->getPosition();
+        sf::Vector2<double> targetPosition = focus->getPosition();
 
         velocity.x = (targetPosition.x - center.x);
         velocity.y = (targetPosition.y - center.y);

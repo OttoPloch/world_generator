@@ -16,7 +16,7 @@ class Entity
 public:
     Entity();
 
-    Entity(Game* game, int ID, sf::Vector2f position);
+    Entity(Game* game, int ID, sf::Vector2<double> position);
 
     Entity(Game* game, int ID, WorldPosition position);
 
@@ -68,7 +68,7 @@ public:
 
     virtual void draw(float alpha, sf::RenderWindow& window);
 
-    sf::Vector2f getPosition();
+    sf::Vector2<double> getPosition();
 
     WorldPosition* getPositionVar();
 
@@ -80,7 +80,7 @@ protected:
     int ID;
 
     WorldPosition position;
-    sf::Vector2f lastPosition;
+    sf::Vector2<double> lastPosition;
 
     Sprite sprite;
 

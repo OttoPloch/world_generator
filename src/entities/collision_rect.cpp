@@ -4,47 +4,47 @@ CollisionRect::CollisionRect() {}
 
 CollisionRect::CollisionRect(WorldPosition position, sf::Vector2f size, RectType type) : position(position), size(size), type(type) {}
 
-float CollisionRect::left()
+double CollisionRect::left()
 {
     return position.getPos().x - size.x / 2.f;
 }
 
-float CollisionRect::right()
+double CollisionRect::right()
 {
     return position.getPos().x + size.x / 2.f;
 }
 
-float CollisionRect::top()
+double CollisionRect::top()
 {
     return position.getPos().y - size.y / 2.f;
 }
 
-float CollisionRect::bottom()
+double CollisionRect::bottom()
 {
     return position.getPos().y + size.y / 2.f;
 }
 
-void CollisionRect::setLeft(float x)
+void CollisionRect::setLeft(double x)
 {
     position.position->x = x + size.x / 2.f;
 }
 
-void CollisionRect::setRight(float x)
+void CollisionRect::setRight(double x)
 {
     position.position->x = x - size.x / 2.f;
 }
 
-void CollisionRect::setTop(float y)
+void CollisionRect::setTop(double y)
 {
     position.position->y = y + size.y / 2.f;
 }
 
-void CollisionRect::setBottom(float y)
+void CollisionRect::setBottom(double y)
 {
     position.position->y = y - size.y / 2.f;
 }
 
-void CollisionRect::move(sf::Vector2f dist)
+void CollisionRect::move(sf::Vector2<double> dist)
 {
     position.position->x += dist.x;
     position.position->y += dist.y;

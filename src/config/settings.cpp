@@ -8,11 +8,12 @@ Settings::Settings()
 void Settings::init()
 {
     int renderDistance = 5;
+    int loadDistanceExtra = 5;
 
     ui_animation_speed = 0.15f;
-    tile_size = 200.f;
+    tile_size = 10.f;
     chunk_size = 16;
     chunk_render_distance = renderDistance;
-    chunk_load_distance = renderDistance * 2;
-    generation_foliage_scale = 4.f;
+    chunk_load_distance = renderDistance + loadDistanceExtra;
+    generation_foliage_scale = .2f;
 }

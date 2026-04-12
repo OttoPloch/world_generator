@@ -12,7 +12,7 @@ Sprite::Sprite(WorldPosition position, sf::Texture* texture, sf::Vector2f size, 
 
     sprite = std::make_unique<sf::Sprite>(*texture);
     
-    sprite->setPosition(position.getPos());
+    sprite->setPosition(static_cast<sf::Vector2f>(position.getPos()));
     
     if (usingTexCoords) sprite->setTextureRect(texCoords);
     
@@ -21,7 +21,7 @@ Sprite::Sprite(WorldPosition position, sf::Texture* texture, sf::Vector2f size, 
     resize(size, sizeIsScale);
 }
 
-sf::Vector2f Sprite::getPosition() { return position.getPos(); }
+sf::Vector2<double> Sprite::getPosition() { return position.getPos(); }
 
 sf::Vector2f Sprite::getSize() { return size; }
 
@@ -64,7 +64,7 @@ void Sprite::syncPos(sf::Vector2f interpolatedPos, bool useInterpolated)
     }
     else
     {
-        sprite->setPosition(position.getPos());
+        sprite->setPosition(static_cast<sf::Vector2f>(position.getPos()));
     }
 }
 

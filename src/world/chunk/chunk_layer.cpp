@@ -41,7 +41,7 @@ void ChunkLayer::loadNearbyChunks()
     int renderDist = game->getSettings()->chunk_render_distance;
     int loadDist = game->getSettings()->chunk_load_distance;
  
-    sf::Vector2i currChunkPos = worldToChunkPosition(game, game->getScene()->getCamera()->getCenter());
+    sf::Vector2i currChunkPos = worldToChunkPosition(game, static_cast<sf::Vector2<double>>(game->getScene()->getCamera()->getCenter()));
 
     if (currChunkPos != lastChunkPos)
     {
@@ -217,14 +217,14 @@ void ChunkLayer::tick()
         }
     }
 
-    sf::Vector2i currChunkPos = worldToChunkPosition(game, game->getScene()->getCamera()->getCenter());
+    sf::Vector2i currChunkPos = worldToChunkPosition(game, static_cast<sf::Vector2<double>>(game->getScene()->getCamera()->getCenter()));
 }
 
 void ChunkLayer::loadUpdate()
 {
     int loadDist = game->getSettings()->chunk_load_distance;
 
-    sf::Vector2i currChunkPos = worldToChunkPosition(game, game->getScene()->getCamera()->getCenter());
+    sf::Vector2i currChunkPos = worldToChunkPosition(game, static_cast<sf::Vector2<double>>(game->getScene()->getCamera()->getCenter()));
 
     loadNearbyChunks();
 
