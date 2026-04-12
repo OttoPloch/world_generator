@@ -63,11 +63,14 @@ private:
     float secondsPerTick;
     
     float dt;
-    float alpha;
 
     sf::Clock dtClock;
     sf::Clock tickClock;
+
+    // gameClock is the total elapsed time of the program,
+    // while worldClock is the time the game has been unpaused.
     sf::Clock gameClock;
+    sf::Clock worldClock;
 
     // this is to detect window resizing that the
     // event handler doesn't normally catch

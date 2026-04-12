@@ -144,12 +144,6 @@ void UILayer::draw()
                 {
                     i.second->draw();
                 }
-    
-                // sf::CircleShape circle(5.f);
-                // circle.setFillColor(sf::Color::Red);
-                // circle.setOrigin({5.f, 5.f});
-                // circle.setPosition(i.second->getScreenCenter());
-                // game->getWindow()->getWindow().draw(circle);
             }
         }
     }

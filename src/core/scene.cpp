@@ -111,12 +111,12 @@ void Scene::chunkLoadUpdate()
     chunkLayer.loadUpdate();
 }
 
-void Scene::draw(float alpha)
+void Scene::draw()
 {
     window->setView(camera.getView());
 
     chunkLayer.draw(debugView);
-    entityLayer.draw(alpha);
+    entityLayer.draw();
     uiLayer.draw();
 }
 

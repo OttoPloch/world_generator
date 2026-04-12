@@ -66,7 +66,7 @@ public:
 
     virtual void update(float dt);
 
-    virtual void draw(float alpha, sf::RenderWindow& window);
+    virtual void draw(sf::RenderWindow& window);
 
     sf::Vector2f getPosition();
 

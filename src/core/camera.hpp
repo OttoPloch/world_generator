@@ -28,8 +28,6 @@ public:
 
     void tick();
 
-    sf::View getInterpolatedView(float alpha);
-
     void setVelocity(sf::Vector2f newVelocity);
 
     // 'x' or 'y'

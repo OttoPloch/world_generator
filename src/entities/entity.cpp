@@ -41,11 +41,9 @@ void Entity::update(float dt)
     for (auto& c : components) c->update();
 }
 
-void Entity::draw(float alpha, sf::RenderWindow& window)
+void Entity::draw(sf::RenderWindow& window)
 {
-    sf::Vector2f renderPos = static_cast<sf::Vector2f>(position.getPos()) * alpha + static_cast<sf::Vector2f>(lastPosition) * (1.f - alpha);
-
-    sprite.syncPos(renderPos);
+    sprite.syncPos();
 
     sprite.draw(window);
 }

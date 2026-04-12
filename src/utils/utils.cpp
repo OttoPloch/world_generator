@@ -35,7 +35,7 @@ bool rayRectCollide(sf::Vector2f rayOrigin, sf::Vector2f rayDirection, Collision
     sf::Vector2f tNear = (targetPos - rayOrigin);
     tNear = {tNear.x / rayDirection.x, tNear.y / rayDirection.y};
     
-    sf::Vector2f tFar = (targetPos + static_cast<sf::Vector2f>(target->size) - rayOrigin);
+    sf::Vector2f tFar = (targetPos + (target->size) - rayOrigin);
     tFar = {tFar.x / rayDirection.x, tFar.y / rayDirection.y};
 
     if (std::isnan(tFar.y) || std::isnan(tFar.x)) return false;

@@ -12,7 +12,7 @@ Sprite::Sprite(WorldPosition position, sf::Texture* texture, sf::Vector2f size, 
 
     sprite = std::make_unique<sf::Sprite>(*texture);
     
-    sprite->setPosition(static_cast<sf::Vector2f>(position.getPos()));
+    sprite->setPosition(position.getPos());
     
     if (usingTexCoords) sprite->setTextureRect(texCoords);
     

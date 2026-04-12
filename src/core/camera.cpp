@@ -72,13 +72,7 @@ void Camera::tick()
 
     if (focus != nullptr)
     {
-        sf::Vector2f targetPosition = focus->getPosition();
-
-        velocity.x = (targetPosition.x - center.x);
-        velocity.y = (targetPosition.y - center.y);
-
-        center.x += velocity.x;
-        center.y += velocity.y;
+        center = focus->getPosition();
     }
     else
     {
@@ -89,17 +83,10 @@ void Camera::tick()
         center.y += velocity.y;
     }
 
-    center.x = std::roundf(center.x);
-    center.y = std::roundf(center.y);
+    // center.x = std::roundf(center.x);
+    // center.y = std::roundf(center.y);
 
     view.setCenter(center);
-}
-
-sf::View Camera::getInterpolatedView(float alpha)
-{
-    sf::Vector2f renderPos = center * alpha + lastCenter * (1.f - alpha);
-
-    return sf::View(renderPos, view.getSize());
 }
 
 void Camera::setVelocity(sf::Vector2f newVelocity)

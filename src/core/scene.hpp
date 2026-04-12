@@ -30,7 +30,7 @@ public:
 
     void chunkLoadUpdate();
 
-    void draw(float alpha);
+    void draw();
 
     void sceneInput(std::string control);
 
