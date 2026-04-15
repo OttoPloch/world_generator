@@ -8,6 +8,7 @@
 #include "../../graphics/vertex_group.hpp"
 #include "../background_object.hpp"
 #include <algorithm>
+#include <cmath>
 
 ChunkGenerator::ChunkGenerator() {}
     
@@ -24,19 +25,27 @@ void ChunkGenerator::init(Game* game, std::unordered_map<sf::Vector2i, std::uniq
 
     noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
     noise.SetFrequency(.02f);
-    int rand = getRandInt();
-    noise.SetSeed(rand);
+
+    if (int seed = game->getSettings()->worldSeed != -1)
+    {
+        noise.SetSeed(seed);
+    }
+    else
+    {
+        int rand = getRandInt();
+        noise.SetSeed(rand);
+    }
 }
 
 void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
 {
-    std::vector<Tile> newTiles;
-
-    TextureAtlas* atlas = game->getAssetManager()->getTextureAtlas("tiles_better");
-
     int chunkSize = game->getSettings()->chunk_size;
     float tileSize = game->getSettings()->tile_size;
     float chunkLength = toFloat(chunkSize) * tileSize;
+    
+    TextureAtlas* atlas = game->getAssetManager()->getTextureAtlas("tiles_better");
+
+    std::vector<std::vector<Tile>> newTiles(game->getSettings()->maxTileZ + 1);
 
     if (genMode == 0)
     {
@@ -45,16 +54,16 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
         switch (tileType)
         {
             case 0:
-                newTiles.emplace_back(TileType::WATER, atlas->getItemTexCoords("water_basic"));
+                newTiles[0].emplace_back(TileType::WATER, atlas->getItemTexCoords("water_basic"));
                 break;
             case 1:
-                newTiles.emplace_back(TileType::GRASS, atlas->getItemTexCoords("grass_basic"));
+                newTiles[0].emplace_back(TileType::GRASS, atlas->getItemTexCoords("grass_basic"));
                 break;
             case 2:
-                newTiles.emplace_back(TileType::LAVA, atlas->getItemTexCoords("lava_basic"));
+                newTiles[0].emplace_back(TileType::LAVA, atlas->getItemTexCoords("lava_basic"));
                 break;
             case 3:
-                newTiles.emplace_back(TileType::PINK, atlas->getItemTexCoords("pink_basic"), true, "tile");
+                newTiles[0].emplace_back(TileType::PINK, atlas->getItemTexCoords("pink_basic"), true, "tile");
                 break;
         }
     }
@@ -67,16 +76,16 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
             switch (tileType)
             {
                 case 0:
-                    newTiles.emplace_back(TileType::WATER, atlas->getItemTexCoords("water_basic"));
+                    newTiles[0].emplace_back(TileType::WATER, atlas->getItemTexCoords("water_basic"));
                     break;
                 case 1:
-                    newTiles.emplace_back(TileType::GRASS, atlas->getItemTexCoords("grass_basic"));
+                    newTiles[0].emplace_back(TileType::GRASS, atlas->getItemTexCoords("grass_basic"));
                     break;
                 case 2:
-                    newTiles.emplace_back(TileType::LAVA, atlas->getItemTexCoords("lava_basic"));
+                    newTiles[0].emplace_back(TileType::LAVA, atlas->getItemTexCoords("lava_basic"));
                     break;
                 case 3:
-                    newTiles.emplace_back(TileType::PINK, atlas->getItemTexCoords("pink_basic"), true, "tile");
+                    newTiles[0].emplace_back(TileType::PINK, atlas->getItemTexCoords("pink_basic"), true, "tile");
                     break;
             }
         }
@@ -95,51 +104,129 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
             }
         }
 
-        for (int i = 0; i < noiseData.size(); i++)
+        for (int i = 0; i < chunkSize * chunkSize; i++)
         {
-            int tileType;
-            sf::Color tileColor;
-
-            sf::Vector2i tilePosition = {i % chunkSize, toInt(std::floor(i / chunkSize))};
-
-            if (getDistance({-tileSize / 2.f, -tileSize / 2.f}, {chunkPosition.x * chunkLength + tilePosition.x * tileSize, chunkPosition.y * chunkLength + tilePosition.y * tileSize}) <= tileSize * 10)
+            std::vector<TileType> typeData(game->getSettings()->maxTileZ + 1);
+            
+            // COBBLE AT SPAWN
+            if (chunkPosition.x >= -1 && chunkPosition.x < 1 && chunkPosition.y >= -1 && chunkPosition.y < 1)
             {
-                newTiles.emplace_back(TileType::COBBLE, atlas->getItemTexCoords("cobble"));
+                for (int j = 0; j < typeData.size(); j++)
+                {
+                    switch(j)
+                    {
+                        case 0:
+                            typeData[0] = TileType::COBBLE;
+                            break;
+                        default:
+                            typeData[j] = TileType::AIR;
+                            break;
+                    }
+                }
             }
             else
             {
-                if (noiseData[i] >= .92f) { newTiles.emplace_back(TileType::LAVA, atlas->getItemTexCoords("lava")); }
-                else if (noiseData[i] >= .8f) { newTiles.emplace_back(TileType::STONE, atlas->getItemTexCoords("stone"), true, "stone"); }
-                else if (noiseData[i] >= .3f) { newTiles.emplace_back(TileType::GRASS, atlas->getItemTexCoords("grass")); }
-                else if (noiseData[i] - .3f > -.1f) { newTiles.emplace_back(TileType::WATER, atlas->getItemTexCoords("water")); }
-                else { newTiles.emplace_back(TileType::WATER, atlas->getItemTexCoords("water")); }
+                if (noiseData[i] >= .8f)
+                {
+                    for (int j = 0; j < typeData.size(); j++)
+                    {
+                        switch (j)
+                        {
+                            case 0:
+                                typeData[0] = TileType::GRASS;
+                                break;
+                            case 1:
+                                typeData[1] = TileType::STONE;
+                                break;
+                            default:
+                                typeData[j] = TileType::AIR;
+                                break;
+                        }
+                    }
+                }
+                else if (noiseData[i] >= .3f)
+                {
+                    for (int j = 0; j < typeData.size(); j++)
+                    {
+                        switch(j)
+                        {
+                            case 0:
+                                typeData[0] = TileType::GRASS;
+                                break;
+                            default:
+                                typeData[j] = TileType::AIR;
+                                break;
+                        }
+                    }
+                }
+                else
+                {
+                    for (int j = 0; j < typeData.size(); j++)
+                    {
+                        switch(j)
+                        {
+                            case 0:
+                                typeData[j] = TileType::WATER;
+                                break;
+                            default:
+                                typeData[j] = TileType::AIR;
+                                break;
+                        }
+                    }
+                }
+            }
+
+            for (int j = 0; j < typeData.size(); j++)
+            {
+                // TODO: dont hardcode this
+                std::map<TileType, std::string> typesToStrings {
+                    {TileType::AIR, "air"},
+                    {TileType::WATER, "water"},
+                    {TileType::GRASS, "grass"},
+                    {TileType::STONE, "stone"},
+                    {TileType::LAVA, "lava"},
+                    {TileType::COBBLE, "cobble"},
+                    {TileType::PINK, "pink"},
+                };
+
+                newTiles[j].emplace_back(typeData[j], atlas->getItemTexCoords(typesToStrings[typeData[j]]), j);
             }
         }
 
-        // water collides if next to non-water tile
-        int end = newTiles.size() - 1;
-        for (int i = 0; i <= end; i++)
+        // setting colliders
+        for (int i = 0; i < newTiles.size(); i++)
         {
-            if (newTiles[i].type == TileType::WATER)
+            for (int j = 0; j < newTiles[i].size(); j++)
             {
-                if (
-                    i % chunkSize == 0 ||
-                    i % chunkSize == chunkSize - 1 ||
-                    i < chunkSize ||
-                    i >= newTiles.size() - chunkSize ||
-                    newTiles[i - 1].type != TileType::WATER ||
-                    newTiles[i + 1].type != TileType::WATER ||
-                    newTiles[i - chunkSize].type != TileType::WATER ||
-                    newTiles[i + chunkSize].type != TileType::WATER)
+                if (newTiles[i][j].type == TileType::WATER)
                 {
-                    newTiles[i].collides = true;
-                    newTiles[i].colliderName = "water";
+                    if
+                    (
+                        j % chunkSize == 0 ||
+                        j % chunkSize == chunkSize - 1 ||
+                        j < chunkSize ||
+                        j >= newTiles[i].size() - chunkSize ||
+                        newTiles[i][j - 1].type != TileType::WATER ||
+                        newTiles[i][j + 1].type != TileType::WATER ||
+                        newTiles[i][j - chunkSize].type != TileType::WATER ||
+                        newTiles[i][j + chunkSize].type != TileType::WATER
+                    )
+                    {
+                        newTiles[i][j].collides = true;
+                        newTiles[i][j].colliderName = "water";
+                    }
+                }
+
+                if (newTiles[i][j].type == TileType::STONE)
+                {
+                    newTiles[i][j].collides = true;
+                    newTiles[i][j].colliderName = "stone";
                 }
             }
         }
     }
 
-    (*chunks)[chunkPosition] = std::make_unique<Chunk>(game, chunkPosition, std::move(newTiles));
+    (*chunks)[chunkPosition] = std::make_unique<Chunk>(game, chunkPosition, newTiles);
 
     // decorations
     if (genMode == 2)
@@ -160,8 +247,17 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
             for (int i = 0; i < 30; i++)
             {
                 sf::Vector2f decBottom(getRandInt(1, chunkLength - 1), getRandInt(1, chunkLength - 1));
-    
-                if (chunk->getTile(std::floor(decBottom.x / tileSize), std::floor(decBottom.y / tileSize))->type != currDecTileType) continue;
+
+                // TODO: right now decorations only check the top layer of the chunk when deciding to generate. This is most likely fine
+                // and maybe the best solution, but I'm not sure if I will want to keep it this way forever.
+                int decCheckTileZ = -1;
+                TileType currZTileType = chunk->getTile(std::floor(decBottom.x / tileSize), std::floor(decBottom.y / tileSize), decCheckTileZ)->type;
+                while (currZTileType == TileType::AIR)
+                {
+                    decCheckTileZ--;
+                    currZTileType = chunk->getTile(std::floor(decBottom.x / tileSize), std::floor(decBottom.y / tileSize), decCheckTileZ)->type;
+                }
+                if (currZTileType != currDecTileType) continue;
 
                 switch(getRandInt(0, 2))
                 {
@@ -186,6 +282,7 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
                 decorations.push_back(dec);
             }
 
+            // TODO: make this decoration generation system better
             if (currDecTileType == TileType::GRASS) currDecTileType = TileType::WATER;
             if (currDecTileType == TileType::WATER) currDecTileType = TileType::COUNT;
         }

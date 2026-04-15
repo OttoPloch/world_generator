@@ -37,7 +37,7 @@ public:
 
     void update(float dt);
 
-    void draw(bool debug = false);
+    void draw(bool debug = false, int debugLayerView = 0);
 private:
     Game* game;
 

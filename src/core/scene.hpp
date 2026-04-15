@@ -55,4 +55,5 @@ private:
     Camera camera;
 
     bool debugView;
+    int debugChunkLayerView;
 };

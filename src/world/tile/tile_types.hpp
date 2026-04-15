@@ -2,6 +2,7 @@
 
 enum class TileType
 {
+    AIR,
     WATER,
     GRASS,
     STONE,

@@ -30,8 +30,6 @@
 //     {   
 //         sf::Vector2f movement = game->getInput()->getMovement();
 
-//         // TODO: replace "player" here with
-//         // a variable representing the entity's name or type
 //         float baseSpeed = gamerules->player_moveSpeed;
 //         float speed = baseSpeed;
 

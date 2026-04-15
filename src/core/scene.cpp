@@ -34,6 +34,7 @@ void Scene::init(Game* game)
     camera.init(game, false, {0, 0}, toV2F(window->getSize()));
 
     debugView = false;
+    debugChunkLayerView = 0;
 }
 
 void Scene::tick()
@@ -47,6 +48,33 @@ void Scene::tick()
     // TEMP
     sf::Vector2i mouseChunkPos = worldToChunkPosition(game, window->getWindow().mapPixelToCoords(sf::Mouse::getPosition(window->getWindow())));
     uiLayer.getElement("mouse chunk pos display")->getAsText()->setValue(std::to_string(mouseChunkPos.x) + ", " + std::to_string(mouseChunkPos.y));
+    
+    sf::Vector2f mouseWorldPos = window->getWindow().mapPixelToCoords(sf::Mouse::getPosition(window->getWindow()));
+    sf::Vector2f mouseLocalWorldPos = {std::fmod(mouseWorldPos.x, toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size), std::fmod(mouseWorldPos.y, toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size)};
+    sf::Vector2i mouseLocalPos = {toInt(std::floor(mouseLocalWorldPos.x / game->getSettings()->tile_size)), toInt(std::floor(mouseLocalWorldPos.y / game->getSettings()->tile_size))};
+    Chunk* mouseChunk = chunkLayer.getChunk(mouseChunkPos);
+    
+    if (mouseChunk && mouseChunk->state == ChunkState::ACTIVE)
+    {
+        Tile* mouseTile = mouseChunk->getTile(mouseLocalPos.x, mouseLocalPos.y, 0);
+        
+        std::map<TileType, std::string> typesToStrings {
+            {TileType::AIR, "air"},
+            {TileType::WATER, "water"},
+            {TileType::GRASS, "grass"},
+            {TileType::STONE, "stone"},
+            {TileType::LAVA, "lava"},
+            {TileType::COBBLE, "cobble"},
+            {TileType::PINK, "pink"},
+        };
+    
+        uiLayer.getElement("mouse tile type display")->getAsText()->setValue(typesToStrings[mouseTile->type]);
+    }
+    else
+    {
+        uiLayer.getElement("mouse tile type display")->getAsText()->setValue("none");
+    }
+    ///////
 }
 
 void Scene::update(float dt)
@@ -91,16 +119,16 @@ void Scene::UIUpdate(float dt)
 
     if (uiLayer.getElement("animation button")->getAsButton()->getActive())
     {
-        uiLayer.getElement("win 1")->setAnimation({0, 0}, {60, 250}, -1, 0, true);
-        uiLayer.getElement("animation button")->setAnimation({0, 0}, {-75, 140}, -1, -1, true, false);
-        uiLayer.getElement("animation button 2")->setAnimation({0, 0}, {25, 140}, -1, -1, true, false);
+        uiLayer.getElement("win 1")->setAnimation({0, 0}, {60, 300}, -1, 0, true);
+        uiLayer.getElement("animation button")->setAnimation({0, 0}, {-75, 200}, -1, -1, true, false);
+        uiLayer.getElement("animation button 2")->setAnimation({0, 0}, {25, 200}, -1, -1, true, false);
     }
     
     if (uiLayer.getElement("animation button 2")->getAsButton()->getActive())
     {
-        uiLayer.getElement("win 1")->setAnimation({0, 0}, {-280, 250}, -1, 0, true);
-        uiLayer.getElement("animation button")->setAnimation({0, 0}, {25, 140}, -1, -1, true, false);
-        uiLayer.getElement("animation button 2")->setAnimation({0, 0}, {-75, 140}, -1, -1, true, false);
+        uiLayer.getElement("win 1")->setAnimation({0, 0}, {-280, 300}, -1, 0, true);
+        uiLayer.getElement("animation button")->setAnimation({0, 0}, {25, 200}, -1, -1, true, false);
+        uiLayer.getElement("animation button 2")->setAnimation({0, 0}, {-75, 200}, -1, -1, true, false);
     }
 
     uiLayer.UIUpdate(dt);
@@ -115,7 +143,7 @@ void Scene::draw()
 {
     window->setView(camera.getView());
 
-    chunkLayer.draw(debugView);
+    chunkLayer.draw(debugView, debugChunkLayerView);
     entityLayer.draw();
     uiLayer.draw();
 }
@@ -145,6 +173,10 @@ void Scene::sceneInput(std::string control)
     else if (control == "INTERACT")
     {
         uiLayer.interactiveUIManager.click();
+    }
+    else if (control == "EXTRA 1")
+    {
+        debugChunkLayerView++;
     }
 }
 

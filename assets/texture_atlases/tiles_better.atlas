@@ -1,4 +1,9 @@
 tilesize 16
+item air
+xCoord 0
+yCoord 0
+xSize 0
+ySize 0
 item grass
 xCoord 0
 yCoord 0

@@ -17,4 +17,6 @@ public:
     float chunk_render_distance;
     float chunk_load_distance;
     float generation_foliage_scale;
+    int maxTileZ;
+    int worldSeed; // -1 = random seed
 };

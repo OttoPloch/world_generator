@@ -17,25 +17,23 @@ class Chunk
 public:
     Chunk();
 
-    Chunk(Game* game, sf::Vector2i chunkPosition, std::vector<Tile> tiles);
+    Chunk(Game* game, sf::Vector2i chunkPosition, std::vector<std::vector<Tile>> tiles);
 
-    void init(Game* game, sf::Vector2i chunkPosition, std::vector<Tile> tiles);
+    void createTileVerts(int index, int z);
 
-    void createTileVerts(int index);
+    void createTileVerts(sf::Vector2i tilePosition, int z);
 
-    void createTileVerts(sf::Vector2i tilePosition);
-
-    // values will wrap, so -1
-    // gets the opposite side and
+    // values will wrap, so position
+    // of -1 gets the opposite side and
     // 17 (in a chunk of size 16)
-    // will get the left
-    Tile* getTile(int column, int row);
+    // will get the left. Z also wraps.
+    Tile* getTile(int column, int row, int z = 0);
 
-    std::vector<std::unique_ptr<Tile>>* getTiles();
+    std::vector<std::vector<std::unique_ptr<Tile>>>* getTiles();
 
-    sf::FloatRect getTileRect(sf::Vector2i tileLocalPosition);
+    sf::FloatRect getTileRect(sf::Vector2i tileLocalPosition, int z = 0);
 
-    std::vector<sf::Vertex>* getVertices();
+    std::vector<std::vector<sf::Vertex>>* getVertices();
 
     sf::Vector2i getChunkPosition();
 
@@ -43,7 +41,7 @@ public:
 
     void update(float dt);
 
-    void draw(bool debug = false);
+    void draw(bool debug = false, int debugLayerView = 0);
 
     ChunkState state;
 
@@ -60,10 +58,12 @@ private:
     
     sf::Vector2f worldPosition;
     
-    std::vector<std::unique_ptr<Tile>> tiles;
-
-    std::vector<sf::Vertex> tileVertices;
-    std::vector<sf::Vertex> tileDebugVertices;
+    // tiles have a z for their height value, this
+    // 2D vector separates them by that value.
+    std::vector<std::vector<std::unique_ptr<Tile>>> tiles;
+    
+    std::vector<std::vector<sf::Vertex>> tileVertices;
+    std::vector<std::vector<sf::Vertex>> tileDebugVertices;
 
     sf::RenderStates tileStates;
 };

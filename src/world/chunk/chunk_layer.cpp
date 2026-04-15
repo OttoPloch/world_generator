@@ -264,7 +264,7 @@ void ChunkLayer::update(float dt)
     }
 }
 
-void ChunkLayer::draw(bool debug)
+void ChunkLayer::draw(bool debug, int debugLayerView)
 {
     std::vector<BackgroundObject*> visibleBgObjects;
 
@@ -276,7 +276,7 @@ void ChunkLayer::draw(bool debug)
 
             if (isOnScreen(game, chunkTl, {chunkLength, chunkLength}))
             {
-                i.second->draw(debug);
+                i.second->draw(debug, debugLayerView);
 
                 for (int j = 0; j < i.second->bgObjects.size(); j++)
                 {

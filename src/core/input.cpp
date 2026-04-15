@@ -161,7 +161,8 @@ void Input::init(Game* game)
         {"UI LEFT", {"LEFT", "DPAD LEFT"}},
         {"UI RIGHT", {"RIGHT", "DPAD RIGHT"}},
         {"UI UP", {"UP", "DPAD UP"}},
-        {"UI DOWN", {"DOWN", "DPAD DOWN"}}
+        {"UI DOWN", {"DOWN", "DPAD DOWN"}},
+        {"EXTRA 1", {"P", "NONE"}},
     };
 
     leftClickThisFrame = false;

@@ -7,22 +7,24 @@
 
 Tile::Tile() {}
 
-Tile::Tile(TileType type, sf::IntRect texCoords, bool collides, std::string colliderName, sf::Vector2f collOffsetFraction, sf::Vector2f collSizeFraction)
+Tile::Tile(TileType type, sf::IntRect texCoords, int z, bool collides, std::string colliderName, sf::Vector2f collOffsetFraction, sf::Vector2f collSizeFraction)
 {
     this->type = type;
     myVerts.texCoords = texCoords;
+    this->z = z;
     this->collides = collides;
     this->colliderName = colliderName;
     this->collOffsetFraction = collOffsetFraction;
     this->collSizeFraction = collSizeFraction;
+
+    this->game = nullptr;
+    this->chunk = nullptr;
+    this->localPosition = {0, 0};
+    size = 0;
+    animation = nullptr;
 }
 
-Tile::Tile(Game* game, Chunk* chunk, sf::Vector2i localPosition, TileType type, sf::IntRect texCoords, bool collides, std::string colliderName, sf::Vector2f collOffsetFraction, sf::Vector2f collSizeFraction)
-{
-    init(game, chunk, localPosition, type, texCoords, collides, colliderName, collOffsetFraction, collSizeFraction);
-}
-
-void Tile::init(Game* game, Chunk* chunk, sf::Vector2i localPosition, TileType type, sf::IntRect texCoords, bool collides, std::string colliderName, sf::Vector2f collOffsetFraction, sf::Vector2f collSizeFraction)
+Tile::Tile(Game* game, Chunk* chunk, sf::Vector2i localPosition, TileType type, sf::IntRect texCoords, int z, bool collides, std::string colliderName, sf::Vector2f collOffsetFraction, sf::Vector2f collSizeFraction)
 {
     this->game = game;
 
@@ -36,6 +38,8 @@ void Tile::init(Game* game, Chunk* chunk, sf::Vector2i localPosition, TileType t
 
     myVerts.texCoords = texCoords;
 
+    this->z = z;
+
     animation = nullptr;
 
     this->collides = collides;
@@ -45,8 +49,6 @@ void Tile::init(Game* game, Chunk* chunk, sf::Vector2i localPosition, TileType t
     this->collOffsetFraction = collOffsetFraction;
     
     this->collSizeFraction = collSizeFraction;
-
-    this->chunkVertices = chunk->getVertices();
 }
 
 sf::FloatRect Tile::getCollRect()
@@ -85,7 +87,7 @@ void Tile::update()
             if (myVerts.texCoords != newTexCoords)
             {
                 myVerts.texCoords = newTexCoords;
-                chunk->createTileVerts(localPosition);
+                chunk->createTileVerts(localPosition, z);
             }
         }
     }

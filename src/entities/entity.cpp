@@ -13,11 +13,6 @@ Entity::Entity(Game* game, int ID, sf::Vector2f position) : game(game), ID(ID)
 
 Entity::Entity(Game* game, int ID, WorldPosition position) : game(game), ID(ID), position(position) {}
 
-void Entity::createFromTemplate(EntityTemplate* t)
-{
-    
-}
-
 Sprite* Entity::spriteInit(sf::Texture* texture, sf::Vector2f size, bool sizeIsScale, bool usingTexCoords, sf::IntRect texCoords, float animSpeedMult)
 {
     sprite = Sprite(this->position, texture, size, sizeIsScale, usingTexCoords, texCoords, animSpeedMult);
