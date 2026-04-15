@@ -1,4 +1,5 @@
 #include "window.hpp"
+#include <SFML/Window/VideoMode.hpp>
 
 Window::Window() {}
 
@@ -6,7 +7,15 @@ void Window::create(sf::Vector2u size, std::string name, bool fullscreen, int ma
 {
     sf::State windowState;
 
-    (fullscreen) ? windowState = sf::State::Fullscreen : windowState = sf::State::Windowed;
+    if (fullscreen)
+    {
+        windowState = sf::State::Fullscreen;
+        size = sf::VideoMode::getFullscreenModes()[0].size;
+    }
+    else
+    {
+        windowState = sf::State::Windowed;
+    }
 
     window.create(sf::VideoMode(size), name, windowState);
 
