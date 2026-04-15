@@ -33,7 +33,7 @@ public:
 
     sf::FloatRect getTileRect(sf::Vector2i tileLocalPosition, int z = 0);
 
-    std::vector<std::vector<sf::Vertex>>* getVertices();
+    std::vector<sf::Vertex>* getVertices();
 
     sf::Vector2i getChunkPosition();
 
@@ -62,7 +62,7 @@ private:
     // 2D vector separates them by that value.
     std::vector<std::vector<std::unique_ptr<Tile>>> tiles;
     
-    std::vector<std::vector<sf::Vertex>> tileVertices;
+    std::vector<sf::Vertex> tileVertices;
     std::vector<std::vector<sf::Vertex>> tileDebugVertices;
 
     sf::RenderStates tileStates;

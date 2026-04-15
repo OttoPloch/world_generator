@@ -38,13 +38,12 @@ Chunk::Chunk(Game* game, sf::Vector2i chunkPosition, std::vector<std::vector<Til
     // }
 
     this->tiles.resize(tiles.size());
-    tileVertices.resize(this->tiles.size());
+    tileVertices.resize(this->tiles.size() * chunkSize * chunkSize * 6);
     tileDebugVertices.resize(this->tiles.size());
 
     for (int i = 0; i < this->tiles.size(); i++)
     {
         this->tiles[i].resize(chunkSize * chunkSize);
-        tileVertices[i].resize(chunkSize * chunkSize * 6);
     }
 
     for (int i = 0; i < this->tiles.size(); i++)
@@ -98,7 +97,7 @@ void Chunk::createTileVerts(int index, int z)
     std::array<sf::Vertex, 6> verts = VertexGroup::createTriangleVerts(tileAdjustedTl, tileFittedSize, texCoords);
     for (int i = 0; i < 6; i++)
     {
-        tileVertices[z][index * 6 + i] = verts[i];
+        tileVertices[(chunkSize * chunkSize * 6 * z) + (index * 6 + i)] = verts[i];
     }
 
     if (!tiles[z][index]->collides) return;
@@ -160,7 +159,7 @@ sf::FloatRect Chunk::getTileRect(sf::Vector2i tileLocalPosition, int z)
     return sf::FloatRect(tileWorldPos, {tileSize, tileSize});
 }
 
-std::vector<std::vector<sf::Vertex>>* Chunk::getVertices() { return &tileVertices; }
+std::vector<sf::Vertex>* Chunk::getVertices() { return &tileVertices; }
 
 sf::Vector2i Chunk::getChunkPosition() { return chunkPosition; }
 
@@ -185,17 +184,14 @@ void Chunk::draw(bool debug, int debugLayerView)
     if (debug)
     {
         int effectiveLayerView = debugLayerView;
-        while (effectiveLayerView > tileVertices.size() - 1) effectiveLayerView -= tileVertices.size();
+        while (effectiveLayerView > game->getSettings()->maxTileZ) effectiveLayerView -= game->getSettings()->maxTileZ + 1;
         while (effectiveLayerView < 0) effectiveLayerView += tileVertices.size();
-        
-        window->getWindow().draw(tileVertices[effectiveLayerView].data(), tileVertices[effectiveLayerView].size(), sf::PrimitiveType::Triangles, tileStates);
+
+        window->getWindow().draw(&tileVertices[chunkSize * chunkSize * 6 * effectiveLayerView], (chunkSize * chunkSize * 6), sf::PrimitiveType::Triangles, tileStates);
         window->getWindow().draw(tileDebugVertices[effectiveLayerView].data(), tileDebugVertices[effectiveLayerView].size(), sf::PrimitiveType::Lines);
     }
     else
     {
-        for (int i = 0; i < tileVertices.size(); i++)
-        {
-            window->getWindow().draw(tileVertices[i].data(), tileVertices[i].size(), sf::PrimitiveType::Triangles, tileStates);
-        }
+        window->getWindow().draw(tileVertices.data(), tileVertices.size(), sf::PrimitiveType::Triangles, tileStates);
     }
 }
