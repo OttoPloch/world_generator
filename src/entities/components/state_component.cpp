@@ -10,10 +10,10 @@ void StateComponent::update()
     {
         AnimState activeAnimState = AnimState::IDLE;
 
-        if      (c->velocity.x < -0.5f) activeAnimState = AnimState::LEFT;
-        else if (c->velocity.x > 0.5f) activeAnimState = AnimState::RIGHT;
-        else if (c->velocity.y < -0.5f) activeAnimState = AnimState::UP;
-        else if (c->velocity.y > 0.5f) activeAnimState = AnimState::DOWN;
+        if      (c->velocity.x < -0.1f) activeAnimState = AnimState::LEFT;
+        else if (c->velocity.x > 0.1f) activeAnimState = AnimState::RIGHT;
+        else if (c->velocity.y < -0.1f) activeAnimState = AnimState::UP;
+        else if (c->velocity.y > 0.1f) activeAnimState = AnimState::DOWN;
 
         if (auto s = myEntity->getSprite())
         {

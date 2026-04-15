@@ -89,18 +89,18 @@ void Game::run()
         float fps = 1.f / dt;
         float dtick = tickClock.restart().asSeconds();
 
-        if (secondsSinceStatPrint > secondsToPrintStats)
-        {
-            std::cout << "dt: " << dt << "; dtick: " << dtick << '\n';
-            std::cout << "average dt: " << averageDt << '\n';
-            std::cout << "fps: " << fps << "; tps: " << 1.f / dtick << '\n';
-            std::cout << "ticks last second: " << ticksLastSecond << '\n';
-            std::cout << "time: " << gameClock.getElapsedTime().asSeconds() << '\n';
-            std::cout << "///////////////////////////////////\n";
+        // if (secondsSinceStatPrint > secondsToPrintStats)
+        // {
+        //     std::cout << "dt: " << dt << "; dtick: " << dtick << '\n';
+        //     std::cout << "average dt: " << averageDt << '\n';
+        //     std::cout << "fps: " << fps << "; tps: " << 1.f / dtick << '\n';
+        //     std::cout << "ticks last second: " << ticksLastSecond << '\n';
+        //     std::cout << "time: " << gameClock.getElapsedTime().asSeconds() << '\n';
+        //     std::cout << "///////////////////////////////////\n";
 
-            ticksLastSecond = 0;
-            secondsSinceStatPrint = 0;
-        }
+        //     ticksLastSecond = 0;
+        //     secondsSinceStatPrint = 0;
+        // }
         
         input.update();
         eventHandler.processEvents();
@@ -126,7 +126,6 @@ void Game::run()
             update();
         }
 
-        assetManager.updateGlobalAnimations(dt);
         scene.UIUpdate(dt);
         scene.chunkLoadUpdate();
         scene.getUILayer()->getElement("fps display")->getAsText()->setValue(std::to_string(toInt(std::round(smoothFps))));
@@ -145,6 +144,8 @@ void Game::tick()
 void Game::update()
 {
     scene.update(dt);
+
+    assetManager.updateGlobalAnimations(dt);
 }
 
 void Game::draw()

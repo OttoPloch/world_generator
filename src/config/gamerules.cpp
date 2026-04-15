@@ -15,5 +15,5 @@ void Gamerules::init()
     camera_smallZoomAmount = 0.1f;
     camera_minZoomFactor = 0.1f;
     camera_maxZoomFactor = pow(bigZoomFactor, 4);
-    motion_friction = 0.8f;
+    motion_friction = 0.9f;
 }
