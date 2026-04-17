@@ -274,7 +274,7 @@ void EntityLayer::update(float dt)
     }
 }
 
-void EntityLayer::draw()
+void EntityLayer::draw(bool debug)
 {
     std::vector<int> outOfBoundsEntities;
 
@@ -291,6 +291,19 @@ void EntityLayer::draw()
                 if (isOnScreen(game, {entitySprite->left(), entitySprite->top()}, entitySprite->getSize()))
                 {
                     i.second->draw(game->getWindow()->getWindow());
+
+                    if (debug)
+                    {
+                        if (auto c = i.second->getComponent<CollisionComponent>())
+                        {
+                            sf::RectangleShape rect(c->rect.size);
+                            rect.setPosition({c->rect.left(), c->rect.top()});
+                            rect.setFillColor(sf::Color::Transparent);
+                            rect.setOutlineColor(sf::Color::Red);
+                            rect.setOutlineThickness(.5f);
+                            game->getWindow()->draw(rect);
+                        }
+                    }
                 }
             }
         }

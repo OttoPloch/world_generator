@@ -46,6 +46,8 @@ public:
     ChunkState state;
 
     std::vector<BackgroundObject> bgObjects;
+
+    std::vector<sf::Vector2i> tilesWithColliders;
 private:
     Game* game;
 
@@ -61,7 +63,7 @@ private:
     // tiles have a z for their height value, this
     // 2D vector separates them by that value.
     std::vector<std::vector<std::unique_ptr<Tile>>> tiles;
-    
+
     std::vector<sf::Vertex> tileVertices;
     std::vector<std::vector<sf::Vertex>> tileDebugVertices;
 

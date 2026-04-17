@@ -100,6 +100,20 @@ Chunk* ChunkLayer::getChunk(sf::Vector2i chunkPosition)
     return nullptr;
 }
 
+std::array<Chunk*, 9> ChunkLayer::getNearbyChunks(sf::Vector2f position)
+{
+    sf::Vector2i chunkPosition = worldToChunkPosition(game, position);
+
+    std::array<Chunk*, 9> chunks;
+
+    for (int i = 0; i < 9; i++)
+    {
+        chunks[i] = getChunk({chunkPosition.x - 1 + (i % 3), chunkPosition.y - 1 + (toInt(std::floor(i / 3)))});
+    }
+
+    return chunks;
+}
+
 std::array<Tile*, 8> ChunkLayer::getTileNeighbors(sf::Vector2i chunkPos, int column, int row)
 {
     std::array<Tile*, 8> neighbors;

@@ -144,7 +144,7 @@ void Scene::draw()
     window->setView(camera.getView());
 
     chunkLayer.draw(debugView, debugChunkLayerView);
-    entityLayer.draw();
+    entityLayer.draw(debugView);
     uiLayer.draw();
 }
 

@@ -54,7 +54,14 @@ Chunk::Chunk(Game* game, sf::Vector2i chunkPosition, std::vector<std::vector<Til
             {
                 Tile* currTile = &tiles[i][j % tiles[i].size()];
         
-                this->tiles[i][j] = std::make_unique<Tile>(game, this, sf::Vector2i(j % chunkSize, toInt(std::floor(j / chunkSize))), currTile->type, currTile->myVerts.texCoords, i, currTile->collides, currTile->colliderName, currTile->collOffsetFraction, currTile->collSizeFraction);
+                sf::Vector2i localPos(j % chunkSize, toInt(std::floor(j / chunkSize)));
+
+                this->tiles[i][j] = std::make_unique<Tile>(game, this, localPos, currTile->type, currTile->myVerts.texCoords, i, currTile->collides, currTile->colliderName, currTile->collOffsetFraction, currTile->collSizeFraction);
+
+                if (currTile->collides)
+                {
+                    tilesWithColliders.push_back(localPos);
+                }
             }
             else
             {
@@ -154,9 +161,11 @@ std::vector<std::vector<std::unique_ptr<Tile>>>* Chunk::getTiles() { return &til
 
 sf::FloatRect Chunk::getTileRect(sf::Vector2i tileLocalPosition, int z)
 {
-    sf::Vector2f tileWorldPos = {worldPosition.x + tileLocalPosition.x * tileSize, worldPosition.y + tileLocalPosition.y * tileSize};
+    Tile* tile = getTile(tileLocalPosition.x, tileLocalPosition.y, z);
 
-    return sf::FloatRect(tileWorldPos, {tileSize, tileSize});
+    sf::Vector2f tileWorldPos = {worldPosition.x + tileLocalPosition.x * tile->size, worldPosition.y + tileLocalPosition.y * tile->size};
+
+    return sf::FloatRect(tileWorldPos, {tile->size, tile->size});
 }
 
 std::vector<sf::Vertex>* Chunk::getVertices() { return &tileVertices; }

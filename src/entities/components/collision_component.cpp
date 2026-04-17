@@ -1,6 +1,7 @@
 #include "collision_component.hpp"
 #include "../entity.hpp"
 #include "../../core/game.hpp"
+#include "component_data.hpp"
 #include "entity_component.hpp"
 #include "movement_component.hpp"
 #include <cstddef>
@@ -26,13 +27,62 @@ void CollisionComponent::update()
     {
         if (auto m = myEntity->getComponent<MovementComponent>())
         {
-            std::vector<Entity*> entities = myEntity->game->getScene()->getEntityLayer()->getEntitiesInChunkArea(rect.position.getPos(), 1);
-        
-            std::vector<std::pair<CollisionRect*, float>> z;
+            // TILE COLLISION
+            std::array<Chunk*, 9> nearbyChunks = myEntity->game->getScene()->getChunkLayer()->getNearbyChunks(myEntity->getPosition());
+            std::vector<std::pair<Chunk*, sf::Vector2i>> tilesWithColliders;
+
+            for (int i = 0; i < nearbyChunks.size(); i++)
+            {
+                std::vector<sf::Vector2i> tilePositions = nearbyChunks[i]->tilesWithColliders;
+
+                for (int j = 0; j < tilePositions.size(); j++)
+                {
+                    tilesWithColliders.push_back({nearbyChunks[i], tilePositions[j]});
+                }
+            }
+
             sf::Vector2f contactPoint;
             sf::Vector2f contactNormal;
             float contactTime;
-    
+
+            if (tilesWithColliders.size() > 0)
+            {
+                // <colliding tile, contact time>
+                std::vector<std::pair<CollisionRect, float>> collidingTiles;
+
+                for (auto t : tilesWithColliders)
+                {
+                    Tile* tile = t.first->getTile(t.second.x, t.second.y);
+                    WorldPosition tilePos(t.first->getTileRect(t.second).position);
+                    CollisionRect tileRect(tilePos, {tile->size, tile->size}, RectType::STATIC);
+
+                    if (dynamicRectRectCollide(&rect, m->velocity, &tileRect, contactPoint, contactNormal, contactTime))
+                    {
+                        collidingTiles.emplace_back(tileRect, contactTime);
+                    }
+                }
+
+                std::sort(collidingTiles.begin(), collidingTiles.end(), [](const std::pair<CollisionRect, float>& a, const std::pair<CollisionRect, float>& b)
+                {
+                    return a.second < b.second;
+                });
+        
+                for (auto i : collidingTiles)
+                {
+                    if (dynamicRectRectCollide(&rect, m->velocity, &i.first, contactPoint, contactNormal, contactTime))
+                    {
+                        m->velocity += sf::Vector2f(std::abs(m->velocity.x) * contactNormal.x, std::abs(m->velocity.y) * contactNormal.y) * (1.f - contactTime);
+                        m->velocity += {contactNormal.x * .001f, contactNormal.y * .001f};
+                    }
+                }
+            }
+
+            // ENTITY COLLISION
+            std::vector<Entity*> entities = myEntity->game->getScene()->getEntityLayer()->getEntitiesInChunkArea(rect.position.getPos(), 1);
+        
+            // <rect, contact time>
+            std::vector<std::pair<CollisionRect*, float>> z;
+
             for (auto i : entities)
             {
                 if (i->getID() == myEntity->getID()) continue;
@@ -40,29 +90,31 @@ void CollisionComponent::update()
                 if (auto c = i->getComponent<CollisionComponent>())
                 {
                     CollisionRect* other = &c->rect;
-    
+
                     if (dynamicRectRectCollide(&rect, m->velocity, other, contactPoint, contactNormal, contactTime))
                     {
-                        z.emplace_back(std::pair(&c->rect, contactTime));
+                        z.emplace_back(&c->rect, contactTime);
                     }
                 }
             }
-    
-            std::sort(z.begin(), z.end(), [](const std::pair<CollisionRect*, float>& a, const std::pair<CollisionRect*, float>& b)
+
+            if (z.size() > 0)
             {
-                return a.second < b.second;
-            });
-    
-            for (auto j : z)
-            {
-                if (dynamicRectRectCollide(&rect, m->velocity, j.first, contactPoint, contactNormal, contactTime))
+                std::sort(z.begin(), z.end(), [](const std::pair<CollisionRect*, float>& a, const std::pair<CollisionRect*, float>& b)
                 {
-                    m->velocity += sf::Vector2f(std::abs(m->velocity.x) * contactNormal.x, std::abs(m->velocity.y) * contactNormal.y) * (1.f - contactTime);
-                    m->velocity += {contactNormal.x * .001f, contactNormal.y * .001f};
+                    return a.second < b.second;
+                });
+    
+                for (auto i : z)
+                {
+                    if (dynamicRectRectCollide(&rect, m->velocity, i.first, contactPoint, contactNormal, contactTime))
+                    {
+                        m->velocity += sf::Vector2f(std::abs(m->velocity.x) * contactNormal.x, std::abs(m->velocity.y) * contactNormal.y) * (1.f - contactTime);
+                        m->velocity += {contactNormal.x * .001f, contactNormal.y * .001f};
+                    }
                 }
             }
         }
-
     }
 }
 
