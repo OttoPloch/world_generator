@@ -60,7 +60,7 @@ Chunk::Chunk(Game* game, sf::Vector2i chunkPosition, std::vector<std::vector<Til
 
                 if (currTile->collides)
                 {
-                    tilesWithColliders.push_back(localPos);
+                    tilesWithColliders.push_back(this->tiles[i][j].get());
                 }
             }
             else
@@ -159,11 +159,20 @@ Tile* Chunk::getTile(int column, int row, int z)
 
 std::vector<std::vector<std::unique_ptr<Tile>>>* Chunk::getTiles() { return &tiles; }
 
-sf::FloatRect Chunk::getTileRect(sf::Vector2i tileLocalPosition, int z)
+sf::FloatRect Chunk::getTileRect(sf::Vector2i tileLocalPosition, int z, bool returnCenterPos)
 {
     Tile* tile = getTile(tileLocalPosition.x, tileLocalPosition.y, z);
 
-    sf::Vector2f tileWorldPos = {worldPosition.x + tileLocalPosition.x * tile->size, worldPosition.y + tileLocalPosition.y * tile->size};
+    sf::Vector2f tileWorldPos;
+
+    if (returnCenterPos)
+    {
+        tileWorldPos = {worldPosition.x + (tileLocalPosition.x + .5f) * tile->size, worldPosition.y + (tileLocalPosition.y + .5f) * tile->size};
+    }
+    else
+    {
+        tileWorldPos = {worldPosition.x + tileLocalPosition.x * tile->size, worldPosition.y + tileLocalPosition.y * tile->size};
+    }
 
     return sf::FloatRect(tileWorldPos, {tile->size, tile->size});
 }
@@ -192,12 +201,27 @@ void Chunk::draw(bool debug, int debugLayerView)
 {
     if (debug)
     {
-        int effectiveLayerView = debugLayerView;
-        while (effectiveLayerView > game->getSettings()->maxTileZ) effectiveLayerView -= game->getSettings()->maxTileZ + 1;
-        while (effectiveLayerView < 0) effectiveLayerView += tileVertices.size();
+        // the effectiveLayerView can be at -1 here, this will show all layers
+        // that way you can still get the debug view without limiting the drawing
+        // to only one layer.
 
-        window->getWindow().draw(&tileVertices[chunkSize * chunkSize * 6 * effectiveLayerView], (chunkSize * chunkSize * 6), sf::PrimitiveType::Triangles, tileStates);
-        window->getWindow().draw(tileDebugVertices[effectiveLayerView].data(), tileDebugVertices[effectiveLayerView].size(), sf::PrimitiveType::Lines);
+        int effectiveLayerView = debugLayerView;
+        while (effectiveLayerView > game->getSettings()->maxTileZ) effectiveLayerView -= game->getSettings()->maxTileZ + 2;
+        while (effectiveLayerView < -1) effectiveLayerView += game->getSettings()->maxTileZ + 2;
+
+        if (effectiveLayerView == -1)
+        {
+            window->getWindow().draw(tileVertices.data(), tileVertices.size(), sf::PrimitiveType::Triangles, tileStates);
+            for (int i = 0; i < tileDebugVertices.size(); i++)
+            {
+                window->getWindow().draw(tileDebugVertices[i].data(), tileDebugVertices[i].size(), sf::PrimitiveType::Lines);
+            }
+        }
+        else
+        {
+            window->getWindow().draw(&tileVertices[chunkSize * chunkSize * 6 * effectiveLayerView], (chunkSize * chunkSize * 6), sf::PrimitiveType::Triangles, tileStates);
+            window->getWindow().draw(tileDebugVertices[effectiveLayerView].data(), tileDebugVertices[effectiveLayerView].size(), sf::PrimitiveType::Lines);
+        }
     }
     else
     {

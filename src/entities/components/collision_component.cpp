@@ -29,15 +29,18 @@ void CollisionComponent::update()
         {
             // TILE COLLISION
             std::array<Chunk*, 9> nearbyChunks = myEntity->game->getScene()->getChunkLayer()->getNearbyChunks(myEntity->getPosition());
-            std::vector<std::pair<Chunk*, sf::Vector2i>> tilesWithColliders;
+            // Chunk, position, z-value
+            std::vector<std::pair<Chunk*, std::pair<sf::Vector2i, int>>> nearbyTilesWithColliders;
 
             for (int i = 0; i < nearbyChunks.size(); i++)
             {
-                std::vector<sf::Vector2i> tilePositions = nearbyChunks[i]->tilesWithColliders;
+                auto currChunkTWithC = &nearbyChunks[i]->tilesWithColliders;
 
-                for (int j = 0; j < tilePositions.size(); j++)
+                for (int j = 0; j < currChunkTWithC->size(); j++)
                 {
-                    tilesWithColliders.push_back({nearbyChunks[i], tilePositions[j]});
+                    Tile* currTile = (*currChunkTWithC)[j];
+
+                    nearbyTilesWithColliders.push_back({nearbyChunks[i], {currTile->localPosition, currTile->z}});
                 }
             }
 
@@ -45,20 +48,21 @@ void CollisionComponent::update()
             sf::Vector2f contactNormal;
             float contactTime;
 
-            if (tilesWithColliders.size() > 0)
+            if (nearbyTilesWithColliders.size() > 0)
             {
                 // <colliding tile, contact time>
                 std::vector<std::pair<CollisionRect, float>> collidingTiles;
 
-                for (auto t : tilesWithColliders)
+                for (auto t : nearbyTilesWithColliders)
                 {
-                    Tile* tile = t.first->getTile(t.second.x, t.second.y);
-                    WorldPosition tilePos(t.first->getTileRect(t.second).position);
-                    CollisionRect tileRect(tilePos, {tile->size, tile->size}, RectType::STATIC);
+                    Tile* tile = t.first->getTile(t.second.first.x, t.second.first.y, t.second.second);
+                    sf::FloatRect tileRect = t.first->getTileRect(t.second.first, t.second.second);
+                    WorldPosition tilePos(tileRect.position);
+                    CollisionRect tileCollRect(tilePos, tileRect.size, RectType::STATIC);
 
-                    if (dynamicRectRectCollide(&rect, m->velocity, &tileRect, contactPoint, contactNormal, contactTime))
+                    if (dynamicRectRectCollide(&rect, m->velocity, &tileCollRect, contactPoint, contactNormal, contactTime))
                     {
-                        collidingTiles.emplace_back(tileRect, contactTime);
+                        collidingTiles.emplace_back(tileCollRect, contactTime);
                     }
                 }
 

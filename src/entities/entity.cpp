@@ -1,6 +1,8 @@
 #include "entity.hpp"
 #include "../core/game.hpp"
 #include "../world/world_position.hpp"
+#include "components/collision_component.hpp"
+#include <SFML/Graphics/RectangleShape.hpp>
 
 Entity::Entity() {}
 

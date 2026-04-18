@@ -34,7 +34,7 @@ void Scene::init(Game* game)
     camera.init(game, false, {0, 0}, toV2F(window->getSize()), entityLayer.getEntity(0));
 
     debugView = false;
-    debugChunkLayerView = 0;
+    debugChunkLayerView = -1;
 }
 
 void Scene::tick()
@@ -56,8 +56,15 @@ void Scene::tick()
     
     if (mouseChunk && mouseChunk->state == ChunkState::ACTIVE)
     {
-        Tile* mouseTile = mouseChunk->getTile(mouseLocalPos.x, mouseLocalPos.y, 0);
-        
+        int tileZ = game->getSettings()->maxTileZ;
+        Tile* mouseTile = mouseChunk->getTile(mouseLocalPos.x, mouseLocalPos.y, tileZ);
+     
+        while (mouseTile->type == TileType::AIR && tileZ >= 0)
+        {
+            tileZ--;
+            mouseTile = mouseChunk->getTile(mouseLocalPos.x, mouseLocalPos.y, tileZ);
+        }
+
         std::map<TileType, std::string> typesToStrings {
             {TileType::AIR, "air"},
             {TileType::WATER, "water"},

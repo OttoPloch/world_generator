@@ -31,7 +31,7 @@ public:
 
     std::vector<std::vector<std::unique_ptr<Tile>>>* getTiles();
 
-    sf::FloatRect getTileRect(sf::Vector2i tileLocalPosition, int z = 0);
+    sf::FloatRect getTileRect(sf::Vector2i tileLocalPosition, int z = 0, bool returnCenterPos = true);
 
     std::vector<sf::Vertex>* getVertices();
 
@@ -47,7 +47,7 @@ public:
 
     std::vector<BackgroundObject> bgObjects;
 
-    std::vector<sf::Vector2i> tilesWithColliders;
+    std::vector<Tile*> tilesWithColliders;
 private:
     Game* game;
 

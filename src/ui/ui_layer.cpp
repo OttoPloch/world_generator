@@ -23,7 +23,7 @@ void UILayer::init(Game* game, Camera* camera)
     currID = getNewID(); elements[currID] = std::make_unique<UIText>(game, this, "fps display", currID, 0, toV2F(20, 20), assetManager->getFont("sfml_font"), "FPS: ###", 30, sf::Color::White);
     currID = getNewID(); elements[currID] = std::make_unique<UIText>(game, this, "chunk pos display", currID, 0, toV2F(20, 60), assetManager->getFont("sfml_font"), "Chunk Position: ###", 30, sf::Color::White);
     currID = getNewID(); elements[currID] = std::make_unique<UIText>(game, this, "mouse chunk pos display", currID, 0, toV2F(20, 100), assetManager->getFont("sfml_font"), "Mouse Chunk Position: ###", 30, sf::Color::White);
-    currID = getNewID(); elements[currID] = std::make_unique<UIText>(game, this, "mouse tile type display", currID, 0, toV2F(20, 140), assetManager->getFont("sfml_font"), "Mouse Tile Type: ###", 30, sf::Color::White);
+    currID = getNewID(); elements[currID] = std::make_unique<UIText>(game, this, "mouse tile type display", currID, 0, toV2F(20, 140), assetManager->getFont("sfml_font"), "Mouse Top Tile Type: ###", 30, sf::Color::White);
     
     currID = getNewID(); elements[currID] = std::make_unique<UIBackground>(game, this, "win 1", currID, 0, toV2F(-280, 300), toV2F(220, 240), sf::Color(0, 0, 0, 0), assetManager->getTileSet("32px filled"), assetManager->getTexture("ui_scroll", "images/ui/"));
     currID = getNewID(); elements[currID] = std::make_unique<UIText>(game, this, "win 1 title", currID, 5, toV2F(0, 0), assetManager->getFont("White Storm"), "Speed adjust", 30, sf::Color::Black, getElement("win 1"));
