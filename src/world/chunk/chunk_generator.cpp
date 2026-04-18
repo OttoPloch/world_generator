@@ -113,7 +113,7 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
             {
                 for (int j = 0; j < typeData.size(); j++)
                 {
-                    switch(j)
+                    switch (j)
                     {
                         case 0:
                             typeData[0] = TileType::COBBLE;
@@ -126,7 +126,25 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
             }
             else
             {
-                if (noiseData[i] >= .8f)
+                if (noiseData[i] >= .975f)
+                {
+                    for (int j = 0; j < typeData.size(); j++)
+                    {
+                        switch (j)
+                        {
+                            case 0:
+                                typeData[0] = TileType::STONE;
+                                break;
+                            case 1:
+                                typeData[1] = TileType::LAVA;
+                                break;
+                            default:
+                                typeData[j] = TileType::AIR;
+                                break;
+                        }
+                    }
+                }
+                else if (noiseData[i] >= .8f)
                 {
                     for (int j = 0; j < typeData.size(); j++)
                     {
@@ -148,7 +166,7 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
                 {
                     for (int j = 0; j < typeData.size(); j++)
                     {
-                        switch(j)
+                        switch (j)
                         {
                             case 0:
                                 typeData[0] = TileType::GRASS;
@@ -163,7 +181,7 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
                 {
                     for (int j = 0; j < typeData.size(); j++)
                     {
-                        switch(j)
+                        switch (j)
                         {
                             case 0:
                                 typeData[j] = TileType::WATER;

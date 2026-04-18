@@ -1,0 +1,9 @@
+texture texture_atlases/tiles_better.png
+coord 48,0
+size 16,16
+coord 48,16
+size 16,16
+coord 48,32
+size 16,16
+coord 48,48
+size 16,16

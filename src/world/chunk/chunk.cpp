@@ -75,6 +75,16 @@ Chunk::Chunk(Game* game, sf::Vector2i chunkPosition, std::vector<std::vector<Til
                 this->tiles[i][j]->animation = game->getAssetManager()->getGlobalAnimation("water");
                 this->tiles[i][j]->animation->animation.adjustSpeed(1.5f);
             }
+            else if (this->tiles[i][j]->type == TileType::GRASS)
+            {
+                this->tiles[i][j]->animation = game->getAssetManager()->getGlobalAnimation("grass");
+                this->tiles[i][j]->animation->animation.adjustSpeed(6);
+            }
+            else if (this->tiles[i][j]->type == TileType::LAVA)
+            {
+                this->tiles[i][j]->animation = game->getAssetManager()->getGlobalAnimation("lava");
+                this->tiles[i][j]->animation->animation.adjustSpeed(.75f);
+            }
 
             createTileVerts(j, i);
         }
