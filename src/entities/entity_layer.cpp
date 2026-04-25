@@ -30,7 +30,7 @@ void EntityLayer::init(Game* game)
     pt->movement = {2.f, 1.5f};
     pt->control = ControlComponentData();
     pt->state = StateComponentData();
-    pt->collision = {{.5f, .7f}, true, RectType::ACTIVE};
+    pt->collision = {{.5f, .5f}, true, RectType::ACTIVE};
 
     Entity* e = addEntity({0, 0}, pt);
 
