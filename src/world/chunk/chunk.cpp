@@ -21,22 +21,6 @@ Chunk::Chunk(Game* game, sf::Vector2i chunkPosition, std::vector<std::vector<Til
 
     worldPosition = {chunkPosition.x * (chunkSize * tileSize), chunkPosition.y * (chunkSize * tileSize)};
 
-    // std::cout << "size: " << tiles.size() << '\n';
-    // if (tiles.size() > 0)
-    // {
-    //     for (int i = 0; i < tiles.size(); i++)
-    //     {
-    //         if (tiles[i].size() > 0)
-    //         {
-    //             std::cout << i << ": " << tiles[i].size() << '\n';
-    //         }
-    //         else
-    //         {
-    //             std::cout << "but " << i << " is empty inside ;(\n";
-    //         }
-    //     }
-    // }
-
     this->tiles.resize(tiles.size());
     tileVertices.resize(this->tiles.size() * chunkSize * chunkSize * 6);
     tileDebugVertices.resize(this->tiles.size());

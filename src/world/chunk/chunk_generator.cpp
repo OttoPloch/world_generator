@@ -244,7 +244,7 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
         }
     }
 
-    (*chunks)[chunkPosition] = std::make_unique<Chunk>(game, chunkPosition, newTiles);
+    (*chunks)[chunkPosition] = std::make_unique<Chunk>(game, chunkPosition, std::move(newTiles));
 
     // decorations
     if (genMode == 2)

@@ -8,6 +8,7 @@
 #include "../background_object.hpp"
 #include "../tile/tile.hpp"
 #include "chunk_state.hpp"
+#include "../tile/tags/mineable_tag.hpp"
 
 class Game;
 class Window;

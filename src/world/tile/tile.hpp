@@ -4,6 +4,8 @@
 #include "../../graphics/global_animation.hpp"
 #include "../../graphics/vertex_group.hpp"
 #include "tile_types.hpp"
+#include "tags/tile_tag.hpp"
+#include "tags/mineable_tag.hpp"
 
 class Game;
 class Chunk;
@@ -19,6 +21,42 @@ public:
     Tile(Game* game, Chunk* chunk, sf::Vector2i localPosition, TileType type, sf::IntRect texCoords, int z = 0, bool collides = false, std::string colliderName = "none", sf::Vector2f collOffsetFraction = {0.f, 0.f}, sf::Vector2f collSizeFraction = {1.f, 1.f});
 
     sf::FloatRect getCollRect();
+
+    template<typename T>
+    T* getTag()
+    {
+        for (auto& t : tags)
+        {
+            if (auto casted = dynamic_cast<T*>(t.get())) return casted;
+        }
+        
+        return nullptr;
+    }
+
+    template<typename T, typename... Args>
+    T& addTag(Args&&... args)
+    {
+        T* comp = new T(std::forward<Args>(args)...);
+        tags.emplace_back(comp);
+        return *comp;
+    }
+
+    template<typename T>
+    void removeTag()
+    {
+        for (auto i = tags.begin(); i != tags.end();)
+        {
+            if (auto casted = dynamic_cast<T*>(i->get()))
+            {
+                i = tags.erase(i);
+                break;
+            }
+            else
+            {
+                ++i;
+            }
+        }
+    }
 
     void update();
 
@@ -45,4 +83,6 @@ public:
     int z;
 private:
     Game* game;
+
+    std::vector<std::unique_ptr<TileTag>> tags;
 };
