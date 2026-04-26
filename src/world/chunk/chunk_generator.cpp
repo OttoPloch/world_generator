@@ -33,7 +33,7 @@ void ChunkGenerator::init(Game* game, std::unordered_map<sf::Vector2i, std::uniq
     else
     {
         int rand = getRandInt();
-        noise.SetSeed(rand);
+        noise.SetSeed(117);
     }
 }
 
@@ -133,7 +133,7 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
                         switch (j)
                         {
                             case 0:
-                                typeData[0] = TileType::STONE;
+                                typeData[0] = TileType::GRASS;
                                 break;
                             case 1:
                                 typeData[1] = TileType::LAVA;
