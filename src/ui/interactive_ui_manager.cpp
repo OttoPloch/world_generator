@@ -178,7 +178,7 @@ void InteractiveUIManager::moveIndicator(sf::Vector2i direction)
 
 void InteractiveUIManager::click()
 {
-    if (controllerUI_selectedElement != nullptr && controllerUI_selectedElement->getAsButton() && controllerUI_selectedElement != nullptr && active)
+    if (controllerUI_selectedElement != nullptr && controllerUI_selectedElement->getAsButton() && active)
     {
         controllerUI_selectedElement->getAsButton()->activate();
     }
@@ -187,6 +187,8 @@ void InteractiveUIManager::click()
 void InteractiveUIManager::disableControllerUI()
 {
     active = false;
+
+    game->getWindow()->getWindow().setMouseCursorVisible(true);
 }
 
 bool InteractiveUIManager::isControllerUIActive()

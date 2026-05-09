@@ -48,11 +48,11 @@ bool UIButton::pressed()
 {
     if (uiLayer->interactiveUIManager.isControllerUIActive())
     {
-        return (hover() && game->getInput()->getControl("INTERACT"));
+        return (hover() && game->getInput()->isControlPressed("INTERACT"));
     }
     else
     {
-        return (hover() && game->getInput()->getKey("LEFTCLICK"));
+        return (hover() && game->getInput()->isKeyPressed("LEFTCLICK"));
     }
 }
 
@@ -65,9 +65,7 @@ bool UIButton::clicked()
     }
     else
     {
-        if (game->getInput()->getKey("LEFTCLICK")) std::cout << game->getInput()->getKeyPressedLastFrame("LEFTCLICK") << '\n';
-
-        return (hover() && game->getInput()->getKey("LEFTCLICK") && !game->getInput()->getKeyPressedLastFrame("LEFTCLICK"));
+        return (hover() && game->getInput()->isKeyPressed("LEFTCLICK") && !game->getInput()->getKeyPressedLastFrame("LEFTCLICK"));
     }
 }
 

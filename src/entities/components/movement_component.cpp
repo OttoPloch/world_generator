@@ -23,7 +23,7 @@ void MovementComponent::update()
     {
         m = myEntity->game->getInput()->getMovement();
 
-        if (myEntity->game->getInput()->getControl("SPRINT")) speedMult = stats.sprintMultilpier;
+        if (myEntity->game->getInput()->isControlPressed("SPRINT")) speedMult = stats.sprintMultilpier;
     }
 
     if (m != sf::Vector2f(0, 0))

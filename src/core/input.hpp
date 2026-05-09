@@ -15,15 +15,15 @@ public:
     void init(Game* game);
 
     // enter key in all caps
-    bool getKey(std::string key);
+    bool isKeyPressed(std::string key);
     
     // enter key in all caps.
     // 'DPAD xxx' works but is
     // special because they are axes.
     // could also use getAxis for those.
-    bool getButton(std::string key);
+    bool isButtonPressed(std::string button);
     
-    bool getControl(std::string key);
+    bool isControlPressed(std::string control);
 
     float getAxis(sf::Joystick::Axis axis);
     
@@ -39,6 +39,23 @@ public:
 
     void shiftPressedThisFrame();
 private:
+    // enter key in all caps
+    // Dont worry about dontSetPressedThisFrame,
+    // it is only used in other functions in Input.
+    bool getKey(std::string key, bool dontSetPressedThisFrame = false);
+    
+    // enter key in all caps.
+    // 'DPAD xxx' works but is
+    // special because they are axes.
+    // Can also use getAxis for those.
+    // Dont worry about dontSetPressedThisFrame,
+    // it is only used in other functions in Input.
+    bool getButton(std::string key, bool dontSetPressedThisFrame = false);
+    
+    // Dont worry about dontSetPressedThisFrame,
+    // it is only used in other functions in Input.
+    bool getControl(std::string control, bool dontSetPressedThisFrame = false);
+
     Game* game;
 
     std::vector<std::string> keys;
