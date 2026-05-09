@@ -32,7 +32,7 @@ public:
 
     void draw();
 
-    void sceneInput(std::string control);
+    void sceneInput(std::string control, bool justPressed = false);
 
     Camera* getCamera();
 

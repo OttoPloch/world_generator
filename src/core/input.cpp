@@ -1,6 +1,7 @@
 #include "input.hpp"
 #include "game.hpp"
 #include "../ui/interactive_ui_manager.hpp"
+#include <SFML/Window/Mouse.hpp>
 
 Input::Input() {}
 
@@ -163,10 +164,8 @@ void Input::init(Game* game)
         {"UI UP", {"UP", "DPAD UP"}},
         {"UI DOWN", {"DOWN", "DPAD DOWN"}},
         {"EXTRA 1", {"P", "NONE"}},
+        {"MAIN ACTION", {"LEFTCLICK", "A"}}
     };
-
-    leftClickThisFrame = false;
-    leftClickLastFrame = false;
 }
 
 bool Input::getKey(std::string key)
@@ -175,7 +174,15 @@ bool Input::getKey(std::string key)
     {
         bool isPressed = false;
     
-        if (sf::Keyboard::isKeyPressed(static_cast<sf::Keyboard::Key>(stringToKey[key]))) isPressed = true;
+        if (key == "LEFTCLICK" || key == "RIGHTCLICK")
+        {
+            if (key == "LEFTCLICK" && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) isPressed = true;
+            if (key == "RIGHTCLICK" && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) isPressed = true;
+        }
+        else
+        {
+            if (sf::Keyboard::isKeyPressed(static_cast<sf::Keyboard::Key>(stringToKey[key]))) isPressed = true;
+        }
     
         if (isPressed) keysPressedThisFrame[key] = true;
     
@@ -255,18 +262,6 @@ bool Input::getControl(std::string key)
     return false;
 }
 
-bool Input::leftClick()
-{
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && !leftClickLastFrame)
-    {
-        leftClickThisFrame = true;
-
-        return true;
-    }
-
-    return false;
-}
-
 float Input::getAxis(sf::Joystick::Axis axis)
 {
     if (sf::Joystick::isConnected(0))
@@ -328,27 +323,39 @@ sf::Vector2f Input::getMovement()
     }
 }
 
+bool Input::getKeyPressedLastFrame(std::string key)
+{
+    if (auto i = keysPressedLastFrame.find(key) != keysPressedLastFrame.end())
+    {
+        return keysPressedLastFrame[key];
+    }
+
+    return false;
+}
+
+bool Input::getControlPressedLastFrame(std::string control)
+{
+    if (auto i = controlsPressedLastFrame.find(control) != controlsPressedLastFrame.end())
+    {
+        return controlsPressedLastFrame[control];
+    }
+
+    return false;
+}
+
 void Input::update()
 {
     if (game->getWindow()->getWindow().hasFocus())
     {
         for (int i = 0; i < controls.size(); i++)
         {
-            if (getControl(controls[i].first) && !controlsPressedLastFrame[controls[i].first])
+            if (getControl(controls[i].first))
             {
-                game->processInput(controls[i].first);
+                game->processInput(controls[i].first, !controlsPressedLastFrame[controls[i].first]);
             }
         }
 
-        leftClickLastFrame = leftClickThisFrame;
-        leftClickThisFrame = false;
-
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
-        {
-            leftClickThisFrame = true;
-
-            game->getScene()->getUILayer()->interactiveUIManager.disableControllerUI();
-        }
+        if (getKey("LEFTCLICK")) game->getScene()->getUILayer()->interactiveUIManager.disableControllerUI();
     
         if (controllerUI_moveClock.getElapsedTime().asSeconds() >= 0.2f)
         {
@@ -382,7 +389,10 @@ void Input::update()
             }
         }
     }
+}
 
+void Input::shiftPressedThisFrame()
+{
     for (auto i : keysPressedLastFrame)
     {
         keysPressedLastFrame[i.first] = false;

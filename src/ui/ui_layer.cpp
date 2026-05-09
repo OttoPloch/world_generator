@@ -98,6 +98,21 @@ sf::Vector2f UILayer::getViewSize()
     return game->getWindow()->getWindow().getView().getSize();
 }
 
+bool UILayer::checkUICollision()
+{
+    for (auto& i : elements)
+    {
+        if (i.second->getAsText()) continue;
+
+        if (mouseRectCollide(game, {i.second->left(), i.second->top()}, i.second->getSize()))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void UILayer::reset()
 {
     sf::Vector2f viewSize = toV2F(game->getWindow()->getSize());

@@ -52,7 +52,7 @@ bool UIButton::pressed()
     }
     else
     {
-        return (hover() && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left));
+        return (hover() && game->getInput()->getKey("LEFTCLICK"));
     }
 }
 
@@ -65,7 +65,9 @@ bool UIButton::clicked()
     }
     else
     {
-        return (hover() && game->getInput()->leftClick());
+        if (game->getInput()->getKey("LEFTCLICK")) std::cout << game->getInput()->getKeyPressedLastFrame("LEFTCLICK") << '\n';
+
+        return (hover() && game->getInput()->getKey("LEFTCLICK") && !game->getInput()->getKeyPressedLastFrame("LEFTCLICK"));
     }
 }
 

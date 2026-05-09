@@ -29,6 +29,8 @@ public:
 
     sf::Vector2f getViewSize();
 
+    bool checkUICollision();
+
     void reset();
 
     void UIUpdate(float dt);

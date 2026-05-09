@@ -25,15 +25,19 @@ public:
     
     bool getControl(std::string key);
 
-    bool leftClick();
-
     float getAxis(sf::Joystick::Axis axis);
     
     float getAxis(int axis);
 
     sf::Vector2f getMovement();
 
+    bool getKeyPressedLastFrame(std::string key);
+    
+    bool getControlPressedLastFrame(std::string control);
+
     void update();
+
+    void shiftPressedThisFrame();
 private:
     Game* game;
 
@@ -59,9 +63,6 @@ private:
     
     std::unordered_map<std::string, bool> controlsPressedThisFrame;
     std::unordered_map<std::string, bool> controlsPressedLastFrame;
-
-    bool leftClickThisFrame;
-    bool leftClickLastFrame;
 
     sf::Clock controllerUI_moveClock;
 };

@@ -21,7 +21,7 @@ public:
 
     void exit();
     
-    void processInput(std::string control);
+    void processInput(std::string control, bool justPressed = false);
     
     Window* getWindow();
     

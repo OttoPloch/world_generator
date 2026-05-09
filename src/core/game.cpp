@@ -28,17 +28,17 @@ void Game::exit()
     window.exit();
 }
 
-void Game::processInput(std::string control)
+void Game::processInput(std::string control, bool justPressed)
 {
     if (control == "EXIT")
     {
         exit();
     }
-    else if (control == "PAUSE")
+    else if (control == "PAUSE" && justPressed)
     {
         paused = !paused;
     }
-    else if (control == "STEP")
+    else if (control == "STEP" && justPressed)
     {
         if (paused)
         {
@@ -48,7 +48,7 @@ void Game::processInput(std::string control)
     }
     else
     {
-        scene.sceneInput(control);
+        scene.sceneInput(control, justPressed);
     }
 }
 
@@ -131,6 +131,8 @@ void Game::run()
         scene.getUILayer()->getElement("fps display")->getAsText()->setValue(std::to_string(toInt(std::round(smoothFps))));
 
         draw();
+
+        input.shiftPressedThisFrame();
     }
 
     exit();

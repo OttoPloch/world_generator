@@ -23,8 +23,6 @@ void Scene::init(Game* game)
 
     assetManager = game->getAssetManager();
     
-
-    
     entityLayer.init(game);
 
     uiLayer.init(game, &camera);
@@ -155,35 +153,38 @@ void Scene::draw()
     uiLayer.draw();
 }
 
-void Scene::sceneInput(std::string control)
+void Scene::sceneInput(std::string control, bool justPressed)
 {
-    if (control == "RESETZOOM")
+    if (control == "RESETZOOM" && justPressed)
     {
         camera.resetZoom();
     }
-    else if (control == "TOGGLEFOCUS")
+    else if (control == "TOGGLEFOCUS" && justPressed)
     {
         toggleFocus();
     }
-    else if (control == "DEBUG_VIEW")
+    else if (control == "DEBUG_VIEW" && justPressed)
     {
         debugView = !debugView;
     }
-    else if (control == "ZOOMIN")
+    else if (control == "ZOOMIN" && justPressed)
     {
         camera.zoom(1);
     }
-    else if (control == "ZOOMOUT")
+    else if (control == "ZOOMOUT" && justPressed)
     {
         camera.zoom(-1);
     }
-    else if (control == "INTERACT")
+    else if (control == "INTERACT" && justPressed)
     {
         uiLayer.interactiveUIManager.click();
     }
-    else if (control == "EXTRA 1")
+    else if (control == "EXTRA 1" && justPressed)
     {
         debugChunkLayerView++;
+    }
+    else if (control == "MAIN ACTION")
+    {
     }
 }
 
