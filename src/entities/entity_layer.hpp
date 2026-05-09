@@ -39,6 +39,8 @@ public:
     void update(float dt);
 
     void draw(bool debug);
+
+    Entity* player;
 private:
     Game* game;
 

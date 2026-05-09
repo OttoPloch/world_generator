@@ -6,6 +6,7 @@
 #include "../entities/components/movement_component.hpp"
 #include "../entities/components/control_component.hpp"
 #include "../entities/components/collision_component.hpp"
+#include "../entities/components/action_component.hpp"
 
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
@@ -136,6 +137,28 @@ void Scene::UIUpdate(float dt)
         uiLayer.getElement("animation button 2")->setAnimation({0, 0}, {-75, 200}, -1, -1, true, false);
     }
 
+    if (uiLayer.getElement("action set attack button")->getAsButton()->getActive())
+    {
+        if (entityLayer.player)
+        {
+            if (auto a = entityLayer.player->getComponent<ActionComponent>())
+            {
+                a->setAction("attack!");
+            }
+        }
+    }
+
+    if (uiLayer.getElement("action set heal button")->getAsButton()->getActive())
+    {
+        if (entityLayer.player)
+        {
+            if (auto a = entityLayer.player->getComponent<ActionComponent>())
+            {
+                a->setAction("heal!");
+            }
+        }
+    }
+
     uiLayer.UIUpdate(dt);
 }
 
@@ -183,8 +206,31 @@ void Scene::sceneInput(std::string control, bool justPressed)
     {
         debugChunkLayerView++;
     }
-    else if (control == "MAIN ACTION")
+    else if (control == "MAIN ACTION" && justPressed)
     {
+        if (!uiLayer.checkUICollision())
+        {
+            if (entityLayer.player)
+            {
+                if (auto a = entityLayer.player->getComponent<ActionComponent>())
+                {
+                    a->createRequest(control);
+                }
+            }
+        }
+    }
+    else if (control == "SECONDARY ACTION" && justPressed)
+    {
+        if (!uiLayer.checkUICollision())
+        {
+            if (entityLayer.player)
+            {
+                if (auto a = entityLayer.player->getComponent<ActionComponent>())
+                {
+                    a->createRequest(control);
+                }
+            }
+        }
     }
 }
 
@@ -195,6 +241,7 @@ void Scene::toggleFocus()
     if (camera.getFocus() == nullptr)
     {
         Entity* e = entityLayer.getEntity(0);
+        entityLayer.player = e;
         if (!e->getComponent<ControlComponent>()) e->addComponent<ControlComponent>(e);
         camera.setFocus(e);
     }
@@ -203,6 +250,7 @@ void Scene::toggleFocus()
         Entity* e = entityLayer.getEntity(0);
         e->removeComponent<ControlComponent>();
         camera.removeFocus();
+        entityLayer.player = nullptr;
     }
 }
 

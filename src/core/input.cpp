@@ -164,7 +164,8 @@ void Input::init(Game* game)
         {"UI UP", {"UP", "DPAD UP"}},
         {"UI DOWN", {"DOWN", "DPAD DOWN"}},
         {"EXTRA 1", {"P", "NONE"}},
-        {"MAIN ACTION", {"LEFTCLICK", "A"}}
+        {"MAIN ACTION", {"LEFTCLICK", "A"}},
+        {"SECONDARY ACTION", {"RIGHTCLICK", "B"}}
     };
 }
 
@@ -267,7 +268,7 @@ void Input::update()
             }
         }
 
-        if (getKey("LEFTCLICK")) game->getScene()->getUILayer()->interactiveUIManager.disableControllerUI();
+        if (getKey("LEFTCLICK") || getKey("RIGHTCLICK")) game->getScene()->getUILayer()->interactiveUIManager.disableControllerUI();
     
         if (controllerUI_moveClock.getElapsedTime().asSeconds() >= 0.2f)
         {
@@ -351,7 +352,7 @@ bool Input::getKey(std::string key, bool dontSetPressedThisFrame)
         if (key == "LEFTCLICK" || key == "RIGHTCLICK")
         {
             if (key == "LEFTCLICK" && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) isPressed = true;
-            if (key == "RIGHTCLICK" && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) isPressed = true;
+            if (key == "RIGHTCLICK" && sf::Mouse::isButtonPressed(sf::Mouse::Button::Right)) isPressed = true;
         }
         else
         {

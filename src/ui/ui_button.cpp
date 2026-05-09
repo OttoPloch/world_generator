@@ -27,6 +27,11 @@ void UIButton::init(std::array<sf::Texture*, 3> buttonTextures)
     active = false;
 }
 
+sf::FloatRect UIButton::getBoundingBox()
+{
+    return {{left(), top()}, size};
+}
+
 bool UIButton::hover()
 {
     if (uiLayer->interactiveUIManager.isControllerUIActive())

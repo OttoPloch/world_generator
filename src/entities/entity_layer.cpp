@@ -9,6 +9,7 @@
 #include "components/state_component.hpp"
 #include "components/control_component.hpp"
 #include "components/movement_component.hpp"
+#include "components/action_component.hpp"
 
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -31,8 +32,10 @@ void EntityLayer::init(Game* game)
     pt->control = ControlComponentData();
     pt->state = StateComponentData();
     pt->collision = {{.5f, .5f}, true, RectType::ACTIVE};
+    pt->action = {"attack!", "block!"};
 
     Entity* e = addEntity({0, 0}, pt);
+    this->player = e;
 
     auto bt = &tManager.entityTemplates["box"];
     bt->sprite = {game->getAssetManager()->getTexture("crate"), {35, 35}, false, false, {{0, 0}, {0, 0}}, 1, nullptr, nullptr};
@@ -162,6 +165,7 @@ Entity* EntityLayer::addEntity(sf::Vector2f position, EntityTemplate* t)
         if (t->control) e->addComponent<ControlComponent>(e);
         if (t->state) e->addComponent<StateComponent>(e);
         if (t->collision) e->addComponent<CollisionComponent>(e, *e->getPositionVar(), t->collision->size, t->collision->sizeIsScaleOfSprite, t->collision->type);
+        if (t->action) e->addComponent<ActionComponent>(e, t->action->mainAction, t->action->secondaryAction);
     }
 
     return entities[ID].get();

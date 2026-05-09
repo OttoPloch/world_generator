@@ -2,6 +2,7 @@
 
 #include "../core/common.hpp"
 #include "ui_element.hpp"
+#include <SFML/Graphics/Rect.hpp>
 
 class UIButton : public UIElement
 {
@@ -22,6 +23,8 @@ public:
     // buttonTextures[1] = hover texture
     // buttonTextures[2] = click texture
     void init(std::array<sf::Texture*, 3> buttonTextures);
+
+    sf::FloatRect getBoundingBox() override;
 
     bool hover();
 

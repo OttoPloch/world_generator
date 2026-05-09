@@ -39,3 +39,10 @@ struct CollisionComponentData
     bool sizeIsScaleOfSprite;
     RectType type;
 };
+
+struct ActionComponentData
+{
+    // temp, need to create Action struct and substructs.
+    std::string mainAction;
+    std::string secondaryAction;
+};

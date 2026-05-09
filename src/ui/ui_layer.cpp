@@ -2,6 +2,8 @@
 #include "../core/game.hpp"
 #include "../entities/components/movement_component.hpp"
 #include "ui_background.hpp"
+#include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 
 UILayer::UILayer() {}
 
@@ -19,6 +21,8 @@ void UILayer::init(Game* game, Camera* camera)
     
     std::array<sf::Texture*, 3> buttonTextures = {assetManager->getTexture("button_up", "images/ui/"), assetManager->getTexture("button_hover", "images/ui/"), assetManager->getTexture("button_down", "images/ui/")};
     std::array<sf::Texture*, 3> blueButtonTextures = {assetManager->getTexture("blue_button_up", "images/ui/"), assetManager->getTexture("blue_button_hover", "images/ui/"), assetManager->getTexture("blue_button_down", "images/ui/")};
+    std::array<sf::Texture*, 3> redButtonTextures = {assetManager->getTexture("red_button_up", "images/ui/"), assetManager->getTexture("red_button_hover", "images/ui/"), assetManager->getTexture("red_button_down", "images/ui/")};
+    std::array<sf::Texture*, 3> greenButtonTextures = {assetManager->getTexture("green_button_up", "images/ui/"), assetManager->getTexture("green_button_hover", "images/ui/"), assetManager->getTexture("green_button_down", "images/ui/")};
     
     currID = getNewID(); elements[currID] = std::make_unique<UIText>(game, this, "fps display", currID, 0, toV2F(20, 20), assetManager->getFont("sfml_font"), "FPS: ###", 30, sf::Color::White);
     currID = getNewID(); elements[currID] = std::make_unique<UIText>(game, this, "chunk pos display", currID, 0, toV2F(20, 60), assetManager->getFont("sfml_font"), "Chunk Position: ###", 30, sf::Color::White);
@@ -38,6 +42,10 @@ void UILayer::init(Game* game, Camera* camera)
 
     currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "animation button 2", currID, 0, toV2F(-75, 200), toV2F(50, 50), blueButtonTextures);
     currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "animation button", currID, 0, toV2F(25, 200), toV2F(50, 50), blueButtonTextures);
+    
+    currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "action set attack button", currID, 2, toV2F(25, -25), toV2F(100, 100), redButtonTextures);
+    currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "action set heal button", currID, 2, toV2F(175, -25), toV2F(100, 100), greenButtonTextures);
+    currID = getNewID(); elements[currID] = std::make_unique<UIText>(game, this, "action set text", currID, 2, toV2F(25, -150), assetManager->getFont("White Storm"), "Set Main Action 'attack!' or 'heal!'", 25, sf::Color::Black);
     
     // currID = getNewID(); elements[currID] = std::make_unique<UIBackground>(game, this, "many win parent", currID, 0, toV2F(80, 80), toV2F(50, 50), sf::Color(0, 0, 0, 0), assetManager->getTileSet("16px"), assetManager->getTexture("ui_tech", "images/ui/"));
     // for (int i = 0; i < 100; i++)
@@ -103,11 +111,11 @@ bool UILayer::checkUICollision()
     for (auto& i : elements)
     {
         if (i.second->getAsText()) continue;
+        if (i.second.get() == interactiveUIManager.controllerUI_indicator) continue;
 
-        if (mouseRectCollide(game, {i.second->left(), i.second->top()}, i.second->getSize()))
-        {
-            return true;
-        }
+        sf::FloatRect bb = i.second->getBoundingBox();
+
+        if (mouseRectCollide(game, bb.position, bb.size)) return true;
     }
 
     return false;
