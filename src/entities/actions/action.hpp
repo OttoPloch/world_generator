@@ -4,7 +4,7 @@
 
 struct Action
 {
-    Action(std::string name, float rangeMultiplier, float timeToComplete, bool positionTrackedFromClick = false);
+    Action(std::string name, float rangeMultiplier, float timeToComplete, float cooldown = -1.f, bool positionTrackedFromClick = false);
 
     virtual void completeAction(sf::Vector2f position = {0, 0});
 
@@ -18,6 +18,9 @@ struct Action
     
     float timeToComplete;
     float timeProgress;
+
+    float cooldown;
+    float cooldownProgress;
 
     bool active;
 

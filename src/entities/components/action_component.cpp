@@ -7,6 +7,9 @@ ActionComponent::ActionComponent(Entity* myEntity, std::unique_ptr<Action> mainA
 
 void ActionComponent::update(float dt)
 {
+    mainAction->cooldownProgress += dt;
+    secondaryAction->cooldownProgress += dt;
+
     if (mainAction->active)
     {
         mainAction->timeProgress += dt;
@@ -36,22 +39,24 @@ void ActionComponent::update(float dt)
 
 void ActionComponent::startAction(std::string actionInput)
 {
-    if (actionInput == "MAIN ACTION" && mainAction->timeProgress == 0.f)
+    if (actionInput == "MAIN ACTION" && mainAction->cooldownProgress >= mainAction->cooldown)
     {
         mainAction->clickPosition = myEntity->game->getInput()->getMouseWorldPos();
         
         if (myEntity->game->getScene()->processActionRequest(myEntity, mainAction.get()))
         {
-            mainAction->active = true;    
+            mainAction->active = true;
+            mainAction->cooldownProgress = 0.f;
         }
     }
-    else if (actionInput == "SECONDARY ACTION" && secondaryAction->timeProgress == 0.f)
+    else if (actionInput == "SECONDARY ACTION" && secondaryAction->cooldownProgress >= secondaryAction->cooldown)
     {
         secondaryAction->clickPosition = myEntity->game->getInput()->getMouseWorldPos();
         
         if (myEntity->game->getScene()->processActionRequest(myEntity, secondaryAction.get()))
         {
             secondaryAction->active = true;
+            secondaryAction->cooldownProgress = 0.f;
         }
     }
 }

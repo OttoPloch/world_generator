@@ -143,7 +143,7 @@ void Scene::UIUpdate(float dt)
         {
             if (auto a = entityLayer.player->getComponent<ActionComponent>())
             {
-                a->setAction("MAIN ACTION", {"attack!", 1.f, 2.f, false});
+                a->setAction("MAIN ACTION", {"attack!", 1.f, 0.f, 2.f});
             }
         }
     }
@@ -154,7 +154,7 @@ void Scene::UIUpdate(float dt)
         {
             if (auto a = entityLayer.player->getComponent<ActionComponent>())
             {
-                a->setAction("MAIN ACTION", {"heal!", -1.f, .5f, false});
+                a->setAction("MAIN ACTION", {"heal!", -1.f, 1.f, 3.f});
             }
         }
     }
