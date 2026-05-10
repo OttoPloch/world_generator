@@ -58,7 +58,7 @@ public:
         }
     }
 
-    void update();
+    void update(float dt);
 
     Chunk* chunk;
 
@@ -78,7 +78,9 @@ public:
 
     VertexGroup myVerts;
 
-    GlobalAnimation* animation;
+    GlobalAnimation* globalAnimation;
+    std::unique_ptr<Animation> animation;
+    float animSpeedMult;
 
     int z;
 private:

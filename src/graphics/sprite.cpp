@@ -86,6 +86,8 @@ void Sprite::update(float dt)
             if (activeAnimation->index >= activeAnimation->frames.size()) activeAnimation->index = 0;
             if (activeAnimation->index < 0) activeAnimation->index = activeAnimation->frames.size() - 1;
             
+            // TODO: devise a better way to check if a sprite and its animation have the same texture,
+            // without using getNativeHandle.
             if (activeAnimation->texture->getNativeHandle() != sprite->getTexture().getNativeHandle())
             {
                 std::cout << "ACTIVE ANIMATION TEXTURE AND SPRITE CURRENT TEXTURE ARE DIFFERENT, UPDATING SPRITE TEXTURE.\n";

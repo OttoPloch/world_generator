@@ -21,7 +21,7 @@ Tile::Tile(TileType type, sf::IntRect texCoords, int z, bool collides, std::stri
     this->chunk = nullptr;
     this->localPosition = {0, 0};
     size = 0;
-    animation = nullptr;
+    globalAnimation = nullptr;
 }
 
 Tile::Tile(Game* game, Chunk* chunk, sf::Vector2i localPosition, TileType type, sf::IntRect texCoords, int z, bool collides, std::string colliderName, sf::Vector2f collOffsetFraction, sf::Vector2f collSizeFraction)
@@ -40,7 +40,7 @@ Tile::Tile(Game* game, Chunk* chunk, sf::Vector2i localPosition, TileType type, 
 
     this->z = z;
 
-    animation = nullptr;
+    globalAnimation = nullptr;
 
     this->collides = collides;
 
@@ -76,19 +76,41 @@ sf::FloatRect Tile::getCollRect()
     }
 }
 
-void Tile::update()
+void Tile::update(float dt)
 {
-    if (animation)
+    if (globalAnimation)
     {
-        if (animation->animation.name != "")
+        if (globalAnimation->animation.name != "")
         {
-            sf::IntRect newTexCoords = animation->animation.frames[animation->animation.index];
+            sf::IntRect newTexCoords = globalAnimation->animation.frames[globalAnimation->animation.index];
     
             if (myVerts.texCoords != newTexCoords)
             {
                 myVerts.texCoords = newTexCoords;
                 chunk->createTileVerts(localPosition, z);
             }
+        }
+    }
+    else if (animation)
+    {
+        animation->secondsTillNextFrame -= dt * animSpeedMult;
+
+        if (animation->secondsTillNextFrame <= 0.f)
+        {
+            (animation->reversed) ? animation->index-- : animation->index++;
+            
+            if (animation->index >= animation->frames.size()) animation->index = 0;
+            if (animation->index < 0) animation->index = animation->frames.size() - 1;
+            
+            sf::IntRect newTexCoords = animation->frames[animation->index];
+
+            if (myVerts.texCoords != newTexCoords)
+            {
+                myVerts.texCoords = newTexCoords;
+                chunk->createTileVerts(localPosition, z);
+            }
+
+            animation->secondsTillNextFrame = animation->secondsPerFrame;
         }
     }
 }

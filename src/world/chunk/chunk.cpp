@@ -56,19 +56,28 @@ Chunk::Chunk(Game* game, sf::Vector2i chunkPosition, std::vector<std::vector<Til
             // TEMP, TODO: find a better place for this
             if (this->tiles[i][j]->type == TileType::WATER)
             {
-                this->tiles[i][j]->animation = game->getAssetManager()->getGlobalAnimation("water");
-                this->tiles[i][j]->animation->animation.adjustSpeed(1.5f);
+                this->tiles[i][j]->globalAnimation = game->getAssetManager()->getGlobalAnimation("water");
+                this->tiles[i][j]->globalAnimation->animation.adjustSpeed(1.5f);
             }
             else if (this->tiles[i][j]->type == TileType::GRASS)
             {
-                this->tiles[i][j]->animation = game->getAssetManager()->getGlobalAnimation("grass");
-                this->tiles[i][j]->animation->animation.adjustSpeed(6);
+                this->tiles[i][j]->animation = std::make_unique<Animation>(*game->getAssetManager()->getAnimation("grass"));
+                this->tiles[i][j]->animation->adjustSpeed(6.f);
+                
+                // random starting point, makes tiles not in sync.
+                this->tiles[i][j]->animation->secondsTillNextFrame = this->tiles[i][j]->animation->secondsPerFrame * (toFloat(getRandInt(0, 99)) / 100.f);
+                this->tiles[i][j]->animSpeedMult = toFloat(getRandInt(10, 40)) / 100.f;
+                this->tiles[i][j]->animation->index = getRandInt(0, this->tiles[i][j]->animation->frames.size() - 1);
+
+                // this->tiles[i][j]->globalAnimation = game->getAssetManager()->getGlobalAnimation("grass");
+                // this->tiles[i][j]->globalAnimation->animation.adjustSpeed(6);
             }
             else if (this->tiles[i][j]->type == TileType::LAVA)
             {
-                this->tiles[i][j]->animation = game->getAssetManager()->getGlobalAnimation("lava");
-                this->tiles[i][j]->animation->animation.adjustSpeed(.75f);
+                this->tiles[i][j]->globalAnimation = game->getAssetManager()->getGlobalAnimation("lava");
+                this->tiles[i][j]->globalAnimation->animation.adjustSpeed(.75f);
             }
+            // // // // // // // // // // // // // // /
 
             createTileVerts(j, i);
         }
@@ -186,7 +195,7 @@ void Chunk::update(float dt)
     {
         for (int j = 0; j < tiles[i].size(); j++)
         {
-            tiles[i][j]->update();
+            tiles[i][j]->update(dt);
         }
     }
 }
