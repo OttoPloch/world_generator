@@ -286,3 +286,10 @@ sf::Vector2f chunkToWorldPosition(Game* game, sf::Vector2i position)
 
     return {position.x * chunkSize, position.y * chunkSize};
 }
+
+sf::Vector2i worldToTilePosition(Game* game, sf::Vector2f position)
+{
+    float tileSize = game->getSettings()->tile_size;
+
+    return {toInt(std::floor(position.x / tileSize)), toInt(std::floor(position.y / tileSize))};
+}

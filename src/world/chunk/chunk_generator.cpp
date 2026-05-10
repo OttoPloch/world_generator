@@ -63,7 +63,7 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
                 newTiles[0].emplace_back(TileType::LAVA, atlas->getItemTexCoords("lava_basic"));
                 break;
             case 3:
-                newTiles[0].emplace_back(TileType::PINK, atlas->getItemTexCoords("pink_basic"), true, "tile");
+                newTiles[0].emplace_back(Tile(TileType::PINK, atlas->getItemTexCoords("pink_basic"), 0, {}, true, "tile"));
                 break;
         }
     }
@@ -85,7 +85,7 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
                     newTiles[0].emplace_back(TileType::LAVA, atlas->getItemTexCoords("lava_basic"));
                     break;
                 case 3:
-                    newTiles[0].emplace_back(TileType::PINK, atlas->getItemTexCoords("pink_basic"), true, "tile");
+                    newTiles[0].push_back(Tile(TileType::PINK, atlas->getItemTexCoords("pink_basic"), 0, {}, true, "tile"));
                     break;
             }
         }
@@ -207,7 +207,20 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
                     {TileType::PINK, "pink"},
                 };
 
-                newTiles[j].emplace_back(typeData[j], atlas->getItemTexCoords(typesToStrings[typeData[j]]), j);
+                // TEMP, TODO: tile templates, make getting these values the same everywhere, and not hardcoded.
+                std::map<TileType, float> durabilities {
+                    {TileType::STONE, 3.f},
+                    {TileType::COBBLE, 1.f}
+                };
+
+                std::vector<std::unique_ptr<TileTag>> tags = {};
+
+                if (durabilities.find(typeData[j]) != durabilities.end())
+                {
+                    tags.emplace_back(std::make_unique<MineableTag>(durabilities[typeData[j]]));
+                }
+
+                newTiles[j].emplace_back(typeData[j], atlas->getItemTexCoords(typesToStrings[typeData[j]]), j, std::move(tags));
             }
         }
 

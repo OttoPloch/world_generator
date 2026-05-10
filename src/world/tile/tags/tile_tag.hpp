@@ -1,12 +1,14 @@
 #pragma once
 
+#include <string>
+
 class Tile;
 
 struct TileTag
 {
-    TileTag(Tile* myTile);
+    TileTag(std::string name);
 
     virtual ~TileTag();
 
-    Tile* myTile;
+    std::string name;
 };

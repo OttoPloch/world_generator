@@ -28,13 +28,22 @@ public:
     // of -1 gets the opposite side and
     // 17 (in a chunk of size 16)
     // will get the left. Z also wraps.
-    Tile* getTile(int column, int row, int z = 0);
+    Tile* getTile(int column, int row, int z = 0, bool getHighestNonAir = true);
+
+    void setTile(Tile newTile, bool setHighestNonAir = true);
 
     std::vector<std::vector<std::unique_ptr<Tile>>>* getTiles();
 
     sf::FloatRect getTileRect(sf::Vector2i tileLocalPosition, int z = 0, bool returnCenterPos = true);
 
     std::vector<sf::Vertex>* getVertices();
+
+    // if wrapValues is true, column and row arguments can be out
+    // of bounds, and will wrap around. If it is false, you must
+    // provide valid coordinates. The z return value will always
+    // be in a valid range, not a negative UNLESS no non-air tile
+    // is found, then it will return -1 to indicate a failure.
+    int getHighestNonAirZ(int column, int row, bool wrapValues = true);
 
     sf::Vector2i getChunkPosition();
 

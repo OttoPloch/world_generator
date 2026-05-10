@@ -12,7 +12,7 @@ void ActionComponent::update(float dt)
 
     if (mainAction->active)
     {
-        mainAction->timeProgress += dt;
+        mainAction->update(dt, myEntity->game);
 
         if (mainAction->timeProgress >= mainAction->timeToComplete)
         {
@@ -25,15 +25,17 @@ void ActionComponent::update(float dt)
 
     if (secondaryAction->active)
     {
-        secondaryAction->timeProgress += dt;
-
-        if (secondaryAction->timeProgress >= secondaryAction->timeToComplete)
+        if (mainAction->update(dt, myEntity->game))
         {
-            secondaryAction->completeAction(myEntity, myEntity->game->getInput()->getMouseWorldPos());
-
-            secondaryAction->timeProgress = 0.f;
-            secondaryAction->active = false;
+            if (secondaryAction->timeProgress >= secondaryAction->timeToComplete)
+            {
+                secondaryAction->completeAction(myEntity, myEntity->game->getInput()->getMouseWorldPos());
+    
+                secondaryAction->timeProgress = 0.f;
+                secondaryAction->active = false;
+            }
         }
+
     }
 }
 
@@ -47,6 +49,7 @@ void ActionComponent::startAction(std::string actionInput)
         {
             mainAction->active = true;
             mainAction->cooldownProgress = 0.f;
+            mainAction->start(myEntity->game);
         }
     }
     else if (actionInput == "SECONDARY ACTION" && secondaryAction->cooldownProgress >= secondaryAction->cooldown)
@@ -57,6 +60,7 @@ void ActionComponent::startAction(std::string actionInput)
         {
             secondaryAction->active = true;
             secondaryAction->cooldownProgress = 0.f;
+            secondaryAction->start(myEntity->game);
         }
     }
 }

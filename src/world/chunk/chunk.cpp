@@ -40,7 +40,7 @@ Chunk::Chunk(Game* game, sf::Vector2i chunkPosition, std::vector<std::vector<Til
         
                 sf::Vector2i localPos(j % chunkSize, toInt(std::floor(j / chunkSize)));
 
-                this->tiles[i][j] = std::make_unique<Tile>(game, this, localPos, currTile->type, currTile->myVerts.texCoords, i, currTile->collides, currTile->colliderName, currTile->collOffsetFraction, currTile->collSizeFraction);
+                this->tiles[i][j] = std::make_unique<Tile>(game, this, localPos, currTile->type, currTile->myVerts.texCoords, i, std::move(currTile->tags), currTile->collides, currTile->colliderName, currTile->collOffsetFraction, currTile->collSizeFraction);
 
                 if (currTile->collides)
                 {
@@ -144,8 +144,10 @@ void Chunk::createTileVerts(sf::Vector2i tilePosition, int z)
     createTileVerts(tilePosition.y * chunkSize + tilePosition.x, z);
 }
 
-Tile* Chunk::getTile(int column, int row, int z)
+Tile* Chunk::getTile(int column, int row, int z, bool getHighestNonAir)
 {
+    // Wrapping values //
+
     int x = column;
     int y = row;
 
@@ -155,12 +157,88 @@ Tile* Chunk::getTile(int column, int row, int z)
     while (y < 0) y += chunkSize;
 
     int effectiveZ = z;
+    if (getHighestNonAir) effectiveZ = getHighestNonAirZ(x, y, false);
 
     int maxZ = game->getSettings()->maxTileZ;
     while (effectiveZ > maxZ) effectiveZ -= maxZ + 1;
     while (effectiveZ < 0) effectiveZ += maxZ + 1;
 
+    // // // // // // // 
+
     return tiles[effectiveZ][y * chunkSize + x].get();
+}
+
+void Chunk::setTile(Tile newTile, bool setHighestNonAir)
+{
+    // Wrapping values //
+
+    int x = newTile.localPosition.x;
+    int y = newTile.localPosition.y;
+
+    while (x > chunkSize - 1) x -= chunkSize;
+    while (x < 0) x += chunkSize;
+    while (y > chunkSize - 1) y -= chunkSize;
+    while (y < 0) y += chunkSize;
+
+    int effectiveZ = newTile.z;
+    if (setHighestNonAir) effectiveZ = getHighestNonAirZ(x, y, false);
+
+    // // // // // // //
+
+    if (Tile* tile = this->tiles[effectiveZ][y * chunkSize + x].get())
+    {
+        if ((tile->collides && !newTile.collides) || (!tile->collides && newTile.collides))
+        {
+            // old tile and new tile do not have same collider value, tilesWithColliders needs to be updated.
+            
+            if (tile->collides)
+            {
+                // old tile collides but new one doesn't, remove this tile from tilesWithColliders
+                for (int i = 0; i < tilesWithColliders.size(); i++)
+                {
+                    if (tilesWithColliders[i] == tile)
+                    {
+                        tilesWithColliders.erase(tilesWithColliders.begin() + i);
+
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                // new tile collides but old one doesn't, add tile to tilesWithColliders
+                tilesWithColliders.push_back(tile);
+            }
+        }
+
+        // finally, set the tile
+        *tile = Tile(game, this, {x, y}, newTile.type, newTile.myVerts.texCoords, effectiveZ, std::move(newTile.tags), newTile.collides, newTile.colliderName, newTile.collOffsetFraction, newTile.collSizeFraction);
+
+        createTileVerts(y * chunkSize + x, effectiveZ);
+
+
+
+
+        
+        // TEMP, TODO: find a better place for this. This code is also in the constructor,
+        // need to make a unified tile creation/modification tool that grabs animation configs
+        // from somewhere, like with the templateManager for entities.
+        if (tile->type == TileType::WATER)
+        {
+            tile->globalAnimation = game->getAssetManager()->getGlobalAnimation("water");
+            tile->globalAnimation->animation.adjustSpeed(1.5f);
+        }
+        else if (tile->type == TileType::GRASS)
+        {
+
+        }
+        else if (tile->type == TileType::LAVA)
+        {
+            tile->globalAnimation = game->getAssetManager()->getGlobalAnimation("lava");
+            tile->globalAnimation->animation.adjustSpeed(.75f);
+        }
+        // // // // // // // // // // // // // // /
+    }
 }
 
 std::vector<std::vector<std::unique_ptr<Tile>>>* Chunk::getTiles() { return &tiles; }
@@ -184,6 +262,36 @@ sf::FloatRect Chunk::getTileRect(sf::Vector2i tileLocalPosition, int z, bool ret
 }
 
 std::vector<sf::Vertex>* Chunk::getVertices() { return &tileVertices; }
+
+int Chunk::getHighestNonAirZ(int column, int row, bool wrapValues)
+{
+    int maxZ = game->getSettings()->maxTileZ;
+    int z = maxZ;
+
+    int x = column;
+    int y = row;
+
+    if (wrapValues)
+    {
+        while (x > chunkSize - 1) x -= chunkSize;
+        while (x < 0) x += chunkSize;
+        while (y > chunkSize - 1) y -= chunkSize;
+        while (y < 0) y += chunkSize;
+    }
+
+    Tile* tile = this->tiles[z][y * chunkSize + x].get();
+
+    while (tile->type == TileType::AIR && z > 0)
+    {
+        z--;
+
+        tile = this->tiles[z][y * chunkSize + x].get();
+    }
+
+    if (tile->type == TileType::AIR) z = -1;
+
+    return z;
+}
 
 sf::Vector2i Chunk::getChunkPosition() { return chunkPosition; }
 

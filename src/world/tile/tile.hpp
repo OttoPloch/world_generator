@@ -16,9 +16,9 @@ public:
     Tile();
 
     // this is only used in ChunkGenerator to set the values of the tile before they are copied into the final Tile object in the Chunk.
-    Tile(TileType type, sf::IntRect texCoords, int z = 0, bool collides = false, std::string colliderName = "none", sf::Vector2f collOffsetFraction = {0.f, 0.f}, sf::Vector2f collSizeFraction = {1.f, 1.f});
+    Tile(TileType type, sf::IntRect texCoords, int z = 0, std::vector<std::unique_ptr<TileTag>> tags = {}, bool collides = false, std::string colliderName = "none", sf::Vector2f collOffsetFraction = {0.f, 0.f}, sf::Vector2f collSizeFraction = {1.f, 1.f});
     
-    Tile(Game* game, Chunk* chunk, sf::Vector2i localPosition, TileType type, sf::IntRect texCoords, int z = 0, bool collides = false, std::string colliderName = "none", sf::Vector2f collOffsetFraction = {0.f, 0.f}, sf::Vector2f collSizeFraction = {1.f, 1.f});
+    Tile(Game* game, Chunk* chunk, sf::Vector2i localPosition, TileType type, sf::IntRect texCoords, int z = 0, std::vector<std::unique_ptr<TileTag>> tags = {}, bool collides = false, std::string colliderName = "none", sf::Vector2f collOffsetFraction = {0.f, 0.f}, sf::Vector2f collSizeFraction = {1.f, 1.f});
 
     sf::FloatRect getCollRect();
 
@@ -83,8 +83,8 @@ public:
     float animSpeedMult;
 
     int z;
-private:
-    Game* game;
 
     std::vector<std::unique_ptr<TileTag>> tags;
+    
+    Game* game;
 };

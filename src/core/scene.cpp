@@ -7,6 +7,8 @@
 #include "../entities/components/control_component.hpp"
 #include "../entities/components/collision_component.hpp"
 #include "../entities/components/action_component.hpp"
+#include "../entities/actions/action.hpp"
+#include "../entities/actions/mine_action.hpp"
 
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
@@ -48,7 +50,7 @@ void Scene::tick()
     sf::Vector2i mouseChunkPos = worldToChunkPosition(game, window->getWindow().mapPixelToCoords(sf::Mouse::getPosition(window->getWindow())));
     uiLayer.getElement("mouse chunk pos display")->getAsText()->setValue(std::to_string(mouseChunkPos.x) + ", " + std::to_string(mouseChunkPos.y));
     
-    sf::Vector2f mouseWorldPos = window->getWindow().mapPixelToCoords(sf::Mouse::getPosition(window->getWindow()));
+    sf::Vector2f mouseWorldPos = game->getInput()->getMouseWorldPos();
     sf::Vector2f mouseLocalWorldPos = {std::fmod(mouseWorldPos.x, toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size), std::fmod(mouseWorldPos.y, toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size)};
     sf::Vector2i mouseLocalPos = {toInt(std::floor(mouseLocalWorldPos.x / game->getSettings()->tile_size)), toInt(std::floor(mouseLocalWorldPos.y / game->getSettings()->tile_size))};
     Chunk* mouseChunk = chunkLayer.getChunk(mouseChunkPos);
@@ -241,8 +243,43 @@ bool Scene::processActionRequest(Entity* actor, Action* action)
         if (auto a = actor->getComponent<ActionComponent>())
         {
             // CHECKS
+
             if (action->rangeMultiplier < 0.f || getDistance(actor->getPosition(), action->clickPosition) <= a->range * action->rangeMultiplier)
             {
+                // IS WITHIN RANGE
+
+                if (dynamic_cast<MineAction*>(action))
+                {
+                    // TRYING TO MINE
+
+                    sf::Vector2f mouseWorldPos = game->getInput()->getMouseWorldPos();
+
+                    if (auto chunk = chunkLayer.getChunk(worldToChunkPosition(game, mouseWorldPos)))
+                    {
+                        // IN A VALID CHUNK
+
+                        sf::Vector2i tilePos = worldToTilePosition(game, mouseWorldPos);
+                        tilePos = {tilePos.x % game->getSettings()->chunk_size, tilePos.y % game->getSettings()->chunk_size};
+
+                        if (auto t = chunk->getTile(tilePos.x, tilePos.y))
+                        {
+                            // FOUND TARGETED TILE
+
+                            for (auto& i : t->tags)
+                            {
+                                if (i->name == "MINE")
+                                {
+                                    // TARGETED TILE CAN BE MINED, ACTION IS VALID
+                                    return true;
+                                }
+                            }
+
+                            // NO MINEABLE TAG FOUND, TARGETED TILE CANNOT BE MINED
+                            return false;
+                        }
+                    }
+                }
+
                 // ALL CHECKS PASSED, REQUEST IS VALID
                 return true;
             }

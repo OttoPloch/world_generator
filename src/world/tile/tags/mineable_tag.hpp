@@ -4,5 +4,7 @@
 
 struct MineableTag : public TileTag
 {
-    MineableTag(Tile* myTile);
+    MineableTag(float durability);
+
+    float durability;
 };

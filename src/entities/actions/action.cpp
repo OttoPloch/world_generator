@@ -14,6 +14,15 @@ Action::Action(std::string name, float rangeMultiplier, float timeToComplete, fl
     }
 }
 
+void Action::start(Game* game) {}
+
+bool Action::update(float dt, Game* game)
+{
+    timeProgress += dt;
+
+    return true;
+}
+
 void Action::completeAction(Entity* actor, sf::Vector2f position)
 {
     sf::Vector2f p = position;
@@ -21,8 +30,4 @@ void Action::completeAction(Entity* actor, sf::Vector2f position)
     if (positionTrackedFromClick) p = clickPosition;
 
     std::cout << name << " has completed at " << p.x << ", " << p.y << ".\n";
-
-    EntityLayer* eL = actor->game->getScene()->getEntityLayer();
-
-    eL->addEntity(p, &eL->tManager.entityTemplates["box"]);
 }

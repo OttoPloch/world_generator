@@ -10,6 +10,7 @@
 #include "components/control_component.hpp"
 #include "components/movement_component.hpp"
 #include "components/action_component.hpp"
+#include "actions/mine_action.hpp"
 
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -32,7 +33,7 @@ void EntityLayer::init(Game* game)
     pt->control = ControlComponentData();
     pt->state = StateComponentData();
     pt->collision = {{.5f, .5f}, true, RectType::ACTIVE};
-    pt->action = {std::make_unique<Action>("attack!", 1.f, 0.f, 2.f), std::make_unique<Action>("block!", -1.f, 0.f, 4.f, true), game->getSettings()->tile_size * 5};
+    pt->action = {std::make_unique<MineAction>(1.f, "mine!", 1.f), std::make_unique<Action>("block!", -1.f, 0.f, 4.f, true), game->getSettings()->tile_size * 15};
 
     Entity* e = addEntity({0, 0}, pt);
     this->player = e;

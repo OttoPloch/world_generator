@@ -42,3 +42,5 @@ bool isOnScreen(Game* game, sf::Vector2f point, bool applyView = true);
 sf::Vector2i worldToChunkPosition(Game* game, sf::Vector2f position);
 
 sf::Vector2f chunkToWorldPosition(Game* game, sf::Vector2i position);
+
+sf::Vector2i worldToTilePosition(Game* game, sf::Vector2f position);
