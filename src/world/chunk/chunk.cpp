@@ -61,13 +61,16 @@ Chunk::Chunk(Game* game, sf::Vector2i chunkPosition, std::vector<std::vector<Til
             }
             else if (this->tiles[i][j]->type == TileType::GRASS)
             {
-                this->tiles[i][j]->animation = std::make_unique<Animation>(*game->getAssetManager()->getAnimation("grass"));
-                this->tiles[i][j]->animation->adjustSpeed(6.f);
+                // this->tiles[i][j]->animation = std::make_unique<Animation>(*game->getAssetManager()->getAnimation("grass"));
+                // this->tiles[i][j]->animation->adjustSpeed(6.f);
                 
-                // random starting point, makes tiles not in sync.
-                this->tiles[i][j]->animation->secondsTillNextFrame = this->tiles[i][j]->animation->secondsPerFrame * (toFloat(getRandInt(0, 99)) / 100.f);
-                this->tiles[i][j]->animSpeedMult = toFloat(getRandInt(10, 40)) / 100.f;
-                this->tiles[i][j]->animation->index = getRandInt(0, this->tiles[i][j]->animation->frames.size() - 1);
+                // // random starting point, makes tiles not in sync.
+                // this->tiles[i][j]->animation->secondsTillNextFrame = this->tiles[i][j]->animation->secondsPerFrame * (toFloat(getRandInt(0, 99)) / 100.f);
+                // this->tiles[i][j]->animSpeedMult = toFloat(getRandInt(10, 40)) / 100.f;
+                // this->tiles[i][j]->animation->index = getRandInt(0, this->tiles[i][j]->animation->frames.size() - 1);
+
+                //     /\/\/\        OPTION 2
+                //    OPTION 1        \/\/\/
 
                 // this->tiles[i][j]->globalAnimation = game->getAssetManager()->getGlobalAnimation("grass");
                 // this->tiles[i][j]->globalAnimation->animation.adjustSpeed(6);
