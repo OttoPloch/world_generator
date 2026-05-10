@@ -143,7 +143,7 @@ void Scene::UIUpdate(float dt)
         {
             if (auto a = entityLayer.player->getComponent<ActionComponent>())
             {
-                a->setAction("MAIN ACTION", {"attack!", 1.f, .5f});
+                a->setAction("MAIN ACTION", {"attack!", 1.f, 2.f, false});
             }
         }
     }
@@ -154,7 +154,7 @@ void Scene::UIUpdate(float dt)
         {
             if (auto a = entityLayer.player->getComponent<ActionComponent>())
             {
-                a->setAction("MAIN ACTION", {"heal!", -1.f, 0.f});
+                a->setAction("MAIN ACTION", {"heal!", -1.f, .5f, false});
             }
         }
     }
@@ -206,7 +206,7 @@ void Scene::sceneInput(std::string control, bool justPressed)
     {
         debugChunkLayerView++;
     }
-    else if (control == "MAIN ACTION" && justPressed)
+    else if (control == "MAIN ACTION")
     {
         if (!uiLayer.checkUICollision())
         {
@@ -219,7 +219,7 @@ void Scene::sceneInput(std::string control, bool justPressed)
             }
         }
     }
-    else if (control == "SECONDARY ACTION" && justPressed)
+    else if (control == "SECONDARY ACTION")
     {
         if (!uiLayer.checkUICollision())
         {
