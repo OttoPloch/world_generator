@@ -1,16 +1,20 @@
 #pragma once
 
 #include "entity_component.hpp"
+#include "../actions/action.hpp"
 
 struct ActionComponent : EntityComponent
 {
-    ActionComponent(Entity* myEntity, std::string mainAction, std::string secondaryAction);
+    ActionComponent(Entity* myEntity, std::unique_ptr<Action> mainAction, std::unique_ptr<Action> secondaryAction, float range);
 
-    void setAction(std::string action, bool secondary = false);
+    void update(float dt) override;
 
-    void createRequest(std::string actionInput);
+    void startAction(std::string actionInput);
 
-    // temp, need to make Action struct and substructs.
-    std::string mainAction;
-    std::string secondaryAction;
+    void setAction(std::string actionInput, Action action);
+
+    float range;
+private:
+    std::unique_ptr<Action> mainAction;
+    std::unique_ptr<Action> secondaryAction;
 };

@@ -10,6 +10,7 @@
 #include "../world/chunk/chunk_layer.hpp"
 #include "../entities/components/entity_component.hpp"
 #include "../entities/components/movement_component.hpp"
+#include "../entities/actions/action.hpp"
 
 #include <vector>
 
@@ -34,6 +35,8 @@ public:
 
     void sceneInput(std::string control, bool justPressed = false);
 
+    bool processActionRequest(Entity* actor, Action* action);
+
     Camera* getCamera();
 
     void toggleFocus();
@@ -53,6 +56,8 @@ private:
     ChunkLayer chunkLayer;
 
     Camera camera;
+
+    std::vector<std::pair<Entity*, std::unique_ptr<Action>>> actions;
 
     bool debugView;
     int debugChunkLayerView;

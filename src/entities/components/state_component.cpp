@@ -4,7 +4,7 @@
 
 StateComponent::StateComponent(Entity* myEntity) : EntityComponent(myEntity) {}
 
-void StateComponent::update()
+void StateComponent::update(float dt)
 {
     if (auto c = myEntity->getComponent<MovementComponent>())
     {

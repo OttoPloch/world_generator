@@ -4,6 +4,7 @@
 #include "../../graphics/animation.hpp"
 #include "../../graphics/animation_set.hpp"
 #include "../rect_type.hpp"
+#include "../actions/action.hpp"
 
 struct SpriteData
 {
@@ -42,7 +43,8 @@ struct CollisionComponentData
 
 struct ActionComponentData
 {
-    // temp, need to create Action struct and substructs.
-    std::string mainAction;
-    std::string secondaryAction;
+    std::unique_ptr<Action> mainAction;
+    std::unique_ptr<Action> secondaryAction;
+
+    float range;
 };

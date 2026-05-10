@@ -35,7 +35,7 @@ void Entity::update(float dt)
 {
     sprite.update(dt);
 
-    for (auto& c : components) c->update();
+    for (auto& c : components) c->update(dt);
 }
 
 void Entity::draw(sf::RenderWindow& window)

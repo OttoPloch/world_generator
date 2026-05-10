@@ -86,7 +86,7 @@ void Scene::tick()
 void Scene::update(float dt)
 {       
     chunkLayer.update(dt);
-    
+
     entityLayer.update(dt);
 }
 
@@ -143,7 +143,7 @@ void Scene::UIUpdate(float dt)
         {
             if (auto a = entityLayer.player->getComponent<ActionComponent>())
             {
-                a->setAction("attack!");
+                a->setAction("MAIN ACTION", {"attack!", 1.f, .5f});
             }
         }
     }
@@ -154,7 +154,7 @@ void Scene::UIUpdate(float dt)
         {
             if (auto a = entityLayer.player->getComponent<ActionComponent>())
             {
-                a->setAction("heal!");
+                a->setAction("MAIN ACTION", {"heal!", -1.f, 0.f});
             }
         }
     }
@@ -214,7 +214,7 @@ void Scene::sceneInput(std::string control, bool justPressed)
             {
                 if (auto a = entityLayer.player->getComponent<ActionComponent>())
                 {
-                    a->createRequest(control);
+                    a->startAction(control);
                 }
             }
         }
@@ -227,11 +227,29 @@ void Scene::sceneInput(std::string control, bool justPressed)
             {
                 if (auto a = entityLayer.player->getComponent<ActionComponent>())
                 {
-                    a->createRequest(control);
+                    a->startAction(control);
                 }
             }
         }
     }
+}
+
+bool Scene::processActionRequest(Entity* actor, Action* action)
+{
+    if (actor)
+    {
+        if (auto a = actor->getComponent<ActionComponent>())
+        {
+            // CHECKS
+            if (action->rangeMultiplier < 0.f || getDistance(actor->getPosition(), action->clickPosition) <= a->range * action->rangeMultiplier)
+            {
+                // ALL CHECKS PASSED, REQUEST IS VALID
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 Camera* Scene::getCamera() { return &camera; }

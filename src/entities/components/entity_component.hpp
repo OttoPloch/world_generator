@@ -12,7 +12,7 @@ struct EntityComponent
     
     virtual void tick();
 
-    virtual void update();
+    virtual void update(float dt);
 
     Entity* myEntity;
 };

@@ -14,7 +14,7 @@ void MovementComponent::tick()
     position->y += velocity.y;
 }
 
-void MovementComponent::update()
+void MovementComponent::update(float dt)
 {
     sf::Vector2f m = {0, 0};
     float speedMult = 1.f;

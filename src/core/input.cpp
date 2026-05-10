@@ -236,6 +236,11 @@ sf::Vector2f Input::getMovement()
     }
 }
 
+sf::Vector2f Input::getMouseWorldPos()
+{
+    return game->getWindow()->getWindow().mapPixelToCoords(sf::Mouse::getPosition(game->getWindow()->getWindow()));
+}
+
 bool Input::getKeyPressedLastFrame(std::string key)
 {
     if (auto i = keysPressedLastFrame.find(key) != keysPressedLastFrame.end())

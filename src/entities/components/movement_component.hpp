@@ -10,7 +10,7 @@ struct MovementComponent : public EntityComponent
 
     void tick() override;
 
-    void update() override;
+    void update(float dt) override;
 
     sf::Vector2f velocity;
 

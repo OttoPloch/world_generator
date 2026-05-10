@@ -31,6 +31,8 @@ public:
 
     sf::Vector2f getMovement();
 
+    sf::Vector2f getMouseWorldPos();
+
     bool getKeyPressedLastFrame(std::string key);
     
     bool getControlPressedLastFrame(std::string control);

@@ -21,7 +21,7 @@ CollisionComponent::CollisionComponent(Entity* myEntity, WorldPosition position,
     rect = {position, adjustedSize, type};
 }
 
-void CollisionComponent::update()
+void CollisionComponent::update(float dt)
 {
     if (rect.type == RectType::ACTIVE)
     {

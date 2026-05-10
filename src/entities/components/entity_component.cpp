@@ -7,4 +7,4 @@ EntityComponent::~EntityComponent() {}
 
 void EntityComponent::tick() {}
 
-void EntityComponent::update() {}
+void EntityComponent::update(float dt) {}

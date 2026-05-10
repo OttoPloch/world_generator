@@ -32,7 +32,7 @@ void EntityLayer::init(Game* game)
     pt->control = ControlComponentData();
     pt->state = StateComponentData();
     pt->collision = {{.5f, .5f}, true, RectType::ACTIVE};
-    pt->action = {"attack!", "block!"};
+    pt->action = {std::make_unique<Action>("attack!", 1.f, 0.5f, false), std::make_unique<Action>("block!", -1.f, 1.f, true), game->getSettings()->tile_size * 5};
 
     Entity* e = addEntity({0, 0}, pt);
     this->player = e;
@@ -43,7 +43,7 @@ void EntityLayer::init(Game* game)
 
     Entity* b = addEntity({-100, -100}, bt);
 
-    // PERFORMANCE TEST
+    // // PERFORMANCE TEST
     // for (int y = 0; y < 20; y++)
     // {
     //     for (int x = 0; x < 50; x++)
@@ -51,7 +51,7 @@ void EntityLayer::init(Game* game)
     //         addEntity({static_cast<float>(-600 + x * bt->sprite.size.x), static_cast<float>(50 + y * bt->sprite.size.y * 2)}, bt);
     //     }
     // }
-    // // // // // // /
+    // // // // // // // /
 
     // AssetManager* assetManager = game->getAssetManager();
 
@@ -165,7 +165,7 @@ Entity* EntityLayer::addEntity(sf::Vector2f position, EntityTemplate* t)
         if (t->control) e->addComponent<ControlComponent>(e);
         if (t->state) e->addComponent<StateComponent>(e);
         if (t->collision) e->addComponent<CollisionComponent>(e, *e->getPositionVar(), t->collision->size, t->collision->sizeIsScaleOfSprite, t->collision->type);
-        if (t->action) e->addComponent<ActionComponent>(e, t->action->mainAction, t->action->secondaryAction);
+        if (t->action) e->addComponent<ActionComponent>(e, std::move(t->action->mainAction), std::move(t->action->secondaryAction), t->action->range);
     }
 
     return entities[ID].get();

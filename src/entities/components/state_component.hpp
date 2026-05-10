@@ -9,5 +9,5 @@ struct StateComponent : public EntityComponent
 {
     StateComponent(Entity* myEntity);
 
-    void update() override;
+    void update(float dt) override;
 };
