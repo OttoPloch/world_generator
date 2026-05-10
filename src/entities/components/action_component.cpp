@@ -16,7 +16,7 @@ void ActionComponent::update(float dt)
 
         if (mainAction->timeProgress >= mainAction->timeToComplete)
         {
-            mainAction->completeAction(myEntity->game->getInput()->getMouseWorldPos());
+            mainAction->completeAction(myEntity, myEntity->game->getInput()->getMouseWorldPos());
 
             mainAction->timeProgress = 0.f;
             mainAction->active = false;
@@ -29,7 +29,7 @@ void ActionComponent::update(float dt)
 
         if (secondaryAction->timeProgress >= secondaryAction->timeToComplete)
         {
-            secondaryAction->completeAction(myEntity->game->getInput()->getMouseWorldPos());
+            secondaryAction->completeAction(myEntity, myEntity->game->getInput()->getMouseWorldPos());
 
             secondaryAction->timeProgress = 0.f;
             secondaryAction->active = false;

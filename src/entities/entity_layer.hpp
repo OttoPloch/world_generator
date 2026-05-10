@@ -41,10 +41,10 @@ public:
     void draw(bool debug);
 
     Entity* player;
+    
+    TemplateManager tManager;
 private:
     Game* game;
-
-    TemplateManager tManager;
 
     int IDCounter;
 

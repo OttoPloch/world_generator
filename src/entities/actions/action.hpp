@@ -6,7 +6,7 @@ struct Action
 {
     Action(std::string name, float rangeMultiplier, float timeToComplete, float cooldown = -1.f, bool positionTrackedFromClick = false);
 
-    virtual void completeAction(sf::Vector2f position = {0, 0});
+    virtual void completeAction(Entity* actor, sf::Vector2f position = {0, 0});
 
     std::string name;
 
