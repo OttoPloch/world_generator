@@ -1,22 +1,22 @@
 #include "chunk.hpp"
 #include "../../core/game.hpp"
 #include "../tile/tile_types.hpp"
+#include "chunk_layer.hpp"
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <memory>
 
 Chunk::Chunk() {}
 
-Chunk::Chunk(Game* game, sf::Vector2i chunkPosition, std::vector<std::vector<Tile>> tiles)
+Chunk::Chunk(Game* game, ChunkLayer* chunkLayer, sf::Vector2i chunkPosition, std::vector<std::vector<Tile>> tiles)
 {
     this->game = game;
-
+    this->chunkLayer = chunkLayer;
     this->window = game->getWindow();
 
     this->chunkPosition = chunkPosition;
 
     chunkSize = game->getSettings()->chunk_size;
-
     tileSize = game->getSettings()->tile_size;
 
     worldPosition = {chunkPosition.x * (chunkSize * tileSize), chunkPosition.y * (chunkSize * tileSize)};
@@ -39,6 +39,7 @@ Chunk::Chunk(Game* game, sf::Vector2i chunkPosition, std::vector<std::vector<Til
                 Tile* currTile = &tiles[i][j % tiles[i].size()];
         
                 sf::Vector2i localPos(j % chunkSize, toInt(std::floor(j / chunkSize)));
+
 
                 this->tiles[i][j] = std::make_unique<Tile>(game, this, localPos, currTile->type, currTile->myVerts.texCoords, i, std::move(currTile->tags), currTile->collides, currTile->colliderName, currTile->collOffsetFraction, currTile->collSizeFraction);
 
@@ -146,48 +147,29 @@ void Chunk::createTileVerts(sf::Vector2i tilePosition, int z)
 
 Tile* Chunk::getTile(int column, int row, int z, bool getHighestNonAir)
 {
-    // Wrapping values //
-
     int x = column;
     int y = row;
-
-    while (x > chunkSize - 1) x -= chunkSize;
-    while (x < 0) x += chunkSize;
-    while (y > chunkSize - 1) y -= chunkSize;
-    while (y < 0) y += chunkSize;
-
     int effectiveZ = z;
-    if (getHighestNonAir) effectiveZ = getHighestNonAirZ(x, y, false);
-
-    int maxZ = game->getSettings()->maxTileZ;
-    while (effectiveZ > maxZ) effectiveZ -= maxZ + 1;
-    while (effectiveZ < 0) effectiveZ += maxZ + 1;
-
-    // // // // // // // 
+    if (getHighestNonAir) effectiveZ = getHighestNonAirZ(x, y);
+    if (effectiveZ == -1) effectiveZ = 0;
 
     return tiles[effectiveZ][y * chunkSize + x].get();
 }
 
-void Chunk::setTile(Tile newTile, bool setHighestNonAir)
+void Chunk::setTile(int column, int row, TileTemplate* t, int z, bool setHighestNonAir)
 {
     // Wrapping values //
 
-    int x = newTile.localPosition.x;
-    int y = newTile.localPosition.y;
-
-    while (x > chunkSize - 1) x -= chunkSize;
-    while (x < 0) x += chunkSize;
-    while (y > chunkSize - 1) y -= chunkSize;
-    while (y < 0) y += chunkSize;
-
-    int effectiveZ = newTile.z;
-    if (setHighestNonAir) effectiveZ = getHighestNonAirZ(x, y, false);
+    int x = column;
+    int y = row;
+    int effectiveZ = z;
+    if (setHighestNonAir) effectiveZ = getHighestNonAirZ(x, y);
 
     // // // // // // //
 
     if (Tile* tile = this->tiles[effectiveZ][y * chunkSize + x].get())
     {
-        if ((tile->collides && !newTile.collides) || (!tile->collides && newTile.collides))
+        if ((tile->collides && !t->collides) || (!tile->collides && t->collides))
         {
             // old tile and new tile do not have same collider value, tilesWithColliders needs to be updated.
             
@@ -212,7 +194,7 @@ void Chunk::setTile(Tile newTile, bool setHighestNonAir)
         }
 
         // finally, set the tile
-        *tile = Tile(game, this, {x, y}, newTile.type, newTile.myVerts.texCoords, effectiveZ, std::move(newTile.tags), newTile.collides, newTile.colliderName, newTile.collOffsetFraction, newTile.collSizeFraction);
+        *tile = Tile(game, this, {x, y}, t->type, t->myVerts.texCoords, effectiveZ, std::move(t->tags), t->collides, t->colliderName, t->collOffsetFraction, t->collSizeFraction);
 
         createTileVerts(y * chunkSize + x, effectiveZ);
 
@@ -263,34 +245,44 @@ sf::FloatRect Chunk::getTileRect(sf::Vector2i tileLocalPosition, int z, bool ret
 
 std::vector<sf::Vertex>* Chunk::getVertices() { return &tileVertices; }
 
-int Chunk::getHighestNonAirZ(int column, int row, bool wrapValues)
+int Chunk::getHighestNonAirZ(int& column, int& row, bool alsoWrapPosition)
 {
+    if (alsoWrapPosition) wrapPosition(column, row);
+    
     int maxZ = game->getSettings()->maxTileZ;
     int z = maxZ;
 
-    int x = column;
-    int y = row;
-
-    if (wrapValues)
-    {
-        while (x > chunkSize - 1) x -= chunkSize;
-        while (x < 0) x += chunkSize;
-        while (y > chunkSize - 1) y -= chunkSize;
-        while (y < 0) y += chunkSize;
-    }
-
-    Tile* tile = this->tiles[z][y * chunkSize + x].get();
-
+    Tile* tile = tiles[z][row * chunkSize + column].get();
     while (tile->type == TileType::AIR && z > 0)
     {
         z--;
 
-        tile = this->tiles[z][y * chunkSize + x].get();
+        tile = tiles[z][row * chunkSize + column].get();
     }
 
     if (tile->type == TileType::AIR) z = -1;
 
     return z;
+}
+
+void Chunk::wrapPosition(int& column, int& row)
+{
+    while (column > chunkSize - 1) column -= chunkSize;
+    while (column < 0) column += chunkSize;
+    while (row > chunkSize - 1) row -= chunkSize;
+    while (row < 0) row += chunkSize;
+}
+
+void Chunk::wrapPosition(int& column, int& row, int& z)
+{
+    while (column > chunkSize - 1) column -= chunkSize;
+    while (column < 0) column += chunkSize;
+    while (row > chunkSize - 1) row -= chunkSize;
+    while (row < 0) row += chunkSize;
+    
+    int maxZ = game->getSettings()->maxTileZ;
+    while (z > maxZ) z -= maxZ + 1;
+    while (z < 0) z += maxZ + 1;
 }
 
 sf::Vector2i Chunk::getChunkPosition() { return chunkPosition; }

@@ -4,7 +4,7 @@
 
 struct Action
 {
-    Action(std::string name, float rangeMultiplier, float timeToComplete, float cooldown = -1.f, bool positionTrackedFromClick = false);
+    Action(std::string name, float rangeMultiplier, float timeToComplete, float cooldown = -1.f, bool positionTrackedFromStart = false, bool mustHoldDown = false);
 
     virtual void start(Game* game);
 
@@ -29,6 +29,7 @@ struct Action
 
     bool active;
 
-    bool positionTrackedFromClick;
-    sf::Vector2f clickPosition;
+    bool positionTrackedFromStart;
+    bool mustHoldDown;
+    sf::Vector2f startPosition;
 };

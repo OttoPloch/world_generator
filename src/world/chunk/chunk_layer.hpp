@@ -1,13 +1,14 @@
 #pragma once
 
+#include <SFML/Graphics/RenderStates.hpp>
+#include <unordered_map>
+
 #include "../../core/common.hpp"
 #include "../../entities/entity.hpp"
 #include "../../core/window.hpp"
 #include "chunk.hpp"
 #include "chunk_generator.hpp"
-
-#include <SFML/Graphics/RenderStates.hpp>
-#include <unordered_map>
+#include "../tile/tile_template_manager.hpp"
 
 class Game;
 
@@ -40,6 +41,8 @@ public:
     void update(float dt);
 
     void draw(bool debug = false, int debugLayerView = 0);
+
+    TileTemplateManager tManager;
 private:
     Game* game;
 

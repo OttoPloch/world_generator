@@ -20,18 +20,44 @@ ChunkLayer::ChunkLayer(Game* game) : chunks(0)
 void ChunkLayer::init(Game* game)
 {
     this->game = game;
-
     this->window = game->getWindow();
 
     chunkSize = game->getSettings()->chunk_size;
     tileSize = game->getSettings()->tile_size;
     chunkLength = toFloat(chunkSize) * tileSize;
-
-    chunkGenerator.init(game, &chunks);
-
     lastChunkPos = {INT32_MAX, INT32_MAX};
 
+    chunkGenerator.init(game, &chunks);
     bgObjectStates.texture = game->getAssetManager()->getTexture("background_foliage", "texture_atlases/");
+
+
+    TextureAtlas* atlas = game->getAssetManager()->getTextureAtlas("tiles_better");
+
+    tManager.tileTemplates["grass"] = {
+        TileType::GRASS,
+        false,
+        {0.f, 0.f},
+        {1.f, 1.f},
+        "none",
+        {atlas->getItemTexCoords("grass")},
+        nullptr,
+        nullptr,
+        1.f,
+        {}
+    };
+
+    tManager.tileTemplates["air"] = {
+        TileType::AIR,
+        false,
+        {0.f, 0.f},
+        {1.f, 1.f},
+        "none",
+        atlas->getItemTexCoords("air"),
+        nullptr,
+        nullptr,
+        1.f,
+        {}
+    };
 
     loadNearbyChunks();
 }

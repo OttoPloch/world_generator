@@ -57,14 +57,7 @@ void Scene::tick()
     
     if (mouseChunk && mouseChunk->state == ChunkState::ACTIVE)
     {
-        int tileZ = game->getSettings()->maxTileZ;
-        Tile* mouseTile = mouseChunk->getTile(mouseLocalPos.x, mouseLocalPos.y, tileZ);
-     
-        while (mouseTile->type == TileType::AIR && tileZ >= 0)
-        {
-            tileZ--;
-            mouseTile = mouseChunk->getTile(mouseLocalPos.x, mouseLocalPos.y, tileZ);
-        }
+        Tile* mouseTile = mouseChunk->getTile(mouseLocalPos.x, mouseLocalPos.y);
 
         std::map<TileType, std::string> typesToStrings {
             {TileType::AIR, "air"},
@@ -244,7 +237,7 @@ bool Scene::processActionRequest(Entity* actor, Action* action)
         {
             // CHECKS
 
-            if (action->rangeMultiplier < 0.f || getDistance(actor->getPosition(), action->clickPosition) <= a->range * action->rangeMultiplier)
+            if (action->rangeMultiplier < 0.f || getDistance(actor->getPosition(), action->startPosition) <= a->range * action->rangeMultiplier)
             {
                 // IS WITHIN RANGE
 

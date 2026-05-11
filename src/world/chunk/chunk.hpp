@@ -9,16 +9,18 @@
 #include "../tile/tile.hpp"
 #include "chunk_state.hpp"
 #include "../tile/tags/mineable_tag.hpp"
+#include "../tile/tile_template.hpp"
 
 class Game;
 class Window;
+class ChunkLayer;
 
 class Chunk
 {
 public:
     Chunk();
 
-    Chunk(Game* game, sf::Vector2i chunkPosition, std::vector<std::vector<Tile>> tiles);
+    Chunk(Game* game, ChunkLayer* chunkLayer, sf::Vector2i chunkPosition, std::vector<std::vector<Tile>> tiles);
 
     void createTileVerts(int index, int z);
 
@@ -30,7 +32,7 @@ public:
     // will get the left. Z also wraps.
     Tile* getTile(int column, int row, int z = 0, bool getHighestNonAir = true);
 
-    void setTile(Tile newTile, bool setHighestNonAir = true);
+    void setTile(int column, int row, TileTemplate* t, int z = 0, bool setHighestNonAir = true);
 
     std::vector<std::vector<std::unique_ptr<Tile>>>* getTiles();
 
@@ -38,12 +40,15 @@ public:
 
     std::vector<sf::Vertex>* getVertices();
 
-    // if wrapValues is true, column and row arguments can be out
-    // of bounds, and will wrap around. If it is false, you must
-    // provide valid coordinates. The z return value will always
-    // be in a valid range, not a negative UNLESS no non-air tile
-    // is found, then it will return -1 to indicate a failure.
-    int getHighestNonAirZ(int column, int row, bool wrapValues = true);
+    // return value will be in a valid range for z,
+    // unless it returns -1 which indicates that
+    // all tiles at that position are air or there
+    // are no tiles there.
+    int getHighestNonAirZ(int& column, int& row, bool alsoWrapPosition = true);
+
+    void wrapPosition(int& column, int& row);
+
+    void wrapPosition(int& column, int& row, int& z);
 
     sf::Vector2i getChunkPosition();
 
@@ -58,16 +63,17 @@ public:
     std::vector<BackgroundObject> bgObjects;
 
     std::vector<Tile*> tilesWithColliders;
+    
+    ChunkLayer* chunkLayer;
 private:
     Game* game;
-
     Window* window;
 
     sf::Vector2i chunkPosition;
-
+    
     int chunkSize;
     float tileSize;
-    
+
     sf::Vector2f worldPosition;
     
     // tiles have a z for their height value, this

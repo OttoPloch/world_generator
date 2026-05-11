@@ -69,6 +69,7 @@ src/world/chunk/chunk_generator.cpp
 src/world/tile/tile.cpp
 src/world/tile/tags/tile_tag.cpp
 src/world/tile/tags/mineable_tag.cpp
+src/world/tile/tile_template_manager.cpp
 )
 
 target_compile_features(app PRIVATE cxx_std_17)
