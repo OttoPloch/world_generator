@@ -7,51 +7,25 @@
 
 Tile::Tile() {}
 
-Tile::Tile(TileType type, sf::IntRect texCoords, int z, std::vector<std::unique_ptr<TileTag>> tags, bool collides, std::string colliderName, sf::Vector2f collOffsetFraction, sf::Vector2f collSizeFraction)
-{
-    this->type = type;
-    myVerts.texCoords = texCoords;
-    this->z = z;
-    this->tags = std::move(tags);
-    this->collides = collides;
-    this->colliderName = colliderName;
-    this->collOffsetFraction = collOffsetFraction;
-    this->collSizeFraction = collSizeFraction;
-
-    this->game = nullptr;
-    this->chunk = nullptr;
-    this->localPosition = {0, 0};
-    size = 0;
-    globalAnimation = nullptr;
-}
-
-Tile::Tile(Game* game, Chunk* chunk, sf::Vector2i localPosition, TileType type, sf::IntRect texCoords, int z, std::vector<std::unique_ptr<TileTag>> tags, bool collides, std::string colliderName, sf::Vector2f collOffsetFraction, sf::Vector2f collSizeFraction)
+Tile::Tile(Game* game, Chunk* chunk, sf::Vector2i localPosition, const TileTemplate& t, int z)
 {
     this->game = game;
-
     this->chunk = chunk;
-
     this->localPosition = localPosition;
-
     size = game->getSettings()->tile_size;
 
-    this->type = type;
-
-    myVerts.texCoords = texCoords;
+    type = t.type;
+    collides = t.collides;
+    collOffsetFraction = t.collOffsetFraction;
+    collSizeFraction = t.collSizeFraction;
+    colliderName = t.colliderName;
+    myVerts.texCoords = t.myVerts.texCoords;
+    globalAnimation = t.globalAnimation;
+    if (t.animation) animation = std::make_unique<Animation>(*t.animation);
+    animSpeedMult = t.animSpeedMult;
+    for (auto& t : t.tags) tags.emplace_back(t->getCopy());
 
     this->z = z;
-
-    globalAnimation = nullptr;
-
-    this->tags = std::move(tags);
-
-    this->collides = collides;
-
-    this->colliderName = colliderName;
-    
-    this->collOffsetFraction = collOffsetFraction;
-    
-    this->collSizeFraction = collSizeFraction;
 }
 
 sf::FloatRect Tile::getCollRect()

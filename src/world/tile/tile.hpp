@@ -6,6 +6,7 @@
 #include "tile_types.hpp"
 #include "tags/tile_tag.hpp"
 #include "tags/mineable_tag.hpp"
+#include "tile_template.hpp"
 
 class Game;
 class Chunk;
@@ -14,11 +15,8 @@ class Tile
 {
 public:
     Tile();
-
-    // this is only used in ChunkGenerator to set the values of the tile before they are copied into the final Tile object in the Chunk.
-    Tile(TileType type, sf::IntRect texCoords, int z = 0, std::vector<std::unique_ptr<TileTag>> tags = {}, bool collides = false, std::string colliderName = "none", sf::Vector2f collOffsetFraction = {0.f, 0.f}, sf::Vector2f collSizeFraction = {1.f, 1.f});
     
-    Tile(Game* game, Chunk* chunk, sf::Vector2i localPosition, TileType type, sf::IntRect texCoords, int z = 0, std::vector<std::unique_ptr<TileTag>> tags = {}, bool collides = false, std::string colliderName = "none", sf::Vector2f collOffsetFraction = {0.f, 0.f}, sf::Vector2f collSizeFraction = {1.f, 1.f});
+    Tile(Game* game, Chunk* chunk, sf::Vector2i localPosition, const TileTemplate& t, int z = 0);
 
     sf::FloatRect getCollRect();
 

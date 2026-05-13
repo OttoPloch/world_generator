@@ -20,7 +20,7 @@ class Chunk
 public:
     Chunk();
 
-    Chunk(Game* game, ChunkLayer* chunkLayer, sf::Vector2i chunkPosition, std::vector<std::vector<Tile>> tiles);
+    Chunk(Game* game, ChunkLayer* chunkLayer, sf::Vector2i chunkPosition, std::vector<std::vector<TileTemplate>> tileData);
 
     void createTileVerts(int index, int z);
 
@@ -30,9 +30,11 @@ public:
     // of -1 gets the opposite side and
     // 17 (in a chunk of size 16)
     // will get the left. Z also wraps.
-    Tile* getTile(int column, int row, int z = 0, bool getHighestNonAir = true);
+    Tile* getTile(int column, int row, bool getHighestNonAir = true, int z = 0);
 
-    void setTile(int column, int row, TileTemplate* t, int z = 0, bool setHighestNonAir = true);
+    void setTile(int column, int row, TileTemplate* t, bool setHighestNonAir = true, int z = 0);
+
+    void setTile(int index, TileTemplate* t, bool setHighestNonAir = true, int z = 0);
 
     std::vector<std::vector<std::unique_ptr<Tile>>>* getTiles();
 

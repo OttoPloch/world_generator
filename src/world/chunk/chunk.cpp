@@ -8,12 +8,11 @@
 
 Chunk::Chunk() {}
 
-Chunk::Chunk(Game* game, ChunkLayer* chunkLayer, sf::Vector2i chunkPosition, std::vector<std::vector<Tile>> tiles)
+Chunk::Chunk(Game* game, ChunkLayer* chunkLayer, sf::Vector2i chunkPosition, std::vector<std::vector<TileTemplate>> tileData)
 {
     this->game = game;
     this->chunkLayer = chunkLayer;
-    this->window = game->getWindow();
-
+    window = game->getWindow();
     this->chunkPosition = chunkPosition;
 
     chunkSize = game->getSettings()->chunk_size;
@@ -21,69 +20,27 @@ Chunk::Chunk(Game* game, ChunkLayer* chunkLayer, sf::Vector2i chunkPosition, std
 
     worldPosition = {chunkPosition.x * (chunkSize * tileSize), chunkPosition.y * (chunkSize * tileSize)};
 
-    this->tiles.resize(tiles.size());
-    tileVertices.resize(this->tiles.size() * chunkSize * chunkSize * 6);
-    tileDebugVertices.resize(this->tiles.size());
-
-    for (int i = 0; i < this->tiles.size(); i++)
+    tiles.resize(tiles.size());
+    for (int i = 0; i < tiles.size(); i++)
     {
-        this->tiles[i].resize(chunkSize * chunkSize);
+        tiles[i].resize(chunkSize * chunkSize);
     }
 
-    for (int i = 0; i < this->tiles.size(); i++)
+    tileVertices.resize(tiles.size() * chunkSize * chunkSize * 6);
+    tileDebugVertices.resize(tiles.size());
+
+    for (int i = 0; i < tiles.size(); i++)
     {
-        for (int j = 0; j < this->tiles[i].size(); j++)
+        for (int j = 0; j < tiles[i].size(); j++)
         {
-            if (tiles[i].size() > 0)
+            if (tileData[i].size() > 0) // if the tileData is not empty, use it
             {
-                Tile* currTile = &tiles[i][j % tiles[i].size()];
-        
-                sf::Vector2i localPos(j % chunkSize, toInt(std::floor(j / chunkSize)));
-
-
-                this->tiles[i][j] = std::make_unique<Tile>(game, this, localPos, currTile->type, currTile->myVerts.texCoords, i, std::move(currTile->tags), currTile->collides, currTile->colliderName, currTile->collOffsetFraction, currTile->collSizeFraction);
-
-                if (currTile->collides)
-                {
-                    tilesWithColliders.push_back(this->tiles[i][j].get());
-                }
+                setTile(j, &tileData[i][j % tileData[i].size()], false, i);
             }
-            else
+            else // tileData has no data, just do all air
             {
-                // TODO: fix hardcoded texture atlas
-                this->tiles[i][j] = std::make_unique<Tile>(game, this, sf::Vector2i(j % chunkSize, toInt(std::floor(j / chunkSize))), TileType::AIR, game->getAssetManager()->getTextureAtlas("tiles_better")->getItemTexCoords("air"), 0);
+                setTile(j, &chunkLayer->tManager.tileTemplates["air"], false, i);
             }
-            
-            // TEMP, TODO: find a better place for this
-            if (this->tiles[i][j]->type == TileType::WATER)
-            {
-                this->tiles[i][j]->globalAnimation = game->getAssetManager()->getGlobalAnimation("water");
-                this->tiles[i][j]->globalAnimation->animation.adjustSpeed(1.5f);
-            }
-            else if (this->tiles[i][j]->type == TileType::GRASS)
-            {
-                // this->tiles[i][j]->animation = std::make_unique<Animation>(*game->getAssetManager()->getAnimation("grass"));
-                // this->tiles[i][j]->animation->adjustSpeed(6.f);
-                
-                // // random starting point, makes tiles not in sync.
-                // this->tiles[i][j]->animation->secondsTillNextFrame = this->tiles[i][j]->animation->secondsPerFrame * (toFloat(getRandInt(0, 99)) / 100.f);
-                // this->tiles[i][j]->animSpeedMult = toFloat(getRandInt(10, 40)) / 100.f;
-                // this->tiles[i][j]->animation->index = getRandInt(0, this->tiles[i][j]->animation->frames.size() - 1);
-
-                //     /\/\/\        OPTION 2
-                //    OPTION 1        \/\/\/
-
-                // this->tiles[i][j]->globalAnimation = game->getAssetManager()->getGlobalAnimation("grass");
-                // this->tiles[i][j]->globalAnimation->animation.adjustSpeed(6);
-            }
-            else if (this->tiles[i][j]->type == TileType::LAVA)
-            {
-                this->tiles[i][j]->globalAnimation = game->getAssetManager()->getGlobalAnimation("lava");
-                this->tiles[i][j]->globalAnimation->animation.adjustSpeed(.75f);
-            }
-            // // // // // // // // // // // // // // /
-
-            createTileVerts(j, i);
         }
     }
 
@@ -145,18 +102,18 @@ void Chunk::createTileVerts(sf::Vector2i tilePosition, int z)
     createTileVerts(tilePosition.y * chunkSize + tilePosition.x, z);
 }
 
-Tile* Chunk::getTile(int column, int row, int z, bool getHighestNonAir)
+Tile* Chunk::getTile(int column, int row, bool getHighestNonAir, int z)
 {
     int x = column;
     int y = row;
     int effectiveZ = z;
     if (getHighestNonAir) effectiveZ = getHighestNonAirZ(x, y);
-    if (effectiveZ == -1) effectiveZ = 0;
+    if (effectiveZ == -1) return nullptr;
 
     return tiles[effectiveZ][y * chunkSize + x].get();
 }
 
-void Chunk::setTile(int column, int row, TileTemplate* t, int z, bool setHighestNonAir)
+void Chunk::setTile(int column, int row, TileTemplate* t, bool setHighestNonAir, int z)
 {
     // Wrapping values //
 
@@ -164,10 +121,11 @@ void Chunk::setTile(int column, int row, TileTemplate* t, int z, bool setHighest
     int y = row;
     int effectiveZ = z;
     if (setHighestNonAir) effectiveZ = getHighestNonAirZ(x, y);
+    if (effectiveZ == -1) effectiveZ = 0;
 
     // // // // // // //
 
-    if (Tile* tile = this->tiles[effectiveZ][y * chunkSize + x].get())
+    if (Tile* tile = tiles[effectiveZ][y * chunkSize + x].get())
     {
         if ((tile->collides && !t->collides) || (!tile->collides && t->collides))
         {
@@ -193,34 +151,24 @@ void Chunk::setTile(int column, int row, TileTemplate* t, int z, bool setHighest
             }
         }
 
-        // finally, set the tile
-        *tile = Tile(game, this, {x, y}, t->type, t->myVerts.texCoords, effectiveZ, std::move(t->tags), t->collides, t->colliderName, t->collOffsetFraction, t->collSizeFraction);
+        // finally set the tile
+        *tile = Tile(game, this, {x, y}, *t, effectiveZ);
 
         createTileVerts(y * chunkSize + x, effectiveZ);
-
-
-
-
-        
-        // TEMP, TODO: find a better place for this. This code is also in the constructor,
-        // need to make a unified tile creation/modification tool that grabs animation configs
-        // from somewhere, like with the templateManager for entities.
-        if (tile->type == TileType::WATER)
-        {
-            tile->globalAnimation = game->getAssetManager()->getGlobalAnimation("water");
-            tile->globalAnimation->animation.adjustSpeed(1.5f);
-        }
-        else if (tile->type == TileType::GRASS)
-        {
-
-        }
-        else if (tile->type == TileType::LAVA)
-        {
-            tile->globalAnimation = game->getAssetManager()->getGlobalAnimation("lava");
-            tile->globalAnimation->animation.adjustSpeed(.75f);
-        }
-        // // // // // // // // // // // // // // /
     }
+    else
+    {
+        // no tile created at this position yet, do it now
+
+        tiles[effectiveZ][y * chunkSize + x] = std::make_unique<Tile>(game, this, sf::Vector2i(x, y), *t, effectiveZ);
+        
+        createTileVerts(y * chunkSize + x, effectiveZ);
+    }
+}
+
+void Chunk::setTile(int index, TileTemplate* t, bool setHighestNonAir, int z)
+{
+    setTile(toInt(std::floor(index / chunkSize)), index % chunkSize, t, z, setHighestNonAir);
 }
 
 std::vector<std::vector<std::unique_ptr<Tile>>>* Chunk::getTiles() { return &tiles; }

@@ -9,6 +9,7 @@
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <algorithm>
 #include <functional>
+#include <memory>
 
 ChunkLayer::ChunkLayer() : chunks(0) {}
 
@@ -33,19 +34,7 @@ void ChunkLayer::init(Game* game)
 
     TextureAtlas* atlas = game->getAssetManager()->getTextureAtlas("tiles_better");
 
-    tManager.tileTemplates["grass"] = {
-        TileType::GRASS,
-        false,
-        {0.f, 0.f},
-        {1.f, 1.f},
-        "none",
-        {atlas->getItemTexCoords("grass")},
-        nullptr,
-        nullptr,
-        1.f,
-        {}
-    };
-
+    std::vector<std::unique_ptr<TileTag>> airTags = {};
     tManager.tileTemplates["air"] = {
         TileType::AIR,
         false,
@@ -56,7 +45,79 @@ void ChunkLayer::init(Game* game)
         nullptr,
         nullptr,
         1.f,
-        {}
+        std::move(airTags)
+    };
+
+    std::vector<std::unique_ptr<TileTag>> waterTags = {};
+    tManager.tileTemplates["water"] = {
+        TileType::WATER,
+        false, // set to true in chunk generator if touching non-water or on chunk edge
+        {0.f, 0.f},
+        {1.f, 1.f},
+        "none",
+        atlas->getItemTexCoords("water"),
+        game->getAssetManager()->getGlobalAnimation("water"),
+        nullptr,
+        1.f,
+        std::move(waterTags)
+    };
+
+    std::vector<std::unique_ptr<TileTag>> grassTags = {};
+    tManager.tileTemplates["grass"] = {
+        TileType::GRASS,
+        false,
+        {0.f, 0.f},
+        {1.f, 1.f},
+        "none",
+        {atlas->getItemTexCoords("grass")},
+        nullptr,
+        nullptr,
+        1.f,
+        std::move(grassTags)
+    };
+
+    std::vector<std::unique_ptr<TileTag>> stoneTags;
+    stoneTags.emplace_back(std::make_unique<MineableTag>(3.f));
+    tManager.tileTemplates["stone"] = {
+        TileType::STONE,
+        true,
+        {0.f, 0.f},
+        {.5f, .5f},
+        "stone",
+        atlas->getItemTexCoords("stone"),
+        nullptr,
+        nullptr,
+        1.f,
+        std::move(stoneTags)
+    };
+
+    std::vector<std::unique_ptr<TileTag>> cobbleTags;
+    cobbleTags.emplace_back(std::make_unique<MineableTag>(1.f));
+    tManager.tileTemplates["cobble"] = {
+        TileType::COBBLE,
+        false,
+        {0.f, 0.f},
+        {1.f, 1.f},
+        "none",
+        atlas->getItemTexCoords("cobble"),
+        nullptr,
+        nullptr,
+        1.f,
+        std::move(cobbleTags)
+    };
+
+    std::vector<std::unique_ptr<TileTag>> pinkTags = {};
+    tManager.tileTemplates["pink"] = {
+        TileType::PINK,
+        false,
+        {0.f, 0.f},
+        {1.f, 1.f},
+        "none",
+        atlas->getItemTexCoords("pink"),
+        nullptr,
+        nullptr,
+        1.f,
+        std::move(pinkTags)
     };
 
     loadNearbyChunks();

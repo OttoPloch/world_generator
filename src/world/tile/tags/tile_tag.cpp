@@ -3,4 +3,7 @@
 
 TileTag::TileTag(std::string name) : name(name) {}
 
-TileTag::~TileTag() {}
+std::unique_ptr<TileTag> TileTag::getCopy()
+{
+    return std::make_unique<TileTag>(*this);
+}
