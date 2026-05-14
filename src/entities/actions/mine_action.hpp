@@ -13,4 +13,6 @@ struct MineAction : public Action
     void completeAction(Entity* actor, sf::Vector2f position = {0, 0}) override;
 
     float mineSpeed;
+
+    int mineZ;
 };

@@ -59,17 +59,24 @@ void Scene::tick()
     {
         Tile* mouseTile = mouseChunk->getTile(mouseLocalPos.x, mouseLocalPos.y);
 
-        std::map<TileType, std::string> typesToStrings {
-            {TileType::AIR, "air"},
-            {TileType::WATER, "water"},
-            {TileType::GRASS, "grass"},
-            {TileType::STONE, "stone"},
-            {TileType::LAVA, "lava"},
-            {TileType::COBBLE, "cobble"},
-            {TileType::PINK, "pink"},
-        };
-    
-        uiLayer.getElement("mouse tile type display")->getAsText()->setValue(typesToStrings[mouseTile->type]);
+        if (mouseTile)
+        {
+            std::map<TileType, std::string> typesToStrings {
+                {TileType::AIR, "air"},
+                {TileType::WATER, "water"},
+                {TileType::GRASS, "grass"},
+                {TileType::STONE, "stone"},
+                {TileType::LAVA, "lava"},
+                {TileType::COBBLE, "cobble"},
+                {TileType::PINK, "pink"},
+            };
+        
+            uiLayer.getElement("mouse tile type display")->getAsText()->setValue(typesToStrings[mouseTile->type]);
+        }
+        else
+        {
+            uiLayer.getElement("mouse tile type display")->getAsText()->setValue("none");
+        }
     }
     else
     {
@@ -111,8 +118,7 @@ void Scene::UIUpdate(float dt)
     {
         if (auto e = entityLayer.getEntity(0)->getComponent<MovementComponent>())
         {
-            // TEMP, TODO: replace constant with value from entity template for player.
-            e->stats.speed = 2;
+            e->stats.speed = entityLayer.tManager.entityTemplates["player"].movement->speed;
 
             uiLayer.getElement("speed display")->getAsText()->setValue(std::to_string(toInt(e->stats.speed)));
         }
@@ -266,11 +272,11 @@ bool Scene::processActionRequest(Entity* actor, Action* action)
                                     return true;
                                 }
                             }
-
-                            // NO MINEABLE TAG FOUND, TARGETED TILE CANNOT BE MINED
-                            return false;
                         }
                     }
+
+                    // EITHER THE CHUNK OR TILE DOESN'T EXIST, OR THERE THE TILE IS NOT MINEABLE
+                    return false;
                 }
 
                 // ALL CHECKS PASSED, REQUEST IS VALID

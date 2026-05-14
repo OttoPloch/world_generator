@@ -2,7 +2,7 @@
 #include "../../core/game.hpp"
 #include <SFML/System/Vector2.hpp>
 
-MineAction::MineAction(float mineSpeed, std::string name, float rangeMultiplier) : Action(name, rangeMultiplier, 0.f, 0.f, true, true), mineSpeed(mineSpeed) {}
+MineAction::MineAction(float mineSpeed, std::string name, float rangeMultiplier) : Action(name, rangeMultiplier, 0.f, 0.f, true, true), mineSpeed(mineSpeed), mineZ(-1) {}
 
 void MineAction::start(Game* game)
 {
@@ -13,14 +13,22 @@ void MineAction::start(Game* game)
         sf::Vector2i tilePos = worldToTilePosition(game, startPosition);
         tilePos = {tilePos.x % game->getSettings()->chunk_size, tilePos.y % game->getSettings()->chunk_size};
         
-        std::vector<std::unique_ptr<TileTag>>* tags = &chunk->getTile(tilePos.x, tilePos.y)->tags;
+        bool getHighestNonAir = false;
+        if (mineZ == -1) getHighestNonAir = true;
 
-        for (auto& t : *tags)
+        Tile* tile = chunk->getTile(tilePos.x, tilePos.y, getHighestNonAir, mineZ);
+        
+        if (tile)
         {
-            if (auto m = dynamic_cast<MineableTag*>(t.get()))
+            std::vector<std::unique_ptr<TileTag>>* tags = &tile->tags;
+
+            for (auto& t : *tags)
             {
-                timeToComplete = m->durability / mineSpeed;
-                cooldown = m->durability / mineSpeed;
+                if (auto m = dynamic_cast<MineableTag*>(t.get()))
+                {
+                    timeToComplete = m->durability / mineSpeed;
+                    cooldown = m->durability / mineSpeed;
+                }
             }
         }
     }
@@ -62,4 +70,6 @@ void MineAction::completeAction(Entity* actor, sf::Vector2f position)
 
         chunk->setTile(tilePos.x, tilePos.y, &chunk->chunkLayer->tManager.tileTemplates["air"]);
     }
+
+    active = false;
 }

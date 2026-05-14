@@ -91,6 +91,20 @@ void ChunkLayer::init(Game* game)
         std::move(stoneTags)
     };
 
+    std::vector<std::unique_ptr<TileTag>> lavaTags = {};
+    tManager.tileTemplates["lava"] = {
+        TileType::LAVA,
+        false,
+        {0.f, 0.f},
+        {1.f, 1.f},
+        "none",
+        atlas->getItemTexCoords("lava"),
+        game->getAssetManager()->getGlobalAnimation("lava"),
+        nullptr,
+        1.f,
+        std::move(lavaTags)
+    };
+
     std::vector<std::unique_ptr<TileTag>> cobbleTags;
     cobbleTags.emplace_back(std::make_unique<MineableTag>(1.f));
     tManager.tileTemplates["cobble"] = {

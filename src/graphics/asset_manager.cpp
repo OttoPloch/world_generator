@@ -85,6 +85,7 @@ Animation* AssetManager::getAnimation(std::string name, std::string pathFromAsse
             std::ifstream animFile("../../assets/" + pathFromAssets + name + ".anim");
 
             std::string texturePath;
+            float defaultSPF = 0.5f; // SPF = seconds per frame
             std::vector<sf::Vector2i> coords;
             std::vector<sf::Vector2i> sizes;
 
@@ -93,6 +94,7 @@ Animation* AssetManager::getAnimation(std::string name, std::string pathFromAsse
             while (std::getline(animFile, line))
             {
                 if (line.substr(0, 7) == "texture") texturePath = line.substr(8);
+                if (line.substr(0, 11) == "default spf") defaultSPF = std::stof(line.substr(12));
                 if (line.substr(0, 5) == "coord")
                 {
                     std::string substr = line.substr(6);
@@ -139,7 +141,7 @@ Animation* AssetManager::getAnimation(std::string name, std::string pathFromAsse
 
             for(int i = 0; i < coords.size(); i++) frames.emplace_back(coords[i], sizes[i]);
 
-            newAnimation = std::make_unique<Animation>(name, animTexture, frames);
+            newAnimation = std::make_unique<Animation>(name, animTexture, frames, defaultSPF);
         }
 
         animationMap[name] = std::move(newAnimation);

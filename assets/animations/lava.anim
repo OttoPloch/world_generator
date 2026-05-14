@@ -1,4 +1,5 @@
 texture texture_atlases/tiles_better.png
+default spf .75
 coord 48,0
 size 16,16
 coord 48,16

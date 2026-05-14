@@ -20,7 +20,7 @@ Chunk::Chunk(Game* game, ChunkLayer* chunkLayer, sf::Vector2i chunkPosition, std
 
     worldPosition = {chunkPosition.x * (chunkSize * tileSize), chunkPosition.y * (chunkSize * tileSize)};
 
-    tiles.resize(tiles.size());
+    tiles.resize(game->getSettings()->maxTileZ + 1);
     for (int i = 0; i < tiles.size(); i++)
     {
         tiles[i].resize(chunkSize * chunkSize);
@@ -108,6 +108,7 @@ Tile* Chunk::getTile(int column, int row, bool getHighestNonAir, int z)
     int y = row;
     int effectiveZ = z;
     if (getHighestNonAir) effectiveZ = getHighestNonAirZ(x, y);
+    else wrapPosition(x, y, effectiveZ);
     if (effectiveZ == -1) return nullptr;
 
     return tiles[effectiveZ][y * chunkSize + x].get();
@@ -121,6 +122,7 @@ void Chunk::setTile(int column, int row, TileTemplate* t, bool setHighestNonAir,
     int y = row;
     int effectiveZ = z;
     if (setHighestNonAir) effectiveZ = getHighestNonAirZ(x, y);
+    else wrapPosition(x, y, effectiveZ);
     if (effectiveZ == -1) effectiveZ = 0;
 
     // // // // // // //
@@ -162,20 +164,22 @@ void Chunk::setTile(int column, int row, TileTemplate* t, bool setHighestNonAir,
 
         tiles[effectiveZ][y * chunkSize + x] = std::make_unique<Tile>(game, this, sf::Vector2i(x, y), *t, effectiveZ);
         
+        if (t->collides) tilesWithColliders.push_back(tiles[effectiveZ][y * chunkSize + x].get());
+
         createTileVerts(y * chunkSize + x, effectiveZ);
     }
 }
 
 void Chunk::setTile(int index, TileTemplate* t, bool setHighestNonAir, int z)
 {
-    setTile(toInt(std::floor(index / chunkSize)), index % chunkSize, t, z, setHighestNonAir);
+    setTile(index % chunkSize, toInt(std::floor(index / chunkSize)), t, setHighestNonAir, z);
 }
 
 std::vector<std::vector<std::unique_ptr<Tile>>>* Chunk::getTiles() { return &tiles; }
 
 sf::FloatRect Chunk::getTileRect(sf::Vector2i tileLocalPosition, int z, bool returnCenterPos)
 {
-    Tile* tile = getTile(tileLocalPosition.x, tileLocalPosition.y, z);
+    Tile* tile = getTile(tileLocalPosition.x, tileLocalPosition.y, false, z);
 
     sf::Vector2f tileWorldPos;
 
@@ -200,15 +204,21 @@ int Chunk::getHighestNonAirZ(int& column, int& row, bool alsoWrapPosition)
     int maxZ = game->getSettings()->maxTileZ;
     int z = maxZ;
 
-    Tile* tile = tiles[z][row * chunkSize + column].get();
-    while (tile->type == TileType::AIR && z > 0)
+    if (Tile* tile = tiles[z][row * chunkSize + column].get())
     {
-        z--;
+        while (tile->type == TileType::AIR && z > 0)
+        {
+            z--;
+    
+            tile = tiles[z][row * chunkSize + column].get();
+        }
 
-        tile = tiles[z][row * chunkSize + column].get();
+        if (tile->type == TileType::AIR) z = -1;
     }
-
-    if (tile->type == TileType::AIR) z = -1;
+    else
+    {
+        z = -1;
+    }
 
     return z;
 }
@@ -246,7 +256,7 @@ void Chunk::update(float dt)
     {
         for (int j = 0; j < tiles[i].size(); j++)
         {
-            tiles[i][j]->update(dt);
+            if (Tile* tile = tiles[i][j].get()) tile->update(dt);
         }
     }
 }

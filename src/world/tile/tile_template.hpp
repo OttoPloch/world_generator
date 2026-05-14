@@ -24,4 +24,6 @@ struct TileTemplate
     float animSpeedMult;
 
     std::vector<std::unique_ptr<TileTag>> tags;
+
+    TileTemplate getCopy();
 };

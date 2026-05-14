@@ -55,7 +55,7 @@ void CollisionComponent::update(float dt)
 
                 for (auto t : nearbyTilesWithColliders)
                 {
-                    Tile* tile = t.first->getTile(t.second.first.x, t.second.first.y, t.second.second);
+                    Tile* tile = t.first->getTile(t.second.first.x, t.second.first.y, false, t.second.second);
                     sf::FloatRect tileRect = t.first->getTileRect(t.second.first, t.second.second);
                     WorldPosition tilePos(tileRect.position);
                     CollisionRect tileCollRect(tilePos, tileRect.size, RectType::STATIC);

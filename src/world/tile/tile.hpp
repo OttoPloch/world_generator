@@ -78,6 +78,8 @@ public:
 
     GlobalAnimation* globalAnimation;
     std::unique_ptr<Animation> animation;
+    
+    // only affects the individual animation, not globalAnimation
     float animSpeedMult;
 
     int z;

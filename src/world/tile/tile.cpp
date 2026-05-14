@@ -24,7 +24,7 @@ Tile::Tile(Game* game, Chunk* chunk, sf::Vector2i localPosition, const TileTempl
     if (t.animation) animation = std::make_unique<Animation>(*t.animation);
     animSpeedMult = t.animSpeedMult;
     for (auto& t : t.tags) tags.emplace_back(t->getCopy());
-
+    
     this->z = z;
 }
 
