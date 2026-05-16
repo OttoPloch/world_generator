@@ -1,45 +1,45 @@
-#pragma once
+// #pragma once
 
-#include "ui_element.hpp"
+// #include "ui_element.hpp"
 
-#include <memory>
-#include <string>
+// #include <memory>
+// #include <string>
 
-class Game;
+// class Game;
 
-class UIText : public UIElement
-{
-public:
-    UIText();
+// class UIText : public UIElement
+// {
+// public:
+//     UIText();
 
-    UIText(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Font* font, std::string text, unsigned int fontSize, sf::Color fontColor, UIElement* parent = nullptr);
+//     UIText(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Font* font, std::string text, unsigned int fontSize, sf::Color fontColor, UIElement* parent = nullptr);
 
-    void init(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Font* font, std::string text, unsigned int fontSize, sf::Color fontColor, UIElement* parent = nullptr);
+//     void init(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Font* font, std::string text, unsigned int fontSize, sf::Color fontColor, UIElement* parent = nullptr);
     
-    void init(sf::Font* font, std::string text, unsigned int fontSize, sf::Color fontColor);
+//     void init(sf::Font* font, std::string text, unsigned int fontSize, sf::Color fontColor);
 
-    sf::FloatRect getBoundingBox() override;
+//     sf::FloatRect getBoundingBox() override;
 
-    // the full text
-    void setText(std::string text);
+//     // the full text
+//     void setText(std::string text);
     
-    // use ### to represent the changeable value
-    void setBaseText(std::string baseText);
+//     // use ### to represent the changeable value
+//     void setBaseText(std::string baseText);
 
-    void setValue(std::string value);
+//     void setValue(std::string value);
 
-    std::string getText();
+//     std::string getText();
     
-    UIText* getAsText() override;
+//     UIText* getAsText() override;
 
-    void resize(sf::Vector2f newSize, int posSet = -1) override;
+//     void resize(sf::Vector2f newSize, int posSet = -1) override;
 
-    void draw() override;
-private:
-    // no default constructor for sf::Text
-    std::unique_ptr<sf::Text> displayText;
+//     void draw() override;
+// private:
+//     // no default constructor for sf::Text
+//     std::unique_ptr<sf::Text> displayText;
 
-    std::string baseText;
+//     std::string baseText;
 
-    std::string value;
-};
+//     std::string value;
+// };

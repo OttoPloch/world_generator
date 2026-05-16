@@ -1,54 +1,54 @@
-#pragma once
+// #pragma once
 
-#include "../core/common.hpp"
-#include "ui_element.hpp"
-#include <SFML/Graphics/Rect.hpp>
+// #include "../core/common.hpp"
+// #include "ui_element.hpp"
+// #include <SFML/Graphics/Rect.hpp>
 
-class UIButton : public UIElement
-{
-public:
-    UIButton();
+// class UIButton : public UIElement
+// {
+// public:
+//     UIButton();
 
-    // buttonTextures[0] = default texture
-    // buttonTextures[1] = hover texture
-    // buttonTextures[2] = click texture
-    UIButton(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::array<sf::Texture*, 3> buttonTextures, UIElement* parent = nullptr);
+//     // buttonTextures[0] = default texture
+//     // buttonTextures[1] = hover texture
+//     // buttonTextures[2] = click texture
+//     UIButton(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::array<sf::Texture*, 3> buttonTextures, UIElement* parent = nullptr);
     
-    // buttonTextures[0] = default texture
-    // buttonTextures[1] = hover texture
-    // buttonTextures[2] = click texture
-    void init(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::array<sf::Texture*, 3> buttonTextures, UIElement* parent = nullptr);
+//     // buttonTextures[0] = default texture
+//     // buttonTextures[1] = hover texture
+//     // buttonTextures[2] = click texture
+//     void init(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, std::array<sf::Texture*, 3> buttonTextures, UIElement* parent = nullptr);
     
-    // buttonTextures[0] = default texture
-    // buttonTextures[1] = hover texture
-    // buttonTextures[2] = click texture
-    void init(std::array<sf::Texture*, 3> buttonTextures);
+//     // buttonTextures[0] = default texture
+//     // buttonTextures[1] = hover texture
+//     // buttonTextures[2] = click texture
+//     void init(std::array<sf::Texture*, 3> buttonTextures);
 
-    sf::FloatRect getBoundingBox() override;
+//     sf::FloatRect getBoundingBox() override;
 
-    bool hover();
+//     bool hover();
 
-    bool pressed();
+//     bool pressed();
 
-    bool clicked();
+//     bool clicked();
 
-    void activate();
+//     void activate();
 
-    bool getActive();
+//     bool getActive();
 
-    UIButton* getAsButton() override;
+//     UIButton* getAsButton() override;
 
-    void switchTexture(int index);
+//     void switchTexture(int index);
 
-    void resize(sf::Vector2f newSize, int posSet = -1) override;
+//     void resize(sf::Vector2f newSize, int posSet = -1) override;
 
-    void update() override;
+//     void update() override;
 
-    void draw() override;
-private:
-    std::array<sf::Texture*, 3> buttonTextures;
+//     void draw() override;
+// private:
+//     std::array<sf::Texture*, 3> buttonTextures;
 
-    std::unique_ptr<sf::Sprite> button;
+//     std::unique_ptr<sf::Sprite> button;
 
-    bool active;
-};
+//     bool active;
+// };

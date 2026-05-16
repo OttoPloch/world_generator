@@ -6,7 +6,6 @@
 #include "../graphics/asset_manager.hpp"
 #include "../entities/entity_layer.hpp"
 #include "../ui/ui_layer.hpp"
-#include "../ui/ui_animation.hpp"
 #include "../world/chunk/chunk_layer.hpp"
 #include "../entities/components/entity_component.hpp"
 #include "../entities/components/movement_component.hpp"

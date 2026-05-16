@@ -1,6 +1,5 @@
 #include "input.hpp"
 #include "game.hpp"
-#include "../ui/interactive_ui_manager.hpp"
 #include <SFML/Window/Mouse.hpp>
 
 Input::Input() {}
@@ -273,7 +272,7 @@ void Input::update()
             }
         }
 
-        if (getKey("LEFTCLICK") || getKey("RIGHTCLICK")) game->getScene()->getUILayer()->interactiveUIManager.disableControllerUI();
+        // if (getKey("LEFTCLICK") || getKey("RIGHTCLICK")) game->getScene()->getUILayer()->interactiveUIManager.disableControllerUI();
     
         if (controllerUI_moveClock.getElapsedTime().asSeconds() >= 0.2f)
         {
@@ -301,7 +300,7 @@ void Input::update()
 
             if (UIMoveInput.x != 0 || UIMoveInput.y != 0 || moveDirection.x != 0 || moveDirection.y != 0)
             {
-                game->getScene()->getUILayer()->interactiveUIManager.moveIndicator(moveDirection);
+                // game->getScene()->getUILayer()->interactiveUIManager.moveIndicator(moveDirection);
                 
                 controllerUI_moveClock.restart();
             }

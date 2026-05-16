@@ -1,47 +1,47 @@
-#pragma once
+// #pragma once
 
-#include "../core/common.hpp"
-#include "ui_button.hpp"
-#include "ui_background.hpp"
+// #include "../core/common.hpp"
+// #include "ui_button.hpp"
+// #include "ui_background.hpp"
 
-#include <map>
+// #include <map>
 
-class Game;
+// class Game;
 
-class InteractiveUIManager
-{
-public:
-    InteractiveUIManager();
+// class InteractiveUIManager
+// {
+// public:
+//     InteractiveUIManager();
     
-    InteractiveUIManager(Game* game, std::map<int, std::unique_ptr<UIElement>>* elements, UIElement* controllerUI_indicator);
+//     InteractiveUIManager(Game* game, std::map<int, std::unique_ptr<UIElement>>* elements, UIElement* controllerUI_indicator);
 
-    void init(Game* game, std::map<int, std::unique_ptr<UIElement>>* elements, UIElement* controllerUI_indicator);
+//     void init(Game* game, std::map<int, std::unique_ptr<UIElement>>* elements, UIElement* controllerUI_indicator);
 
-    void moveIndicator(sf::Vector2i direction);
+//     void moveIndicator(sf::Vector2i direction);
 
-    void click();
+//     void click();
     
-    void disableControllerUI();
+//     void disableControllerUI();
 
-    bool isControllerUIActive();
+//     bool isControllerUIActive();
 
-    UIElement* getSelectedElement();
+//     UIElement* getSelectedElement();
 
-    void draw();
+//     void draw();
 
-    void updateIndicatorPosition();
+//     void updateIndicatorPosition();
 
-    UIElement* controllerUI_indicator;
+//     UIElement* controllerUI_indicator;
 
-    UIElement* controllerUI_selectedElement;
-private:
-    Game* game;
+//     UIElement* controllerUI_selectedElement;
+// private:
+//     Game* game;
 
-    UILayer* uiLayer;
+//     UILayer* uiLayer;
 
-    std::map<int, std::unique_ptr<UIElement>>* elements;
+//     std::map<int, std::unique_ptr<UIElement>>* elements;
 
-    bool active;
+//     bool active;
 
-    sf::Vector2f indicatorSize;
-};
+//     sf::Vector2f indicatorSize;
+// };

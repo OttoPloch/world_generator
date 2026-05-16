@@ -47,41 +47,41 @@ void Scene::tick()
     chunkLayer.tick();
 
     // TEMP
-    sf::Vector2i mouseChunkPos = worldToChunkPosition(game, window->getWindow().mapPixelToCoords(sf::Mouse::getPosition(window->getWindow())));
-    uiLayer.getElement("mouse chunk pos display")->getAsText()->setValue(std::to_string(mouseChunkPos.x) + ", " + std::to_string(mouseChunkPos.y));
+    // sf::Vector2i mouseChunkPos = worldToChunkPosition(game, window->getWindow().mapPixelToCoords(sf::Mouse::getPosition(window->getWindow())));
+    // uiLayer.getElement("mouse chunk pos display")->getAsText()->setValue(std::to_string(mouseChunkPos.x) + ", " + std::to_string(mouseChunkPos.y));
     
-    sf::Vector2f mouseWorldPos = game->getInput()->getMouseWorldPos();
-    sf::Vector2f mouseLocalWorldPos = {std::fmod(mouseWorldPos.x, toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size), std::fmod(mouseWorldPos.y, toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size)};
-    sf::Vector2i mouseLocalPos = {toInt(std::floor(mouseLocalWorldPos.x / game->getSettings()->tile_size)), toInt(std::floor(mouseLocalWorldPos.y / game->getSettings()->tile_size))};
-    Chunk* mouseChunk = chunkLayer.getChunk(mouseChunkPos);
+    // sf::Vector2f mouseWorldPos = game->getInput()->getMouseWorldPos();
+    // sf::Vector2f mouseLocalWorldPos = {std::fmod(mouseWorldPos.x, toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size), std::fmod(mouseWorldPos.y, toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size)};
+    // sf::Vector2i mouseLocalPos = {toInt(std::floor(mouseLocalWorldPos.x / game->getSettings()->tile_size)), toInt(std::floor(mouseLocalWorldPos.y / game->getSettings()->tile_size))};
+    // Chunk* mouseChunk = chunkLayer.getChunk(mouseChunkPos);
     
-    if (mouseChunk && mouseChunk->state == ChunkState::ACTIVE)
-    {
-        Tile* mouseTile = mouseChunk->getTile(mouseLocalPos.x, mouseLocalPos.y);
+    // if (mouseChunk && mouseChunk->state == ChunkState::ACTIVE)
+    // {
+    //     Tile* mouseTile = mouseChunk->getTile(mouseLocalPos.x, mouseLocalPos.y);
 
-        if (mouseTile)
-        {
-            std::map<TileType, std::string> typesToStrings {
-                {TileType::AIR, "air"},
-                {TileType::WATER, "water"},
-                {TileType::GRASS, "grass"},
-                {TileType::STONE, "stone"},
-                {TileType::LAVA, "lava"},
-                {TileType::COBBLE, "cobble"},
-                {TileType::PINK, "pink"},
-            };
+    //     if (mouseTile)
+    //     {
+    //         std::map<TileType, std::string> typesToStrings {
+    //             {TileType::AIR, "air"},
+    //             {TileType::WATER, "water"},
+    //             {TileType::GRASS, "grass"},
+    //             {TileType::STONE, "stone"},
+    //             {TileType::LAVA, "lava"},
+    //             {TileType::COBBLE, "cobble"},
+    //             {TileType::PINK, "pink"},
+    //         };
         
-            uiLayer.getElement("mouse tile type display")->getAsText()->setValue(typesToStrings[mouseTile->type]);
-        }
-        else
-        {
-            uiLayer.getElement("mouse tile type display")->getAsText()->setValue("none");
-        }
-    }
-    else
-    {
-        uiLayer.getElement("mouse tile type display")->getAsText()->setValue("none");
-    }
+    //         uiLayer.getElement("mouse tile type display")->getAsText()->setValue(typesToStrings[mouseTile->type]);
+    //     }
+    //     else
+    //     {
+    //         uiLayer.getElement("mouse tile type display")->getAsText()->setValue("none");
+    //     }
+    // }
+    // else
+    // {
+    //     uiLayer.getElement("mouse tile type display")->getAsText()->setValue("none");
+    // }
     ///////
 }
 
@@ -94,71 +94,71 @@ void Scene::update(float dt)
 
 void Scene::UIUpdate(float dt)
 {
-    if (uiLayer.getElement("faster button")->getAsButton()->getActive())
-    {
-        if (auto e = entityLayer.getEntity(0)->getComponent<MovementComponent>())
-        {
-            e->stats.speed += 2;
+    // if (uiLayer.getElement("faster button")->getAsButton()->getActive())
+    // {
+    //     if (auto e = entityLayer.getEntity(0)->getComponent<MovementComponent>())
+    //     {
+    //         e->stats.speed += 2;
             
-            uiLayer.getElement("speed display")->getAsText()->setValue(std::to_string(toInt(e->stats.speed)));
-        }        
-    }
+    //         uiLayer.getElement("speed display")->getAsText()->setValue(std::to_string(toInt(e->stats.speed)));
+    //     }        
+    // }
     
-    if (uiLayer.getElement("slower button")->getAsButton()->getActive())
-    {
-        if (auto e = entityLayer.getEntity(0)->getComponent<MovementComponent>())
-        {
-            e->stats.speed -= 2;
+    // if (uiLayer.getElement("slower button")->getAsButton()->getActive())
+    // {
+    //     if (auto e = entityLayer.getEntity(0)->getComponent<MovementComponent>())
+    //     {
+    //         e->stats.speed -= 2;
 
-            uiLayer.getElement("speed display")->getAsText()->setValue(std::to_string(toInt(e->stats.speed)));
-        }
-    }
+    //         uiLayer.getElement("speed display")->getAsText()->setValue(std::to_string(toInt(e->stats.speed)));
+    //     }
+    // }
 
-    if (uiLayer.getElement("reset button")->getAsButton()->getActive())
-    {
-        if (auto e = entityLayer.getEntity(0)->getComponent<MovementComponent>())
-        {
-            e->stats.speed = entityLayer.tManager.entityTemplates["player"].movement->speed;
+    // if (uiLayer.getElement("reset button")->getAsButton()->getActive())
+    // {
+    //     if (auto e = entityLayer.getEntity(0)->getComponent<MovementComponent>())
+    //     {
+    //         e->stats.speed = entityLayer.tManager.entityTemplates["player"].movement->speed;
 
-            uiLayer.getElement("speed display")->getAsText()->setValue(std::to_string(toInt(e->stats.speed)));
-        }
-    }
+    //         uiLayer.getElement("speed display")->getAsText()->setValue(std::to_string(toInt(e->stats.speed)));
+    //     }
+    // }
 
-    if (uiLayer.getElement("animation button")->getAsButton()->getActive())
-    {
-        uiLayer.getElement("win 1")->setAnimation({0, 0}, {60, 300}, -1, 0, true);
-        uiLayer.getElement("animation button")->setAnimation({0, 0}, {-75, 200}, -1, -1, true, false);
-        uiLayer.getElement("animation button 2")->setAnimation({0, 0}, {25, 200}, -1, -1, true, false);
-    }
+    // if (uiLayer.getElement("animation button")->getAsButton()->getActive())
+    // {
+    //     uiLayer.getElement("win 1")->setAnimation({0, 0}, {60, 300}, -1, 0, true);
+    //     uiLayer.getElement("animation button")->setAnimation({0, 0}, {-75, 200}, -1, -1, true, false);
+    //     uiLayer.getElement("animation button 2")->setAnimation({0, 0}, {25, 200}, -1, -1, true, false);
+    // }
     
-    if (uiLayer.getElement("animation button 2")->getAsButton()->getActive())
-    {
-        uiLayer.getElement("win 1")->setAnimation({0, 0}, {-280, 300}, -1, 0, true);
-        uiLayer.getElement("animation button")->setAnimation({0, 0}, {25, 200}, -1, -1, true, false);
-        uiLayer.getElement("animation button 2")->setAnimation({0, 0}, {-75, 200}, -1, -1, true, false);
-    }
+    // if (uiLayer.getElement("animation button 2")->getAsButton()->getActive())
+    // {
+    //     uiLayer.getElement("win 1")->setAnimation({0, 0}, {-280, 300}, -1, 0, true);
+    //     uiLayer.getElement("animation button")->setAnimation({0, 0}, {25, 200}, -1, -1, true, false);
+    //     uiLayer.getElement("animation button 2")->setAnimation({0, 0}, {-75, 200}, -1, -1, true, false);
+    // }
 
-    if (uiLayer.getElement("action set attack button")->getAsButton()->getActive())
-    {
-        if (entityLayer.player)
-        {
-            if (auto a = entityLayer.player->getComponent<ActionComponent>())
-            {
-                a->setAction("MAIN ACTION", {"attack!", 1.f, 0.f, 2.f});
-            }
-        }
-    }
+    // if (uiLayer.getElement("action set attack button")->getAsButton()->getActive())
+    // {
+    //     if (entityLayer.player)
+    //     {
+    //         if (auto a = entityLayer.player->getComponent<ActionComponent>())
+    //         {
+    //             a->setAction("MAIN ACTION", {"attack!", 1.f, 0.f, 2.f});
+    //         }
+    //     }
+    // }
 
-    if (uiLayer.getElement("action set heal button")->getAsButton()->getActive())
-    {
-        if (entityLayer.player)
-        {
-            if (auto a = entityLayer.player->getComponent<ActionComponent>())
-            {
-                a->setAction("MAIN ACTION", {"heal!", -1.f, 1.f, 3.f});
-            }
-        }
-    }
+    // if (uiLayer.getElement("action set heal button")->getAsButton()->getActive())
+    // {
+    //     if (entityLayer.player)
+    //     {
+    //         if (auto a = entityLayer.player->getComponent<ActionComponent>())
+    //         {
+    //             a->setAction("MAIN ACTION", {"heal!", -1.f, 1.f, 3.f});
+    //         }
+    //     }
+    // }
 
     uiLayer.UIUpdate(dt);
 }
@@ -201,7 +201,7 @@ void Scene::sceneInput(std::string control, bool justPressed)
     }
     else if (control == "INTERACT" && justPressed)
     {
-        uiLayer.interactiveUIManager.click();
+        //uiLayer.interactiveUIManager.click();
     }
     else if (control == "EXTRA 1" && justPressed)
     {

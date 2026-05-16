@@ -362,7 +362,7 @@ void ChunkLayer::loadUpdate()
 
     if (currChunkPos != lastChunkPos)
     {
-        game->getScene()->getUILayer()->getElement("chunk pos display")->getAsText()->setValue(std::to_string(currChunkPos.x) + ", " + std::to_string(currChunkPos.y));
+        // game->getScene()->getUILayer()->getElement("chunk pos display")->getAsText()->setValue(std::to_string(currChunkPos.x) + ", " + std::to_string(currChunkPos.y));
 
         lastChunkPos = currChunkPos;
     }

@@ -4,10 +4,6 @@
 #include "../core/camera.hpp"
 #include "../graphics/asset_manager.hpp"
 #include "ui_element.hpp"
-#include "ui_background.hpp"
-#include "ui_text.hpp"
-#include "ui_button.hpp"
-#include "interactive_ui_manager.hpp"
 
 #include <vector>
 #include <map>
@@ -37,17 +33,15 @@ public:
 
     void draw();
     
-    InteractiveUIManager interactiveUIManager;
+    // InteractiveUIManager interactiveUIManager;
 private:
     Game* game;
-
     AssetManager* assetManager;
-
     Camera* camera;
 
     int IDCounter;
     
     sf::View UIView;
     
-    std::map<int, std::unique_ptr<UIElement>> elements;
+    std::vector<std::unique_ptr<UIElement>> elements;
 };

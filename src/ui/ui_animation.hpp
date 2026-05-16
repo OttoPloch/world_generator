@@ -1,37 +1,37 @@
-#pragma once
+// #pragma once
 
-#include "../utils/utils.hpp"
-#include "ui_element.hpp"
+// #include "../utils/utils.hpp"
+// #include "ui_element.hpp"
 
-#include <SFML/Graphics.hpp>
+// #include <SFML/Graphics.hpp>
 
-class UILayer;
-class Game;
+// class UILayer;
+// class Game;
 
-class UIAnimation
-{
-public:
-    UIAnimation();
+// class UIAnimation
+// {
+// public:
+//     UIAnimation();
 
-    UIAnimation(sf::Vector2f startCenter, sf::Vector2f endCenter, int endPosSet);
+//     UIAnimation(sf::Vector2f startCenter, sf::Vector2f endCenter, int endPosSet);
     
-    void init(sf::Vector2f startCenter, sf::Vector2f endCenter, int endPosSet);
+//     void init(sf::Vector2f startCenter, sf::Vector2f endCenter, int endPosSet);
 
-    sf::Vector2f step(float dt, Game* game);
+//     sf::Vector2f step(float dt, Game* game);
 
-    bool isDone();
+//     bool isDone();
 
-    void finalize(UILayer* uiLayer, UIElement* element);
+//     void finalize(UILayer* uiLayer, UIElement* element);
 
-    int getEndPosSet();
+//     int getEndPosSet();
 
-    sf::Vector2f currentCenter;
+//     sf::Vector2f currentCenter;
     
-    sf::Vector2f startCenter;
-private:
-    Game* game;
+//     sf::Vector2f startCenter;
+// private:
+//     Game* game;
 
-    sf::Vector2f endCenter;
+//     sf::Vector2f endCenter;
 
-    int endPosSet;
-};
+//     int endPosSet;
+// };

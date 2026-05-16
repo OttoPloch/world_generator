@@ -27,7 +27,7 @@ void log(T message, bool newLine = true)
     if (newLine) std::cout << '\n';
 }
 
-sf::Vector2f UIPositionToScreenCenter(UILayer* uiLayer, UIElement* element, sf::Vector2f pos, int posSet = -1, bool useElementPosition = false);
+// sf::Vector2f UIPositionToScreenCenter(UILayer* uiLayer, UIElement* element, sf::Vector2f pos, int posSet = -1, bool useElementPosition = false);
 
 int getRandInt(int min, int max);
 

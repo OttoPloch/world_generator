@@ -26,6 +26,27 @@ std::array<sf::Vertex, 6> VertexGroup::createTriangleVerts(sf::Vector2f tl, sf::
     return vertices;
 }
 
+std::array<sf::Vertex, 6> VertexGroup::createTriangleVerts(sf::Vector2f tl, sf::Vector2f size, sf::Color color)
+{
+    std::array<sf::Vertex, 6> vertices;
+
+    vertices[0].position = tl;                                  // tl
+    vertices[1].position = {tl.x + size.x, tl.y};          // tr
+    vertices[2].position = {tl.x + size.x, tl.y + size.y}; // br
+    vertices[3].position = {tl.x, tl.y + size.y};          // bl
+    vertices[4].position = vertices[0].position;                // tl
+    vertices[5].position = vertices[2].position;                // br
+
+    vertices[0].color = color;
+    vertices[1].color = color;
+    vertices[2].color = color;
+    vertices[3].color = color;
+    vertices[4].color = color;
+    vertices[5].color = color;
+    
+    return vertices;
+}
+
 std::array<sf::Vertex, 8> VertexGroup::createLineVerts(sf::Vector2f tl, sf::Vector2f size, sf::Color color)
 {
     std::array<sf::Vertex, 8> vertices;

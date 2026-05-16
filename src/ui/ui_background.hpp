@@ -1,46 +1,46 @@
-#pragma once
+// #pragma once
 
-#include "ui_element.hpp"
-#include "../graphics/tile_set.hpp"
+// #include "ui_element.hpp"
+// #include "../graphics/tile_set.hpp"
 
-#include <vector>
+// #include <vector>
 
-class Game;
+// class Game;
 
-class UIBackground : public UIElement
-{
-public:
-    UIBackground();
+// class UIBackground : public UIElement
+// {
+// public:
+//     UIBackground();
 
-    UIBackground(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, sf::Color color, TileSet* tileSet = nullptr, sf::Texture* borderTexture = nullptr, float borderSize = 96.f, UIElement* parent = nullptr);
+//     UIBackground(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, sf::Color color, TileSet* tileSet = nullptr, sf::Texture* borderTexture = nullptr, float borderSize = 96.f, UIElement* parent = nullptr);
     
-    void init(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, sf::Color color, TileSet* tileSet = nullptr, sf::Texture* borderTexture = nullptr, float borderSize = 96.f, UIElement* parent = nullptr);
+//     void init(Game* game, UILayer* uiLayer, std::string name, int ID, unsigned int posSet, sf::Vector2f position, sf::Vector2f size, sf::Color color, TileSet* tileSet = nullptr, sf::Texture* borderTexture = nullptr, float borderSize = 96.f, UIElement* parent = nullptr);
 
-    void init(sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, float borderSize = 96.f);
+//     void init(sf::Color color, TileSet* tileSet, sf::Texture* borderTexture, float borderSize = 96.f);
 
-    sf::FloatRect getBoundingBox() override;
+//     sf::FloatRect getBoundingBox() override;
 
-    void createBorderVertices();
+//     void createBorderVertices();
 
-    sf::Color getColor();
+//     sf::Color getColor();
 
-    float getBorderSize();
+//     float getBorderSize();
 
-    UIBackground* getAsBackground() override;
+//     UIBackground* getAsBackground() override;
 
-    void resize(sf::Vector2f newSize, int posSet = -1) override;
+//     void resize(sf::Vector2f newSize, int posSet = -1) override;
     
-    void draw() override;
-private:
-    sf::Color color;
+//     void draw() override;
+// private:
+//     sf::Color color;
 
-    TileSet* tileSet;
+//     TileSet* tileSet;
 
-    sf::RenderStates borderStates;
+//     sf::RenderStates borderStates;
     
-    float borderSize;
+//     float borderSize;
 
-    std::vector<sf::Vertex> borderVertices;
+//     std::vector<sf::Vertex> borderVertices;
     
-    sf::RectangleShape background;
-};
+//     sf::RectangleShape background;
+// };
