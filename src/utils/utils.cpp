@@ -80,7 +80,7 @@ bool dynamicRectRectCollide(CollisionRect* in, sf::Vector2f inVel, CollisionRect
         target->type
     );
 
-    if (rayRectCollide(in->position.getPosition(), inVel, &expandedTarget, contactPoint, contactNormal, contactTime))
+    if (rayRectCollide(in->position.getPosition(PositionType::WORLD), inVel, &expandedTarget, contactPoint, contactNormal, contactTime))
     {
         if (contactTime <= 1.f) return true;
     }
@@ -186,25 +186,26 @@ int getRandInt()
     return dist(gen);
 }
 
-bool isOnScreen(Game* game, sf::Vector2f tl, sf::Vector2f size, bool applyView)
+bool isOnScreen(Game* game, sf::Vector2f tl, sf::Vector2f size, bool useCameraView)
 {
-    sf::RenderWindow& window = game->getWindow()->getWindow();
-    sf::View view = window.getView();
+    Camera* camera = game->getScene()->getCamera();
+    sf::Vector2f cameraTopLeft = camera->getTopLeft();
+    sf::Vector2f cameraSize = camera->getView().getSize();
 
-    float top = tl.y;
-    float bottom = tl.y + size.y;
     float left = tl.x;
     float right = tl.x + size.x;
+    float top = tl.y;
+    float bottom = tl.y + size.y;
 
-    if (applyView)
+    if (useCameraView)
     {
-        if (right >= view.getCenter().x - view.getSize().x / 2.f)
+        if (right >= cameraTopLeft.x)
         {
-            if (left <= view.getCenter().x + view.getSize().x / 2.f)
+            if (left <= cameraTopLeft.x + cameraSize.x)
             {
-                if (bottom >= view.getCenter().y - view.getSize().y / 2.f)
+                if (bottom >= cameraTopLeft.y)
                 {
-                    if (top <= view.getCenter().y + view.getSize().y / 2.f)
+                    if (top <= cameraTopLeft.y + cameraSize.y)
                     {
                         return true;
                     }
@@ -214,7 +215,7 @@ bool isOnScreen(Game* game, sf::Vector2f tl, sf::Vector2f size, bool applyView)
     }
     else
     {
-        sf::Vector2f viewSize = view.getSize();
+        sf::Vector2f viewSize = game->getWindow()->getWindow().getView().getSize();
 
         if (right >= 0)
         {
@@ -236,24 +237,26 @@ bool isOnScreen(Game* game, sf::Vector2f tl, sf::Vector2f size, bool applyView)
 
 bool isOnScreen(Game* game, GamePosition tl, sf::Vector2f size)
 {
-    sf::RenderWindow& window = game->getWindow()->getWindow();
-    sf::View view = window.getView();
+    Camera* camera = game->getScene()->getCamera();
+    sf::Vector2f cameraTopLeft = camera->getTopLeft();
+    sf::Vector2f cameraSize = camera->getView().getSize();
 
-    float left = tl.getPosition().x;
-    float right = tl.getPosition().x + size.x;
-    float top = tl.getPosition().y;
-    float bottom = tl.getPosition().y + size.y;
+    sf::Vector2f point = tl.getPosition(tl.getPositionType());
+
+    float left = point.x;
+    float right = point.x + size.x;
+    float top = point.y;
+    float bottom = point.y + size.y;
 
     if (tl.getPositionType() == PositionType::WORLD)
     {
-
-        if (right >= view.getCenter().x - view.getSize().x / 2.f)
+        if (right >= cameraTopLeft.x)
         {
-            if (left <= view.getCenter().x + view.getSize().x / 2.f)
+            if (left <= cameraTopLeft.x + cameraSize.x)
             {
-                if (bottom >= view.getCenter().y - view.getSize().y / 2.f)
+                if (bottom >= cameraTopLeft.y)
                 {
-                    if (top <= view.getCenter().y + view.getSize().y / 2.f)
+                    if (top <= cameraTopLeft.y + cameraSize.y)
                     {
                         return true;
                     }
@@ -263,7 +266,7 @@ bool isOnScreen(Game* game, GamePosition tl, sf::Vector2f size)
     }
     else if (tl.getPositionType() == PositionType::SCREEN)
     {
-        sf::Vector2f viewSize = view.getSize();
+        sf::Vector2f viewSize = game->getWindow()->getWindow().getView().getSize();
 
         if (right >= 0)
         {
@@ -281,27 +284,28 @@ bool isOnScreen(Game* game, GamePosition tl, sf::Vector2f size)
     }
     else
     {
-        std::cout << "ERROR in utils, checking isOnScreen for GamePosition with invalid type of " << static_cast<int>(tl.getPositionType()) << '\n';
+        std::cout << "ERROR invalid GamePosition type of " << static_cast<int>(tl.getPositionType()) << ".\n";
         assert(false);
     }
 
     return false;
 }
 
-bool isOnScreen(Game* game, sf::Vector2f point, bool applyView)
+bool isOnScreen(Game* game, sf::Vector2f point, bool useCameraView)
 {
-    sf::RenderWindow& window = game->getWindow()->getWindow();
-    sf::View view = window.getView();
+    Camera* camera = game->getScene()->getCamera();
+    sf::Vector2f cameraTopLeft = camera->getTopLeft();
+    sf::Vector2f cameraSize = camera->getView().getSize();
 
-    if (applyView)
+    if (useCameraView)
     {
-        if (point.x >= view.getCenter().x - view.getSize().x / 2.f)
+        if (point.x >= cameraTopLeft.x)
         {
-            if (point.x <= view.getCenter().x + view.getSize().x / 2.f)
+            if (point.x <= cameraTopLeft.x + cameraSize.x)
             {
-                if (point.y >= view.getCenter().y - view.getSize().y / 2.f)
+                if (point.y >= cameraTopLeft.y)
                 {
-                    if (point.y <= view.getCenter().y + view.getSize().y / 2.f)
+                    if (point.y <= cameraTopLeft.y + cameraSize.y)
                     {
                         return true;
                     }
@@ -311,7 +315,7 @@ bool isOnScreen(Game* game, sf::Vector2f point, bool applyView)
     }
     else
     {
-        sf::Vector2f viewSize = view.getSize();
+        sf::Vector2f viewSize = game->getWindow()->getWindow().getView().getSize();
 
         if (point.x >= 0)
         {
@@ -333,20 +337,21 @@ bool isOnScreen(Game* game, sf::Vector2f point, bool applyView)
 
 bool isOnScreen(Game* game, GamePosition position)
 {
-    sf::Vector2f point = position.getPosition();
+    Camera* camera = game->getScene()->getCamera();
+    sf::Vector2f cameraTopLeft = camera->getTopLeft();
+    sf::Vector2f cameraSize = camera->getView().getSize();
+
+    sf::Vector2f point = position.getPosition(position.getPositionType());
 
     if (position.getPositionType() == PositionType::WORLD)
     {
-        sf::RenderWindow& window = game->getWindow()->getWindow();
-        sf::View view = window.getView();
-
-        if (point.x >= view.getCenter().x - view.getSize().x / 2.f)
+        if (point.x >= cameraTopLeft.x)
         {
-            if (point.x <= view.getCenter().x + view.getSize().x / 2.f)
+            if (point.x <= cameraTopLeft.x + cameraSize.x)
             {
-                if (point.y >= view.getCenter().y - view.getSize().y / 2.f)
+                if (point.y >= cameraTopLeft.y)
                 {
-                    if (point.y <= view.getCenter().y + view.getSize().y / 2.f)
+                    if (point.y <= cameraTopLeft.y + cameraSize.y)
                     {
                         return true;
                     }
@@ -374,7 +379,7 @@ bool isOnScreen(Game* game, GamePosition position)
     }
     else
     {
-        std::cout << "ERROR in utils, checking isOnScreen for GamePosition with invalid type of " << static_cast<int>(position.getPositionType()) << '\n';
+        std::cout << "ERROR invalid GamePosition type of " << static_cast<int>(position.getPositionType()) << ".\n";
         assert(false);
     }
 

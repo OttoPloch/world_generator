@@ -4,7 +4,7 @@
 
 MineAction::MineAction(float mineSpeed, std::string name, float rangeMultiplier) : Action(name, rangeMultiplier, 0.f, 0.f, true, true), mineSpeed(mineSpeed), mineZ(-1) {}
 
-void MineAction::start(Game* game)
+bool MineAction::start(Game* game)
 {
     sf::Vector2i chunkPos = worldToChunkPosition(game, startPosition);
 
@@ -28,10 +28,19 @@ void MineAction::start(Game* game)
                 {
                     timeToComplete = m->durability / mineSpeed;
                     cooldown = m->durability / mineSpeed;
+
+                    return true;
                 }
             }
         }
     }
+
+    active = false;
+    timeProgress = 0.f;
+    timeToComplete = 0.f;
+    cooldownProgress = 0.f;
+    cooldown = 0.f;
+    return false;
 }
 
 bool MineAction::update(float dt, Game* game)
@@ -52,8 +61,9 @@ bool MineAction::update(float dt, Game* game)
     if (worldToTilePosition(game, game->getInput()->getMouseWorldPos()) != worldToTilePosition(game, startPosition))
     {
         timeProgress = 0.f;
+        cooldownProgress = 0.f;
         startPosition = game->getInput()->getMouseWorldPos();
-        start(game);
+        return start(game);
     }
     
     return true;

@@ -36,11 +36,12 @@ int getRandInt(int seed, int min, int max);
 
 int getRandInt();
 
-bool isOnScreen(Game* game, sf::Vector2f tl, sf::Vector2f size, bool applyView = true);
+// if !useCameraView, then the current applied view of the window will be used.
+bool isOnScreen(Game* game, sf::Vector2f tl, sf::Vector2f size, bool useCameraView = true);
 
 bool isOnScreen(Game* game, GamePosition position, sf::Vector2f size);
 
-bool isOnScreen(Game* game, sf::Vector2f point, bool applyView = true);
+bool isOnScreen(Game* game, sf::Vector2f point, bool useCameraView = true);
 
 bool isOnScreen(Game* game, GamePosition position);
 

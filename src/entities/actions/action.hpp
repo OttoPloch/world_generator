@@ -6,7 +6,7 @@ struct Action
 {
     Action(std::string name, float rangeMultiplier, float timeToComplete, float cooldown = -1.f, bool positionTrackedFromStart = false, bool mustHoldDown = false);
 
-    virtual void start(Game* game);
+    virtual bool start(Game* game);
 
     // true if still updating, false if action was CANCELLED.
     virtual bool update(float dt, Game* game);

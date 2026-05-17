@@ -17,8 +17,6 @@ public:
 
     GamePosition(const GamePosition& other);
 
-    sf::Vector2f getPosition();
-
     PositionType getPositionType();
 
     void setPosition(sf::Vector2f newPosition);
@@ -29,11 +27,11 @@ public:
 
     void setPositionType(PositionType newType, bool convertPosition = true);
 
-    // return this object's position as a desired position type without changing it.
-    sf::Vector2f convertPosition(PositionType returnType);
+    // return this object's position as a desired position type.
+    sf::Vector2f getPosition(PositionType returnType);
 
-    // static version for general conversions
-    static sf::Vector2f convertPosition(Game* game, sf::Vector2f position, PositionType type);
+    // static function for general conversions.
+    static sf::Vector2f convertPosition(Game* game, sf::Vector2f position, PositionType from, PositionType to);
 private:
     Game* game;
 

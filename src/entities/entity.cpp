@@ -17,7 +17,7 @@ int Entity::getID() { return ID; }
 
 void Entity::tick()
 {
-    lastPosition = position.getPosition();
+    lastPosition = position.getPosition(PositionType::WORLD);
 
     for (auto& c : components) c->tick();
 }
@@ -36,7 +36,7 @@ void Entity::draw(sf::RenderWindow& window)
     sprite.draw(window);
 }
 
-sf::Vector2f Entity::getPosition() { return position.getPosition(); }
+sf::Vector2f Entity::getPosition() { return position.getPosition(PositionType::WORLD); }
 
 GamePosition* Entity::getPositionVar() { return &position; }
 

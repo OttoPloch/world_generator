@@ -14,7 +14,10 @@ Action::Action(std::string name, float rangeMultiplier, float timeToComplete, fl
     }
 }
 
-void Action::start(Game* game) {}
+bool Action::start(Game* game)
+{
+    return true;
+}
 
 bool Action::update(float dt, Game* game)
 {

@@ -8,7 +8,7 @@ UIElement::UIElement(Game* game, std::string name, GamePosition position, sf::Ve
 
 void UIElement::updateVertices()
 {
-    vertices = VertexGroup::createTriangleVerts(position.getPosition(), size, backgroundColor);
+    vertices = VertexGroup::createTriangleVerts(position.getPosition(position.getPositionType()), size, backgroundColor);
 }
 
 void UIElement::draw()

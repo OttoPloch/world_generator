@@ -6,22 +6,22 @@ CollisionRect::CollisionRect(GamePosition position, sf::Vector2f size, RectType 
 
 float CollisionRect::left()
 {
-    return position.getPosition().x - size.x / 2.f;
+    return position.getPosition(PositionType::WORLD).x - size.x / 2.f;
 }
 
 float CollisionRect::right()
 {
-    return position.getPosition().x + size.x / 2.f;
+    return position.getPosition(PositionType::WORLD).x + size.x / 2.f;
 }
 
 float CollisionRect::top()
 {
-    return position.getPosition().y - size.y / 2.f;
+    return position.getPosition(PositionType::WORLD).y - size.y / 2.f;
 }
 
 float CollisionRect::bottom()
 {
-    return position.getPosition().y + size.y / 2.f;
+    return position.getPosition(PositionType::WORLD).y + size.y / 2.f;
 }
 
 void CollisionRect::setLeft(float x)

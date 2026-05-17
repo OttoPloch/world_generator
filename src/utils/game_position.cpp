@@ -14,11 +14,6 @@ GamePosition::GamePosition(const GamePosition& other)
     this->type = other.type;
 }
 
-sf::Vector2f GamePosition::getPosition()
-{
-    return *position;
-}
-
 PositionType GamePosition::getPositionType()
 {
     return *type;
@@ -76,7 +71,7 @@ void GamePosition::setPositionType(PositionType newType, bool convertPosition)
     }
 }
 
-sf::Vector2f GamePosition::convertPosition(PositionType returnType)
+sf::Vector2f GamePosition::getPosition(PositionType returnType)
 {
     if (returnType == PositionType::WORLD && *type == PositionType::SCREEN)
     {    
@@ -88,4 +83,18 @@ sf::Vector2f GamePosition::convertPosition(PositionType returnType)
     }
     
     return *position;
+}
+
+sf::Vector2f GamePosition::convertPosition(Game* game, sf::Vector2f position, PositionType from, PositionType to)
+{
+    if (from == PositionType::SCREEN && to == PositionType::WORLD)
+    {
+        return position + game->getScene()->getCamera()->getTopLeft();
+    }
+    else if (from == PositionType::WORLD && to == PositionType::SCREEN)
+    {
+        return position - game->getScene()->getCamera()->getTopLeft();
+    }
+
+    return position;
 }

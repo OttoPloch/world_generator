@@ -16,7 +16,7 @@ void UILayer::init(Game* game, Camera* camera)
     int currID;
     
     elements.emplace_back(std::make_unique<UIElement>(game, "test", GamePosition(game, {150, 150}, PositionType::SCREEN), sf::Vector2f(400, 100), 1, sf::Color(30, 30, 30, 180)));
-    elements.emplace_back(std::make_unique<UIElement>(game, "test 2", GamePosition(game, {100, 50}, PositionType::SCREEN), sf::Vector2f(300, 300), 0, sf::Color(255, 0, 0)));
+    elements.emplace_back(std::make_unique<UIElement>(game, "test 2", GamePosition(game, {400, 100}, PositionType::WORLD), sf::Vector2f(50, 50), 0, sf::Color(255, 0, 0)));
 
     // std::array<sf::Texture*, 3> buttonTextures = {assetManager->getTexture("button_up", "images/ui/"), assetManager->getTexture("button_hover", "images/ui/"), assetManager->getTexture("button_down", "images/ui/")};
     // std::array<sf::Texture*, 3> blueButtonTextures = {assetManager->getTexture("blue_button_up", "images/ui/"), assetManager->getTexture("blue_button_hover", "images/ui/"), assetManager->getTexture("blue_button_down", "images/ui/")};
@@ -116,6 +116,8 @@ void UILayer::UIUpdate(float dt)
 
 void UILayer::draw()
 {
+    // elements with a WORLD position type will always be under elements
+    // with a SCREEN position type, regardless of their z value.
     std::vector<UIElement*> worldElements;
     std::vector<UIElement*> screenElements;
     std::vector<UIElement*> visibleUIElements;
@@ -139,7 +141,7 @@ void UILayer::draw()
 
     std::sort(visibleUIElements.begin(), visibleUIElements.end(), [](UIElement* a, UIElement* b){
         if (a->z != b->z) return a->z < b->z;
-        else return a->position.getPosition().y + a->size.y < b->position.getPosition().y + b->size.y;
+        else return a->position.getPosition(PositionType::WORLD).y + a->size.y < b->position.getPosition(PositionType::WORLD).y + b->size.y;
     });
 
     for (auto e : visibleUIElements)
@@ -162,7 +164,7 @@ void UILayer::draw()
 
     std::sort(visibleUIElements.begin(), visibleUIElements.end(), [](UIElement* a, UIElement* b){
         if (a->z != b->z) return a->z < b->z;
-        else return a->position.getPosition().y + a->size.y < b->position.getPosition().y + b->size.y;
+        else return a->position.getPosition(PositionType::SCREEN).y + a->size.y < b->position.getPosition(PositionType::SCREEN).y + b->size.y;
     });
 
     for (auto e : visibleUIElements)

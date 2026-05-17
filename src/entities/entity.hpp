@@ -58,11 +58,11 @@ public:
         }
     }
 
-    virtual void tick();
+    void tick();
 
-    virtual void update(float dt);
+    void update(float dt);
 
-    virtual void draw(sf::RenderWindow& window);
+    void draw(sf::RenderWindow& window);
 
     sf::Vector2f getPosition();
 

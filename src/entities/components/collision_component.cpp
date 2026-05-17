@@ -82,7 +82,7 @@ void CollisionComponent::update(float dt)
             }
 
             // ENTITY COLLISION
-            std::vector<Entity*> entities = myEntity->game->getScene()->getEntityLayer()->getEntitiesInChunkArea(rect.position.getPosition(), 1);
+            std::vector<Entity*> entities = myEntity->game->getScene()->getEntityLayer()->getEntitiesInChunkArea(rect.position.getPosition(PositionType::WORLD), 1);
         
             // <rect, contact time>
             std::vector<std::pair<CollisionRect*, float>> z;

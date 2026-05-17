@@ -6,7 +6,7 @@ struct MineAction : public Action
 {
     MineAction(float mineSpeed, std::string name, float rangeMultiplier);
 
-    void start(Game* game) override;
+    bool start(Game* game) override;
 
     bool update(float dt, Game* game) override;
 
