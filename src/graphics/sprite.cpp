@@ -3,16 +3,13 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <memory>
 
-Sprite::Sprite() {}
+Sprite::Sprite() : position(nullptr, {0, 0}, PositionType::WORLD) {}
 
-Sprite::Sprite(WorldPosition position, sf::Texture* texture, sf::Vector2f size, bool sizeIsScale, bool usingTexCoords, sf::IntRect texCoords, float animSpeedMult)
+Sprite::Sprite(GamePosition position, sf::Texture* texture, sf::Vector2f size, bool sizeIsScale, bool usingTexCoords, sf::IntRect texCoords, float animSpeedMult) : position(position), texture(texture)
 {
-    this->position = position;
-    this->texture = texture;
-
     sprite = std::make_unique<sf::Sprite>(*texture);
     
-    sprite->setPosition(position.getPos());
+    sprite->setPosition(position.getPosition());
     
     if (usingTexCoords) sprite->setTextureRect(texCoords);
     
@@ -21,17 +18,17 @@ Sprite::Sprite(WorldPosition position, sf::Texture* texture, sf::Vector2f size, 
     resize(size, sizeIsScale);
 }
 
-sf::Vector2f Sprite::getPosition() { return position.getPos(); }
+sf::Vector2f Sprite::getPosition() { return position.getPosition(); }
 
 sf::Vector2f Sprite::getSize() { return size; }
 
-float Sprite::left() { return position.getPos().x - size.x / 2.f; }
+float Sprite::left() { return position.getPosition().x - size.x / 2.f; }
 
-float Sprite::right() { return position.getPos().x + size.x / 2.f; }
+float Sprite::right() { return position.getPosition().x + size.x / 2.f; }
 
-float Sprite::top() { return position.getPos().y - size.y / 2.f; }
+float Sprite::top() { return position.getPosition().y - size.y / 2.f; }
 
-float Sprite::bottom() { return position.getPos().y + size.y / 2.f; }
+float Sprite::bottom() { return position.getPosition().y + size.y / 2.f; }
 
 void Sprite::resize(sf::Vector2f newSize, bool sizeIsScale)
 {
@@ -64,7 +61,7 @@ void Sprite::syncPos(sf::Vector2f interpolatedPos, bool useInterpolated)
     }
     else
     {
-        sprite->setPosition(position.getPos());
+        sprite->setPosition(position.getPosition());
     }
 }
 

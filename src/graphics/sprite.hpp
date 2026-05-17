@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../core/common.hpp"
-#include "../world/world_position.hpp"
+#include "../utils/game_position.hpp"
 #include "animation.hpp"
 #include "animation_set.hpp"
 
@@ -14,7 +14,7 @@ class Sprite
 public:
     Sprite();
 
-    Sprite(WorldPosition position, sf::Texture* texture, sf::Vector2f size = {1.f, 1.f}, bool sizeIsScale = true, bool usingTexCoords = false, sf::IntRect texCoords = sf::IntRect({0, 0}, {0, 0}), float animSpeedMult = 1.f);
+    Sprite(GamePosition position, sf::Texture* texture, sf::Vector2f size = {1.f, 1.f}, bool sizeIsScale = true, bool usingTexCoords = false, sf::IntRect texCoords = sf::IntRect({0, 0}, {0, 0}), float animSpeedMult = 1.f);
 
     sf::Vector2f getPosition();
     sf::Vector2f getSize();
@@ -39,7 +39,7 @@ public:
     std::unique_ptr<AnimationSet> animSet;
     float animSpeedMult;
 private:
-    WorldPosition position;
+    GamePosition position;
 
     sf::Vector2f size;
 

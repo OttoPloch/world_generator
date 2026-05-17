@@ -4,7 +4,7 @@
 #include "../ui/ui_layer.hpp"
 #include "../ui/ui_element.hpp"
 #include "../entities/collision_rect.hpp"
-#include <SFML/Graphics/Rect.hpp>
+#include "game_position.hpp"
 #include <cstdlib>
 #include <random>
 
@@ -80,7 +80,7 @@ bool dynamicRectRectCollide(CollisionRect* in, sf::Vector2f inVel, CollisionRect
         target->type
     );
 
-    if (rayRectCollide(*in->position.position, inVel, &expandedTarget, contactPoint, contactNormal, contactTime))
+    if (rayRectCollide(in->position.getPosition(), inVel, &expandedTarget, contactPoint, contactNormal, contactTime))
     {
         if (contactTime <= 1.f) return true;
     }
@@ -214,19 +214,75 @@ bool isOnScreen(Game* game, sf::Vector2f tl, sf::Vector2f size, bool applyView)
     }
     else
     {
+        sf::Vector2f viewSize = view.getSize();
+
         if (right >= 0)
         {
-            if (left <= window.getSize().x)
+            if (left <= viewSize.x)
             {
                 if (bottom >= 0)
                 {
-                    if (top <= window.getSize().y)
+                    if (top <= viewSize.y)
                     {
                         return true;
                     }
                 }
             }
         }
+    }
+
+    return false;
+}
+
+bool isOnScreen(Game* game, GamePosition tl, sf::Vector2f size)
+{
+    sf::RenderWindow& window = game->getWindow()->getWindow();
+    sf::View view = window.getView();
+
+    float left = tl.getPosition().x;
+    float right = tl.getPosition().x + size.x;
+    float top = tl.getPosition().y;
+    float bottom = tl.getPosition().y + size.y;
+
+    if (tl.getPositionType() == PositionType::WORLD)
+    {
+
+        if (right >= view.getCenter().x - view.getSize().x / 2.f)
+        {
+            if (left <= view.getCenter().x + view.getSize().x / 2.f)
+            {
+                if (bottom >= view.getCenter().y - view.getSize().y / 2.f)
+                {
+                    if (top <= view.getCenter().y + view.getSize().y / 2.f)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    else if (tl.getPositionType() == PositionType::SCREEN)
+    {
+        sf::Vector2f viewSize = view.getSize();
+
+        if (right >= 0)
+        {
+            if (left <= viewSize.x)
+            {
+                if (bottom >= 0)
+                {
+                    if (top <= viewSize.y)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        std::cout << "ERROR in utils, checking isOnScreen for GamePosition with invalid type of " << static_cast<int>(tl.getPositionType()) << '\n';
+        assert(false);
     }
 
     return false;
@@ -255,19 +311,71 @@ bool isOnScreen(Game* game, sf::Vector2f point, bool applyView)
     }
     else
     {
+        sf::Vector2f viewSize = view.getSize();
+
         if (point.x >= 0)
         {
-            if (point.x <= window.getSize().x)
+            if (point.x <= viewSize.x)
             {
                 if (point.y >= 0)
                 {
-                    if (point.y <= window.getSize().y)
+                    if (point.y <= viewSize.y)
                     {
                         return true;
                     }
                 }
             }
         }
+    }
+
+    return false;
+}
+
+bool isOnScreen(Game* game, GamePosition position)
+{
+    sf::Vector2f point = position.getPosition();
+
+    if (position.getPositionType() == PositionType::WORLD)
+    {
+        sf::RenderWindow& window = game->getWindow()->getWindow();
+        sf::View view = window.getView();
+
+        if (point.x >= view.getCenter().x - view.getSize().x / 2.f)
+        {
+            if (point.x <= view.getCenter().x + view.getSize().x / 2.f)
+            {
+                if (point.y >= view.getCenter().y - view.getSize().y / 2.f)
+                {
+                    if (point.y <= view.getCenter().y + view.getSize().y / 2.f)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    else if (position.getPositionType() == PositionType::SCREEN)
+    {
+        sf::Vector2f viewSize = game->getWindow()->getWindow().getView().getSize();
+
+        if (point.x >= 0)
+        {
+            if (point.x <= viewSize.x)
+            {
+                if (point.y >= 0)
+                {
+                    if (point.y <= viewSize.y)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        std::cout << "ERROR in utils, checking isOnScreen for GamePosition with invalid type of " << static_cast<int>(position.getPositionType()) << '\n';
+        assert(false);
     }
 
     return false;

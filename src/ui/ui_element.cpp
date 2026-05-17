@@ -1,9 +1,14 @@
 #include "ui_element.hpp"
 #include "../core/game.hpp"
 
-UIElement::UIElement(Game* game, std::string name, sf::Vector2f position, sf::Vector2f size, int z, sf::Color backgroundColor) : game(game), name(name), position(position), size(size), z(z)
+UIElement::UIElement(Game* game, std::string name, GamePosition position, sf::Vector2f size, int z, sf::Color backgroundColor) : game(game), name(name), position(position), size(size), z(z), backgroundColor(backgroundColor)
 {
-    vertices = VertexGroup::createTriangleVerts(position, size, backgroundColor);
+    updateVertices();
+}
+
+void UIElement::updateVertices()
+{
+    vertices = VertexGroup::createTriangleVerts(position.getPosition(), size, backgroundColor);
 }
 
 void UIElement::draw()

@@ -9,6 +9,7 @@ class Game;
 class UILayer;
 class UIElement;
 class CollisionRect;
+class GamePosition;
 
 float getDistance(sf::Vector2f vec1, sf::Vector2f vec2);
 
@@ -37,7 +38,11 @@ int getRandInt();
 
 bool isOnScreen(Game* game, sf::Vector2f tl, sf::Vector2f size, bool applyView = true);
 
+bool isOnScreen(Game* game, GamePosition position, sf::Vector2f size);
+
 bool isOnScreen(Game* game, sf::Vector2f point, bool applyView = true);
+
+bool isOnScreen(Game* game, GamePosition position);
 
 sf::Vector2i worldToChunkPosition(Game* game, sf::Vector2f position);
 

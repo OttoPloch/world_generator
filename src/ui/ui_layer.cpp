@@ -1,5 +1,6 @@
 #include "ui_layer.hpp"
 #include "../core/game.hpp"
+#include "ui_element.hpp"
 #include <algorithm>
 
 UILayer::UILayer() {}
@@ -14,8 +15,8 @@ void UILayer::init(Game* game, Camera* camera)
 
     int currID;
     
-    elements.emplace_back(std::make_unique<UIElement>(game, "test", sf::Vector2f(150, 150), sf::Vector2f(400, 100), 1, sf::Color(30, 30, 30, 180)));
-    elements.emplace_back(std::make_unique<UIElement>(game, "test 2", sf::Vector2f(100, 50), sf::Vector2f(300, 300), 0, sf::Color(255, 0, 0)));
+    elements.emplace_back(std::make_unique<UIElement>(game, "test", GamePosition(game, {150, 150}, PositionType::SCREEN), sf::Vector2f(400, 100), 1, sf::Color(30, 30, 30, 180)));
+    elements.emplace_back(std::make_unique<UIElement>(game, "test 2", GamePosition(game, {100, 50}, PositionType::SCREEN), sf::Vector2f(300, 300), 0, sf::Color(255, 0, 0)));
 
     // std::array<sf::Texture*, 3> buttonTextures = {assetManager->getTexture("button_up", "images/ui/"), assetManager->getTexture("button_hover", "images/ui/"), assetManager->getTexture("button_down", "images/ui/")};
     // std::array<sf::Texture*, 3> blueButtonTextures = {assetManager->getTexture("blue_button_up", "images/ui/"), assetManager->getTexture("blue_button_hover", "images/ui/"), assetManager->getTexture("blue_button_down", "images/ui/")};
@@ -115,42 +116,61 @@ void UILayer::UIUpdate(float dt)
 
 void UILayer::draw()
 {
-    game->getWindow()->setView(UIView);
-
+    std::vector<UIElement*> worldElements;
+    std::vector<UIElement*> screenElements;
     std::vector<UIElement*> visibleUIElements;
 
     for (auto& e : elements)
     {
-        if (isOnScreen(game, e->position, e->size, true))
+        if (e->position.getPositionType() == PositionType::WORLD) worldElements.push_back(e.get());
+        else if (e->position.getPositionType() == PositionType::SCREEN) screenElements.push_back(e.get());
+    }
+
+    // WORLD ELEMENTS
+    visibleUIElements.clear();
+
+    for (auto e : worldElements)
+    {
+        if (isOnScreen(game, e->position, e->size))
         {
-            visibleUIElements.emplace_back(e.get());
+            visibleUIElements.emplace_back(e);
         }
     }
 
     std::sort(visibleUIElements.begin(), visibleUIElements.end(), [](UIElement* a, UIElement* b){
         if (a->z != b->z) return a->z < b->z;
-        else return a->position.y + a->size.y < b->position.y + b->size.y;
+        else return a->position.getPosition().y + a->size.y < b->position.getPosition().y + b->size.y;
     });
 
-    for (auto& e : visibleUIElements)
+    for (auto e : visibleUIElements)
+    {
+        e->draw();
+    }
+
+    // SCREEN ELEMENTS
+    game->getWindow()->setView(UIView);
+
+    visibleUIElements.clear();
+
+    for (auto e : screenElements)
+    {
+        if (isOnScreen(game, e->position, e->size))
+        {
+            visibleUIElements.emplace_back(e);
+        }
+    }
+
+    std::sort(visibleUIElements.begin(), visibleUIElements.end(), [](UIElement* a, UIElement* b){
+        if (a->z != b->z) return a->z < b->z;
+        else return a->position.getPosition().y + a->size.y < b->position.getPosition().y + b->size.y;
+    });
+
+    for (auto e : visibleUIElements)
     {
         if (e->name != "CONTROLLER_INDICATOR") e->draw();
     }
 
-    // for (auto& e : elements)
-    // {
-    //     // sf::FloatRect bb = e->getBoundingBox();
-
-    //     // if (isOnScreen(game, bb.position, bb.size, false))
-    //     // {
-    //     //     if (e->getName() != "CONTROLLER_INDICATOR")
-    //     //     {
-    //     //         e->draw();
-    //     //     }
-    //     // }
-    // }
-
-    //interactiveUIManager.draw();
+    // interactiveUIManager.draw();
 
     game->getWindow()->setView(camera->getView());
 }

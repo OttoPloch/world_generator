@@ -1,14 +1,14 @@
 #pragma once
 
 #include "../core/common.hpp"
-#include "../world/world_position.hpp"
+#include "../utils/game_position.hpp"
 #include "rect_type.hpp"
 
 struct CollisionRect
 {
     CollisionRect();
 
-    CollisionRect(WorldPosition position, sf::Vector2f size, RectType type);
+    CollisionRect(GamePosition position, sf::Vector2f size, RectType type);
 
     float left();
     float right();
@@ -22,7 +22,7 @@ struct CollisionRect
 
     void move(sf::Vector2f dist);
 
-    WorldPosition position;
+    GamePosition position;
 
     sf::Vector2f size;
 

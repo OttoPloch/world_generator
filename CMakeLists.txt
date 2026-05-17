@@ -23,6 +23,7 @@ src/core/scene.cpp
 
 src/utils/conversions.cpp
 src/utils/utils.cpp
+src/utils/game_position.cpp
 
 src/config/settings.cpp
 src/config/gamerules.cpp
@@ -57,10 +58,8 @@ src/ui/ui_button.cpp
 src/ui/ui_text.cpp
 src/ui/ui_animation.cpp
 src/ui/interactive_ui_manager.cpp
-src/ui/screen_position.cpp
 
 src/world/background_object.cpp
-src/world/world_position.cpp
 
 src/world/chunk/chunk_layer.cpp
 src/world/chunk/chunk.cpp

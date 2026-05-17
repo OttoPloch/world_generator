@@ -28,11 +28,11 @@ void Scene::init(Game* game)
     
     entityLayer.init(game);
 
+    camera.init(game, false, {0, 0}, toV2F(window->getSize()), entityLayer.getEntity(0));
+
     uiLayer.init(game, &camera);
 
     chunkLayer.init(game);
-
-    camera.init(game, false, {0, 0}, toV2F(window->getSize()), entityLayer.getEntity(0));
 
     debugView = false;
     debugChunkLayerView = -1;

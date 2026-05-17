@@ -6,7 +6,7 @@
 
 struct CollisionComponent : EntityComponent
 {
-    CollisionComponent(Entity* myEntity, WorldPosition position, sf::Vector2f size, bool sizeIsScaleOfSprite, RectType type);
+    CollisionComponent(Entity* myEntity, GamePosition position, sf::Vector2f size, bool sizeIsScaleOfSprite, RectType type);
 
     void update(float dt) override;
 

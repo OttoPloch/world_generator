@@ -145,7 +145,7 @@ Entity* EntityLayer::addEntity(sf::Vector2f position, EntityTemplate* t)
 {
     int ID = getNewID();
 
-    entities[ID] = std::make_unique<Entity>(game, ID, position);
+    entities[ID] = std::make_unique<Entity>(game, ID, GamePosition(game, position, PositionType::WORLD));
     
     Entity* e = entities[ID].get();
 

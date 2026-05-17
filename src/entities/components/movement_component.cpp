@@ -8,10 +8,7 @@ MovementComponent::MovementComponent(Entity* myEntity, sf::Vector2f velocity, Mo
 
 void MovementComponent::tick()
 {
-    sf::Vector2f* position = myEntity->getPositionVar()->position.get();
-
-    position->x += velocity.x;
-    position->y += velocity.y;
+    myEntity->getPositionVar()->changePosition(velocity);
 }
 
 void MovementComponent::update(float dt)

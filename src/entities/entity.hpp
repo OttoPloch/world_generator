@@ -2,7 +2,7 @@
 
 #include "../core/common.hpp"
 #include "components/entity_component.hpp"
-#include "../world/world_position.hpp"
+#include "../utils/game_position.hpp"
 #include "../graphics/sprite.hpp"
 #include "components/entity_component.hpp"
 #include "entity_template.hpp"
@@ -16,9 +16,7 @@ class Entity
 public:
     Entity();
 
-    Entity(Game* game, int ID, sf::Vector2f position);
-
-    Entity(Game* game, int ID, WorldPosition position);
+    Entity(Game* game, int ID, GamePosition position);
 
     Sprite* spriteInit(sf::Texture* texture, sf::Vector2f size = {1.f, 1.f}, bool sizeIsScale = true, bool usingTexCoords = false, sf::IntRect texCoords = sf::IntRect({0, 0}, {0, 0}), float animSpeedMult = 1.f);
 
@@ -68,7 +66,7 @@ public:
 
     sf::Vector2f getPosition();
 
-    WorldPosition* getPositionVar();
+    GamePosition* getPositionVar();
 
     Sprite* getSprite();
     
@@ -77,7 +75,7 @@ protected:
 
     int ID;
 
-    WorldPosition position;
+    GamePosition position;
     sf::Vector2f lastPosition;
 
     Sprite sprite;
