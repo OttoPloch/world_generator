@@ -57,7 +57,7 @@ void CollisionComponent::update(float dt)
                 {
                     Tile* tile = t.first->getTile(t.second.first.x, t.second.first.y, false, t.second.second);
                     sf::FloatRect tileRect = t.first->getTileRect(t.second.first, t.second.second);
-                    GamePosition tilePos(myEntity->game, tileRect.position, PositionType::WORLD);
+                    GamePosition tilePos(myEntity->game, tileRect.position);
                     CollisionRect tileCollRect(tilePos, tileRect.size, RectType::STATIC);
 
                     if (dynamicRectRectCollide(&rect, m->velocity, &tileCollRect, contactPoint, contactNormal, contactTime))
@@ -82,7 +82,7 @@ void CollisionComponent::update(float dt)
             }
 
             // ENTITY COLLISION
-            std::vector<Entity*> entities = myEntity->game->getScene()->getEntityLayer()->getEntitiesInChunkArea(rect.position.getPosition(PositionType::WORLD), 1);
+            std::vector<Entity*> entities = myEntity->game->getScene()->getEntityLayer()->getEntitiesInChunkArea(rect.position.getPosition(), 1);
         
             // <rect, contact time>
             std::vector<std::pair<CollisionRect*, float>> z;

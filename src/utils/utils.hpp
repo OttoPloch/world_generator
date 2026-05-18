@@ -41,6 +41,10 @@ bool isOnScreen(Game* game, sf::Vector2f tl, sf::Vector2f size, bool useCameraVi
 
 bool isOnScreen(Game* game, GamePosition position, sf::Vector2f size);
 
+// if !useCameraView, then the current applied view of the window will be used.
+bool isOnScreen(Game* game, sf::FloatRect rect, bool useCameraView = true);
+
+// if !useCameraView, then the current applied view of the window will be used.
 bool isOnScreen(Game* game, sf::Vector2f point, bool useCameraView = true);
 
 bool isOnScreen(Game* game, GamePosition position);

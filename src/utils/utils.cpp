@@ -80,7 +80,7 @@ bool dynamicRectRectCollide(CollisionRect* in, sf::Vector2f inVel, CollisionRect
         target->type
     );
 
-    if (rayRectCollide(in->position.getPosition(PositionType::WORLD), inVel, &expandedTarget, contactPoint, contactNormal, contactTime))
+    if (rayRectCollide(in->position.getPosition(), inVel, &expandedTarget, contactPoint, contactNormal, contactTime))
     {
         if (contactTime <= 1.f) return true;
     }
@@ -241,54 +241,33 @@ bool isOnScreen(Game* game, GamePosition tl, sf::Vector2f size)
     sf::Vector2f cameraTopLeft = camera->getTopLeft();
     sf::Vector2f cameraSize = camera->getView().getSize();
 
-    sf::Vector2f point = tl.getPosition(tl.getPositionType());
+    sf::Vector2f point = tl.getPosition();
 
     float left = point.x;
     float right = point.x + size.x;
     float top = point.y;
     float bottom = point.y + size.y;
 
-    if (tl.getPositionType() == PositionType::WORLD)
+    if (right >= cameraTopLeft.x)
     {
-        if (right >= cameraTopLeft.x)
+        if (left <= cameraTopLeft.x + cameraSize.x)
         {
-            if (left <= cameraTopLeft.x + cameraSize.x)
+            if (bottom >= cameraTopLeft.y)
             {
-                if (bottom >= cameraTopLeft.y)
+                if (top <= cameraTopLeft.y + cameraSize.y)
                 {
-                    if (top <= cameraTopLeft.y + cameraSize.y)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
         }
-    }
-    else if (tl.getPositionType() == PositionType::SCREEN)
-    {
-        sf::Vector2f viewSize = game->getWindow()->getWindow().getView().getSize();
-
-        if (right >= 0)
-        {
-            if (left <= viewSize.x)
-            {
-                if (bottom >= 0)
-                {
-                    if (top <= viewSize.y)
-                    {
-                        return true;
-                    }
-                }
-            }
-        }
-    }
-    else
-    {
-        std::cout << "ERROR invalid GamePosition type of " << static_cast<int>(tl.getPositionType()) << ".\n";
-        assert(false);
     }
 
     return false;
+}
+
+bool isOnScreen(Game* game, sf::FloatRect rect, bool useCameraView)
+{
+    return isOnScreen(game, rect.position, rect.size, useCameraView);
 }
 
 bool isOnScreen(Game* game, sf::Vector2f point, bool useCameraView)
@@ -341,46 +320,20 @@ bool isOnScreen(Game* game, GamePosition position)
     sf::Vector2f cameraTopLeft = camera->getTopLeft();
     sf::Vector2f cameraSize = camera->getView().getSize();
 
-    sf::Vector2f point = position.getPosition(position.getPositionType());
+    sf::Vector2f point = position.getPosition();
 
-    if (position.getPositionType() == PositionType::WORLD)
+    if (point.x >= cameraTopLeft.x)
     {
-        if (point.x >= cameraTopLeft.x)
+        if (point.x <= cameraTopLeft.x + cameraSize.x)
         {
-            if (point.x <= cameraTopLeft.x + cameraSize.x)
+            if (point.y >= cameraTopLeft.y)
             {
-                if (point.y >= cameraTopLeft.y)
+                if (point.y <= cameraTopLeft.y + cameraSize.y)
                 {
-                    if (point.y <= cameraTopLeft.y + cameraSize.y)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
         }
-    }
-    else if (position.getPositionType() == PositionType::SCREEN)
-    {
-        sf::Vector2f viewSize = game->getWindow()->getWindow().getView().getSize();
-
-        if (point.x >= 0)
-        {
-            if (point.x <= viewSize.x)
-            {
-                if (point.y >= 0)
-                {
-                    if (point.y <= viewSize.y)
-                    {
-                        return true;
-                    }
-                }
-            }
-        }
-    }
-    else
-    {
-        std::cout << "ERROR invalid GamePosition type of " << static_cast<int>(position.getPositionType()) << ".\n";
-        assert(false);
     }
 
     return false;

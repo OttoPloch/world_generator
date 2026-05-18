@@ -50,5 +50,5 @@ void EventHandler::windowResized()
 {
     camera->setBaseSize(toV2F(window->getSize()));
     window->getWindow().setView(camera->getView());
-    scene->getUILayer()->reset();
+    scene->getUILayer()->updateVisuals();
 }

@@ -1,6 +1,11 @@
 #include "ui_layer.hpp"
 #include "../core/game.hpp"
 #include "ui_element.hpp"
+#include "components/text_component.hpp"
+#include "components/background_component.hpp"
+#include "ui_position.hpp"
+#include <SFML/Graphics/PrimitiveType.hpp>
+#include <SFML/Graphics/Vertex.hpp>
 #include <algorithm>
 
 UILayer::UILayer() {}
@@ -11,13 +16,21 @@ void UILayer::init(Game* game, Camera* camera)
     this->assetManager = game->getAssetManager();
     this->camera = camera;
 
+    UIView.setSize(camera->getSize());
+
     IDCounter = 0;
 
     int currID;
-    
-    elements.emplace_back(std::make_unique<UIElement>(game, "test", GamePosition(game, {150, 150}, PositionType::SCREEN), sf::Vector2f(400, 100), 1, sf::Color(30, 30, 30, 180)));
-    elements.emplace_back(std::make_unique<UIElement>(game, "test 2", GamePosition(game, {400, 100}, PositionType::WORLD), sf::Vector2f(50, 50), 0, sf::Color(255, 0, 0)));
 
+    auto e = elements.emplace_back(std::make_unique<UIElement>(game, "test", UIPosition({0, 0}), 1)).get();
+    auto e2 = elements.emplace_back(std::make_unique<UIElement>(game, "test 2", UIPosition({400, 400}, UIOrigin::TOP_LEFT, UIAnchor::TOP_LEFT, true), 0)).get();
+
+    e->addComponent<BackgroundComponent>(game, e, UIPosition({0, 0}), sf::Vector2f(400, 100), sf::Color(30, 30, 30, 180));
+    e2->addComponent<BackgroundComponent>(game, e2, UIPosition({0, 0}), sf::Vector2f(30, 30), sf::Color(255, 0, 0));
+
+    e->addComponent<TextComponent>(game, e, UIPosition({0, 0}), "Hello, World!", assetManager->getFont("sfml_font"), 30);
+    e2->addComponent<TextComponent>(game, e2, UIPosition({0, 0}), "(0_0)", assetManager->getFont("sfml_font"), 10);
+    
     // std::array<sf::Texture*, 3> buttonTextures = {assetManager->getTexture("button_up", "images/ui/"), assetManager->getTexture("button_hover", "images/ui/"), assetManager->getTexture("button_down", "images/ui/")};
     // std::array<sf::Texture*, 3> blueButtonTextures = {assetManager->getTexture("blue_button_up", "images/ui/"), assetManager->getTexture("blue_button_hover", "images/ui/"), assetManager->getTexture("blue_button_down", "images/ui/")};
     // std::array<sf::Texture*, 3> redButtonTextures = {assetManager->getTexture("red_button_up", "images/ui/"), assetManager->getTexture("red_button_hover", "images/ui/"), assetManager->getTexture("red_button_down", "images/ui/")};
@@ -55,7 +68,16 @@ void UILayer::init(Game* game, Camera* camera)
     // currID = getNewID(); elements[currID] = std::make_unique<UIBackground>(game, this, "CONTROLLER_INDICATOR", getNewID(), 0, toV2F(0, 0), toV2F(50, 50), sf::Color::Transparent, assetManager->getTileSet("16px"), assetManager->getTexture("ui_select", "images/ui/"), 36.f);
     // interactiveUIManager.init(game, &elements, getElement("CONTROLLER_INDICATOR"));
 
-    reset();
+    for (auto& e : elements)
+    {
+        auto bb = e->getGlobalBounds();
+
+        std::array<sf::Vertex, 8> verts = VertexGroup::createLineVerts(bb.position, bb.size, sf::Color::Red);
+
+        debugElementBoundingBoxes.insert(debugElementBoundingBoxes.end(), verts.begin(), verts.end());
+    }
+
+    updateVisuals();
 }
 
 UIElement* UILayer::getElement(std::string name)
@@ -83,17 +105,17 @@ bool UILayer::checkUICollision()
     return false;
 }
 
-void UILayer::reset()
+void UILayer::updateVisuals()
 {
     sf::Vector2f viewSize = toV2F(game->getWindow()->getSize());
-
-    UIView = sf::View({viewSize.x / 2.f, viewSize.y / 2.f}, viewSize);
+    UIView.setCenter({viewSize.x / 2.f, viewSize.y / 2.f});
+    UIView.setSize(viewSize);
 
     if (elements.size() > 0)
     {
         for (auto& e : elements)
         {
-            //e->updateSize();
+            e->updateVisuals();
         }
     }
 }
@@ -114,65 +136,77 @@ void UILayer::UIUpdate(float dt)
     // }
 }
 
-void UILayer::draw()
+void UILayer::draw(bool debug)
 {
-    // elements with a WORLD position type will always be under elements
-    // with a SCREEN position type, regardless of their z value.
-    std::vector<UIElement*> worldElements;
-    std::vector<UIElement*> screenElements;
-    std::vector<UIElement*> visibleUIElements;
+    std::vector<UIElement*> visibleWorldElements;
+    std::vector<UIElement*> visibleScreenElements;
 
     for (auto& e : elements)
     {
-        if (e->position.getPositionType() == PositionType::WORLD) worldElements.push_back(e.get());
-        else if (e->position.getPositionType() == PositionType::SCREEN) screenElements.push_back(e.get());
-    }
-
-    // WORLD ELEMENTS
-    visibleUIElements.clear();
-
-    for (auto e : worldElements)
-    {
-        if (isOnScreen(game, e->position, e->size))
+        if (e->position.worldPosition && isOnScreen(game, e->getGlobalBounds(), true))
         {
-            visibleUIElements.emplace_back(e);
+            visibleWorldElements.push_back(e.get());
+        }
+        else if (!e->position.worldPosition && isOnScreen(game, e->getGlobalBounds(), false))
+        {
+            visibleScreenElements.push_back(e.get());
         }
     }
 
-    std::sort(visibleUIElements.begin(), visibleUIElements.end(), [](UIElement* a, UIElement* b){
-        if (a->z != b->z) return a->z < b->z;
-        else return a->position.getPosition(PositionType::WORLD).y + a->size.y < b->position.getPosition(PositionType::WORLD).y + b->size.y;
+
+
+    // WORLD ELEMENTS
+
+    std::sort(visibleWorldElements.begin(), visibleWorldElements.end(), [](UIElement* a, UIElement* b) {
+        if (a->z != b->z)
+        {
+            return a->z < b->z;
+        }
+        else
+        {
+            sf::FloatRect aGB = a->getGlobalBounds();
+            sf::FloatRect bGB = b->getGlobalBounds();
+
+            return aGB.position.y + aGB.size.y < bGB.position.y + bGB.size.y;
+        }
     });
 
-    for (auto e : visibleUIElements)
+    for (auto e : visibleWorldElements)
     {
         e->draw();
     }
 
+
+
     // SCREEN ELEMENTS
+
     game->getWindow()->setView(UIView);
-
-    visibleUIElements.clear();
-
-    for (auto e : screenElements)
-    {
-        if (isOnScreen(game, e->position, e->size))
+    
+    std::sort(visibleScreenElements.begin(), visibleScreenElements.end(), [](UIElement* a, UIElement* b){
+        if (a->z != b->z)
         {
-            visibleUIElements.emplace_back(e);
+            return a->z < b->z;
         }
-    }
+        else
+        {
+            sf::FloatRect aGB = a->getGlobalBounds();
+            sf::FloatRect bGB = b->getGlobalBounds();
 
-    std::sort(visibleUIElements.begin(), visibleUIElements.end(), [](UIElement* a, UIElement* b){
-        if (a->z != b->z) return a->z < b->z;
-        else return a->position.getPosition(PositionType::SCREEN).y + a->size.y < b->position.getPosition(PositionType::SCREEN).y + b->size.y;
+            return aGB.position.y + aGB.size.y < bGB.position.y + bGB.size.y;
+        }
     });
-
-    for (auto e : visibleUIElements)
+    
+    for (auto e : visibleScreenElements)
     {
         if (e->name != "CONTROLLER_INDICATOR") e->draw();
     }
 
     // interactiveUIManager.draw();
+
+    if (debug)
+    {
+        game->getWindow()->getWindow().draw(debugElementBoundingBoxes.data(), debugElementBoundingBoxes.size(), sf::PrimitiveType::Lines);
+    }
 
     game->getWindow()->setView(camera->getView());
 }

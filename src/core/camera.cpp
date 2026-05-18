@@ -64,6 +64,8 @@ sf::Vector2f Camera::getTopLeft()
     return {center.x - size.x / 2, center.y - size.y / 2};
 }
 
+sf::Vector2f Camera::getSize() { return size; }
+
 float Camera::getZoomFactor() { return zoomFactor; }
 
 void Camera::tick()

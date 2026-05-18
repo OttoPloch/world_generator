@@ -2,7 +2,7 @@
 #include "../core/game.hpp"
 #include "components/collision_component.hpp"
 
-Entity::Entity() : position(nullptr, {0, 0}, PositionType::WORLD) {}
+Entity::Entity() : position(nullptr, {0, 0}) {}
 
 Entity::Entity(Game* game, int ID, GamePosition position) : game(game), ID(ID), position(position) {}
 
@@ -17,7 +17,7 @@ int Entity::getID() { return ID; }
 
 void Entity::tick()
 {
-    lastPosition = position.getPosition(PositionType::WORLD);
+    lastPosition = position.getPosition();
 
     for (auto& c : components) c->tick();
 }
@@ -36,7 +36,7 @@ void Entity::draw(sf::RenderWindow& window)
     sprite.draw(window);
 }
 
-sf::Vector2f Entity::getPosition() { return position.getPosition(PositionType::WORLD); }
+sf::Vector2f Entity::getPosition() { return position.getPosition(); }
 
 GamePosition* Entity::getPositionVar() { return &position; }
 

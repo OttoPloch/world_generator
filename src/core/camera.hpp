@@ -24,6 +24,8 @@ public:
 
     sf::Vector2f getTopLeft();
 
+    sf::Vector2f getSize();
+
     float getZoomFactor();
 
     void tick();

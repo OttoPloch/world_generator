@@ -27,11 +27,11 @@ public:
 
     bool checkUICollision();
 
-    void reset();
+    void updateVisuals();
 
     void UIUpdate(float dt);
 
-    void draw();
+    void draw(bool debug);
     
     // InteractiveUIManager interactiveUIManager;
 private:
@@ -44,4 +44,6 @@ private:
     sf::View UIView;
     
     std::vector<std::unique_ptr<UIElement>> elements;
+
+    std::vector<sf::Vertex> debugElementBoundingBoxes;
 };

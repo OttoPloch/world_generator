@@ -174,7 +174,7 @@ void Scene::draw()
 
     chunkLayer.draw(debugView, debugChunkLayerView);
     entityLayer.draw(debugView);
-    uiLayer.draw();
+    uiLayer.draw(debugView);
 }
 
 void Scene::sceneInput(std::string control, bool justPressed)
@@ -266,7 +266,7 @@ bool Scene::processActionRequest(Entity* actor, Action* action)
 
                             for (auto& i : t->tags)
                             {
-                                if (i->name == "MINE")
+                                if (dynamic_cast<MineableTag*>(i.get()))
                                 {
                                     // TARGETED TILE CAN BE MINED, ACTION IS VALID
                                     return true;

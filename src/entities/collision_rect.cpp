@@ -1,27 +1,27 @@
 #include "collision_rect.hpp"
 
-CollisionRect::CollisionRect() : position(nullptr, {0, 0}, PositionType::WORLD) {}
+CollisionRect::CollisionRect() : position(nullptr, {0, 0}) {}
 
 CollisionRect::CollisionRect(GamePosition position, sf::Vector2f size, RectType type) : position(position), size(size), type(type) {}
 
 float CollisionRect::left()
 {
-    return position.getPosition(PositionType::WORLD).x - size.x / 2.f;
+    return position.getPosition().x - size.x / 2.f;
 }
 
 float CollisionRect::right()
 {
-    return position.getPosition(PositionType::WORLD).x + size.x / 2.f;
+    return position.getPosition().x + size.x / 2.f;
 }
 
 float CollisionRect::top()
 {
-    return position.getPosition(PositionType::WORLD).y - size.y / 2.f;
+    return position.getPosition().y - size.y / 2.f;
 }
 
 float CollisionRect::bottom()
 {
-    return position.getPosition(PositionType::WORLD).y + size.y / 2.f;
+    return position.getPosition().y + size.y / 2.f;
 }
 
 void CollisionRect::setLeft(float x)

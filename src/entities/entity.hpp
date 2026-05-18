@@ -44,16 +44,16 @@ public:
     template<typename T>
     void removeComponent()
     {
-        for (auto i = components.begin(); i != components.end();)
+        for (auto c = components.begin(); c != components.end();)
         {
-            if (auto casted = dynamic_cast<T*>(i->get()))
+            if (auto casted = dynamic_cast<T*>(c->get()))
             {
-                i = components.erase(i);
+                c = components.erase(c);
                 break;
             }
             else
             {
-                ++i;
+                c++;
             }
         }
     }
