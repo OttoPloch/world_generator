@@ -16,7 +16,7 @@ sf::FloatRect TextComponent::getLocalBounds()
 {
     if (text)
     {
-        return {position.position - text->getOrigin(), text->getLocalBounds().size};
+        return {position.position - text->getOrigin(), text->getGlobalBounds().size};
     }
     else
     {

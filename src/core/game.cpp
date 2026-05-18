@@ -78,6 +78,9 @@ void Game::run()
 
     while (window.getWindow().isOpen())
     {
+        runBlame.clear();
+        debugClock.restart();
+
         dt = dtClock.restart().asSeconds();
         secondsSinceStatPrint += dt;
         frameTimes[currentFrame % sampleSize] = dt;
@@ -91,7 +94,7 @@ void Game::run()
 
         if (secondsSinceStatPrint > secondsToPrintStats)
         {
-            std::cout << "FPS (smoothed): " << smoothFps << '\n';
+            //std::cout << "FPS (smoothed): " << smoothFps << '\n';
 
             // std::cout << "dt: " << dt << "; dtick: " << dtick << '\n';
             // std::cout << "average dt: " << averageDt << '\n';
@@ -100,12 +103,16 @@ void Game::run()
             // std::cout << "time: " << gameClock.getElapsedTime().asSeconds() << '\n';
             // std::cout << "///////////////////////////////////\n";
 
-            // ticksLastSecond = 0;
-            // secondsSinceStatPrint = 0;
+            ticksLastSecond = 0;
+            secondsSinceStatPrint = 0;
         }
         
+        runBlame["STAT TRACKING"] = debugClock.restart().asSeconds();
+
         input.update();
         eventHandler.processEvents();
+
+        runBlame["INPUT/EVENTS"] = debugClock.restart().asSeconds();
 
         if (lastWindowSize != window.getSize())
         {
@@ -113,10 +120,14 @@ void Game::run()
             lastWindowSize = window.getSize();
         }
 
+        runBlame["WINDOW RESIZE"] = debugClock.restart().asSeconds();
+
         if (!paused)
         {
             ticksToProcess += dt;
             
+            debugClock.restart();
+
             while (ticksToProcess >= secondsPerTick)
             {
                 tick();
@@ -125,16 +136,31 @@ void Game::run()
                 ticksToProcess -= secondsPerTick;
             }
 
+            runBlame["TICK"] = debugClock.restart().asSeconds();
+
             update();
+
+            runBlame["UPDATE"] = debugClock.restart().asSeconds();
+        }
+        else
+        {
+            runBlame["TICK"] = 0;
+            runBlame["UPDATE"] = 0;
         }
 
         scene.UIUpdate(dt);
         scene.chunkLoadUpdate();
         // scene.getUILayer()->getElement("fps display")->getAsText()->setValue(std::to_string(toInt(std::round(smoothFps))));
 
+        runBlame["UI/CHUNK LOAD UPDATE"] = debugClock.restart().asSeconds();
+
         draw();
 
+        runBlame["DRAW"] = debugClock.restart().asSeconds();
+
         input.shiftPressedThisFrame();
+
+        printBlameStats(runBlame, "GAME_RUN");
     }
 
     exit();
@@ -154,9 +180,16 @@ void Game::update()
 
 void Game::draw()
 {
+    debugClock.restart();
+
     window.clear();
-
+    drawBlame["DRAW_CLEAR"] = debugClock.restart().asSeconds();
+    
     scene.draw();
-
+    drawBlame["DRAW_SCENE"] = debugClock.restart().asSeconds();
+    
     window.display();
+    drawBlame["DRAW_DISPLAY"] = debugClock.restart().asSeconds();
+
+    printBlameStats(drawBlame, "GAME_DRAW");
 }

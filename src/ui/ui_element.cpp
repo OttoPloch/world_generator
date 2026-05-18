@@ -12,7 +12,7 @@ sf::FloatRect UIElement::getGlobalBounds()
     for (auto& c : components)
     {
         sf::FloatRect cBox = c->getLocalBounds();
-
+        
         left = std::min(left, cBox.position.x);
         right = std::max(right, cBox.position.x + cBox.size.x);
         top = std::min(top, cBox.position.y);

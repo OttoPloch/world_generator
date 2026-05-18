@@ -45,6 +45,8 @@ public:
     UILayer* getUILayer();
 
     ChunkLayer* getChunkLayer();
+    
+    bool debugMode;
 private:
     Game* game;
     Window* window;
@@ -58,6 +60,10 @@ private:
 
     std::vector<std::pair<Entity*, std::unique_ptr<Action>>> actions;
 
-    bool debugView;
     int debugChunkLayerView;
+
+    // for monitoring performance
+    std::unordered_map<std::string, float> updateBlame;
+    std::unordered_map<std::string, float> drawBlame;
+    sf::Clock debugClock;
 };

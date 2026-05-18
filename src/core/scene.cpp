@@ -34,7 +34,7 @@ void Scene::init(Game* game)
 
     chunkLayer.init(game);
 
-    debugView = false;
+    debugMode = false;
     debugChunkLayerView = -1;
 }
 
@@ -86,10 +86,16 @@ void Scene::tick()
 }
 
 void Scene::update(float dt)
-{       
-    chunkLayer.update(dt);
+{
+    debugClock.restart();
 
+    chunkLayer.update(dt);
+    updateBlame["UPDATE_CHUNK_LAYER"] = debugClock.restart().asSeconds();
+    
     entityLayer.update(dt);
+    updateBlame["UPDATE_ENTITY_LAYER"] = debugClock.restart().asSeconds();
+
+    printBlameStats(updateBlame, "SCENE_UPDATE");
 }
 
 void Scene::UIUpdate(float dt)
@@ -172,9 +178,18 @@ void Scene::draw()
 {
     window->setView(camera.getView());
 
-    chunkLayer.draw(debugView, debugChunkLayerView);
-    entityLayer.draw(debugView);
-    uiLayer.draw(debugView);
+    debugClock.restart();
+
+    chunkLayer.draw(debugMode, debugChunkLayerView);
+    drawBlame["DRAW_CHUNK_LAYER"] = debugClock.restart().asSeconds();
+    
+    entityLayer.draw(debugMode);
+    drawBlame["DRAW_ENTITY_LAYER"] = debugClock.restart().asSeconds();
+
+    uiLayer.draw(debugMode);
+    drawBlame["DRAW_UI_LAYER"] = debugClock.restart().asSeconds();
+
+    printBlameStats(drawBlame, "SCENE_DRAW");
 }
 
 void Scene::sceneInput(std::string control, bool justPressed)
@@ -189,7 +204,7 @@ void Scene::sceneInput(std::string control, bool justPressed)
     }
     else if (control == "DEBUG_VIEW" && justPressed)
     {
-        debugView = !debugView;
+        debugMode = !debugMode;
     }
     else if (control == "ZOOMIN" && justPressed)
     {

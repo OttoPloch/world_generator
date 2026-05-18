@@ -359,3 +359,37 @@ sf::Vector2i worldToTilePosition(Game* game, sf::Vector2f position)
 
     return {toInt(std::floor(position.x / tileSize)), toInt(std::floor(position.y / tileSize))};
 }
+
+void printBlameStats(const std::unordered_map<std::string, float> &blame, std::string category)
+{
+    std::cout << '\n' + category + ":\n";
+
+    float total = 0;
+    for (auto b : blame) total += b.second;
+
+    int messageLength = 0;
+    for (auto b : blame)
+    {
+        std::string message = b.first + ": ";
+
+        if (message.size() > messageLength) messageLength = message.size();
+    }
+
+    for (int i = 0; i < messageLength + 20; i++) std::cout << '=';
+    std::cout << '\n';
+
+    for (auto b : blame)
+    {
+        std::string message = b.first + ": ";
+
+        int remaining = messageLength - message.size();
+
+        for (int i = 0; i < remaining; i++) message += ' ';
+
+        message += std::to_string(b.second) + ' ' + std::to_string(100 * b.second / total) + '%';
+
+        std::cout << message << '\n';
+    }
+
+    std::cout << "TOTAL: " << total << '\n';
+}

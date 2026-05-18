@@ -68,8 +68,13 @@ private:
     sf::Clock tickClock;
 
     sf::Clock gameClock;
-
+    
     // this is to detect window resizing that the
     // event handler doesn't normally catch
     sf::Vector2u lastWindowSize;
+    
+    // for monitoring performance
+    std::unordered_map<std::string, float> runBlame;
+    std::unordered_map<std::string, float> drawBlame;
+    sf::Clock debugClock;
 };

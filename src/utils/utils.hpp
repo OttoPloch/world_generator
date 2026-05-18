@@ -54,3 +54,5 @@ sf::Vector2i worldToChunkPosition(Game* game, sf::Vector2f position);
 sf::Vector2f chunkToWorldPosition(Game* game, sf::Vector2i position);
 
 sf::Vector2i worldToTilePosition(Game* game, sf::Vector2f position);
+
+void printBlameStats(const std::unordered_map<std::string, float>& blame, std::string category);

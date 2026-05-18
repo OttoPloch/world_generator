@@ -45,5 +45,6 @@ private:
     
     std::vector<std::unique_ptr<UIElement>> elements;
 
-    std::vector<sf::Vertex> debugElementBoundingBoxes;
+    std::vector<sf::Vertex> debugWorldElementBoundingBoxes;
+    std::vector<sf::Vertex> debugScreenElementBoundingBoxes;
 };

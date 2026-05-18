@@ -72,9 +72,18 @@ void UILayer::init(Game* game, Camera* camera)
     {
         auto bb = e->getGlobalBounds();
 
-        std::array<sf::Vertex, 8> verts = VertexGroup::createLineVerts(bb.position, bb.size, sf::Color::Red);
+        std::cout << e->name << "; " << bb.position.x << ", " << bb.position.y << "; " << bb.size.x << ", " << bb.size.y << '\n';
 
-        debugElementBoundingBoxes.insert(debugElementBoundingBoxes.end(), verts.begin(), verts.end());
+        std::array<sf::Vertex, 8> verts = VertexGroup::createLineVerts(bb.position, bb.size, sf::Color::Green);
+
+        if (e->position.worldPosition)
+        {
+            debugWorldElementBoundingBoxes.insert(debugWorldElementBoundingBoxes.end(), verts.begin(), verts.end());
+        }
+        else
+        {
+            debugScreenElementBoundingBoxes.insert(debugScreenElementBoundingBoxes.end(), verts.begin(), verts.end());
+        }
     }
 
     updateVisuals();
@@ -176,6 +185,10 @@ void UILayer::draw(bool debug)
         e->draw();
     }
 
+    if (debug)
+    {
+        game->getWindow()->getWindow().draw(debugWorldElementBoundingBoxes.data(), debugWorldElementBoundingBoxes.size(), sf::PrimitiveType::Lines);
+    }
 
 
     // SCREEN ELEMENTS
@@ -205,7 +218,7 @@ void UILayer::draw(bool debug)
 
     if (debug)
     {
-        game->getWindow()->getWindow().draw(debugElementBoundingBoxes.data(), debugElementBoundingBoxes.size(), sf::PrimitiveType::Lines);
+        game->getWindow()->getWindow().draw(debugScreenElementBoundingBoxes.data(), debugScreenElementBoundingBoxes.size(), sf::PrimitiveType::Lines);
     }
 
     game->getWindow()->setView(camera->getView());
