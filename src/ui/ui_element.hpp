@@ -19,11 +19,22 @@ public:
     void draw();
 
     template<typename T>
-    T* getComponent()
+    T* getComponent(std::string identifier = "")
     {
         for (auto& c : components)
         {
-            if (auto casted = dynamic_cast<T*>(c.get())) return casted;
+            if (auto casted = dynamic_cast<T*>(c.get()))
+            {
+                if (identifier == "")
+                {
+                    return casted;
+                }
+                else
+                {
+                    if (c->identifier == identifier) return casted;
+                }
+            }
+
         }
         
         return nullptr;

@@ -7,7 +7,7 @@ class UIElement;
 
 struct UIComponent
 {
-    UIComponent(Game* game, UIElement* myElement, UIPosition position);
+    UIComponent(Game* game, UIElement* myElement, UIPosition position, std::string identifier);
 
     virtual sf::FloatRect getLocalBounds();
 
@@ -19,4 +19,6 @@ struct UIComponent
     UIElement* myElement;
 
     UIPosition position;
+
+    std::string identifier;
 };

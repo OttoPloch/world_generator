@@ -25,11 +25,11 @@ void UILayer::init(Game* game, Camera* camera)
     auto e = elements.emplace_back(std::make_unique<UIElement>(game, "test", UIPosition({0, 0}), 1)).get();
     auto e2 = elements.emplace_back(std::make_unique<UIElement>(game, "test 2", UIPosition({400, 400}, UIOrigin::TOP_LEFT, UIAnchor::TOP_LEFT, true), 0)).get();
 
-    e->addComponent<BackgroundComponent>(game, e, UIPosition({0, 0}), sf::Vector2f(400, 100), sf::Color(30, 30, 30, 180));
-    e2->addComponent<BackgroundComponent>(game, e2, UIPosition({0, 0}), sf::Vector2f(30, 30), sf::Color(255, 0, 0));
+    e->addComponent<BackgroundComponent>(game, e, UIPosition({0, 0}), "test bg", sf::Vector2f(400, 100), sf::Color(30, 30, 30, 180));
+    e2->addComponent<BackgroundComponent>(game, e2, UIPosition({0, 0}), "test 2 bg", sf::Vector2f(30, 30), sf::Color(255, 0, 0));
 
-    e->addComponent<TextComponent>(game, e, UIPosition({0, 0}), "Hello, World!", assetManager->getFont("sfml_font"), 30);
-    e2->addComponent<TextComponent>(game, e2, UIPosition({0, 0}), "(0_0)", assetManager->getFont("sfml_font"), 10);
+    e->addComponent<TextComponent>(game, e, UIPosition({0, 0}), "test text", "Hello, World!", assetManager->getFont("sfml_font"), 30);
+    e2->addComponent<TextComponent>(game, e2, UIPosition({0, 0}), "test 2 text", "(0_0)", assetManager->getFont("sfml_font"), 10);
     
     // std::array<sf::Texture*, 3> buttonTextures = {assetManager->getTexture("button_up", "images/ui/"), assetManager->getTexture("button_hover", "images/ui/"), assetManager->getTexture("button_down", "images/ui/")};
     // std::array<sf::Texture*, 3> blueButtonTextures = {assetManager->getTexture("blue_button_up", "images/ui/"), assetManager->getTexture("blue_button_hover", "images/ui/"), assetManager->getTexture("blue_button_down", "images/ui/")};

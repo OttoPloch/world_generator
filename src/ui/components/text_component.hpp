@@ -6,7 +6,7 @@
 
 struct TextComponent : public UIComponent
 {
-    TextComponent(Game* game, UIElement* myElement, UIPosition, std::string text, sf::Font* font, unsigned int fontSize);
+    TextComponent(Game* game, UIElement* myElement, UIPosition, std::string identifier, std::string text, sf::Font* font, unsigned int fontSize);
 
     sf::FloatRect getLocalBounds() override;
 

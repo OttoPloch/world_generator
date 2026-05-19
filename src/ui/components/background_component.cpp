@@ -3,7 +3,7 @@
 #include "../../core/game.hpp"
 #include <SFML/Graphics/PrimitiveType.hpp>
 
-BackgroundComponent::BackgroundComponent(Game* game, UIElement* myElement, UIPosition position, sf::Vector2f size, sf::Color backgroundColor) : UIComponent(game, myElement, position), size(size), backgroundColor(backgroundColor)
+BackgroundComponent::BackgroundComponent(Game* game, UIElement* myElement, UIPosition position, std::string identifier, sf::Vector2f size, sf::Color backgroundColor) : UIComponent(game, myElement, position, identifier), size(size), backgroundColor(backgroundColor)
 {
     updateVisuals();
 }

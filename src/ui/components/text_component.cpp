@@ -2,7 +2,7 @@
 #include "../../core/game.hpp"
 #include <SFML/Graphics/Rect.hpp>
 
-TextComponent::TextComponent(Game* game, UIElement* myElement, UIPosition position, std::string text, sf::Font* font, unsigned int fontSize) : UIComponent(game, myElement, position)
+TextComponent::TextComponent(Game* game, UIElement* myElement, UIPosition position, std::string identifier, std::string text, sf::Font* font, unsigned int fontSize) : UIComponent(game, myElement, position, identifier)
 {
     this->text = std::make_unique<sf::Text>(*font, text, 50);
 
