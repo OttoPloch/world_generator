@@ -168,11 +168,35 @@ void Input::init(Game* game)
     };
 }
 
-bool Input::isKeyPressed(std::string key) { return getKey(key, true); }
+bool Input::isKeyPressed(std::string key, bool checkJustPressed)
+{
+    if (checkJustPressed)
+    {
+        return getKey(key) && !keysPressedLastFrame[key];
+    }
 
-bool Input::isButtonPressed(std::string button) { return getButton(button, true); }
+    return getKey(key);
+}
 
-bool Input::isControlPressed(std::string control) { return getControl(control, true); }
+bool Input::isButtonPressed(std::string button, bool checkJustPressed)
+{
+    if (checkJustPressed)
+    {
+        return getButton(button) && !buttonsPressedLastFrame[button];
+    }
+
+    return getButton(button);
+}
+
+bool Input::isControlPressed(std::string control, bool checkJustPressed)
+{
+    if (checkJustPressed)
+    {
+        return getControl(control) && !controlsPressedLastFrame[control];
+    }
+
+    return getControl(control);
+}
 
 float Input::getAxis(sf::Joystick::Axis axis)
 {
@@ -271,6 +295,10 @@ void Input::update()
                 game->processInput(c.first, !controlsPressedLastFrame[c.first]);
             }
         }
+
+        // these functions are needed to set __pressedThisFrame if the input is pressed
+        for (auto k : keys) getKey(k);
+        for (auto b : buttons) getButton(b);
 
         // if (getKey("LEFTCLICK") || getKey("RIGHTCLICK")) game->getScene()->getUILayer()->interactiveUIManager.disableControllerUI();
     

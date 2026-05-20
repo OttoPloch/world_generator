@@ -15,15 +15,15 @@ public:
     void init(Game* game);
 
     // enter key in all caps
-    bool isKeyPressed(std::string key);
+    bool isKeyPressed(std::string key, bool checkJustPressed = false);
     
     // enter key in all caps.
     // 'DPAD xxx' works but is
     // special because they are axes.
     // could also use getAxis for those.
-    bool isButtonPressed(std::string button);
+    bool isButtonPressed(std::string button, bool checkJustPressed = false);
     
-    bool isControlPressed(std::string control);
+    bool isControlPressed(std::string control, bool checkJustPressed = false);
 
     float getAxis(sf::Joystick::Axis axis);
     

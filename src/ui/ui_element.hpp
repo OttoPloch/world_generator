@@ -49,14 +49,25 @@ public:
     }
 
     template<typename T>
-    void removeComponent()
+    void removeComponent(std::string identifier = "")
     {
         for (auto c = components.begin(); c != components.end();)
         {
             if (auto casted = dynamic_cast<T*>(c->get()))
             {
-                c = components.erase(c);
-                break;
+                if (identifier == "")
+                {
+                    c = components.erase(c);
+                    break;
+                }
+                else
+                {
+                    if (c->get()->identifier == identifier)
+                    {
+                        c = components.erase(c);
+                        break;
+                    }
+                }
             }
             else
             {

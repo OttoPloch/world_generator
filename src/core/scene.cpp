@@ -95,7 +95,7 @@ void Scene::update(float dt)
     entityLayer.update(dt);
     updateBlame["UPDATE_ENTITY_LAYER"] = debugClock.restart().asSeconds();
 
-    printBlameStats(updateBlame, "SCENE_UPDATE");
+    if (debugMode) printBlameStats(updateBlame, "SCENE_UPDATE");
 }
 
 void Scene::UIUpdate(float dt)
@@ -189,7 +189,7 @@ void Scene::draw()
     uiLayer.draw(debugMode);
     drawBlame["DRAW_UI_LAYER"] = debugClock.restart().asSeconds();
 
-    printBlameStats(drawBlame, "SCENE_DRAW");
+    if (debugMode) printBlameStats(drawBlame, "SCENE_DRAW");
 }
 
 void Scene::sceneInput(std::string control, bool justPressed)
