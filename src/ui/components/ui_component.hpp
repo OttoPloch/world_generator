@@ -19,6 +19,7 @@ struct UIComponent
     UIElement* myElement;
 
     UIPosition position;
+    sf::Vector2f originOffset;
 
     std::string identifier;
 };

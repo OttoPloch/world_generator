@@ -42,9 +42,11 @@ void Scene::tick()
 {   
     camera.tick();
 
+    chunkLayer.tick();
+    
     entityLayer.tick();
 
-    chunkLayer.tick();
+    uiLayer.tick();
 
     // TEMP
     // sf::Vector2i mouseChunkPos = worldToChunkPosition(game, window->getWindow().mapPixelToCoords(sf::Mouse::getPosition(window->getWindow())));

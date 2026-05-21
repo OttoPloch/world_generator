@@ -10,11 +10,13 @@ BackgroundComponent::BackgroundComponent(Game* game, UIElement* myElement, UIPos
 
 sf::FloatRect BackgroundComponent::getLocalBounds()
 {
-    return {position.position, size};
+    return {position.position + originOffset, size};
 }
 
 void BackgroundComponent::updateVisuals()
 {
+    originOffset = UIPosition::getOriginOffset(position.origin, size);
+
     updateVertices();
 }
 
@@ -25,5 +27,5 @@ void BackgroundComponent::draw()
 
 void BackgroundComponent::updateVertices()
 {
-    vertices = VertexGroup::createTriangleVerts(myElement->position.position + position.position, size, backgroundColor);
+    vertices = VertexGroup::createTriangleVerts(myElement->position.position + position.position + originOffset, size, backgroundColor);
 }

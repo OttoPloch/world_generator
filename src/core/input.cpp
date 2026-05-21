@@ -383,8 +383,13 @@ bool Input::getKey(std::string key, bool dontSetPressedThisFrame)
     
         if (key == "LEFTCLICK" || key == "RIGHTCLICK")
         {
-            if (key == "LEFTCLICK" && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) isPressed = true;
-            if (key == "RIGHTCLICK" && sf::Mouse::isButtonPressed(sf::Mouse::Button::Right)) isPressed = true;
+            sf::Vector2i mousePos = sf::Mouse::getPosition(game->getWindow()->getWindow());
+
+            if (0 < mousePos.x && mousePos.x < game->getWindow()->getSize().x && 0 < mousePos.y && mousePos.y < game->getWindow()->getSize().y)
+            {
+                if (key == "LEFTCLICK" && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) isPressed = true;
+                if (key == "RIGHTCLICK" && sf::Mouse::isButtonPressed(sf::Mouse::Button::Right)) isPressed = true;
+            }
         }
         else
         {

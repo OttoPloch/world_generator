@@ -7,20 +7,21 @@ UIElement::UIElement(Game* game, std::string name, UIPosition position, int z) :
 sf::FloatRect UIElement::getGlobalBounds()
 {
     // relative coordinates
-    float left = 0, right = 0, top = 0, bottom = 0;
+    float left = 0, top = 0;
+    sf::Vector2f size(0, 0);
     
     for (auto& c : components)
     {
         sf::FloatRect cBox = c->getLocalBounds();
-        
-        left = std::min(left, cBox.position.x);
-        right = std::max(right, cBox.position.x + cBox.size.x);
-        top = std::min(top, cBox.position.y);
-        bottom = std::max(bottom, cBox.position.y + cBox.size.y);
-    }
 
+        left = std::min(left, cBox.position.x);
+        top = std::min(top, cBox.position.y);
+        size.x = std::max(size.x, cBox.size.x);
+        size.y = std::max(size.y, cBox.size.y);
+    }
+    
     // converts to global coordinates
-    return {{position.position.x + left, position.position.y + top}, {right, bottom}};
+    return {{position.position.x + left, position.position.y + top}, size};
 }
 
 void UIElement::updateVisuals()

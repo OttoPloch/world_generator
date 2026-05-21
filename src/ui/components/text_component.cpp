@@ -16,7 +16,7 @@ sf::FloatRect TextComponent::getLocalBounds()
 {
     if (text)
     {
-        return {position.position - text->getOrigin(), text->getGlobalBounds().size};
+        return {position.position - text->getOrigin() + originOffset, text->getGlobalBounds().size};
     }
     else
     {
@@ -26,7 +26,9 @@ sf::FloatRect TextComponent::getLocalBounds()
 
 void TextComponent::updateVisuals()
 {
-    text->setPosition(myElement->position.position + position.position);
+    originOffset = UIPosition::getOriginOffset(position.origin, text->getGlobalBounds().size);
+
+    text->setPosition(myElement->position.position + position.position + originOffset);
 }
 
 void TextComponent::draw()

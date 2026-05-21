@@ -9,6 +9,9 @@ sf::FloatRect UIComponent::getLocalBounds()
     return {position.position, {0, 0}};
 }
 
-void UIComponent::updateVisuals() {}
+void UIComponent::updateVisuals()
+{
+    originOffset = {0, 0};
+}
 
 void UIComponent::draw() {}

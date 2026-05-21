@@ -21,13 +21,13 @@ public:
 
     int getNewID();
 
-    sf::Vector2u getScreenSize();
-
-    sf::Vector2f getViewSize();
+    sf::View getUIView();
 
     bool checkUICollision();
 
     void updateVisuals();
+
+    void tick();
 
     void UIUpdate(float dt);
 

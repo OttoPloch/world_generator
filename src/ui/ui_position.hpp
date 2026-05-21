@@ -37,6 +37,8 @@ class UIPosition
 public:
     UIPosition(sf::Vector2f position, UIOrigin origin = UIOrigin::TOP_LEFT, UIAnchor anchor = UIAnchor::TOP_LEFT, bool worldPosition = false);
 
+    static sf::Vector2f getOriginOffset(UIOrigin origin, sf::Vector2f size);
+
     // UI positions are relative to their element's parent's position.
     sf::Vector2f position;
 

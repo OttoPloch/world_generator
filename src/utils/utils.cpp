@@ -5,6 +5,7 @@
 #include "../ui/ui_element.hpp"
 #include "../entities/collision_rect.hpp"
 #include "game_position.hpp"
+#include <SFML/Window/Mouse.hpp>
 #include <cstdlib>
 #include <random>
 
@@ -215,15 +216,15 @@ bool isOnScreen(Game* game, sf::Vector2f tl, sf::Vector2f size, bool useCameraVi
     }
     else
     {
-        sf::Vector2f viewSize = game->getWindow()->getWindow().getView().getSize();
+        sf::Vector2f UIViewSize = game->getScene()->getUILayer()->getUIView().getSize();
 
         if (right >= 0)
         {
-            if (left <= viewSize.x)
+            if (left <= UIViewSize.x)
             {
                 if (bottom >= 0)
                 {
-                    if (top <= viewSize.y)
+                    if (top <= UIViewSize.y)
                     {
                         return true;
                     }

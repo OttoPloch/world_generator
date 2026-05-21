@@ -7,6 +7,7 @@
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 #include <algorithm>
+#include <filesystem>
 
 UILayer::UILayer() {}
 
@@ -22,10 +23,11 @@ void UILayer::init(Game* game, Camera* camera)
 
     int currID;
 
-    auto e = elements.emplace_back(std::make_unique<UIElement>(game, "test", UIPosition({0, 0}), 1)).get();
+    auto e = elements.emplace_back(std::make_unique<UIElement>(game, "test", UIPosition({500, 500}), 1)).get();
     auto e2 = elements.emplace_back(std::make_unique<UIElement>(game, "test 2", UIPosition({400, 400}, UIOrigin::TOP_LEFT, UIAnchor::TOP_LEFT, true), 0)).get();
 
-    e->addComponent<BackgroundComponent>(game, e, UIPosition({0, 0}), "bg", sf::Vector2f(400, 100), sf::Color(30, 30, 30, 180));
+    e->addComponent<BackgroundComponent>(game, e, UIPosition({0, 0}), "bg 1", sf::Vector2f(400, 100), sf::Color(30, 30, 30, 180));
+    e->addComponent<BackgroundComponent>(game, e, UIPosition({0, 0}, UIOrigin::CENTER), "bg 2", sf::Vector2f(10, 10), sf::Color(255, 0, 0));
     e2->addComponent<BackgroundComponent>(game, e2, UIPosition({0, 0}), "bg", sf::Vector2f(30, 30), sf::Color(255, 0, 0));
 
     e->addComponent<TextComponent>(game, e, UIPosition({0, 0}), "text", "Hello, World!", assetManager->getFont("sfml_font"), 30);
@@ -72,8 +74,6 @@ void UILayer::init(Game* game, Camera* camera)
     {
         auto bb = e->getGlobalBounds();
 
-        std::cout << e->name << "; " << bb.position.x << ", " << bb.position.y << "; " << bb.size.x << ", " << bb.size.y << '\n';
-
         std::array<sf::Vertex, 8> verts = VertexGroup::createLineVerts(bb.position, bb.size, sf::Color::Green);
 
         if (e->position.worldPosition)
@@ -109,6 +109,8 @@ int UILayer::getNewID()
     return IDCounter - 1;
 }
 
+sf::View UILayer::getUIView() { return UIView; }
+
 bool UILayer::checkUICollision()
 {
     return false;
@@ -127,6 +129,11 @@ void UILayer::updateVisuals()
             e->updateVisuals();
         }
     }
+}
+
+void UILayer::tick()
+{
+
 }
 
 void UILayer::UIUpdate(float dt)
