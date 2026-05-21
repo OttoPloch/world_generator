@@ -87,10 +87,4 @@ void UIElement::sortComponents()
     std::sort(components.begin(), components.end(), [](const std::unique_ptr<UIComponent>& a, const std::unique_ptr<UIComponent>& b){
         return a->sortIndex < b->sortIndex;
     });
-
-    std::cout << name << '\n';
-    for (auto& c : components)
-    {
-        std::cout << "   - " << c->identifier << "; " << c->sortIndex << '\n';
-    }
 }

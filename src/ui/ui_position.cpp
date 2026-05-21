@@ -88,8 +88,6 @@ sf::Vector2f UIPosition::getAnchorOffset(UIAnchor anchor, UIElement* element)
 
 sf::Vector2f UIPosition::getAnchorOffset(UIAnchor anchor, sf::FloatRect bounds)
 {
-    std::cout << "BOUNDS: " << bounds.position.x << ", " << bounds.position.y << "; " << bounds.size.x << ", " << bounds.size.y << '\n';
-
     sf::Vector2f relativeSpace = bounds.size;
 
     sf::Vector2f offset;
@@ -147,8 +145,6 @@ sf::Vector2f UIPosition::getAnchorOffset(UIAnchor anchor, sf::FloatRect bounds)
             break;
         }
     }
-
-    std::cout << "ANCHOR IS " << static_cast<int>(anchor) << "; final: " << offset.x << ", " << offset.y << " (" << bounds.position.x + offset.x << ", " << bounds.position.y + offset.y << ");\n";
 
     return bounds.position + offset;
 }
