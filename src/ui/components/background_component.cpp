@@ -27,5 +27,5 @@ void BackgroundComponent::draw()
 
 void BackgroundComponent::updateVertices()
 {
-    vertices = VertexGroup::createTriangleVerts(myElement->position.position + position.position + originOffset, size, backgroundColor);
+    vertices = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset, size, backgroundColor);
 }

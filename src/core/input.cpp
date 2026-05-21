@@ -163,6 +163,7 @@ void Input::init(Game* game)
         {"UI UP", {"UP", "DPAD UP"}},
         {"UI DOWN", {"DOWN", "DPAD DOWN"}},
         {"EXTRA 1", {"P", "NONE"}},
+        {"EXTRA 2", {"O", "NONE"}},
         {"MAIN ACTION", {"LEFTCLICK", "A"}},
         {"SECONDARY ACTION", {"RIGHTCLICK", "B"}}
     };

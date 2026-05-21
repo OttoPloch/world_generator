@@ -38,11 +38,14 @@ public:
     UIPosition(sf::Vector2f position, UIOrigin origin = UIOrigin::TOP_LEFT, UIAnchor anchor = UIAnchor::TOP_LEFT, bool worldPosition = false);
 
     static sf::Vector2f getOriginOffset(UIOrigin origin, sf::Vector2f size);
+    
+    static sf::Vector2f getAnchorOffset(UIAnchor anchor, UIElement* element);
 
     // UI positions are relative to their element's parent's position.
     sf::Vector2f position;
 
     // the origin is which part of the component the position sets.
+    // Origins currently only affect components, not elements.
     UIOrigin origin;
 
     // the anchor is where the origin of the element will be placed
@@ -52,6 +55,7 @@ public:
     // parent element and the same anchor will place itself on the
     // top right of that element. Of couse, the position of the
     // component will act as an offset to the anchor.
+    // Anchors currently only affect elements, not components.
     UIAnchor anchor;
 
     // if true, then the element will be drawn at a position in the

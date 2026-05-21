@@ -30,6 +30,14 @@ void ActionComponent::update(float dt)
                     mainAction->active = false;
                 }
             }
+            else
+            {
+                mainAction->active = false;
+                mainAction->timeProgress = 0.f;
+                mainAction->timeToComplete = 0.f;
+                mainAction->cooldownProgress = 0.f;
+                mainAction->cooldown = 0.f;
+            }
         }
     }
 
@@ -52,6 +60,14 @@ void ActionComponent::update(float dt)
                     secondaryAction->timeProgress = 0.f;
                     secondaryAction->active = false;
                 }
+            }
+            else
+            {
+                secondaryAction->active = false;
+                secondaryAction->timeProgress = 0.f;
+                secondaryAction->timeToComplete = 0.f;
+                secondaryAction->cooldownProgress = 0.f;
+                secondaryAction->cooldown = 0.f;
             }
         }
     }

@@ -47,6 +47,7 @@ public:
     ChunkLayer* getChunkLayer();
     
     bool debugMode;
+    int debugLevel;
 private:
     Game* game;
     Window* window;

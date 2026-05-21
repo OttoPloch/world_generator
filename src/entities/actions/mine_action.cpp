@@ -6,6 +6,11 @@ MineAction::MineAction(float mineSpeed, std::string name, float rangeMultiplier)
 
 bool MineAction::start(Game* game)
 {
+    timeProgress = 0.f;
+    timeToComplete = 0.f;
+    cooldownProgress = 0.f;
+    cooldown = 0.f;
+
     sf::Vector2i chunkPos = worldToChunkPosition(game, startPosition);
 
     if (Chunk* chunk = game->getScene()->getChunkLayer()->getChunk(chunkPos))
@@ -36,10 +41,6 @@ bool MineAction::start(Game* game)
     }
 
     active = false;
-    timeProgress = 0.f;
-    timeToComplete = 0.f;
-    cooldownProgress = 0.f;
-    cooldown = 0.f;
     return false;
 }
 
@@ -60,10 +61,7 @@ bool MineAction::update(float dt, Game* game)
 
     if (worldToTilePosition(game, game->getInput()->getMouseWorldPos()) != worldToTilePosition(game, startPosition))
     {
-        timeProgress = 0.f;
-        cooldownProgress = 0.f;
-        startPosition = game->getInput()->getMouseWorldPos();
-        return start(game);
+        return false;
     }
     
     return true;

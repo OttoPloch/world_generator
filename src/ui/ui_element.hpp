@@ -9,7 +9,7 @@
 class UIElement
 {
 public:
-    UIElement(Game* game, std::string name, UIPosition position, int z);
+    UIElement(Game* game, std::string name, UIPosition position, int z = 0, UIElement* parent = nullptr);
 
     // total bounding rect including any components that go outside the element.
     sf::FloatRect getGlobalBounds();
@@ -78,8 +78,21 @@ public:
 
     Game* game;
     std::string name;
+    // the position is basically an offset, and in order to
+    // find the effective position, this value must be added
+    // to the position of this element's parent, and it's parent,
+    // and so on and so forth until the final parent, whose position
+    // is an offset from 0,0 (just a normal position). This is the
+    // purpose of the getEffectivePosition() method.
     UIPosition position;
     int z;
+    
+    sf::Vector2f anchorOffset;
+    sf::Vector2f effectivePosition;
+
+    UIElement* parent;
 
     std::vector<std::unique_ptr<UIComponent>> components;
+private:
+    sf::Vector2f calculateEffectivePosition();
 };

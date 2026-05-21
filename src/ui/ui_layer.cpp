@@ -23,15 +23,14 @@ void UILayer::init(Game* game, Camera* camera)
 
     int currID;
 
-    auto e = elements.emplace_back(std::make_unique<UIElement>(game, "test", UIPosition({500, 500}), 1)).get();
-    auto e2 = elements.emplace_back(std::make_unique<UIElement>(game, "test 2", UIPosition({400, 400}, UIOrigin::TOP_LEFT, UIAnchor::TOP_LEFT, true), 0)).get();
-
-    e->addComponent<BackgroundComponent>(game, e, UIPosition({0, 0}), "bg 1", sf::Vector2f(400, 100), sf::Color(30, 30, 30, 180));
-    e->addComponent<BackgroundComponent>(game, e, UIPosition({0, 0}, UIOrigin::CENTER), "bg 2", sf::Vector2f(10, 10), sf::Color(255, 0, 0));
-    e2->addComponent<BackgroundComponent>(game, e2, UIPosition({0, 0}), "bg", sf::Vector2f(30, 30), sf::Color(255, 0, 0));
-
-    e->addComponent<TextComponent>(game, e, UIPosition({0, 0}), "text", "Hello, World!", assetManager->getFont("sfml_font"), 30);
-    e2->addComponent<TextComponent>(game, e2, UIPosition({0, 0}), "text", "(0_0)", assetManager->getFont("sfml_font"), 10);
+    auto e = elements.emplace_back(std::make_unique<UIElement>(game, "test", UIPosition({0, 0}))).get();
+    e->addComponent<BackgroundComponent>(game, e, UIPosition({0, 0}), "bg", sf::Vector2f(400, 100), sf::Color(30, 30, 30, 180));
+    e->addComponent<TextComponent>(game, e, UIPosition({0, 0}), "text 1", "Hello, World!", assetManager->getFont("sfml_font"), 30);
+    
+    auto e2 = elements.emplace_back(std::make_unique<UIElement>(game, "test 2", UIPosition({200, 400}, UIOrigin::TOP_LEFT, UIAnchor::TOP_LEFT, true))).get();
+    e2->addComponent<BackgroundComponent>(game, e2, UIPosition({0, 0}, UIOrigin::CENTER), "bg 2", sf::Vector2f(52, 37), sf::Color(15, 15, 15));
+    e2->addComponent<BackgroundComponent>(game, e2, UIPosition({0, 0}, UIOrigin::CENTER), "bg 1", sf::Vector2f(50, 35), sf::Color(255, 0, 0));
+    e2->addComponent<TextComponent>(game, e2, UIPosition({0, 0}, UIOrigin::CENTER), "text", "This is a\nUI element", assetManager->getFont("sfml_font"), 10);
     
     // std::array<sf::Texture*, 3> buttonTextures = {assetManager->getTexture("button_up", "images/ui/"), assetManager->getTexture("button_hover", "images/ui/"), assetManager->getTexture("button_down", "images/ui/")};
     // std::array<sf::Texture*, 3> blueButtonTextures = {assetManager->getTexture("blue_button_up", "images/ui/"), assetManager->getTexture("blue_button_hover", "images/ui/"), assetManager->getTexture("blue_button_down", "images/ui/")};
@@ -70,23 +69,7 @@ void UILayer::init(Game* game, Camera* camera)
     // currID = getNewID(); elements[currID] = std::make_unique<UIBackground>(game, this, "CONTROLLER_INDICATOR", getNewID(), 0, toV2F(0, 0), toV2F(50, 50), sf::Color::Transparent, assetManager->getTileSet("16px"), assetManager->getTexture("ui_select", "images/ui/"), 36.f);
     // interactiveUIManager.init(game, &elements, getElement("CONTROLLER_INDICATOR"));
 
-    for (auto& e : elements)
-    {
-        auto bb = e->getGlobalBounds();
-
-        std::array<sf::Vertex, 8> verts = VertexGroup::createLineVerts(bb.position, bb.size, sf::Color::Green);
-
-        if (e->position.worldPosition)
-        {
-            debugWorldElementBoundingBoxes.insert(debugWorldElementBoundingBoxes.end(), verts.begin(), verts.end());
-        }
-        else
-        {
-            debugScreenElementBoundingBoxes.insert(debugScreenElementBoundingBoxes.end(), verts.begin(), verts.end());
-        }
-    }
-
-    updateVisuals();
+    setDebugVertices();
 }
 
 UIElement* UILayer::getElement(std::string name)
@@ -129,6 +112,8 @@ void UILayer::updateVisuals()
             e->updateVisuals();
         }
     }
+
+    setDebugVertices();
 }
 
 void UILayer::tick()
@@ -229,4 +214,30 @@ void UILayer::draw(bool debug)
     }
 
     game->getWindow()->setView(camera->getView());
+}
+
+void UILayer::setDebugVertices()
+{
+    debugWorldElementBoundingBoxes.clear();
+    debugScreenElementBoundingBoxes.clear();
+    for (auto& e : elements)
+    {
+        auto bb = e->getGlobalBounds();
+
+        // if (e->name == "test")
+        // {
+        //     std::cout << bb.position.x << ", " << bb.position.y << "; " << bb.size.x << ", " << bb.size.y << '\n';
+        // }
+
+        std::array<sf::Vertex, 8> verts = VertexGroup::createLineVerts(bb.position, bb.size, sf::Color::Green);
+
+        if (e->position.worldPosition)
+        {
+            debugWorldElementBoundingBoxes.insert(debugWorldElementBoundingBoxes.end(), verts.begin(), verts.end());
+        }
+        else
+        {
+            debugScreenElementBoundingBoxes.insert(debugScreenElementBoundingBoxes.end(), verts.begin(), verts.end());
+        }
+    }
 }

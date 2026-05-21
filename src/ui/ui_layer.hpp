@@ -35,6 +35,8 @@ public:
     
     // InteractiveUIManager interactiveUIManager;
 private:
+    void setDebugVertices();
+
     Game* game;
     AssetManager* assetManager;
     Camera* camera;

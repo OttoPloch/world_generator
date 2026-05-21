@@ -160,7 +160,7 @@ void Game::run()
 
         input.shiftPressedThisFrame();
 
-        if (scene.debugMode) printBlameStats(runBlame, "GAME_RUN");
+        if (scene.debugMode && scene.debugLevel == 1) printBlameStats(runBlame, "GAME_RUN");
     }
 
     exit();
@@ -191,5 +191,5 @@ void Game::draw()
     window.display();
     drawBlame["DRAW_DISPLAY"] = debugClock.restart().asSeconds();
 
-    if (scene.debugMode) printBlameStats(drawBlame, "GAME_DRAW");
+    if (scene.debugMode && scene.debugLevel == 1) printBlameStats(drawBlame, "GAME_DRAW");
 }

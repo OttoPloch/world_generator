@@ -35,6 +35,7 @@ void Scene::init(Game* game)
     chunkLayer.init(game);
 
     debugMode = false;
+    debugLevel = 0;
     debugChunkLayerView = -1;
 }
 
@@ -97,7 +98,7 @@ void Scene::update(float dt)
     entityLayer.update(dt);
     updateBlame["UPDATE_ENTITY_LAYER"] = debugClock.restart().asSeconds();
 
-    if (debugMode) printBlameStats(updateBlame, "SCENE_UPDATE");
+    if (debugMode && debugLevel == 1) printBlameStats(updateBlame, "SCENE_UPDATE");
 }
 
 void Scene::UIUpdate(float dt)
@@ -191,7 +192,7 @@ void Scene::draw()
     uiLayer.draw(debugMode);
     drawBlame["DRAW_UI_LAYER"] = debugClock.restart().asSeconds();
 
-    if (debugMode) printBlameStats(drawBlame, "SCENE_DRAW");
+    if (debugMode && debugLevel == 1) printBlameStats(drawBlame, "SCENE_DRAW");
 }
 
 void Scene::sceneInput(std::string control, bool justPressed)
@@ -223,6 +224,12 @@ void Scene::sceneInput(std::string control, bool justPressed)
     else if (control == "EXTRA 1" && justPressed)
     {
         debugChunkLayerView++;
+    }
+    else if (control == "EXTRA 2" && justPressed)
+    {
+        debugLevel++;
+
+        if (debugLevel > 1) debugLevel = 0;
     }
     else if (control == "MAIN ACTION")
     {
