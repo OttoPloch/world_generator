@@ -14,6 +14,11 @@ public:
     // total bounding rect including any components that go outside the element.
     sf::FloatRect getGlobalBounds();
     
+    // returns the local bounds of the element, including every component UP TO
+    // those with the sortIndex given. This is designed to be used by UI components
+    // to get the relative space for their anchors.
+    sf::FloatRect getLocalBoundsUpToComponent(int sortIndex);
+
     void updateVisuals();
 
     void draw();
@@ -45,6 +50,7 @@ public:
     {
         T* comp = new T(std::forward<Args>(args)...);
         components.emplace_back(comp);
+        sortComponents();
         return *comp;
     }
 
@@ -58,6 +64,7 @@ public:
                 if (identifier == "")
                 {
                     c = components.erase(c);
+                    sortComponents();
                     break;
                 }
                 else
@@ -65,6 +72,7 @@ public:
                     if (c->get()->identifier == identifier)
                     {
                         c = components.erase(c);
+                        sortComponents();
                         break;
                     }
                 }
@@ -91,8 +99,10 @@ public:
     sf::Vector2f effectivePosition;
 
     UIElement* parent;
-
-    std::vector<std::unique_ptr<UIComponent>> components;
 private:
     sf::Vector2f calculateEffectivePosition();
+    
+    void sortComponents();
+
+    std::vector<std::unique_ptr<UIComponent>> components;
 };

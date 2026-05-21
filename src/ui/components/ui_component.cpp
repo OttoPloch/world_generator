@@ -2,7 +2,7 @@
 #include "../ui_element.hpp"
 #include <SFML/Graphics/Rect.hpp>
 
-UIComponent::UIComponent(Game* game, UIElement* myElement, UIPosition position, std::string identifier) : game(game), myElement(myElement), position(position), identifier(identifier) {}
+UIComponent::UIComponent(Game* game, UIElement* myElement, UIPosition position, std::string identifier, int sortIndex) : game(game), myElement(myElement), position(position), identifier(identifier), sortIndex(sortIndex) {}
 
 sf::FloatRect UIComponent::getLocalBounds()
 {

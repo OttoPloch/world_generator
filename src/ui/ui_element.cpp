@@ -2,6 +2,7 @@
 #include "../core/game.hpp"
 #include <SFML/Graphics/Rect.hpp>
 #include <utility>
+#include <algorithm>
 
 UIElement::UIElement(Game* game, std::string name, UIPosition position, int z, UIElement* parent) : game(game), name(name), position(position), z(z), parent(parent)
 {
@@ -25,30 +26,29 @@ sf::FloatRect UIElement::getGlobalBounds()
         bottom = std::max(bottom, cBox.position.y + cBox.size.y);
     }
 
-    if (right < 0)
-    {
-        float swap = left;
-        left = right;
-        right = swap;
-    }
-    if (bottom < 0)
-    {
-        float swap = top;
-        top = bottom;
-        bottom = swap;
-    }
-
-    // if (name == "test")
-    // {
-    //     std::cout << "- \n";
-    //     std::cout << effectivePosition.x << ", " << effectivePosition.y << '\n';
-    //     std::cout << left << ", " << top << '\n';
-    //     std::cout << right << ", " << bottom << '\n'; 
-    //     std::cout << "FINAL: " << effectivePosition.x + left << ", " << effectivePosition.y + top << "; " << right - left << ", " << bottom - top << ";\n";
-    // }
-
     // converts to global coordinates
     return {{effectivePosition.x + left, effectivePosition.y + top}, {right - left, bottom - top}};
+}
+
+sf::FloatRect UIElement::getLocalBoundsUpToComponent(int sortIndex)
+{
+    float left = 0, top = 0, right = 0, bottom = 0;
+
+    calculateEffectivePosition();
+
+    for (auto& c : components)
+    {
+        if (c->sortIndex >= sortIndex) break;
+
+        sf::FloatRect cBox = c->getLocalBounds();
+
+        left = std::min(left, cBox.position.x);
+        top = std::min(top, cBox.position.y);
+        right = std::max(right, cBox.position.x + cBox.size.x);
+        bottom = std::max(bottom, cBox.position.y + cBox.size.y);
+    }
+
+    return {{left, top}, {right - left, bottom - top}};
 }
 
 void UIElement::updateVisuals()
@@ -80,4 +80,17 @@ sf::Vector2f UIElement::calculateEffectivePosition()
     }
 
     return effectivePosition;
+}
+
+void UIElement::sortComponents()
+{
+    std::sort(components.begin(), components.end(), [](const std::unique_ptr<UIComponent>& a, const std::unique_ptr<UIComponent>& b){
+        return a->sortIndex < b->sortIndex;
+    });
+
+    std::cout << name << '\n';
+    for (auto& c : components)
+    {
+        std::cout << "   - " << c->identifier << "; " << c->sortIndex << '\n';
+    }
 }

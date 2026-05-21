@@ -227,9 +227,12 @@ void Scene::sceneInput(std::string control, bool justPressed)
     }
     else if (control == "EXTRA 2" && justPressed)
     {
-        debugLevel++;
-
-        if (debugLevel > 1) debugLevel = 0;
+        if (debugMode)
+        {
+            debugLevel++;
+    
+            if (debugLevel > 1) debugLevel = 0;
+        }
     }
     else if (control == "MAIN ACTION")
     {

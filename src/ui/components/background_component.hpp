@@ -4,7 +4,7 @@
 
 struct BackgroundComponent : public UIComponent
 {
-    BackgroundComponent(Game* game, UIElement* myElement, UIPosition position, std::string identifier, sf::Vector2f size, sf::Color backgroundColor = {0, 0, 0});
+    BackgroundComponent(Game* game, UIElement* myElement, UIPosition position, std::string identifier, int sortIndex, sf::Vector2f size, sf::Color backgroundColor = {0, 0, 0});
     
     sf::FloatRect getLocalBounds() override;
     

@@ -1,6 +1,7 @@
 #include "ui_position.hpp"
 #include "ui_element.hpp"
 #include "../core/game.hpp"
+#include <SFML/Graphics/Rect.hpp>
 
 UIPosition::UIPosition(sf::Vector2f position, UIOrigin origin, UIAnchor anchor, bool worldPosition) : position(position), origin(origin), anchor(anchor), worldPosition(worldPosition) {}
 
@@ -71,7 +72,7 @@ sf::Vector2f UIPosition::getAnchorOffset(UIAnchor anchor, UIElement* element)
 
     // the space the element is put in. It can go beyond this,
     // but this determines where the anchor can go.
-    sf::Vector2f relativeSpace(0, 0);
+    sf::Vector2f relativeSpace;
 
     if (element->parent)
     {
@@ -81,6 +82,17 @@ sf::Vector2f UIPosition::getAnchorOffset(UIAnchor anchor, UIElement* element)
     {
         relativeSpace = element->game->getScene()->getUILayer()->getUIView().getSize();
     }
+
+    return getAnchorOffset(anchor, {{0, 0}, relativeSpace});
+}
+
+sf::Vector2f UIPosition::getAnchorOffset(UIAnchor anchor, sf::FloatRect bounds)
+{
+    std::cout << "BOUNDS: " << bounds.position.x << ", " << bounds.position.y << "; " << bounds.size.x << ", " << bounds.size.y << '\n';
+
+    sf::Vector2f relativeSpace = bounds.size;
+
+    sf::Vector2f offset;
 
     switch (anchor)
     {
@@ -136,5 +148,7 @@ sf::Vector2f UIPosition::getAnchorOffset(UIAnchor anchor, UIElement* element)
         }
     }
 
-    return offset;
+    std::cout << "ANCHOR IS " << static_cast<int>(anchor) << "; final: " << offset.x << ", " << offset.y << " (" << bounds.position.x + offset.x << ", " << bounds.position.y + offset.y << ");\n";
+
+    return bounds.position + offset;
 }

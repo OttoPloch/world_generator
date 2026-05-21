@@ -23,14 +23,14 @@ void UILayer::init(Game* game, Camera* camera)
 
     int currID;
 
-    auto e = elements.emplace_back(std::make_unique<UIElement>(game, "test", UIPosition({0, 0}))).get();
-    e->addComponent<BackgroundComponent>(game, e, UIPosition({0, 0}), "bg", sf::Vector2f(400, 100), sf::Color(30, 30, 30, 180));
-    e->addComponent<TextComponent>(game, e, UIPosition({0, 0}), "text 1", "Hello, World!", assetManager->getFont("sfml_font"), 30);
+    auto e = elements.emplace_back(std::make_unique<UIElement>(game, "test", UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_RIGHT))).get();
+    e->addComponent<BackgroundComponent>(game, e, UIPosition({0, 0}, UIOrigin::BOTTOM_RIGHT), "bg", 0, sf::Vector2f(400, 100), sf::Color(30, 30, 30, 180));
+    e->addComponent<TextComponent>(game, e, UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::TOP_LEFT), "text 1", 1, "Hello, World!", assetManager->getFont("sfml_font"), 30);
     
     auto e2 = elements.emplace_back(std::make_unique<UIElement>(game, "test 2", UIPosition({200, 400}, UIOrigin::TOP_LEFT, UIAnchor::TOP_LEFT, true))).get();
-    e2->addComponent<BackgroundComponent>(game, e2, UIPosition({0, 0}, UIOrigin::CENTER), "bg 2", sf::Vector2f(52, 37), sf::Color(15, 15, 15));
-    e2->addComponent<BackgroundComponent>(game, e2, UIPosition({0, 0}, UIOrigin::CENTER), "bg 1", sf::Vector2f(50, 35), sf::Color(255, 0, 0));
-    e2->addComponent<TextComponent>(game, e2, UIPosition({0, 0}, UIOrigin::CENTER), "text", "This is a\nUI element", assetManager->getFont("sfml_font"), 10);
+    e2->addComponent<BackgroundComponent>(game, e2, UIPosition({0, 0}, UIOrigin::CENTER), "bg 2", 0, sf::Vector2f(52, 37), sf::Color(15, 15, 15));
+    e2->addComponent<BackgroundComponent>(game, e2, UIPosition({0, 0}, UIOrigin::CENTER), "bg 1", 0, sf::Vector2f(50, 35), sf::Color(255, 0, 0));
+    e2->addComponent<TextComponent>(game, e2, UIPosition({0, 0}, UIOrigin::CENTER, UIAnchor::CENTER), "text", 1, "This is a\nUI element", assetManager->getFont("sfml_font"), 10);
     
     // std::array<sf::Texture*, 3> buttonTextures = {assetManager->getTexture("button_up", "images/ui/"), assetManager->getTexture("button_hover", "images/ui/"), assetManager->getTexture("button_down", "images/ui/")};
     // std::array<sf::Texture*, 3> blueButtonTextures = {assetManager->getTexture("blue_button_up", "images/ui/"), assetManager->getTexture("blue_button_hover", "images/ui/"), assetManager->getTexture("blue_button_down", "images/ui/")};
@@ -223,11 +223,6 @@ void UILayer::setDebugVertices()
     for (auto& e : elements)
     {
         auto bb = e->getGlobalBounds();
-
-        // if (e->name == "test")
-        // {
-        //     std::cout << bb.position.x << ", " << bb.position.y << "; " << bb.size.x << ", " << bb.size.y << '\n';
-        // }
 
         std::array<sf::Vertex, 8> verts = VertexGroup::createLineVerts(bb.position, bb.size, sf::Color::Green);
 
