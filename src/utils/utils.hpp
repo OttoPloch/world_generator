@@ -21,14 +21,14 @@ bool dynamicRectRectCollide(CollisionRect* in, sf::Vector2f inVel, CollisionRect
 
 bool mouseRectCollide(Game* game, sf::Vector2f position, sf::Vector2f size);
 
+bool pointRectCollide(sf::Vector2f point, sf::FloatRect rect);
+
 template<typename T>
 void log(T message, bool newLine = true)
 {
     std::cout << message;
     if (newLine) std::cout << '\n';
 }
-
-// sf::Vector2f UIPositionToScreenCenter(UILayer* uiLayer, UIElement* element, sf::Vector2f pos, int posSet = -1, bool useElementPosition = false);
 
 int getRandInt(int min, int max);
 

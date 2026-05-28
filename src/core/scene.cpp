@@ -9,6 +9,8 @@
 #include "../entities/components/action_component.hpp"
 #include "../entities/actions/action.hpp"
 #include "../entities/actions/mine_action.hpp"
+#include "../entities/actions/mine_action.hpp"
+#include "../ui/components/button_component.hpp"
 
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
@@ -53,7 +55,7 @@ void Scene::tick()
     // sf::Vector2i mouseChunkPos = worldToChunkPosition(game, window->getWindow().mapPixelToCoords(sf::Mouse::getPosition(window->getWindow())));
     // uiLayer.getElement("mouse chunk pos display")->getAsText()->setValue(std::to_string(mouseChunkPos.x) + ", " + std::to_string(mouseChunkPos.y));
     
-    // sf::Vector2f mouseWorldPos = game->getInput()->getMouseWorldPos();
+    // sf::Vector2f mouseWorldPos = game->getInput()->getMouseCoords();
     // sf::Vector2f mouseLocalWorldPos = {std::fmod(mouseWorldPos.x, toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size), std::fmod(mouseWorldPos.y, toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size)};
     // sf::Vector2i mouseLocalPos = {toInt(std::floor(mouseLocalWorldPos.x / game->getSettings()->tile_size)), toInt(std::floor(mouseLocalWorldPos.y / game->getSettings()->tile_size))};
     // Chunk* mouseChunk = chunkLayer.getChunk(mouseChunkPos);
@@ -103,6 +105,47 @@ void Scene::update(float dt)
 
 void Scene::UIUpdate(float dt)
 {
+    if (auto e = uiLayer.getElement("speed buttons"))
+    {
+        if (auto slower = e->getComponent<ButtonComponent>("slower button"))
+        {
+            if (slower->justPressed())
+            {
+                if (entityLayer.player)
+                {
+                    if (auto c = entityLayer.player->getComponent<MovementComponent>())
+                    {
+                        c->stats.speed -= 2;
+
+                        if (auto t = e->getComponent<TextComponent>("speed display"))
+                        {
+                            t->setText(std::to_string(toInt(c->stats.speed)));
+                        }
+                    }
+                }
+            }
+        }
+        
+        if (auto faster = e->getComponent<ButtonComponent>("faster button"))
+        {
+            if (faster->justPressed())
+            {
+                if (entityLayer.player)
+                {
+                    if (auto c = entityLayer.player->getComponent<MovementComponent>())
+                    {
+                        c->stats.speed += 2;
+
+                        if (auto t = e->getComponent<TextComponent>("speed display"))
+                        {
+                            t->setText(std::to_string(toInt(c->stats.speed)));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     // if (uiLayer.getElement("faster button")->getAsButton()->getActive())
     // {
     //     if (auto e = entityLayer.getEntity(0)->getComponent<MovementComponent>())
@@ -278,7 +321,7 @@ bool Scene::processActionRequest(Entity* actor, Action* action)
                 {
                     // TRYING TO MINE
 
-                    sf::Vector2f mouseWorldPos = game->getInput()->getMouseWorldPos();
+                    sf::Vector2f mouseWorldPos = game->getInput()->getMouseCoords();
 
                     if (auto chunk = chunkLayer.getChunk(worldToChunkPosition(game, mouseWorldPos)))
                     {

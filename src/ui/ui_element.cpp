@@ -63,6 +63,11 @@ void UIElement::updateVisuals()
     }
 }
 
+void UIElement::update()
+{
+    for (auto& c : components) c->update();
+}
+
 void UIElement::draw()
 {
     for (auto& c : components) c->draw();

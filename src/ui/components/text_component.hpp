@@ -14,5 +14,7 @@ struct TextComponent : public UIComponent
 
     void draw() override;
 
+    void setText(std::string newText);
+private:
     std::unique_ptr<sf::Text> text;
 };

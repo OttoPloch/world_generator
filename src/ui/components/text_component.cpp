@@ -38,3 +38,10 @@ void TextComponent::draw()
 {
     game->getWindow()->draw(*text);
 }
+
+void TextComponent::setText(std::string newText)
+{
+    text->setString(newText);
+
+    updateVisuals();
+}

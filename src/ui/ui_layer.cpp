@@ -20,20 +20,22 @@ void UILayer::init(Game* game, Camera* camera)
 
     UIView.setSize(toV2F(game->getWindow()->getSize()));
 
-    IDCounter = 0;
-
-    int currID;
-
     auto e = elements.emplace_back(std::make_unique<UIElement>(game, "test", UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_RIGHT))).get();
     e->addComponent<BackgroundComponent>(game, e, UIPosition({0, 0}, UIOrigin::BOTTOM_RIGHT), "bg", 0, sf::Vector2f(400, 100), sf::Color(30, 30, 30, 180));
     e->addComponent<TextComponent>(game, e, UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::TOP_LEFT), "text 1", 1, "Hello, World!", assetManager->getFont("sfml_font"), 30);
-    e->addComponent<ButtonComponent>(game, e, UIPosition({0, 0}, UIOrigin::BOTTOM_RIGHT, UIAnchor::BOTTOM_RIGHT), "button", 1, game->getAssetManager()->getTexture("blue_button_up", "images/ui/"), 3);
 
     auto e2 = elements.emplace_back(std::make_unique<UIElement>(game, "test 2", UIPosition({200, 400}, UIOrigin::TOP_LEFT, UIAnchor::TOP_LEFT, true))).get();
     e2->addComponent<BackgroundComponent>(game, e2, UIPosition({0, 0}, UIOrigin::CENTER), "bg 2", 0, sf::Vector2f(52, 37), sf::Color(15, 15, 15));
     e2->addComponent<BackgroundComponent>(game, e2, UIPosition({0, 0}, UIOrigin::CENTER), "bg 1", 0, sf::Vector2f(50, 35), sf::Color(255, 0, 0));
     e2->addComponent<TextComponent>(game, e2, UIPosition({0, 0}, UIOrigin::CENTER, UIAnchor::CENTER), "text", 1, "This is a\nUI element", assetManager->getFont("sfml_font"), 10);
-    
+
+    auto e3 = elements.emplace_back(std::make_unique<UIElement>(game, "speed buttons", UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::TOP_MIDDLE))).get();
+    e3->addComponent<BackgroundComponent>(game, e3, UIPosition({0, 0}, UIOrigin::TOP_MIDDLE), "bg", 0, sf::Vector2f(300, 120), sf::Color(30, 30, 30, 180));
+    e3->addComponent<ButtonComponent>(game, e3, UIPosition({10, 10}), "slower button", 1, game->getAssetManager()->getTexture("blue_button_up", "images/ui/"), 3);
+    e3->addComponent<ButtonComponent>(game, e3, UIPosition({-10, 10}, UIOrigin::TOP_RIGHT, UIAnchor::TOP_RIGHT), "faster button", 1, game->getAssetManager()->getTexture("green_button_up", "images/ui/"), 3);
+    e3->addComponent<TextComponent>(game, e3, UIPosition({0, 20}, UIOrigin::TOP_MIDDLE, UIAnchor::TOP_MIDDLE), "note", 1, "<< slower\nfaster >>", game->getAssetManager()->getFont("sfml_font"), 20);
+    e3->addComponent<TextComponent>(game, e3, UIPosition({0, -20}, UIOrigin::BOTTOM_MIDDLE, UIAnchor::BOTTOM_MIDDLE), "speed display", 1, "", game->getAssetManager()->getFont("sfml_font"), 20);
+
     // std::array<sf::Texture*, 3> buttonTextures = {assetManager->getTexture("button_up", "images/ui/"), assetManager->getTexture("button_hover", "images/ui/"), assetManager->getTexture("button_down", "images/ui/")};
     // std::array<sf::Texture*, 3> blueButtonTextures = {assetManager->getTexture("blue_button_up", "images/ui/"), assetManager->getTexture("blue_button_hover", "images/ui/"), assetManager->getTexture("blue_button_down", "images/ui/")};
     // std::array<sf::Texture*, 3> redButtonTextures = {assetManager->getTexture("red_button_up", "images/ui/"), assetManager->getTexture("red_button_hover", "images/ui/"), assetManager->getTexture("red_button_down", "images/ui/")};
@@ -87,17 +89,20 @@ UIElement* UILayer::getElement(std::string name)
     return nullptr;
 }
 
-int UILayer::getNewID()
-{
-    IDCounter++;
-
-    return IDCounter - 1;
-}
-
 sf::View UILayer::getUIView() { return UIView; }
 
 bool UILayer::checkUICollision()
 {
+    for (auto& e : elements)
+    {
+        sf::Vector2f mousePos;
+        
+        if (e->position.worldPosition) mousePos = game->getInput()->getMouseCoords();
+        else mousePos = game->getInput()->getMouseWindowPos();
+
+        if (pointRectCollide(mousePos, e->getGlobalBounds())) return true;
+    }
+
     return false;
 }
 
@@ -120,26 +125,14 @@ void UILayer::updateVisuals()
 
 void UILayer::tick()
 {
-    if (auto button = getElement("test")->getComponent<ButtonComponent>())
-    {
-        if (button->isPressed()) std::cout << "PRESSED\n";
-        else if (button->isSelected()) std::cout << "SELECTED\n";
-        else std::cout << "none\n";
-    }
-    else
-    {
-        std::cout << "no button :(\n";
-    }
+
 }
 
 void UILayer::UIUpdate(float dt)
 {
-    if (elements.size() > 0)
+    for (auto& e : elements)
     {
-        for (auto& e : elements)
-        {
-            //e->baseUpdate(dt);
-        }
+        e->update();
     }
 
     // if (interactiveUIManager.isControllerUIActive())

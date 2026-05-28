@@ -11,6 +11,8 @@ struct ButtonComponent : public UIComponent
     
     void updateVisuals() override;
 
+    void update() override;
+
     void draw() override;
     
     void setTexture(sf::Texture* newTexture);
@@ -18,6 +20,8 @@ struct ButtonComponent : public UIComponent
     bool isSelected();
     
     bool isPressed();
+
+    bool justPressed();
 private:
     void updateVertices();
     
@@ -28,4 +32,7 @@ private:
     std::array<sf::Vertex, 6> vertices;
 
     sf::RenderStates states;
+
+    bool pressed;
+    bool pressedLastFrame;
 };

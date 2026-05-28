@@ -15,6 +15,8 @@ struct UIComponent
 
     virtual void updateVisuals();
 
+    virtual void update();
+
     virtual void draw();
 
     Game* game;

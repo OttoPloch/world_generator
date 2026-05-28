@@ -31,7 +31,13 @@ public:
 
     sf::Vector2f getMovement();
 
-    sf::Vector2f getMouseWorldPos();
+    // gets the coordinates of the mouse in the current view.
+    // So, if the camera is offset, the mouse will inherit that offset.
+    sf::Vector2f getMouseCoords();
+
+    // gets the coordinates of the mouse in the window, not
+    // accounting for the current view.
+    sf::Vector2f getMouseWindowPos();
 
     bool getKeyPressedLastFrame(std::string key);
     

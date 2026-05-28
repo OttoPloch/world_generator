@@ -5,7 +5,7 @@
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/StencilMode.hpp>
 
-ButtonComponent::ButtonComponent(Game* game, UIElement* myElement, UIPosition position, std::string identifier, int sortIndex, sf::Texture* texture, int textureScale) : UIComponent(game, myElement, position, identifier, sortIndex), textureScale(textureScale)
+ButtonComponent::ButtonComponent(Game* game, UIElement* myElement, UIPosition position, std::string identifier, int sortIndex, sf::Texture* texture, int textureScale) : UIComponent(game, myElement, position, identifier, sortIndex), textureScale(textureScale), pressed(false), pressedLastFrame(false)
 {
     setTexture(texture);
 }
@@ -21,6 +21,12 @@ void ButtonComponent::updateVisuals()
     anchorOffset = UIPosition::getAnchorOffset(position.anchor, myElement->getLocalBoundsUpToComponent(sortIndex));
 
     updateVertices();
+}
+
+void ButtonComponent::update()
+{
+    pressedLastFrame = pressed;
+    pressed = isPressed();
 }
 
 void ButtonComponent::draw()
@@ -48,6 +54,11 @@ bool ButtonComponent::isSelected()
 bool ButtonComponent::isPressed()
 {
     return isSelected() && game->getInput()->isKeyPressed("LEFTCLICK");
+}
+
+bool ButtonComponent::justPressed()
+{
+    return pressed && !pressedLastFrame;
 }
 
 void ButtonComponent::updateVertices()

@@ -19,8 +19,6 @@ public:
     
     UIElement* getElement(std::string name);
 
-    int getNewID();
-
     sf::View getUIView();
 
     bool checkUICollision();
@@ -40,8 +38,6 @@ private:
     Game* game;
     AssetManager* assetManager;
     Camera* camera;
-
-    int IDCounter;
     
     sf::View UIView;
     

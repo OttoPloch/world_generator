@@ -21,6 +21,8 @@ public:
 
     void updateVisuals();
 
+    void update();
+
     void draw();
 
     template<typename T>
