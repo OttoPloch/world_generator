@@ -9,6 +9,8 @@ struct UIComponent
 {
     UIComponent(Game* game, UIElement* myElement, UIPosition position, std::string identifier, int sortIndex);
 
+    sf::FloatRect getGlobalBounds();
+
     virtual sf::FloatRect getLocalBounds();
 
     virtual void updateVisuals();

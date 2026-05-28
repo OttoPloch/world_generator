@@ -99,10 +99,10 @@ public:
     sf::Vector2f effectivePosition;
 
     UIElement* parent;
+    
+    std::vector<std::unique_ptr<UIComponent>> components;
 private:
     sf::Vector2f calculateEffectivePosition();
     
     void sortComponents();
-
-    std::vector<std::unique_ptr<UIComponent>> components;
 };

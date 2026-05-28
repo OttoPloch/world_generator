@@ -1,8 +1,6 @@
 #include "background_component.hpp"
 #include "../../graphics/vertex_group.hpp"
 #include "../../core/game.hpp"
-#include <SFML/Graphics/PrimitiveType.hpp>
-#include <SFML/Graphics/Rect.hpp>
 
 BackgroundComponent::BackgroundComponent(Game* game, UIElement* myElement, UIPosition position, std::string identifier, int sortIndex, sf::Vector2f size, sf::Color backgroundColor) : UIComponent(game, myElement, position, identifier, sortIndex), size(size), backgroundColor(backgroundColor)
 {

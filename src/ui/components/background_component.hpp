@@ -11,7 +11,8 @@ struct BackgroundComponent : public UIComponent
     void updateVisuals() override;
 
     void draw() override;
-    
+
+private:
     void updateVertices();
 
     sf::Vector2f size;

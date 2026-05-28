@@ -1,5 +1,6 @@
 #include "ui_layer.hpp"
 #include "../core/game.hpp"
+#include "components/button_component.hpp"
 #include "ui_element.hpp"
 #include "components/text_component.hpp"
 #include "components/background_component.hpp"
@@ -17,7 +18,7 @@ void UILayer::init(Game* game, Camera* camera)
     this->assetManager = game->getAssetManager();
     this->camera = camera;
 
-    UIView.setSize(camera->getSize());
+    UIView.setSize(toV2F(game->getWindow()->getSize()));
 
     IDCounter = 0;
 
@@ -26,7 +27,8 @@ void UILayer::init(Game* game, Camera* camera)
     auto e = elements.emplace_back(std::make_unique<UIElement>(game, "test", UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_RIGHT))).get();
     e->addComponent<BackgroundComponent>(game, e, UIPosition({0, 0}, UIOrigin::BOTTOM_RIGHT), "bg", 0, sf::Vector2f(400, 100), sf::Color(30, 30, 30, 180));
     e->addComponent<TextComponent>(game, e, UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::TOP_LEFT), "text 1", 1, "Hello, World!", assetManager->getFont("sfml_font"), 30);
-    
+    e->addComponent<ButtonComponent>(game, e, UIPosition({0, 0}, UIOrigin::BOTTOM_RIGHT, UIAnchor::BOTTOM_RIGHT), "button", 1, game->getAssetManager()->getTexture("blue_button_up", "images/ui/"), 3);
+
     auto e2 = elements.emplace_back(std::make_unique<UIElement>(game, "test 2", UIPosition({200, 400}, UIOrigin::TOP_LEFT, UIAnchor::TOP_LEFT, true))).get();
     e2->addComponent<BackgroundComponent>(game, e2, UIPosition({0, 0}, UIOrigin::CENTER), "bg 2", 0, sf::Vector2f(52, 37), sf::Color(15, 15, 15));
     e2->addComponent<BackgroundComponent>(game, e2, UIPosition({0, 0}, UIOrigin::CENTER), "bg 1", 0, sf::Vector2f(50, 35), sf::Color(255, 0, 0));
@@ -118,7 +120,16 @@ void UILayer::updateVisuals()
 
 void UILayer::tick()
 {
-
+    if (auto button = getElement("test")->getComponent<ButtonComponent>())
+    {
+        if (button->isPressed()) std::cout << "PRESSED\n";
+        else if (button->isSelected()) std::cout << "SELECTED\n";
+        else std::cout << "none\n";
+    }
+    else
+    {
+        std::cout << "no button :(\n";
+    }
 }
 
 void UILayer::UIUpdate(float dt)
@@ -179,6 +190,7 @@ void UILayer::draw(bool debug)
 
     if (debug)
     {
+        game->getWindow()->getWindow().draw(debugWorldComponentBoundingBoxes.data(), debugWorldComponentBoundingBoxes.size(), sf::PrimitiveType::Lines);
         game->getWindow()->getWindow().draw(debugWorldElementBoundingBoxes.data(), debugWorldElementBoundingBoxes.size(), sf::PrimitiveType::Lines);
     }
 
@@ -210,6 +222,7 @@ void UILayer::draw(bool debug)
 
     if (debug)
     {
+        game->getWindow()->getWindow().draw(debugScreenComponentBoundingBoxes.data(), debugScreenComponentBoundingBoxes.size(), sf::PrimitiveType::Lines);
         game->getWindow()->getWindow().draw(debugScreenElementBoundingBoxes.data(), debugScreenElementBoundingBoxes.size(), sf::PrimitiveType::Lines);
     }
 
@@ -218,8 +231,11 @@ void UILayer::draw(bool debug)
 
 void UILayer::setDebugVertices()
 {
+    debugWorldComponentBoundingBoxes.clear();
     debugWorldElementBoundingBoxes.clear();
+    debugScreenComponentBoundingBoxes.clear();
     debugScreenElementBoundingBoxes.clear();
+
     for (auto& e : elements)
     {
         auto bb = e->getGlobalBounds();
@@ -229,10 +245,29 @@ void UILayer::setDebugVertices()
         if (e->position.worldPosition)
         {
             debugWorldElementBoundingBoxes.insert(debugWorldElementBoundingBoxes.end(), verts.begin(), verts.end());
+            
+            for (auto& c : e->components)
+            {
+                bb = c->getGlobalBounds();
+    
+                verts = VertexGroup::createLineVerts(bb.position, bb.size, sf::Color::Blue);
+
+                debugWorldComponentBoundingBoxes.insert(debugWorldComponentBoundingBoxes.end(), verts.begin(), verts.end());
+            }
         }
         else
         {
             debugScreenElementBoundingBoxes.insert(debugScreenElementBoundingBoxes.end(), verts.begin(), verts.end());
+            
+            for (auto& c : e->components)
+            {
+                bb = c->getGlobalBounds();
+                
+                verts = VertexGroup::createLineVerts(bb.position, bb.size, sf::Color::Blue);
+                
+                debugScreenComponentBoundingBoxes.insert(debugScreenComponentBoundingBoxes.end(), verts.begin(), verts.end());
+            }
         }
+
     }
 }
