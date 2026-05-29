@@ -20,6 +20,18 @@ void UILayer::init(Game* game, Camera* camera)
 
     UIView.setSize(toV2F(game->getWindow()->getSize()));
 
+    std::map<ButtonState, sf::Texture*> blueButtonTextures = {
+        {ButtonState::UP, game->getAssetManager()->getTexture("blue_button_up", "images/ui/")},
+        {ButtonState::HOVER, game->getAssetManager()->getTexture("blue_button_hover", "images/ui/")},
+        {ButtonState::DOWN, game->getAssetManager()->getTexture("blue_button_down", "images/ui/")}
+    };
+
+    std::map<ButtonState, sf::Texture*> greenButtonTextures = {
+        {ButtonState::UP, game->getAssetManager()->getTexture("green_button_up", "images/ui/")},
+        {ButtonState::HOVER, game->getAssetManager()->getTexture("green_button_hover", "images/ui/")},
+        {ButtonState::DOWN, game->getAssetManager()->getTexture("green_button_down", "images/ui/")}
+    };
+
     auto e = elements.emplace_back(std::make_unique<UIElement>(game, "test", UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_RIGHT))).get();
     e->addComponent<BackgroundComponent>(game, e, UIPosition({0, 0}, UIOrigin::BOTTOM_RIGHT), "bg", 0, sf::Vector2f(400, 100), sf::Color(30, 30, 30, 180));
     e->addComponent<TextComponent>(game, e, UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::TOP_LEFT), "text 1", 1, "Hello, World!", assetManager->getFont("sfml_font"), 30);
@@ -31,8 +43,8 @@ void UILayer::init(Game* game, Camera* camera)
 
     auto e3 = elements.emplace_back(std::make_unique<UIElement>(game, "speed buttons", UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::TOP_MIDDLE))).get();
     e3->addComponent<BackgroundComponent>(game, e3, UIPosition({0, 0}, UIOrigin::TOP_MIDDLE), "bg", 0, sf::Vector2f(300, 120), sf::Color(30, 30, 30, 180));
-    e3->addComponent<ButtonComponent>(game, e3, UIPosition({10, 10}), "slower button", 1, game->getAssetManager()->getTexture("blue_button_up", "images/ui/"), 3);
-    e3->addComponent<ButtonComponent>(game, e3, UIPosition({-10, 10}, UIOrigin::TOP_RIGHT, UIAnchor::TOP_RIGHT), "faster button", 1, game->getAssetManager()->getTexture("green_button_up", "images/ui/"), 3);
+    e3->addComponent<ButtonComponent>(game, e3, UIPosition({10, 10}), "slower button", 1, blueButtonTextures, sf::Vector2f(3, 3));
+    e3->addComponent<ButtonComponent>(game, e3, UIPosition({-10, 10}, UIOrigin::TOP_RIGHT, UIAnchor::TOP_RIGHT), "faster button", 1, greenButtonTextures, sf::Vector2f(3, 3));
     e3->addComponent<TextComponent>(game, e3, UIPosition({0, 20}, UIOrigin::TOP_MIDDLE, UIAnchor::TOP_MIDDLE), "note", 1, "<< slower\nfaster >>", game->getAssetManager()->getFont("sfml_font"), 20);
     e3->addComponent<TextComponent>(game, e3, UIPosition({0, -20}, UIOrigin::BOTTOM_MIDDLE, UIAnchor::BOTTOM_MIDDLE), "speed display", 1, "", game->getAssetManager()->getFont("sfml_font"), 20);
 
