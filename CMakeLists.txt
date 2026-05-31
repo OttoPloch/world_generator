@@ -41,6 +41,7 @@ src/entities/actions/action.cpp
 src/entities/actions/mine_action.cpp
 src/entities/template_manager.cpp
 src/entities/collision_rect.cpp
+src/entities/entity_systems/collision_system.cpp
 
 src/graphics/sprite.cpp
 src/graphics/asset_manager.cpp

@@ -27,6 +27,8 @@ void EntityLayer::init(Game* game)
     tManager.entityTemplates["player"] = EntityTemplate();
     tManager.entityTemplates["box"] = EntityTemplate();
 
+    collisionSystem = CollisionSystem(game, game->getScene());
+
     auto pt = &tManager.entityTemplates["player"];
     pt->sprite = {game->getAssetManager()->getTexture("dog", "texture_atlases/"), {20, 20}, false, false, {{0, 0}, {0, 0}}, 2.f, nullptr, game->getAssetManager()->getAnimSet("dog")};
     pt->movement = {2.f, 1.5f};
@@ -268,15 +270,7 @@ void EntityLayer::tick()
 
 void EntityLayer::update(float dt)
 {
-    for (auto& i : entities)
-    {
-        Chunk* entityChunk = game->getScene()->getChunkLayer()->getChunk(worldToChunkPosition(game, i.second->getPosition()));
-
-        if (entityChunk && entityChunk->state == ChunkState::ACTIVE)
-        {
-            i.second->update(dt);
-        }
-    }
+    collisionSystem.update(dt);
 }
 
 void EntityLayer::draw(bool debug)

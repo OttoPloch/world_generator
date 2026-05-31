@@ -9,6 +9,7 @@
 #include "entity.hpp"
 #include "entity_template.hpp"
 #include "template_manager.hpp"
+#include "entity_systems/collision_system.hpp"
 
 class Game;
 
@@ -34,6 +35,82 @@ public:
     std::vector<Entity*> getEntitiesInChunkArea(int chunkX, int chunkY, int chunkRadius = 0);
     std::vector<Entity*> getEntitiesInChunkArea(sf::Vector2f position, int chunkRadius = 0);
 
+    template<typename A>
+    std::vector<Entity*> getEntitiesWithComponent()
+    {
+        std::vector<Entity*> entitiesWithRequiredComponent;
+
+        for (auto& e : entities)
+        {
+            if (e.second->getComponent<A>())
+            {
+                entitiesWithRequiredComponent.emplace_back(e.second.get());
+            }
+        }
+
+        return entitiesWithRequiredComponent;
+    }
+
+    template<typename A, typename B>
+    std::vector<Entity*> getEntitiesWithComponents()
+    {
+        std::vector<Entity*> entitiesWithRequiredComponents;
+
+        for (auto& e : entities)
+        {
+            if (
+                e.second->getComponent<A>() &&
+                e.second->getComponent<B>()
+            )
+            {
+                entitiesWithRequiredComponents.emplace_back(e.second.get());
+            }
+        }
+
+        return entitiesWithRequiredComponents;
+    }
+
+    template<typename A, typename B, typename C>
+    std::vector<Entity*> getEntitiesWithComponents()
+    {
+        std::vector<Entity*> entitiesWithRequiredComponents;
+
+        for (auto& e : entities)
+        {
+            if (
+                e.second->getComponent<A>() &&
+                e.second->getComponent<B>() &&
+                e.second->getComponent<C>()
+            )
+            {
+                entitiesWithRequiredComponents.emplace_back(e.second.get());
+            }
+        }
+
+        return entitiesWithRequiredComponents;
+    }
+
+    template<typename A, typename B, typename C, typename D>
+    std::vector<Entity*> getEntitiesWithComponents()
+    {
+        std::vector<Entity*> entitiesWithRequiredComponents;
+
+        for (auto& e : entities)
+        {
+            if (
+                e.second->getComponent<A>() &&
+                e.second->getComponent<B>() &&
+                e.second->getComponent<C>() &&
+                e.second->getComponent<D>()
+            )
+            {
+                entitiesWithRequiredComponents.emplace_back(e.second.get());
+            }
+        }
+
+        return entitiesWithRequiredComponents;
+    }
+
     void tick();
 
     void update(float dt);
@@ -48,5 +125,7 @@ private:
 
     int IDCounter;
 
+    CollisionSystem collisionSystem;
+    
     std::map<int, std::unique_ptr<Entity>> entities;
 };
