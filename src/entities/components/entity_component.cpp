@@ -4,7 +4,3 @@
 EntityComponent::EntityComponent(Entity* myEntity) : myEntity(myEntity) {}
 
 EntityComponent::~EntityComponent() {}
-
-void EntityComponent::tick() {}
-
-void EntityComponent::update(float dt) {}

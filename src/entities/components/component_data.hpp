@@ -6,7 +6,12 @@
 #include "../rect_type.hpp"
 #include "../actions/action.hpp"
 
-struct SpriteData
+struct PositionComponentData
+{
+    sf::Vector2f position;
+};
+
+struct SpriteComponentData
 {
     sf::Texture* texture;
     sf::Vector2f size;

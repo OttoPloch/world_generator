@@ -6,8 +6,8 @@
 
 struct EntityTemplate
 {
-    SpriteData sprite;
-
+    std::optional<PositionComponentData> position;
+    std::optional<SpriteComponentData> sprite;
     std::optional<MovementComponentData> movement;
     std::optional<ControlComponentData> control;
     std::optional<StateComponentData> state;

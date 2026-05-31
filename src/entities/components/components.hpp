@@ -6,3 +6,5 @@
 #include "collision_component.hpp"
 #include "state_component.hpp"
 #include "action_component.hpp"
+#include "sprite_component.hpp"
+#include "position_component.hpp"

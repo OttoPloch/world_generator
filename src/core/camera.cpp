@@ -1,6 +1,7 @@
 #include "camera.hpp"
 #include "game.hpp"
 #include <SFML/System/Vector2.hpp>
+#include "../entities/components/components.hpp"
 
 Camera::Camera() {}
 
@@ -74,7 +75,7 @@ void Camera::tick()
 
     if (focus != nullptr)
     {
-        center = focus->getPosition();
+        center = focus->getComponent<PositionComponent>()->position.getPosition();
     }
     else
     {

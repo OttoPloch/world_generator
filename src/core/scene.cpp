@@ -3,14 +3,11 @@
 #include "input.hpp"
 #include "../entities/states.hpp"
 #include "../utils/utils.hpp"
-#include "../entities/components/movement_component.hpp"
-#include "../entities/components/control_component.hpp"
-#include "../entities/components/collision_component.hpp"
-#include "../entities/components/action_component.hpp"
 #include "../entities/actions/action.hpp"
 #include "../entities/actions/mine_action.hpp"
 #include "../entities/actions/mine_action.hpp"
 #include "../ui/components/button_component.hpp"
+#include "../entities/components/components.hpp"
 
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
@@ -313,7 +310,7 @@ bool Scene::processActionRequest(Entity* actor, Action* action)
         {
             // CHECKS
 
-            if (action->rangeMultiplier < 0.f || getDistance(actor->getPosition(), action->startPosition) <= a->range * action->rangeMultiplier)
+            if (action->rangeMultiplier < 0.f || getDistance(actor->getComponent<PositionComponent>()->position.getPosition(), action->startPosition) <= a->range * action->rangeMultiplier)
             {
                 // IS WITHIN RANGE
 

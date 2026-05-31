@@ -1,16 +1,13 @@
 #include "entity_layer.hpp"
 #include "../core/game.hpp"
 #include "../utils/utils.hpp"
-#include "components/collision_component.hpp"
+#include "components/position_component.hpp"
 #include "rect_type.hpp"
 #include "states.hpp"
 #include "../graphics/asset_manager.hpp"
 #include "components/component_data.hpp"
-#include "components/state_component.hpp"
-#include "components/control_component.hpp"
-#include "components/movement_component.hpp"
-#include "components/action_component.hpp"
 #include "actions/mine_action.hpp"
+#include "components/components.hpp"
 
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -27,7 +24,12 @@ void EntityLayer::init(Game* game)
     tManager.entityTemplates["player"] = EntityTemplate();
     tManager.entityTemplates["box"] = EntityTemplate();
 
+    positionSystem = PositionSystem(game, game->getScene());
     collisionSystem = CollisionSystem(game, game->getScene());
+    renderSystem = RenderSystem(game, game->getScene());
+    animationSystem = AnimationSystem(game, game->getScene());
+    actionSystem = ActionSystem(game, game->getScene());
+    movementSystem = MovementSystem(game, game->getScene());
 
     auto pt = &tManager.entityTemplates["player"];
     pt->sprite = {game->getAssetManager()->getTexture("dog", "texture_atlases/"), {20, 20}, false, false, {{0, 0}, {0, 0}}, 2.f, nullptr, game->getAssetManager()->getAnimSet("dog")};
@@ -37,14 +39,14 @@ void EntityLayer::init(Game* game)
     pt->collision = {{.5f, .5f}, true, RectType::ACTIVE};
     pt->action = {std::make_unique<MineAction>(1.f, "mine!", 1.f), std::make_unique<Action>("block!", -1.f, 0.f, 4.f, true), game->getSettings()->tile_size * 15};
 
-    Entity* e = addEntity({0, 0}, pt);
-    this->player = e;
+    Entity* e = addEntity(pt, true, {0, 0});
+    player = e;
 
     auto bt = &tManager.entityTemplates["box"];
     bt->sprite = {game->getAssetManager()->getTexture("crate"), {35, 35}, false, false, {{0, 0}, {0, 0}}, 1, nullptr, nullptr};
     bt->collision = {{1.f, 1.f}, true, RectType::PASSIVE};
 
-    Entity* b = addEntity({-100, -100}, bt);
+    Entity* b = addEntity(bt, true, {-100, -100});
 
     // // PERFORMANCE TEST
     // for (int y = 0; y < 20; y++)
@@ -143,31 +145,25 @@ int EntityLayer::getNewID()
     return IDCounter - 1;
 }
 
-Entity* EntityLayer::addEntity(sf::Vector2f position, EntityTemplate* t)
+Entity* EntityLayer::addEntity(EntityTemplate* t, bool useCustomPosition, sf::Vector2f position)
 {
     int ID = getNewID();
 
-    entities[ID] = std::make_unique<Entity>(game, ID, GamePosition(game, position));
+    entities[ID] = std::make_unique<Entity>(ID, game);
     
     Entity* e = entities[ID].get();
 
     if (t)
     {
-        e->spriteInit(t->sprite.texture, t->sprite.size, t->sprite.sizeIsScale, t->sprite.usingTexCoords, t->sprite.texCoords, t->sprite.animSpeedMult);
+        sf::Vector2f usedPosition = position;
+        if (t->position) usedPosition = t->position->position;
 
-        if (t->sprite.animation)
-        {
-            e->getSprite()->animation = std::make_unique<Animation>(*t->sprite.animation);
-        }
-        else if (t->sprite.animSet)
-        {
-            e->getSprite()->animSet = std::make_unique<AnimationSet>(*t->sprite.animSet);
-        }
-
+        if (t->position || useCustomPosition) e->addComponent<PositionComponent>(e, GamePosition(game, usedPosition));
+        if (t->sprite) e->addComponent<SpriteComponent>(e, t->sprite->texture, t->sprite->size, t->sprite->sizeIsScale, t->sprite->animation, t->sprite->animSet, t->sprite->usingTexCoords, t->sprite->texCoords, t->sprite->animSpeedMult);
         if (t->movement) e->addComponent<MovementComponent>(e, sf::Vector2f(0, 0), t->movement.value());
         if (t->control) e->addComponent<ControlComponent>(e);
         if (t->state) e->addComponent<StateComponent>(e);
-        if (t->collision) e->addComponent<CollisionComponent>(e, *e->getPositionVar(), t->collision->size, t->collision->sizeIsScaleOfSprite, t->collision->type);
+        if (t->collision) e->addComponent<CollisionComponent>(e, e->getComponent<PositionComponent>()->position, t->collision->size, t->collision->sizeIsScaleOfSprite, t->collision->type);
         if (t->action) e->addComponent<ActionComponent>(e, std::move(t->action->mainAction), std::move(t->action->secondaryAction), t->action->range);
     }
 
@@ -194,11 +190,15 @@ void EntityLayer::removeAllEntitiesInChunk(int chunkX, int chunkY)
 
     for (auto& i : entities)
     {
-        sf::Vector2f entityBottom = {i.second->getSprite()->getPosition().x, i.second->getSprite()->bottom()};
+        sf::Vector2f entityBottom;
+        
+        // if the entity has a sprite, use the bottom of that. If not, just get the entity's position.
+        if (auto s = i.second->getComponent<SpriteComponent>()) entityBottom = {s->sprite.getPosition().x, s->sprite.bottom()};
+        else entityBottom = i.second->getComponent<PositionComponent>()->position.getPosition();
 
         if (worldToChunkPosition(game, entityBottom) == sf::Vector2i(chunkX, chunkY))
         {
-            entitiesToRemove.push_back(i.second->getID());
+            entitiesToRemove.push_back(i.second->ID);
         }
     }
 
@@ -229,7 +229,7 @@ std::vector<Entity*> EntityLayer::getEntitiesInChunkArea(int chunkX, int chunkY,
 
     for (auto& i : entities)
     {
-        sf::Vector2f entityBottom = i.second->getPosition();
+        sf::Vector2f entityBottom = i.second->getComponent<PositionComponent>()->position.getPosition();
         int entityChunkBottomX = toInt(std::floor(entityBottom.x / chunkLength));
         int entityChunkBottomY = toInt(std::floor(entityBottom.y / chunkLength));
 
@@ -257,61 +257,65 @@ std::vector<Entity*> EntityLayer::getEntitiesInChunkArea(sf::Vector2f position, 
 
 void EntityLayer::tick()
 {
-    for (auto& i : entities)
-    {
-        Chunk* entityChunk = game->getScene()->getChunkLayer()->getChunk(worldToChunkPosition(game, i.second->getPosition()));
+    positionSystem.tick();
 
-        if (entityChunk && entityChunk->state == ChunkState::ACTIVE)
-        {
-            i.second->tick();
-        }
-    }
+    movementSystem.tick();
 }
 
 void EntityLayer::update(float dt)
 {
+    movementSystem.update(dt);
+    
     collisionSystem.update(dt);
+
+    actionSystem.update(dt);
+
+    animationSystem.update(dt);
+
+    renderSystem.update(dt);
 }
 
 void EntityLayer::draw(bool debug)
 {
-    std::vector<int> outOfBoundsEntities;
+    renderSystem.draw();
 
-    for (auto& i : entities)
-    {
-        Chunk* entityChunk = game->getScene()->getChunkLayer()->getChunk(worldToChunkPosition(game, i.second->getPosition()));
+    // std::vector<int> outOfBoundsEntities;
 
-        if (entityChunk)
-        {
-            if (entityChunk->state == ChunkState::ACTIVE)
-            {
-                Sprite* entitySprite = i.second->getSprite();
+    // for (auto& i : entities)
+    // {
+    //     Chunk* entityChunk = game->getScene()->getChunkLayer()->getChunk(worldToChunkPosition(game, i.second->getPosition()));
+
+    //     if (entityChunk)
+    //     {
+    //         if (entityChunk->state == ChunkState::ACTIVE)
+    //         {
+    //             Sprite* entitySprite = i.second->getSprite();
     
-                if (isOnScreen(game, {entitySprite->left(), entitySprite->top()}, entitySprite->getSize()))
-                {
-                    i.second->draw(game->getWindow()->getWindow());
+    //             if (isOnScreen(game, {entitySprite->left(), entitySprite->top()}, entitySprite->getSize()))
+    //             {
+    //                 i.second->draw(game->getWindow()->getWindow());
 
-                    if (debug)
-                    {
-                        if (auto c = i.second->getComponent<CollisionComponent>())
-                        {
-                            sf::RectangleShape rect(c->rect.size);
-                            rect.setPosition({c->rect.left(), c->rect.top()});
-                            rect.setFillColor(sf::Color::Transparent);
-                            rect.setOutlineColor(sf::Color::Red);
-                            rect.setOutlineThickness(.5f);
-                            game->getWindow()->draw(rect);
-                        }
-                    }
-                }
-            }
-        }
-        else
-        {
-            // TODO: When chunk saving is implemented, entities unloaded here should be saved.
-            outOfBoundsEntities.push_back(i.second->getID());
-        }
-    }
+    //                 if (debug)
+    //                 {
+    //                     if (auto c = i.second->getComponent<CollisionComponent>())
+    //                     {
+    //                         sf::RectangleShape rect(c->rect.size);
+    //                         rect.setPosition({c->rect.left(), c->rect.top()});
+    //                         rect.setFillColor(sf::Color::Transparent);
+    //                         rect.setOutlineColor(sf::Color::Red);
+    //                         rect.setOutlineThickness(.5f);
+    //                         game->getWindow()->draw(rect);
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     else
+    //     {
+    //         // TODO: When chunk saving is implemented, entities unloaded here should be saved.
+    //         outOfBoundsEntities.push_back(i.second->getID());
+    //     }
+    // }
 
-    for (auto i : outOfBoundsEntities) removeEntity(i);
+    // for (auto i : outOfBoundsEntities) removeEntity(i);
 }

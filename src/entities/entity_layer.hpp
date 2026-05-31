@@ -10,6 +10,11 @@
 #include "entity_template.hpp"
 #include "template_manager.hpp"
 #include "entity_systems/collision_system.hpp"
+#include "entity_systems/render_system.hpp"
+#include "entity_systems/animation_system.hpp"
+#include "entity_systems/movement_system.hpp"
+#include "entity_systems/action_system.hpp"
+#include "entity_systems/position_system.hpp"
 
 class Game;
 
@@ -22,7 +27,7 @@ public:
 
     int getNewID();    
 
-    Entity* addEntity(sf::Vector2f position, EntityTemplate* t = nullptr);
+    Entity* addEntity(EntityTemplate* t = nullptr, bool useCustomPosition = false, sf::Vector2f position = {0, 0});
 
     void removeEntity(int ID);
 
@@ -125,7 +130,12 @@ private:
 
     int IDCounter;
 
+    PositionSystem positionSystem;
     CollisionSystem collisionSystem;
+    RenderSystem renderSystem;
+    AnimationSystem animationSystem;
+    MovementSystem movementSystem;
+    ActionSystem actionSystem;
     
     std::map<int, std::unique_ptr<Entity>> entities;
 };

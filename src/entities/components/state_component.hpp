@@ -8,6 +8,4 @@ class Entity;
 struct StateComponent : public EntityComponent
 {
     StateComponent(Entity* myEntity);
-
-    void update(float dt) override;
 };

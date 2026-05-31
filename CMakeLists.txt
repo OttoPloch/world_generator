@@ -32,16 +32,23 @@ src/entities/entity_layer.cpp
 src/entities/entity.cpp
 
 src/entities/components/entity_component.cpp
+src/entities/components/position_component.cpp
 src/entities/components/movement_component.cpp
 src/entities/components/control_component.cpp
 src/entities/components/state_component.cpp
 src/entities/components/collision_component.cpp
 src/entities/components/action_component.cpp
+src/entities/components/sprite_component.cpp
 src/entities/actions/action.cpp
 src/entities/actions/mine_action.cpp
 src/entities/template_manager.cpp
 src/entities/collision_rect.cpp
+src/entities/entity_systems/position_system.cpp
 src/entities/entity_systems/collision_system.cpp
+src/entities/entity_systems/render_system.cpp
+src/entities/entity_systems/animation_system.cpp
+src/entities/entity_systems/movement_system.cpp
+src/entities/entity_systems/action_system.cpp
 
 src/graphics/sprite.cpp
 src/graphics/asset_manager.cpp
