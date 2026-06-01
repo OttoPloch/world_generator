@@ -5,13 +5,13 @@
 
 struct VertexGroup
 {
-    sf::IntRect texCoords;
+    sf::FloatRect texCoords;
 
     VertexGroup();
 
-    VertexGroup(sf::IntRect texCoords);
+    VertexGroup(sf::FloatRect texCoords);
 
-    static std::array<sf::Vertex, 6> createTriangleVerts(sf::Vector2f tl, sf::Vector2f size, sf::IntRect texCoords);
+    static std::array<sf::Vertex, 6> createTriangleVerts(sf::Vector2f tl, sf::Vector2f size, sf::FloatRect texCoords);
     
     static std::array<sf::Vertex, 6> createTriangleVerts(sf::Vector2f tl, sf::Vector2f size, sf::Color color);
     

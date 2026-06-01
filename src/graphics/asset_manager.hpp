@@ -27,7 +27,7 @@ public:
 
     sf::Font* getFont(std::string name);
 
-    TextureAtlas* getTextureAtlas(std::string name);
+    TextureAtlas* getTextureAtlas(std::string name, std::string pathFromTextureAtlases = "");
 
     void updateGlobalAnimations(float dt);
 private:

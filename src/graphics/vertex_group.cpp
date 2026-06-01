@@ -3,9 +3,9 @@
 
 VertexGroup::VertexGroup() {}
 
-VertexGroup::VertexGroup(sf::IntRect texCoords) : texCoords(texCoords) {}
+VertexGroup::VertexGroup(sf::FloatRect texCoords) : texCoords(texCoords) {}
 
-std::array<sf::Vertex, 6> VertexGroup::createTriangleVerts(sf::Vector2f tl, sf::Vector2f size, sf::IntRect texCoords)
+std::array<sf::Vertex, 6> VertexGroup::createTriangleVerts(sf::Vector2f tl, sf::Vector2f size, sf::FloatRect texCoords)
 {
     std::array<sf::Vertex, 6> vertices;
 
@@ -16,10 +16,10 @@ std::array<sf::Vertex, 6> VertexGroup::createTriangleVerts(sf::Vector2f tl, sf::
     vertices[4].position = vertices[0].position;                // tl
     vertices[5].position = vertices[2].position;                // br
 
-    vertices[0].texCoords = {toFloat(texCoords.position.x), toFloat(texCoords.position.y)};                                                                      // tl
-    vertices[1].texCoords = {toFloat(texCoords.position.x + texCoords.size.x), toFloat(texCoords.position.y)};                    // tr                
-    vertices[2].texCoords = {toFloat(texCoords.position.x + texCoords.size.x), toFloat(texCoords.position.y + texCoords.size.y)}; // br                                
-    vertices[3].texCoords = {toFloat(texCoords.position.x), toFloat(texCoords.position.y + texCoords.size.y)};                    // bl                
+    vertices[0].texCoords = {texCoords.position.x, texCoords.position.y};                                                                      // tl
+    vertices[1].texCoords = {texCoords.position.x + texCoords.size.x, texCoords.position.y};                    // tr                
+    vertices[2].texCoords = {texCoords.position.x + texCoords.size.x, texCoords.position.y + texCoords.size.y}; // br                                
+    vertices[3].texCoords = {texCoords.position.x, texCoords.position.y + texCoords.size.y};                    // bl                
     vertices[4].texCoords = vertices[0].texCoords;                                                                   // tl
     vertices[5].texCoords = vertices[2].texCoords;                                                                   // br
     

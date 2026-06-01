@@ -2,6 +2,7 @@
 
 #include "entity_component.hpp"
 #include "../../graphics/sprite.hpp"
+#include <SFML/Graphics/Rect.hpp>
 
 struct SpriteComponent : public EntityComponent
 {

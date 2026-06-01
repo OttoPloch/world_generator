@@ -10,25 +10,26 @@ CollisionSystem::CollisionSystem(Game* game, Scene* scene) : game(game), scene(s
 
 void CollisionSystem::update(float dt)
 {
-    std::vector<Entity*> validEntities = entityLayer->getEntitiesWithComponents<MovementComponent, CollisionComponent>();
+    std::vector<Entity*> validEntities = entityLayer->getEntitiesWithComponents<PositionComponent, MovementComponent, CollisionComponent>();
 
     for (auto e : validEntities)
     {
-        auto movement = e->getComponent<MovementComponent>();
-        auto collision = e->getComponent<CollisionComponent>();
-        
-        findAndResolveCollisions(e, movement, collision);
+        findAndResolveCollisions(e);
     }
 }
 
-void CollisionSystem::findAndResolveCollisions(Entity* e, MovementComponent* m, CollisionComponent* c)
+void CollisionSystem::findAndResolveCollisions(Entity* e)
 {
+    auto p = e->getComponent<PositionComponent>();
+    auto m = e->getComponent<MovementComponent>();
+    auto c = e->getComponent<CollisionComponent>();
+
     CollisionRect& rect = c->rect;
 
     if (rect.type == RectType::ACTIVE)
     {
         // TILE COLLISION
-        std::array<Chunk*, 9> nearbyChunks = scene->getChunkLayer()->getNearbyChunks(e->getComponent<PositionComponent>()->position.getPosition());
+        std::array<Chunk*, 9> nearbyChunks = scene->getChunkLayer()->getNearbyChunks(p->position.getPosition());
         // Chunk, position, z-value
         std::vector<std::pair<Chunk*, std::pair<sf::Vector2i, int>>> nearbyTilesWithColliders;
 

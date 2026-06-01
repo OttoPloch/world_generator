@@ -44,17 +44,12 @@ private:
     void draw();
     
     Window window;
-
     Gamerules gamerules;
-
     Settings settings;
-
     EventHandler eventHandler;
-
     AssetManager assetManager;
-
     Input input;
-
+    
     Scene scene;
 
     bool paused;

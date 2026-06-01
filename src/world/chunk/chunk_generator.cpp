@@ -7,6 +7,7 @@
 #include "../../utils/utils.hpp"
 #include "../../graphics/vertex_group.hpp"
 #include "../background_object.hpp"
+#include <SFML/Graphics/Rect.hpp>
 #include <algorithm>
 #include <cmath>
 
@@ -43,8 +44,6 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
     float tileSize = game->getSettings()->tile_size;
     float chunkLength = toFloat(chunkSize) * tileSize;
     
-    TextureAtlas* atlas = game->getAssetManager()->getTextureAtlas("tiles_better");
-
     std::vector<std::vector<TileTemplate>> tileData(game->getSettings()->maxTileZ + 1);
 
     if (genMode == 0)
@@ -247,7 +246,7 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition, int genMode)
         sf::Vector2f chunkWorldPos(chunkPosition.x * chunkLength, chunkPosition.y * chunkLength);
 
         sf::Texture* decorationTexture = game->getAssetManager()->getTexture("background_foliage", "texture_atlases/");
-        sf::IntRect decorationTexCoords;
+        sf::FloatRect decorationTexCoords;
         float scale = game->getSettings()->generation_foliage_scale;
 
         std::vector<BackgroundObject> decorations;

@@ -9,7 +9,7 @@ MovementSystem::MovementSystem(Game* game, Scene* scene) : game(game), scene(sce
 
 void MovementSystem::tick()
 {
-    std::vector<Entity*> validEntities = entityLayer->getEntitiesWithComponents<MovementComponent, PositionComponent>();
+    std::vector<Entity*> validEntities = entityLayer->getEntitiesWithComponents<PositionComponent, MovementComponent>();
 
     for (auto e : validEntities)
     {

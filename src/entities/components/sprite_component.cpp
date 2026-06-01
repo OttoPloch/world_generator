@@ -2,6 +2,7 @@
 #include "../../graphics/sprite.hpp"
 #include "../entity.hpp"
 #include "position_component.hpp"
+#include <SFML/Graphics/Rect.hpp>
 
 SpriteComponent::SpriteComponent(Entity* myEntity, sf::Texture* texture, sf::Vector2f size, bool sizeIsScale, Animation* animation, AnimationSet* animSet, bool usingTexCoords, sf::IntRect texCoords, float animSpeedMult) : EntityComponent(myEntity), sprite(myEntity->getComponent<PositionComponent>()->position, texture, size, sizeIsScale, usingTexCoords, texCoords, animSpeedMult)
 {

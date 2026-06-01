@@ -1,0 +1,16 @@
+tilesize 32
+item up
+xCoord 0
+yCoord 0
+xSize 1
+ySize 1
+item hover
+xCoord 1
+yCoord 0
+xSize 1
+ySize 1
+item down
+xCoord 2
+yCoord 0
+xSize 1
+ySize 1

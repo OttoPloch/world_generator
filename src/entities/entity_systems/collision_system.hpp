@@ -15,9 +15,8 @@ public:
     CollisionSystem(Game* game, Scene* scene);
 
     void update(float dt);
-
 private:
-    void findAndResolveCollisions(Entity* e, MovementComponent* m, CollisionComponent* c);
+    void findAndResolveCollisions(Entity* e);
 
     Game* game;
     Scene* scene;

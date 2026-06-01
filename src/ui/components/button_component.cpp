@@ -5,11 +5,17 @@
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/StencilMode.hpp>
 
-ButtonComponent::ButtonComponent(Game* game, UIElement* myElement, UIPosition position, std::string identifier, int sortIndex, std::map<ButtonState, sf::Texture*> textures, sf::Vector2f size, bool sizeIsScale) : UIComponent(game, myElement, position, identifier, sortIndex), pressed(false), pressedLastFrame(false), canPress(false), selected(false), selectedLastFrame(false)
+ButtonComponent::ButtonComponent(Game* game, UIElement* myElement, UIPosition position, std::string identifier, int sortIndex, sf::Texture* buttonTexture, TextureAtlas* buttonTextureAtlas, sf::Vector2f size, bool sizeIsScale) : UIComponent(game, myElement, position, identifier, sortIndex), pressed(false), pressedLastFrame(false), canPress(false), selected(false), selectedLastFrame(false)
 {
     buttonState = ButtonState::UP;
 
-    setButtonTextures(textures, size, sizeIsScale);
+    statesToItemName = {
+        {ButtonState::UP, "up"},
+        {ButtonState::HOVER, "hover"},
+        {ButtonState::DOWN, "down"}
+    };
+
+    setButtonVisuals(size, sizeIsScale, buttonTexture, buttonTextureAtlas);
 }
 
 sf::FloatRect ButtonComponent::getLocalBounds()
@@ -76,20 +82,23 @@ void ButtonComponent::draw()
     game->getWindow()->getWindow().draw(vertices.data(), vertices.size(), sf::PrimitiveType::Triangles, renderStates.texture);
 }
 
-void ButtonComponent::setButtonTextures(std::map<ButtonState, sf::Texture*> newTextures, sf::Vector2f size, bool sizeIsScale)
+void ButtonComponent::setButtonVisuals(sf::Vector2f newSize, bool sizeIsScale, sf::Texture* newTexture, TextureAtlas* newAtlas)
 {
-    textures = newTextures;
+    if (newTexture) buttonTexture = newTexture;
+    if (newAtlas) buttonTextureAtlas = newAtlas;
 
-    this->size = toV2F(textures[buttonState]->getSize());
+    texCoords = buttonTextureAtlas->itemTexCoords[statesToItemName[buttonState]];
+
+    size = texCoords.size;
 
     if (sizeIsScale)
     {
-        this->size.x *= size.x;
-        this->size.y *= size.y;
+        size.x *= newSize.x;
+        size.y *= newSize.y;
     }
     else
     {
-        this->size = size;
+        size = newSize;
     }
 
     updateVisuals();
@@ -114,9 +123,9 @@ bool ButtonComponent::justPressed()
 
 void ButtonComponent::updateVertices()
 {
-    vertices = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset, size, sf::IntRect({0, 0}, toV2I(textures[buttonState]->getSize())));
+    vertices = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset, size, buttonTextureAtlas->itemTexCoords[statesToItemName[buttonState]]);
     
-    renderStates.texture = textures[buttonState];
+    renderStates.texture = buttonTexture;
 }
 
 bool ButtonComponent::isPressed()

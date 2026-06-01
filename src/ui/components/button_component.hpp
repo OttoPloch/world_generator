@@ -1,6 +1,8 @@
 #pragma once
 
 #include "ui_component.hpp"
+#include "../../graphics/texture_atlas.hpp"
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 
 enum class ButtonState
@@ -14,7 +16,7 @@ enum class ButtonState
 
 struct ButtonComponent : public UIComponent
 {
-    ButtonComponent(Game* game, UIElement* myElement, UIPosition position, std::string identifier, int sortIndex, std::map<ButtonState, sf::Texture*> textures, sf::Vector2f size = {1, 1}, bool sizeIsScale = true);
+    ButtonComponent(Game* game, UIElement* myElement, UIPosition position, std::string identifier, int sortIndex, sf::Texture* buttonTexture, TextureAtlas* buttonTextureAtlas, sf::Vector2f size = {1, 1}, bool sizeIsScale = true);
     
     sf::FloatRect getLocalBounds() override;
     
@@ -24,8 +26,8 @@ struct ButtonComponent : public UIComponent
 
     void draw() override;
     
-    // change the textures of the button's different states.
-    void setButtonTextures(std::map<ButtonState, sf::Texture*> newTextures, sf::Vector2f size = {1, 1}, bool sizeIsScale = true);
+    // sets the size, texture and atlas of the button. Leave either blank to keep it the same as before.
+    void setButtonVisuals(sf::Vector2f size, bool sizeIsScale = true, sf::Texture* newTexture = nullptr, TextureAtlas* newAtlas = nullptr);
 
     // checks if the button is currently hovered on,
     // either by the mouse cursor or the controller selector.
@@ -38,6 +40,7 @@ struct ButtonComponent : public UIComponent
     // and wasn't pressed last frame.
     bool justPressed();
 
+    std::map<ButtonState, std::string> statesToItemName;
 private:
     void updateVertices();
     
@@ -49,11 +52,13 @@ private:
     // and wasn't selected last frame.
     bool justSelected();
 
-    std::map<ButtonState, sf::Texture*> textures;
+    sf::Texture* buttonTexture;
+    TextureAtlas* buttonTextureAtlas;
     int textureScale;
     sf::Vector2f size;
 
     std::array<sf::Vertex, 6> vertices;
+    sf::FloatRect texCoords;
 
     sf::RenderStates renderStates;
     ButtonState buttonState;

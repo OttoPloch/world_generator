@@ -5,9 +5,9 @@
 
 TextureAtlas::TextureAtlas() {}
 
-TextureAtlas::TextureAtlas(std::string atlasName, std::unordered_map<std::string, sf::IntRect> itemTexCoords) : name(atlasName), itemTexCoords(itemTexCoords) {}
+TextureAtlas::TextureAtlas(std::string atlasName, std::unordered_map<std::string, sf::FloatRect> itemTexCoords) : name(atlasName), itemTexCoords(itemTexCoords) {}
 
-sf::IntRect TextureAtlas::getItemTexCoords(std::string item)
+sf::FloatRect TextureAtlas::getItemTexCoords(std::string item)
 {
     auto entry = itemTexCoords.find(item);
 
@@ -18,5 +18,5 @@ sf::IntRect TextureAtlas::getItemTexCoords(std::string item)
 
     std::cout << "ERROR getting tex coords for atlas " << name << " item " << item << ". Could not find that item in that texture atlas.\n";
 
-    return sf::IntRect({0, 0}, {0, 0});
+    return sf::FloatRect({0, 0}, {0, 0});
 }

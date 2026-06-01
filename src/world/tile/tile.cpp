@@ -59,7 +59,7 @@ void Tile::update(float dt)
     {
         if (globalAnimation->animation.name != "")
         {
-            sf::IntRect newTexCoords = globalAnimation->animation.frames[globalAnimation->animation.index];
+            sf::FloatRect newTexCoords = globalAnimation->animation.frames[globalAnimation->animation.index];
     
             if (myVerts.texCoords != newTexCoords)
             {
@@ -79,7 +79,7 @@ void Tile::update(float dt)
             if (animation->index >= animation->frames.size()) animation->index = 0;
             if (animation->index < 0) animation->index = animation->frames.size() - 1;
             
-            sf::IntRect newTexCoords = animation->frames[animation->index];
+            sf::FloatRect newTexCoords = animation->frames[animation->index];
 
             if (myVerts.texCoords != newTexCoords)
             {

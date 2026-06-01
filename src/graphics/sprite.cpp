@@ -86,7 +86,12 @@ void Sprite::update(float dt)
                 sprite->setTexture(*activeAnimation->texture);
             }
 
-            setTextureRect(activeAnimation->frames[activeAnimation->index]);
+            sf::IntRect newTexRect = {
+                toV2I(activeAnimation->frames[activeAnimation->index].position),
+                toV2I(activeAnimation->frames[activeAnimation->index].size)
+            };
+
+            setTextureRect(newTexRect);
 
             activeAnimation->secondsTillNextFrame = activeAnimation->secondsPerFrame;
         }

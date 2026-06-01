@@ -7,8 +7,8 @@ struct BackgroundObject
 {
     BackgroundObject();
 
-    BackgroundObject(sf::FloatRect rect, sf::IntRect texCoords);
+    BackgroundObject(sf::FloatRect rect, sf::FloatRect texCoords);
 
     sf::FloatRect rect;
-    sf::IntRect texCoords;
+    sf::FloatRect texCoords;
 };

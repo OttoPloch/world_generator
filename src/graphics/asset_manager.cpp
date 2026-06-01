@@ -1,5 +1,6 @@
 #include "asset_manager.hpp"
 #include "texture_atlas.hpp"
+#include <SFML/Graphics/Rect.hpp>
 #include <fstream>
 
 AssetManager::AssetManager() {}
@@ -87,8 +88,8 @@ Animation* AssetManager::getAnimation(std::string name, std::string pathFromAsse
             std::string textureName = "missing";
             std::string texturePath = "images/";
             float defaultSPF = 0.5f; // SPF = seconds per frame
-            std::vector<sf::Vector2i> coords;
-            std::vector<sf::Vector2i> sizes;
+            std::vector<sf::Vector2f> coords;
+            std::vector<sf::Vector2f> sizes;
 
             std::string line;
 
@@ -103,8 +104,8 @@ Animation* AssetManager::getAnimation(std::string name, std::string pathFromAsse
                     int commaIndex = substr.find(',');
                     if (commaIndex != std::string::npos)
                     {
-                        int coordX = toInt(std::stof(substr.substr(0, commaIndex)));
-                        int coordY = toInt(std::stof(substr.substr(commaIndex + 1)));
+                        float coordX = std::floor(std::stof(substr.substr(0, commaIndex)));
+                        float coordY = std::floor(std::stof(substr.substr(commaIndex + 1)));
 
                         coords.push_back({coordX, coordY});
                     }
@@ -121,8 +122,8 @@ Animation* AssetManager::getAnimation(std::string name, std::string pathFromAsse
                     int commaIndex = substr.find(',');
                     if (commaIndex != std::string::npos)
                     {
-                        int sizeX = toInt(std::stof(substr.substr(0, commaIndex)));
-                        int sizeY = toInt(std::stof(substr.substr(commaIndex + 1)));
+                        float sizeX = std::floor(std::stof(substr.substr(0, commaIndex)));
+                        float sizeY = std::floor(std::stof(substr.substr(commaIndex + 1)));
 
                         sizes.push_back({sizeX, sizeY});
                     }
@@ -139,7 +140,7 @@ Animation* AssetManager::getAnimation(std::string name, std::string pathFromAsse
             
             sf::Texture* animTexture = getTexture(textureName, texturePath);
 
-            std::vector<sf::IntRect> frames;
+            std::vector<sf::FloatRect> frames;
 
             for(int i = 0; i < coords.size(); i++) frames.emplace_back(coords[i], sizes[i]);
 
@@ -344,7 +345,7 @@ sf::Font* AssetManager::getFont(std::string name)
     }
 }
 
-TextureAtlas* AssetManager::getTextureAtlas(std::string name)
+TextureAtlas* AssetManager::getTextureAtlas(std::string name, std::string pathFromTextureAtlases)
 {
     auto entry = atlasMap.find(name);
 
@@ -356,28 +357,28 @@ TextureAtlas* AssetManager::getTextureAtlas(std::string name)
     {
         TextureAtlas newAtlas;
 
-        if (!std::filesystem::exists("../../assets/texture_atlases/" + name + ".atlas"))
+        if (!std::filesystem::exists("../../assets/texture_atlases/" + pathFromTextureAtlases + name + ".atlas"))
         {
-            std::cout << "error loading " << name << ".atlas\n";
+            std::cout << "error loading " << name << ".atlas with pathFromTextureAtlases of '" << pathFromTextureAtlases << "'.\n";
 
             return nullptr;
         }
         else
         {
             // load atlas
-            std::ifstream atlasFile("../../assets/texture_atlases/" + name + ".atlas");
+            std::ifstream atlasFile("../../assets/texture_atlases/" + pathFromTextureAtlases + name + ".atlas");
 
-            std::unordered_map<std::string, sf::IntRect> texCoords;
+            std::unordered_map<std::string, sf::FloatRect> texCoords;
 
             // makes it simpler to type in the positions of
             // atlases when making them, reduces to multiples.
             float tileSize;
 
             std::vector<std::string> items;
-            std::vector<int> xCoords;
-            std::vector<int> yCoords;
-            std::vector<int> xSizes;
-            std::vector<int> ySizes;
+            std::vector<float> xCoords;
+            std::vector<float> yCoords;
+            std::vector<float> xSizes;
+            std::vector<float> ySizes;
 
             std::string line;
 
@@ -405,7 +406,7 @@ TextureAtlas* AssetManager::getTextureAtlas(std::string name)
                 xSizes[i] = std::roundf(xSizes[i]);
                 ySizes[i] = std::roundf(ySizes[i]);
 
-                texCoords[items[i]] = sf::IntRect({xCoords[i], yCoords[i]}, {xSizes[i], ySizes[i]});
+                texCoords[items[i]] = sf::FloatRect({xCoords[i], yCoords[i]}, {xSizes[i], ySizes[i]});
             }
 
             newAtlas = TextureAtlas(name, texCoords);

@@ -3,7 +3,7 @@
 
 Animation::Animation() : name("") {}
 
-Animation::Animation(std::string name, sf::Texture* texture, std::vector<sf::IntRect> frames, float secondsPerFrame) : name(name), texture(texture), frames(frames)
+Animation::Animation(std::string name, sf::Texture* texture, std::vector<sf::FloatRect> frames, float secondsPerFrame) : name(name), texture(texture), frames(frames)
 {
     index = 0;
     this->secondsPerFrame = secondsPerFrame;

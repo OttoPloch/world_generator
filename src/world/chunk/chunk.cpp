@@ -53,7 +53,7 @@ void Chunk::createTileVerts(int index, int z)
 {
     sf::Vector2f tileWorldPos = {worldPosition.x + toFloat(tiles[z][index]->localPosition.x) * tileSize, worldPosition.y + toFloat(tiles[z][index]->localPosition.y) * tileSize};
     
-    sf::IntRect texCoords = tiles[z][index]->myVerts.texCoords;
+    sf::FloatRect texCoords = tiles[z][index]->myVerts.texCoords;
 
     // center on bottom center to allow flexible
     // sizing for the image of the tile
