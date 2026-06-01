@@ -1,4 +1,5 @@
-texture texture_atlases/tiles_better.png
+texture name tiles_better
+path texture_atlases/
 coord 0,0
 size 16,16
 coord 0,16

@@ -1,7 +1,30 @@
-tex name dot_left
-path images/dot_left.png
-col 10
-row 1
-sizex 0.6
-sizey 0.6
-baseticksperframe 8
+texture name dot_left
+path images/
+coord 0,0
+size 10,10
+coord 10,0
+size 10,10
+coord 20,0
+size 10,10
+coord 30,0
+size 10,10
+coord 40,0
+size 10,10
+coord 50,0
+size 10,10
+coord 60,0
+size 10,10
+coord 70,0
+size 10,10
+coord 80,0
+size 10,10
+coord 90,0
+size 10,10
+
+# tex name dot_left
+# path images/dot_left.png
+# col 10
+# row 1
+# sizex 0.6
+# sizey 0.6
+# baseticksperframe 8

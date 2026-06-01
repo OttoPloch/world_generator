@@ -1,4 +1,5 @@
-texture texture_atlases/test.png
+texture name test
+path texture_atlases/
 coord 0,16
 size 16,16
 coord 16,16

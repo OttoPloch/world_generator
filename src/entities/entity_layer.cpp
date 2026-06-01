@@ -43,7 +43,7 @@ void EntityLayer::init(Game* game)
     player = e;
 
     auto bt = &tManager.entityTemplates["box"];
-    bt->sprite = {game->getAssetManager()->getTexture("crate"), {35, 35}, false, false, {{0, 0}, {0, 0}}, 1, nullptr, nullptr};
+    bt->sprite = {game->getAssetManager()->getTexture("crate"), {35, 35}, false};
     bt->collision = {{1.f, 1.f}, true, RectType::PASSIVE};
 
     Entity* b = addEntity(bt, true, {-100, -100});

@@ -27,7 +27,7 @@ void Scene::init(Game* game)
     
     entityLayer.init(game);
 
-    camera.init(game, false, {0, 0}, toV2F(window->getSize()), entityLayer.getEntity(0));
+    camera.init(game, false, {0, 0}, toV2F(window->getSize()), entityLayer.player);
 
     uiLayer.init(game, &camera);
 
@@ -361,17 +361,13 @@ void Scene::toggleFocus()
 {
     if (camera.getFocus() == nullptr)
     {
-        Entity* e = entityLayer.getEntity(0);
-        entityLayer.player = e;
-        if (!e->getComponent<ControlComponent>()) e->addComponent<ControlComponent>(e);
-        camera.setFocus(e);
+        if (!entityLayer.player->getComponent<ControlComponent>()) entityLayer.player->addComponent<ControlComponent>(entityLayer.player);
+        camera.setFocus(entityLayer.player);
     }
     else
     {
-        Entity* e = entityLayer.getEntity(0);
-        e->removeComponent<ControlComponent>();
+        entityLayer.player->removeComponent<ControlComponent>();
         camera.removeFocus();
-        entityLayer.player = nullptr;
     }
 }
 

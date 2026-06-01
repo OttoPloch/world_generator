@@ -20,7 +20,7 @@ sf::Texture* AssetManager::getTexture(std::string name, std::string pathFromAsse
         {
             if (!newTexture->loadFromFile("../../assets/" + pathFromAssets))
             {
-                std::cout << "error loading " << name << " texture with FULL PATH of " << pathFromAssets << '\n';
+                std::cout << "error loading texture with FULL PATH of " << pathFromAssets << '\n';
 
                 return nullptr;
             }
@@ -84,7 +84,8 @@ Animation* AssetManager::getAnimation(std::string name, std::string pathFromAsse
         {
             std::ifstream animFile("../../assets/" + pathFromAssets + name + ".anim");
 
-            std::string texturePath;
+            std::string textureName = "missing";
+            std::string texturePath = "images/";
             float defaultSPF = 0.5f; // SPF = seconds per frame
             std::vector<sf::Vector2i> coords;
             std::vector<sf::Vector2i> sizes;
@@ -93,7 +94,8 @@ Animation* AssetManager::getAnimation(std::string name, std::string pathFromAsse
 
             while (std::getline(animFile, line))
             {
-                if (line.substr(0, 7) == "texture") texturePath = line.substr(8);
+                if (line.substr(0, 12) == "texture name") textureName = line.substr(13);
+                if (line.substr(0, 4) == "path") texturePath = line.substr(5);
                 if (line.substr(0, 11) == "default spf") defaultSPF = std::stof(line.substr(12));
                 if (line.substr(0, 5) == "coord")
                 {
@@ -135,7 +137,7 @@ Animation* AssetManager::getAnimation(std::string name, std::string pathFromAsse
 
             animFile.close();
             
-            sf::Texture* animTexture = getTexture("", texturePath, true);
+            sf::Texture* animTexture = getTexture(textureName, texturePath);
 
             std::vector<sf::IntRect> frames;
 
@@ -145,7 +147,7 @@ Animation* AssetManager::getAnimation(std::string name, std::string pathFromAsse
         }
 
         animationMap[name] = std::move(newAnimation);
-
+        
         return animationMap[name].get();
     }
 

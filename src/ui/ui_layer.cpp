@@ -52,7 +52,7 @@ void UILayer::init(Game* game, Camera* camera)
 
     auto e4 = elements.emplace_back(std::make_unique<UIElement>(game, "test image", UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::TOP_RIGHT))).get();
     e4->addComponent<ImageComponent>(game, e4, UIPosition({0, 0}, UIOrigin::TOP_RIGHT), "image bee", 0, game->getAssetManager()->getTexture("dr bee"), sf::Vector2f(100, 100), false);
-    e4->addComponent<ImageComponent>(game, e4, UIPosition({0, 0}, UIOrigin::TOP_RIGHT, UIAnchor::BOTTOM_MIDDLE), "image", 1, game->getAssetManager()->getTexture("shaq_time_out"));
+    e4->addComponent<ImageComponent>(game, e4, UIPosition({0, 0}, UIOrigin::TOP_RIGHT, UIAnchor::BOTTOM_LEFT), "image", 1, game->getAssetManager()->getTexture("shaq_time_out"), sf::Vector2f(100, 100), false, game->getAssetManager()->getAnimation("dot_left"));
 
     // std::array<sf::Texture*, 3> buttonTextures = {assetManager->getTexture("button_up", "images/ui/"), assetManager->getTexture("button_hover", "images/ui/"), assetManager->getTexture("button_down", "images/ui/")};
     // std::array<sf::Texture*, 3> blueButtonTextures = {assetManager->getTexture("blue_button_up", "images/ui/"), assetManager->getTexture("blue_button_hover", "images/ui/"), assetManager->getTexture("blue_button_down", "images/ui/")};
