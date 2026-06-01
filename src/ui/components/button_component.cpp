@@ -19,13 +19,13 @@ sf::FloatRect ButtonComponent::getLocalBounds()
 
 void ButtonComponent::updateVisuals()
 {
-    originOffset = UIPosition::getOriginOffset(position.origin, size);
-    anchorOffset = UIPosition::getAnchorOffset(position.anchor, myElement->getLocalBoundsUpToComponent(sortIndex));
+    originOffset = UIPosition::getOriginOffset(position, size);
+    anchorOffset = UIPosition::getAnchorOffset(position, myElement->getLocalBoundsUpToComponent(sortIndex));
 
     updateVertices();
 }
 
-void ButtonComponent::update()
+void ButtonComponent::update(float dt)
 {   
     selectedLastFrame = selected;
     selected = isSelected();

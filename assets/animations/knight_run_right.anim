@@ -1,7 +1,17 @@
-tex name RUN
-path animations/Knight 2D Pixel Art/Sprites/with_outline/RUN.png
-col 8
-row 1
-sizex 0.5
-sizey 0.5
-baseticksperframe 8
+texture animations/Knight 2D Pixel Art/Sprites/with_outline/RUN.png
+coord 0,0
+size 96,84
+coord 96,0
+size 96,84
+coord 192,0
+size 96,84
+coord 288,0
+size 96,84
+coord 384,0
+size 96,84
+coord 480,0
+size 96,84
+coord 576,0
+size 96,84
+coord 672,0
+size 96,84

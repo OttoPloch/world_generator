@@ -28,8 +28,8 @@ void TextComponent::updateVisuals()
 {
     text->setOrigin(text->getLocalBounds().position);
 
-    originOffset = UIPosition::getOriginOffset(position.origin, text->getGlobalBounds().size);
-    anchorOffset = UIPosition::getAnchorOffset(position.anchor, myElement->getLocalBoundsUpToComponent(sortIndex));
+    originOffset = UIPosition::getOriginOffset(position, text->getGlobalBounds().size);
+    anchorOffset = UIPosition::getAnchorOffset(position, myElement->getLocalBoundsUpToComponent(sortIndex));
 
     text->setPosition(myElement->effectivePosition + position.position + originOffset + anchorOffset);
 }

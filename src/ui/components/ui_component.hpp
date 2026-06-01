@@ -15,7 +15,7 @@ struct UIComponent
 
     virtual void updateVisuals();
 
-    virtual void update();
+    virtual void update(float dt);
 
     virtual void draw();
 

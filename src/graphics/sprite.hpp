@@ -19,6 +19,8 @@ public:
     sf::Vector2f getPosition();
     sf::Vector2f getSize();
 
+    GamePosition getPositionVar();
+
     float left();
     float right();
     float top();
@@ -27,7 +29,7 @@ public:
     void resize(sf::Vector2f newSize, bool sizeIsScale = true);
     void setTextureRect(sf::IntRect newTexRect);
 
-    void syncPos(sf::Vector2f interpolatedPos = {0, 0}, bool useInterpolated = false);
+    void syncPos();
 
     void update(float dt);
 

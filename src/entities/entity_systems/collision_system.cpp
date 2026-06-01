@@ -35,13 +35,16 @@ void CollisionSystem::findAndResolveCollisions(Entity* e, MovementComponent* m, 
         // getting the colliders of every nearby tile
         for (int i = 0; i < nearbyChunks.size(); i++)
         {
-            auto currChunkTWithC = &nearbyChunks[i]->tilesWithColliders;
-
-            for (int j = 0; j < currChunkTWithC->size(); j++)
+            if (nearbyChunks[i])
             {
-                Tile* currTile = (*currChunkTWithC)[j];
+                std::vector<Tile*>* currChunkTWithC = &nearbyChunks[i]->tilesWithColliders;
 
-                nearbyTilesWithColliders.push_back({nearbyChunks[i], {currTile->localPosition, currTile->z}});
+                for (int j = 0; j < currChunkTWithC->size(); j++)
+                {
+                    Tile* currTile = (*currChunkTWithC)[j];
+    
+                    nearbyTilesWithColliders.push_back({nearbyChunks[i], {currTile->localPosition, currTile->z}});
+                }
             }
         }
 

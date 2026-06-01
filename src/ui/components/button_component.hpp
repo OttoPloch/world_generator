@@ -20,7 +20,7 @@ struct ButtonComponent : public UIComponent
     
     void updateVisuals() override;
 
-    void update() override;
+    void update(float dt) override;
 
     void draw() override;
     

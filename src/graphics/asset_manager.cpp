@@ -128,7 +128,7 @@ Animation* AssetManager::getAnimation(std::string name, std::string pathFromAsse
                     {
                         sizes.push_back({0, 0});
 
-                        std::cout << "error getting size of a frame in animation called " << name << ". Make sure the animation file has sizes typed properly (size x,y)";
+                        std::cout << "error getting size of a frame in animation called " << name << ". Make sure the animation file has sizes typed properly (size x,y).\n";
                     }
                 }
             }

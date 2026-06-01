@@ -22,6 +22,6 @@ void UIComponent::updateVisuals()
     anchorOffset = {0, 0};
 }
 
-void UIComponent::update() {}
+void UIComponent::update(float dt) {}
 
 void UIComponent::draw() {}

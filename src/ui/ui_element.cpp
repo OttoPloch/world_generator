@@ -30,6 +30,18 @@ sf::FloatRect UIElement::getGlobalBounds()
     return {{effectivePosition.x + left, effectivePosition.y + top}, {right - left, bottom - top}};
 }
 
+std::vector<sf::FloatRect> UIElement::getAllComponentBounds()
+{
+    std::vector<sf::FloatRect> bounds;
+
+    for (auto& c : components)
+    {
+        bounds.emplace_back(c->getGlobalBounds());
+    }
+
+    return bounds;
+}
+
 sf::FloatRect UIElement::getLocalBoundsUpToComponent(int sortIndex)
 {
     float left = 0, top = 0, right = 0, bottom = 0;
@@ -53,7 +65,7 @@ sf::FloatRect UIElement::getLocalBoundsUpToComponent(int sortIndex)
 
 void UIElement::updateVisuals()
 {
-    anchorOffset = UIPosition::getAnchorOffset(position.anchor, this);
+    anchorOffset = UIPosition::getAnchorOffset(position, this);
 
     calculateEffectivePosition();
 
@@ -63,9 +75,9 @@ void UIElement::updateVisuals()
     }
 }
 
-void UIElement::update()
+void UIElement::update(float dt)
 {
-    for (auto& c : components) c->update();
+    for (auto& c : components) c->update(dt);
 }
 
 void UIElement::draw()

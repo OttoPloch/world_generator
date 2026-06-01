@@ -28,6 +28,6 @@ void RenderSystem::draw()
 
         sprite.syncPos();
 
-        game->getWindow()->draw(*sprite.sprite);
+        sprite.draw(game->getWindow()->getWindow());
     }
 }

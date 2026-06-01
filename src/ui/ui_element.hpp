@@ -14,6 +14,8 @@ public:
     // total bounding rect including any components that go outside the element.
     sf::FloatRect getGlobalBounds();
     
+    std::vector<sf::FloatRect> getAllComponentBounds();
+
     // returns the local bounds of the element, including every component UP TO
     // those with the sortIndex given. This is designed to be used by UI components
     // to get the relative space for their anchors.
@@ -21,7 +23,7 @@ public:
 
     void updateVisuals();
 
-    void update();
+    void update(float dt);
 
     void draw();
 

@@ -14,8 +14,8 @@ sf::FloatRect BackgroundComponent::getLocalBounds()
 
 void BackgroundComponent::updateVisuals()
 {
-    originOffset = UIPosition::getOriginOffset(position.origin, size);
-    anchorOffset = UIPosition::getAnchorOffset(position.anchor, myElement->getLocalBoundsUpToComponent(sortIndex));
+    originOffset = UIPosition::getOriginOffset(position, size);
+    anchorOffset = UIPosition::getAnchorOffset(position, myElement->getLocalBoundsUpToComponent(sortIndex));
 
     updateVertices();
 }

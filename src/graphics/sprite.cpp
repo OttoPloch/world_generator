@@ -22,6 +22,8 @@ sf::Vector2f Sprite::getPosition() { return position.getPosition(); }
 
 sf::Vector2f Sprite::getSize() { return size; }
 
+GamePosition Sprite::getPositionVar() { return position; }
+
 float Sprite::left() { return position.getPosition().x - size.x / 2.f; }
 
 float Sprite::right() { return position.getPosition().x + size.x / 2.f; }
@@ -53,16 +55,9 @@ void Sprite::setTextureRect(sf::IntRect newTexRect)
     resize(size, false);
 }
 
-void Sprite::syncPos(sf::Vector2f interpolatedPos, bool useInterpolated)
+void Sprite::syncPos()
 {
-    if (useInterpolated)
-    {
-        sprite->setPosition(interpolatedPos);
-    }
-    else
-    {
-        sprite->setPosition(position.getPosition());
-    }
+    sprite->setPosition(position.getPosition());
 }
 
 void Sprite::update(float dt)
@@ -98,4 +93,4 @@ void Sprite::update(float dt)
     }
 }
 
-void Sprite::draw(sf::RenderWindow& window) { window.draw(*sprite.get()); }
+void Sprite::draw(sf::RenderWindow& window) { window.draw(*sprite); }

@@ -1,11 +1,13 @@
 #include "ui_layer.hpp"
 #include "../core/game.hpp"
 #include "components/button_component.hpp"
+#include "components/image_component.hpp"
 #include "ui_element.hpp"
 #include "components/text_component.hpp"
 #include "components/background_component.hpp"
 #include "ui_position.hpp"
 #include <SFML/Graphics/PrimitiveType.hpp>
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 #include <algorithm>
 #include <filesystem>
@@ -47,6 +49,10 @@ void UILayer::init(Game* game, Camera* camera)
     e3->addComponent<ButtonComponent>(game, e3, UIPosition({-10, 10}, UIOrigin::TOP_RIGHT, UIAnchor::TOP_RIGHT), "faster button", 1, greenButtonTextures, sf::Vector2f(3, 3));
     e3->addComponent<TextComponent>(game, e3, UIPosition({0, 20}, UIOrigin::TOP_MIDDLE, UIAnchor::TOP_MIDDLE), "note", 1, "<< slower\nfaster >>", game->getAssetManager()->getFont("sfml_font"), 20);
     e3->addComponent<TextComponent>(game, e3, UIPosition({0, -20}, UIOrigin::BOTTOM_MIDDLE, UIAnchor::BOTTOM_MIDDLE), "speed display", 1, "", game->getAssetManager()->getFont("sfml_font"), 20);
+
+    auto e4 = elements.emplace_back(std::make_unique<UIElement>(game, "test image", UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::TOP_RIGHT))).get();
+    e4->addComponent<ImageComponent>(game, e4, UIPosition({0, 0}, UIOrigin::TOP_RIGHT), "image bee", 0, game->getAssetManager()->getTexture("dr bee"), sf::Vector2f(100, 100), false);
+    e4->addComponent<ImageComponent>(game, e4, UIPosition({0, 0}, UIOrigin::TOP_RIGHT, UIAnchor::BOTTOM_MIDDLE), "image", 1, game->getAssetManager()->getTexture("shaq_time_out"));
 
     // std::array<sf::Texture*, 3> buttonTextures = {assetManager->getTexture("button_up", "images/ui/"), assetManager->getTexture("button_hover", "images/ui/"), assetManager->getTexture("button_down", "images/ui/")};
     // std::array<sf::Texture*, 3> blueButtonTextures = {assetManager->getTexture("blue_button_up", "images/ui/"), assetManager->getTexture("blue_button_hover", "images/ui/"), assetManager->getTexture("blue_button_down", "images/ui/")};
@@ -112,7 +118,11 @@ bool UILayer::checkUICollision()
         if (e->position.worldPosition) mousePos = game->getInput()->getMouseCoords();
         else mousePos = game->getInput()->getMouseWindowPos();
 
-        if (pointRectCollide(mousePos, e->getGlobalBounds())) return true;
+        std::vector<sf::FloatRect> componentBounds = e->getAllComponentBounds();
+        for (auto b : componentBounds)
+        {
+            if (pointRectCollide(mousePos, b)) return true;
+        }
     }
 
     return false;
@@ -144,7 +154,7 @@ void UILayer::UIUpdate(float dt)
 {
     for (auto& e : elements)
     {
-        e->update();
+        e->update(dt);
     }
 
     // if (interactiveUIManager.isControllerUIActive())

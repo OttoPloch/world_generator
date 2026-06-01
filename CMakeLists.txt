@@ -71,6 +71,7 @@ src/ui/components/ui_component.cpp
 src/ui/components/background_component.cpp
 src/ui/components/text_component.cpp
 src/ui/components/button_component.cpp
+src/ui/components/image_component.cpp
 
 src/world/background_object.cpp
 

@@ -38,13 +38,13 @@ public:
     UIPosition(sf::Vector2f position, UIOrigin origin = UIOrigin::TOP_LEFT, UIAnchor anchor = UIAnchor::TOP_LEFT, bool worldPosition = false);
 
     // components only
-    static sf::Vector2f getOriginOffset(UIOrigin origin, sf::Vector2f size);
+    static sf::Vector2f getOriginOffset(UIPosition position, sf::Vector2f size);
     
     // for elements
-    static sf::Vector2f getAnchorOffset(UIAnchor anchor, UIElement* element);
+    static sf::Vector2f getAnchorOffset(UIPosition position, UIElement* element);
     
     // for components
-    static sf::Vector2f getAnchorOffset(UIAnchor anchor, sf::FloatRect bounds);
+    static sf::Vector2f getAnchorOffset(UIPosition position, sf::FloatRect bounds);
 
     // UI positions are relative to their element's parent's position.
     sf::Vector2f position;

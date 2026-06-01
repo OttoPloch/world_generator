@@ -5,11 +5,11 @@
 
 UIPosition::UIPosition(sf::Vector2f position, UIOrigin origin, UIAnchor anchor, bool worldPosition) : position(position), origin(origin), anchor(anchor), worldPosition(worldPosition) {}
 
-sf::Vector2f UIPosition::getOriginOffset(UIOrigin origin, sf::Vector2f size)
+sf::Vector2f UIPosition::getOriginOffset(UIPosition position, sf::Vector2f size)
 {
     sf::Vector2f offset;
 
-    switch(origin)
+    switch(position.origin)
     {
         case UIOrigin::TOP_LEFT:
         {
@@ -66,7 +66,7 @@ sf::Vector2f UIPosition::getOriginOffset(UIOrigin origin, sf::Vector2f size)
     return offset;
 }
 
-sf::Vector2f UIPosition::getAnchorOffset(UIAnchor anchor, UIElement* element)
+sf::Vector2f UIPosition::getAnchorOffset(UIPosition position, UIElement* element)
 {
     sf::Vector2f offset;
 
@@ -83,16 +83,18 @@ sf::Vector2f UIPosition::getAnchorOffset(UIAnchor anchor, UIElement* element)
         relativeSpace = element->game->getScene()->getUILayer()->getUIView().getSize();
     }
 
-    return getAnchorOffset(anchor, {{0, 0}, relativeSpace});
+    return getAnchorOffset(position, {{0, 0}, relativeSpace});
 }
 
-sf::Vector2f UIPosition::getAnchorOffset(UIAnchor anchor, sf::FloatRect bounds)
+sf::Vector2f UIPosition::getAnchorOffset(UIPosition position, sf::FloatRect bounds)
 {
+    if (position.worldPosition) return {0, 0};
+
     sf::Vector2f relativeSpace = bounds.size;
 
     sf::Vector2f offset;
 
-    switch (anchor)
+    switch (position.anchor)
     {
         case UIAnchor::TOP_LEFT:
         {
