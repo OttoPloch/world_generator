@@ -5,6 +5,7 @@
 #include "components/ui_component.hpp"
 #include "components/text_component.hpp"
 #include "components/background_component.hpp"
+#include <SFML/Window/Mouse.hpp>
 
 class UIElement
 {
@@ -15,6 +16,11 @@ public:
     sf::FloatRect getGlobalBounds();
     
     std::vector<sf::FloatRect> getAllComponentBounds();
+
+    // checks if the component given has the highest or equal to the highest sortIndex
+    // at the position given. Uses GLOBAL coordinates, not local. Returns false if point
+    // does not collide with the given component. Designed to be used for registering presses.
+    bool isComponentOnTopAtPoint(UIComponent* component, sf::Vector2f point);
 
     // returns the local bounds of the element, including every component UP TO
     // those with the sortIndex given. This is designed to be used by UI components

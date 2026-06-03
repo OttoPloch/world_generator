@@ -1,5 +1,5 @@
 tilesize 32
-item up
+item idle
 xCoord 0
 yCoord 0
 xSize 1
@@ -9,7 +9,7 @@ xCoord 1
 yCoord 0
 xSize 1
 ySize 1
-item down
+item press
 xCoord 2
 yCoord 0
 xSize 1

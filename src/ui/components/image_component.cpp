@@ -27,6 +27,8 @@ void ImageComponent::updateVisuals()
 
 void ImageComponent::update(float dt)
 {
+    updateState();
+
     sprite.update(dt);
 }
 

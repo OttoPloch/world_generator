@@ -1,5 +1,6 @@
 #include "ui_element.hpp"
 #include "../core/game.hpp"
+#include "components/ui_component.hpp"
 #include <SFML/Graphics/Rect.hpp>
 #include <utility>
 #include <algorithm>
@@ -40,6 +41,37 @@ std::vector<sf::FloatRect> UIElement::getAllComponentBounds()
     }
 
     return bounds;
+}
+
+bool UIElement::isComponentOnTopAtPoint(UIComponent* component, sf::Vector2f point)
+{
+    if (!pointRectCollide(point, component->getGlobalBounds())) return false;
+
+    std::vector<UIComponent*> collidedComponents;
+
+    for (auto& c : components)
+    {
+        if (pointRectCollide(point, c->getGlobalBounds()))
+        {
+            collidedComponents.emplace_back(c.get());
+        }
+    }
+
+    // may not be necessary as the components should already be added in order;
+    std::sort(collidedComponents.begin(), collidedComponents.end(), [](UIComponent* a, UIComponent* b) {
+        return a->sortIndex < b->sortIndex;
+    });
+
+    bool hasPassedComponent = false;
+    for (auto c : collidedComponents)
+    {
+        // if true, the given component will be drawn under another and is therefore not on top at the point.
+        if (hasPassedComponent) return false;
+
+        if (c == component) hasPassedComponent = true;
+    }
+
+    return true;
 }
 
 sf::FloatRect UIElement::getLocalBoundsUpToComponent(int sortIndex)
