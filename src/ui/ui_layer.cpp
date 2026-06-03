@@ -42,6 +42,11 @@ void UILayer::init(Game* game, Camera* camera)
     e4->addComponent<ImageComponent>(game, e4, UIPosition({0, 0}, UIOrigin::TOP_RIGHT), "image bee", 0, game->getAssetManager()->getTexture("dr bee"), sf::Vector2f(100, 100), false);
     e4->addComponent<ImageComponent>(game, e4, UIPosition({0, 0}, UIOrigin::TOP_RIGHT, UIAnchor::BOTTOM_LEFT), "image", 1, game->getAssetManager()->getTexture("shaq_time_out"), sf::Vector2f(100, 100), false, game->getAssetManager()->getAnimation("dot_left"));
 
+    auto e5 = elements.emplace_back(std::make_unique<UIElement>(game, "debug text display", UIPosition({0, 0}))).get();
+    e5->addComponent<TextComponent>(game, e5, UIPosition({10, 10}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT), "fps text", 0, "FPS: ", game->getAssetManager()->getFont("sfml_font"), 32);
+    e5->addComponent<TextComponent>(game, e5, UIPosition({10, 10}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT), "mouse chunk pos text", 1, "Mouse Chunk Pos: ", game->getAssetManager()->getFont("sfml_font"), 32);
+    e5->addComponent<TextComponent>(game, e5, UIPosition({10, 10}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT), "mouse tile type text", 2, "Mouse Tile Type: ", game->getAssetManager()->getFont("sfml_font"), 32);
+
     // std::array<sf::Texture*, 3> buttonTextures = {assetManager->getTexture("button_up", "images/ui/"), assetManager->getTexture("button_hover", "images/ui/"), assetManager->getTexture("button_down", "images/ui/")};
     // std::array<sf::Texture*, 3> blueButtonTextures = {assetManager->getTexture("blue_button_up", "images/ui/"), assetManager->getTexture("blue_button_hover", "images/ui/"), assetManager->getTexture("blue_button_down", "images/ui/")};
     // std::array<sf::Texture*, 3> redButtonTextures = {assetManager->getTexture("red_button_up", "images/ui/"), assetManager->getTexture("red_button_hover", "images/ui/"), assetManager->getTexture("red_button_down", "images/ui/")};

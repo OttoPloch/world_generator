@@ -150,7 +150,16 @@ void Game::run()
 
         scene.UIUpdate(dt);
         scene.chunkLoadUpdate();
-        // scene.getUILayer()->getElement("fps display")->getAsText()->setValue(std::to_string(toInt(std::round(smoothFps))));
+
+        // TEMP, setting the fps display on screen to the smooth fps value.
+        auto element = scene.getUILayer()->getElement("debug text display");
+        if (element)
+        {
+            if (auto fpsText = element->getComponent<TextComponent>("fps text"))
+            {
+                fpsText->setText("FPS: " + std::to_string(toInt(smoothFps)));
+            }
+        }
 
         runBlame["UI/CHUNK LOAD UPDATE"] = debugClock.restart().asSeconds();
 

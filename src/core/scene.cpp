@@ -49,42 +49,49 @@ void Scene::tick()
     uiLayer.tick();
 
     // TEMP
-    // sf::Vector2i mouseChunkPos = worldToChunkPosition(game, window->getWindow().mapPixelToCoords(sf::Mouse::getPosition(window->getWindow())));
+    sf::Vector2i mouseChunkPos = worldToChunkPosition(game, window->getWindow().mapPixelToCoords(sf::Mouse::getPosition(window->getWindow())));
     // uiLayer.getElement("mouse chunk pos display")->getAsText()->setValue(std::to_string(mouseChunkPos.x) + ", " + std::to_string(mouseChunkPos.y));
+    auto element = uiLayer.getElement("debug text display");
+    if (element)
+    {
+        if (auto chunkPosText = element->getComponent<TextComponent>("mouse chunk pos text"))
+        {
+            chunkPosText->setText("Mouse Chunk Pos: " + std::to_string(mouseChunkPos.x) + ", " + std::to_string(mouseChunkPos.y));
+        }
     
-    // sf::Vector2f mouseWorldPos = game->getInput()->getMouseCoords();
-    // sf::Vector2f mouseLocalWorldPos = {std::fmod(mouseWorldPos.x, toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size), std::fmod(mouseWorldPos.y, toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size)};
-    // sf::Vector2i mouseLocalPos = {toInt(std::floor(mouseLocalWorldPos.x / game->getSettings()->tile_size)), toInt(std::floor(mouseLocalWorldPos.y / game->getSettings()->tile_size))};
-    // Chunk* mouseChunk = chunkLayer.getChunk(mouseChunkPos);
-    
-    // if (mouseChunk && mouseChunk->state == ChunkState::ACTIVE)
-    // {
-    //     Tile* mouseTile = mouseChunk->getTile(mouseLocalPos.x, mouseLocalPos.y);
-
-    //     if (mouseTile)
-    //     {
-    //         std::map<TileType, std::string> typesToStrings {
-    //             {TileType::AIR, "air"},
-    //             {TileType::WATER, "water"},
-    //             {TileType::GRASS, "grass"},
-    //             {TileType::STONE, "stone"},
-    //             {TileType::LAVA, "lava"},
-    //             {TileType::COBBLE, "cobble"},
-    //             {TileType::PINK, "pink"},
-    //         };
+        sf::Vector2f mouseWorldPos = game->getInput()->getMouseCoords();
+        sf::Vector2f mouseLocalWorldPos = {std::fmod(mouseWorldPos.x, toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size), std::fmod(mouseWorldPos.y, toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size)};
+        sf::Vector2i mouseLocalPos = {toInt(std::floor(mouseLocalWorldPos.x / game->getSettings()->tile_size)), toInt(std::floor(mouseLocalWorldPos.y / game->getSettings()->tile_size))};
+        Chunk* mouseChunk = chunkLayer.getChunk(mouseChunkPos);
         
-    //         uiLayer.getElement("mouse tile type display")->getAsText()->setValue(typesToStrings[mouseTile->type]);
-    //     }
-    //     else
-    //     {
-    //         uiLayer.getElement("mouse tile type display")->getAsText()->setValue("none");
-    //     }
-    // }
-    // else
-    // {
-    //     uiLayer.getElement("mouse tile type display")->getAsText()->setValue("none");
-    // }
-    ///////
+        std::string mouseTileType = "nwwwwwwwwwwwwwwwwwwwwone";
+
+        if (mouseChunk && mouseChunk->state == ChunkState::ACTIVE)
+        {
+            Tile* mouseTile = mouseChunk->getTile(mouseLocalPos.x, mouseLocalPos.y);
+    
+            if (mouseTile)
+            {
+                std::map<TileType, std::string> typesToStrings {
+                    {TileType::AIR, "air"},
+                    {TileType::WATER, "water"},
+                    {TileType::GRASS, "grass"},
+                    {TileType::STONE, "stone"},
+                    {TileType::LAVA, "lava"},
+                    {TileType::COBBLE, "cobble"},
+                    {TileType::PINK, "pink"},
+                };
+            
+                mouseTileType = typesToStrings[mouseTile->type];
+            }
+        }
+
+        if (auto tileTypeText = element->getComponent<TextComponent>("mouse tile type text"))
+        {
+            tileTypeText->setText("Mouse Tile Type: " + mouseTileType);
+        }
+    }
+    /////
 }
 
 void Scene::update(float dt)
