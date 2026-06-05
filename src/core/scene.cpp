@@ -64,7 +64,7 @@ void Scene::tick()
         sf::Vector2i mouseLocalPos = {toInt(std::floor(mouseLocalWorldPos.x / game->getSettings()->tile_size)), toInt(std::floor(mouseLocalWorldPos.y / game->getSettings()->tile_size))};
         Chunk* mouseChunk = chunkLayer.getChunk(mouseChunkPos);
         
-        std::string mouseTileType = "nwwwwwwwwwwwwwwwwwwwwone";
+        std::string mouseTileType = "none";
 
         if (mouseChunk && mouseChunk->state == ChunkState::ACTIVE)
         {
