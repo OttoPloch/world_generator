@@ -32,7 +32,7 @@ void EntityLayer::init(Game* game)
     movementSystem = MovementSystem(game, game->getScene());
 
     auto pt = &tManager.entityTemplates["player"];
-    pt->sprite = {game->getAssetManager()->getTexture("dog", "texture_atlases/"), {20, 20}, false, false, {{0, 0}, {0, 0}}, 2.f, nullptr, game->getAssetManager()->getAnimSet("dog")};
+    pt->sprite = {game->getAssetManager()->getTexture("dog", "texture_atlases/"), {20, 20}, false, false, {{0, 0}, {0, 0}}, 1.6f, nullptr, game->getAssetManager()->getAnimSet("dog")};
     pt->movement = {2.f, 1.5f};
     pt->control = ControlComponentData();
     pt->state = StateComponentData();

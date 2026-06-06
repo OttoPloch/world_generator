@@ -16,7 +16,8 @@ public:
     int chunk_size;
     float chunk_render_distance;
     float chunk_load_distance;
-    float generation_foliage_scale;
+    float generation_decoration_scale; // negative = match tile pixel size
+    int generation_decoration_frequency;
     int maxTileZ;
     int worldSeed; // -1 = random seed
 };

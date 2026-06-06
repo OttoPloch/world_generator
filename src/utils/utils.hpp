@@ -30,12 +30,6 @@ void log(T message, bool newLine = true)
     if (newLine) std::cout << '\n';
 }
 
-int getRandInt(int min, int max);
-
-int getRandInt(int seed, int min, int max);
-
-int getRandInt();
-
 // if !useCameraView, then the current applied view of the window will be used.
 bool isOnScreen(Game* game, sf::Vector2f tl, sf::Vector2f size, bool useCameraView = true);
 
@@ -53,6 +47,12 @@ sf::Vector2i worldToChunkPosition(Game* game, sf::Vector2f position);
 
 sf::Vector2f chunkToWorldPosition(Game* game, sf::Vector2i position);
 
+// returns a global tile position, not a position within a chunk
 sf::Vector2i worldToTilePosition(Game* game, sf::Vector2f position);
 
+// assumes the position given is a global position, not within a chunk
+sf::Vector2f tileToWorldPosition(Game* game, sf::Vector2i position);
+
 void printBlameStats(const std::unordered_map<std::string, float>& blame, std::string category);
+
+float roundToMultiple(float numToRound, float multiple);

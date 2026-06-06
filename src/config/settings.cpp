@@ -15,7 +15,8 @@ void Settings::init()
     chunk_size = 16;
     chunk_render_distance = renderDistance;
     chunk_load_distance = renderDistance + loadDistanceExtra;
-    generation_foliage_scale = .2f;
+    generation_decoration_scale = -1.f;
+    generation_decoration_frequency = 100;
     maxTileZ = 2;
-    worldSeed = -1;
+    worldSeed = 117;
 }

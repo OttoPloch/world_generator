@@ -228,6 +228,7 @@ void Scene::draw()
 {
     window->setView(camera.getView());
 
+    drawBlame.clear();
     debugClock.restart();
 
     chunkLayer.draw(debugMode, debugChunkLayerView);

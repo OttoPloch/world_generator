@@ -6,6 +6,7 @@
 #include "../entities/collision_rect.hpp"
 #include "game_position.hpp"
 #include <SFML/Window/Mouse.hpp>
+#include <cstdint>
 #include <cstdlib>
 #include <random>
 
@@ -103,33 +104,6 @@ bool pointRectCollide(sf::Vector2f point, sf::FloatRect rect)
     }
 
     return false;
-}
-
-int getRandInt(int min, int max)
-{
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<int> dist(min, max);
-
-    return dist(gen);
-}
-
-int getRandInt(int seed, int min, int max)
-{
-    srand(seed);
-
-    int diff = max - min + 1;
-
-    return rand() % diff + min;
-}
-
-int getRandInt()
-{
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<int> dist;
-
-    return dist(gen);
 }
 
 bool isOnScreen(Game* game, sf::Vector2f tl, sf::Vector2f size, bool useCameraView)
@@ -306,6 +280,13 @@ sf::Vector2i worldToTilePosition(Game* game, sf::Vector2f position)
     return {toInt(std::floor(position.x / tileSize)), toInt(std::floor(position.y / tileSize))};
 }
 
+sf::Vector2f tileToWorldPosition(Game* game, sf::Vector2i position)
+{
+    float tileSize = game->getSettings()->tile_size;
+
+    return {position.x * tileSize, position.y * tileSize};
+}
+
 void printBlameStats(const std::unordered_map<std::string, float> &blame, std::string category)
 {
     std::cout << '\n' + category + ":\n";
@@ -338,4 +319,21 @@ void printBlameStats(const std::unordered_map<std::string, float> &blame, std::s
     }
 
     std::cout << "TOTAL: " << total << '\n';
+}
+
+float roundToMultiple(float numToRound, float multiple)
+{
+    float remainder = std::fmod(numToRound, multiple);
+
+    float roundDown = numToRound - remainder;
+    float roundUp = numToRound - remainder + multiple;
+
+    if (std::abs(numToRound - roundDown) < std::abs(numToRound - roundUp))
+    {
+        return roundDown;
+    }
+    else
+    {
+        return roundUp;
+    }
 }

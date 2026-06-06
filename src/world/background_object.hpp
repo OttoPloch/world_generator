@@ -11,4 +11,7 @@ struct BackgroundObject
 
     sf::FloatRect rect;
     sf::FloatRect texCoords;
+
+    // used to sort all background objects
+    float bottom;
 };

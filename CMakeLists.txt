@@ -24,6 +24,7 @@ src/core/scene.cpp
 src/utils/conversions.cpp
 src/utils/utils.cpp
 src/utils/game_position.cpp
+src/utils/random.cpp
 
 src/config/settings.cpp
 src/config/gamerules.cpp

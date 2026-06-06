@@ -292,6 +292,9 @@ bool Input::getControlPressedLastFrame(std::string control)
 
 void Input::update()
 {
+    updateBlame.clear();
+    debugClock.restart();
+
     if (game->getWindow()->getWindow().hasFocus())
     {
         for (auto c : controls)
@@ -302,9 +305,13 @@ void Input::update()
             }
         }
 
+        updateBlame["PROCESS INPUT"] = debugClock.restart().asSeconds();
+
         // these functions are needed to set __pressedThisFrame if the input is pressed
         for (auto k : keys) getKey(k);
         for (auto b : buttons) getButton(b);
+
+        updateBlame["UPDATING KEYS/BUTTONS"] = debugClock.restart().asSeconds();
 
         // if (getKey("LEFTCLICK") || getKey("RIGHTCLICK")) game->getScene()->getUILayer()->interactiveUIManager.disableControllerUI();
     
@@ -339,7 +346,11 @@ void Input::update()
                 controllerUI_moveClock.restart();
             }
         }
+
+        updateBlame["CONTROLLER"] = debugClock.restart().asSeconds();
     }
+
+    if (game->getScene()->debugMode && game->getScene()->debugLevel == 1) printBlameStats(updateBlame, "INPUT_UPDATE");
 }
 
 void Input::shiftPressedThisFrame()

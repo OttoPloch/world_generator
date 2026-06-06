@@ -56,7 +56,6 @@ bool MineAction::update(float dt, Game* game)
     for (int j = 0; j < progress; j++) std::cout << "+";
     for (int j = 0; j < left; j++) std::cout << ".";
     std::cout << '\n';
-    // TEMP
 
 
     // TODO, replace the ui collision check here if it is too expensive, or abstract that check to the Action struct so it doesn't need to be implemented in every type of action.

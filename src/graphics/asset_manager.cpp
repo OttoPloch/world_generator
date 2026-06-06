@@ -315,44 +315,70 @@ TextureAtlas* AssetManager::getTextureAtlas(std::string name, std::string pathFr
 
             // makes it simpler to type in the positions of
             // atlases when making them, reduces to multiples.
-            float tileSize;
+            unsigned int tileSize;
 
             std::vector<std::string> items;
-            std::vector<float> xCoords;
-            std::vector<float> yCoords;
-            std::vector<float> xSizes;
-            std::vector<float> ySizes;
+            std::vector<sf::Vector2f> coords;
+            std::vector<sf::Vector2f> sizes;
 
             std::string line;
 
             while (std::getline(atlasFile, line))
             {
-                if (line.substr(0, 8) == "tilesize") tileSize = std::stof(line.substr(9));
+                if (line.substr(0, 8) == "tilesize") tileSize = toUnsignedInt(std::stof(line.substr(9)));
                 if (line.substr(0, 4) == "item") items.push_back(line.substr(5));
-                if (line.substr(0, 6) == "xCoord") xCoords.push_back(tileSize * toInt(std::stof(line.substr(7))));
-                if (line.substr(0, 6) == "yCoord") yCoords.push_back(tileSize * toInt(std::stof(line.substr(7))));
-                if (line.substr(0, 5) == "xSize") xSizes.push_back(tileSize * toInt(std::stof(line.substr(6))));
-                if (line.substr(0, 5) == "ySize") ySizes.push_back(tileSize * toInt(std::stof(line.substr(6))));
+                if (line.substr(0, 5) == "coord")
+                {
+                    std::string substr = line.substr(6);
+                    int commaIndex = substr.find(',');
+                    if (commaIndex != std::string::npos)
+                    {
+                        float coordX = std::floor(std::stof(substr.substr(0, commaIndex)));
+                        float coordY = std::floor(std::stof(substr.substr(commaIndex + 1)));
+
+                        coords.push_back({coordX, coordY});
+                    }
+                    else
+                    {
+                        coords.push_back({0, 0});
+
+                        std::cout << "error getting tex coords of an item in texture atlas called " << name << ". Make sure the atlas file has coords typed properly ('coord x,y')";
+                    }
+                }
+                if (line.substr(0, 4) == "size")
+                {
+                    std::string substr = line.substr(5);
+                    int commaIndex = substr.find(',');
+                    if (commaIndex != std::string::npos)
+                    {
+                        float sizeX = std::floor(std::stof(substr.substr(0, commaIndex)));
+                        float sizeY = std::floor(std::stof(substr.substr(commaIndex + 1)));
+
+                        sizes.push_back({sizeX, sizeY});
+                    }
+                    else
+                    {
+                        sizes.push_back({0, 0});
+
+                        std::cout << "error getting size of an item in texture atlas called " << name << ". Make sure the atlas file has sizes typed properly ('size x,y').\n";
+                    }
+                }
             }
 
             atlasFile.close();
 
-            sf::Vector2u atlasSize = getTexture("tiles", "texture_atlases/")->getSize();
-
             for (int i = 0; i < items.size(); i++)
             {
-                if (xCoords[i] < 0) xCoords[i] = atlasSize.x + xCoords[i];
-                if (yCoords[i] < 0) yCoords[i] = atlasSize.y + yCoords[i];
+                if (coords[i].x < 0) coords[i].x = 0;
+                if (coords[i].y < 0) coords[i].y = 0;
 
-                xCoords[i] = std::roundf(xCoords[i]);
-                yCoords[i] = std::roundf(yCoords[i]);
-                xSizes[i] = std::roundf(xSizes[i]);
-                ySizes[i] = std::roundf(ySizes[i]);
+                coords[i] = {coords[i].x * tileSize, coords[i].y * tileSize};
+                sizes[i] = {sizes[i].x * tileSize, sizes[i].y * tileSize};
 
-                texCoords[items[i]] = sf::FloatRect({xCoords[i], yCoords[i]}, {xSizes[i], ySizes[i]});
+                texCoords[items[i]] = sf::FloatRect(coords[i], sizes[i]);
             }
 
-            newAtlas = TextureAtlas(name, texCoords);
+            newAtlas = TextureAtlas(name, texCoords, tileSize);
         }
 
         atlasMap[name] = newAtlas;

@@ -11,6 +11,7 @@
 #include "../graphics/asset_manager.hpp"
 #include "../config/gamerules.hpp"
 #include "../config/settings.hpp"
+#include "../utils/random.hpp"
 
 class Game
 {
@@ -34,6 +35,8 @@ public:
     Input* getInput();
 
     Scene* getScene();
+
+    Random random;
 private:
     void run();
 

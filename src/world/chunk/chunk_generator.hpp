@@ -18,7 +18,7 @@ public:
 
     void init(Game* game, std::unordered_map<sf::Vector2i, std::unique_ptr<Chunk>, Vector2iHash>* chunks);
 
-    void generate(sf::Vector2i chunkPosition, int genMode = 0);
+    void generate(sf::Vector2i chunkPosition);
 private:
     Game* game;
 

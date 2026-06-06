@@ -5,13 +5,13 @@ Game::Game() {}
 
 void Game::init()
 {
-    window.create({800, 800}, "INFINITE", false, 60, sf::Color(10, 10, 12));
+    random = Random(settings.worldSeed);
 
+    window.create({800, 800}, "INFINITE", false, 60, sf::Color(10, 10, 12));
+    eventHandler.init(&window, scene.getCamera(), this, &scene);
     input.init(this);
 
     scene.init(this);
-
-    eventHandler.init(&window, scene.getCamera(), this, &scene);
 
     paused = false;
 
@@ -110,9 +110,12 @@ void Game::run()
         runBlame["STAT TRACKING"] = debugClock.restart().asSeconds();
 
         input.update();
+
+        runBlame["INPUT"] = debugClock.restart().asSeconds();
+
         eventHandler.processEvents();
 
-        runBlame["INPUT/EVENTS"] = debugClock.restart().asSeconds();
+        runBlame["EVENTS"] = debugClock.restart().asSeconds();
 
         if (lastWindowSize != window.getSize())
         {

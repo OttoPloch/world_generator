@@ -90,4 +90,8 @@ private:
     std::unordered_map<std::string, bool> controlsPressedLastFrame;
 
     sf::Clock controllerUI_moveClock;
+
+
+    std::unordered_map<std::string, float> updateBlame;
+    sf::Clock debugClock;
 };

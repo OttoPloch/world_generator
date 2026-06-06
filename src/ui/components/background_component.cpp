@@ -52,15 +52,15 @@ void BackgroundComponent::updateVertices()
         borderOffset = borderSize;
         effectiveSize = {borderSize.x * 2 + size.x, borderSize.y * 2 + size.y};
     
-        centerVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset, size, atlas->getItemTexCoords("center"));
-        topLeftVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - borderSize, borderSize, atlas->getItemTexCoords("topleft"));
-        topVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(0, borderSize.y), {size.x, borderSize.y}, atlas->getItemTexCoords("top"));
-        topRightVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(-size.x, borderSize.y), borderSize, atlas->getItemTexCoords("topright"));
-        leftVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(borderSize.x, 0), {borderSize.x, size.y}, atlas->getItemTexCoords("left"));
-        rightVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(-size.x, 0), {borderSize.x, size.y}, atlas->getItemTexCoords("right"));
-        bottomLeftVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(borderSize.x, -size.y), borderSize, atlas->getItemTexCoords("bottomleft"));
-        bottomVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(0, -size.y), {size.x, borderSize.y}, atlas->getItemTexCoords("bottom"));
-        bottomRightVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(-size.x, -size.y), borderSize, atlas->getItemTexCoords("bottomright"));
+        centerVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset, size, atlas->itemTexCoords["center"]);
+        topLeftVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - borderSize, borderSize, atlas->itemTexCoords["topleft"]);
+        topVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(0, borderSize.y), {size.x, borderSize.y}, atlas->itemTexCoords["top"]);
+        topRightVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(-size.x, borderSize.y), borderSize, atlas->itemTexCoords["topright"]);
+        leftVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(borderSize.x, 0), {borderSize.x, size.y}, atlas->itemTexCoords["left"]);
+        rightVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(-size.x, 0), {borderSize.x, size.y}, atlas->itemTexCoords["right"]);
+        bottomLeftVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(borderSize.x, -size.y), borderSize, atlas->itemTexCoords["bottomleft"]);
+        bottomVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(0, -size.y), {size.x, borderSize.y}, atlas->itemTexCoords["bottom"]);
+        bottomRightVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(-size.x, -size.y), borderSize, atlas->itemTexCoords["bottomright"]);
     
         std::array<std::array<sf::Vertex, 6>*, 9> vertsInOrder = {&centerVerts, &topLeftVerts, &topVerts, &topRightVerts, &leftVerts, &rightVerts, &bottomLeftVerts, &bottomVerts, &bottomRightVerts};
         int indexOffset = 0;

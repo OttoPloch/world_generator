@@ -29,7 +29,7 @@ void ChunkLayer::init(Game* game)
     lastChunkPos = {INT32_MAX, INT32_MAX};
 
     chunkGenerator.init(game, &chunks);
-    bgObjectStates.texture = game->getAssetManager()->getTexture("background_foliage", "texture_atlases/");
+    bgObjectStates.texture = game->getAssetManager()->getTexture("foliage_better", "texture_atlases/");
 
 
     TextureAtlas* atlas = game->getAssetManager()->getTextureAtlas("tiles_better");
@@ -169,7 +169,7 @@ bool ChunkLayer::loadChunk(sf::Vector2i chunkPosition)
 {   
     if (chunks.find(chunkPosition) == chunks.end())
     {
-        chunkGenerator.generate(chunkPosition, 2);
+        chunkGenerator.generate(chunkPosition);
 
         return true;
     }
@@ -430,7 +430,7 @@ void ChunkLayer::draw(bool debug, int debugLayerView)
     {
         std::sort(visibleBgObjects.begin(), visibleBgObjects.end(), [](BackgroundObject* a, BackgroundObject* b)
         {
-            return a->rect.position.y + a->rect.size.y < b->rect.position.y + b->rect.size.y;
+            return a->bottom < b->bottom;
         });
     
         bgObjectsVertices.clear();
@@ -446,5 +446,4 @@ void ChunkLayer::draw(bool debug, int debugLayerView)
         
         window->getWindow().draw(&bgObjectsVertices[0], bgObjectsVertices.size(), sf::PrimitiveType::Triangles, bgObjectStates);
     }
-
 }

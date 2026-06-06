@@ -3,4 +3,4 @@
 
 BackgroundObject::BackgroundObject() {}
 
-BackgroundObject::BackgroundObject(sf::FloatRect rect, sf::FloatRect texCoords) : rect(rect), texCoords(texCoords) {}
+BackgroundObject::BackgroundObject(sf::FloatRect rect, sf::FloatRect texCoords) : rect(rect), texCoords(texCoords), bottom(rect.position.y + rect.size.y) {}
