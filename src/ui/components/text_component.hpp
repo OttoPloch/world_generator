@@ -12,7 +12,7 @@ struct TextComponent : public UIComponent
 
     void updateVisuals() override;
 
-    void draw() override;
+    void draw(bool debug) override;
 
     void setText(std::string newText);
 private:

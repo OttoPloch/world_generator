@@ -52,7 +52,6 @@ src/entities/entity_systems/action_system.cpp
 
 src/graphics/sprite.cpp
 src/graphics/asset_manager.cpp
-src/graphics/tile_set.cpp
 src/graphics/texture_atlas.cpp
 src/graphics/vertex_group.cpp
 src/graphics/animation.cpp

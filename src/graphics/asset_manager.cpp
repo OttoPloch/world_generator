@@ -242,63 +242,6 @@ AnimationSet* AssetManager::getAnimSet(std::string name)
     }
 }
 
-TileSet* AssetManager::getTileSet(std::string name)
-{
-    auto entry = tileSetMap.find(name);
-
-    if (entry != tileSetMap.end())
-    {
-        return &entry->second;        
-    }
-    else
-    {
-        TileSet newSet;
-
-        if (!std::filesystem::exists("../../assets/tilesets/" + name + ".tileset"))
-        {
-            std::cout << "error loading " << name << ".tileset\n";
-
-            return nullptr;
-        }
-        else
-        {
-            // load tile set
-            std::ifstream setFile("../../assets/tilesets/" + name + ".tileset");
-
-            std::unordered_map<std::string, sf::Vector2f> texCoords;
-
-            float tileSize;
-
-            std::vector<std::string> locations;
-            std::vector<float> xCoords;
-            std::vector<float> yCoords;
-
-            std::string line;
-
-            while (std::getline(setFile, line))
-            {
-                if (line.substr(0, 8) == "tilesize") tileSize = std::stof(line.substr(9));
-                if (line.substr(0, 8) == "location") locations.push_back(line.substr(9));
-                if (line.substr(0, 6) == "xCoord") xCoords.push_back(tileSize * std::stof(line.substr(7)));
-                if (line.substr(0, 6) == "yCoord") yCoords.push_back(tileSize * std::stof(line.substr(7)));
-            }
-
-            setFile.close();
-
-            for (int i = 0; i < locations.size(); i++)
-            {
-                texCoords[locations[i]] = {xCoords[i], yCoords[i]};
-            }
-
-            newSet.init(name, texCoords, tileSize);
-        }
-
-        tileSetMap[name] = newSet;
-
-        return &tileSetMap[name];
-    }
-}
-
 sf::Font* AssetManager::getFont(std::string name)
 {
     auto entry = fontMap.find(name);

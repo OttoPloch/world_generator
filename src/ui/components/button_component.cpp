@@ -28,7 +28,7 @@ void ButtonComponent::update(float dt)
     updateState();
 }
 
-void ButtonComponent::draw()
+void ButtonComponent::draw(bool debug)
 {
     game->getWindow()->getWindow().draw(vertices.data(), vertices.size(), sf::PrimitiveType::Triangles, renderStates.texture);
 }

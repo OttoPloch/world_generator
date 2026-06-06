@@ -34,7 +34,7 @@ void TextComponent::updateVisuals()
     text->setPosition(myElement->effectivePosition + position.position + originOffset + anchorOffset);
 }
 
-void TextComponent::draw()
+void TextComponent::draw(bool debug)
 {
     game->getWindow()->draw(*text);
 }

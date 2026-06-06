@@ -32,7 +32,7 @@ void ImageComponent::update(float dt)
     sprite.update(dt);
 }
 
-void ImageComponent::draw()
+void ImageComponent::draw(bool debug)
 {
     sprite.draw(game->getWindow()->getWindow());
 }

@@ -4,7 +4,6 @@
 #include "animation.hpp"
 #include "global_animation.hpp"
 #include "animation_set.hpp"
-#include "tile_set.hpp"
 #include "texture_atlas.hpp"
 
 #include <map>
@@ -23,8 +22,6 @@ public:
 
     AnimationSet* getAnimSet(std::string name);
 
-    TileSet* getTileSet(std::string name);
-
     sf::Font* getFont(std::string name);
 
     TextureAtlas* getTextureAtlas(std::string name, std::string pathFromTextureAtlases = "");
@@ -38,8 +35,6 @@ private:
     std::unordered_map<std::string, std::unique_ptr<GlobalAnimation>> globalAnimationMap;
 
     std::unordered_map<std::string, std::unique_ptr<AnimationSet>> animSetMap;
-
-    std::unordered_map<std::string, TileSet> tileSetMap;
 
     std::unordered_map<std::string, sf::Font> fontMap;
 

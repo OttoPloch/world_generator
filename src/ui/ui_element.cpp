@@ -112,9 +112,9 @@ void UIElement::update(float dt)
     for (auto& c : components) c->update(dt);
 }
 
-void UIElement::draw()
+void UIElement::draw(bool debug)
 {
-    for (auto& c : components) c->draw();
+    for (auto& c : components) c->draw(debug);
 }
 
 sf::Vector2f UIElement::calculateEffectivePosition()

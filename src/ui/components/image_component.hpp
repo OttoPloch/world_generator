@@ -13,7 +13,7 @@ struct ImageComponent : public UIComponent
 
     void update(float dt) override;
 
-    void draw() override;
+    void draw(bool debug) override;
 private:
     Sprite sprite;
 };

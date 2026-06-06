@@ -122,7 +122,7 @@ void UIComponent::update(float dt)
     updateState();
 }
 
-void UIComponent::draw() {}
+void UIComponent::draw(bool debug) {}
 
 
 bool UIComponent::attemptedPress()

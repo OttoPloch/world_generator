@@ -48,31 +48,7 @@ void UILayer::init(Game* game, Camera* camera)
     // e5->addComponent<TextComponent>(game, e5, UIPosition({10, 10}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT), "mouse tile type text", 2, "Mouse Tile Type: ", game->getAssetManager()->getFont("sfml_font"), 32);
     
     auto e6 = elements.emplace_back(std::make_unique<UIElement>(game, "t3st", UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::CENTER))).get();
-    e6->addComponent<BackgroundComponent>(game, e6, UIPosition({0, 0}, UIOrigin::CENTER), "bg", 0, sf::Vector2f(300, 200), sf::Color(30, 30, 30, 180));
-    
-    auto debug1 = elements.emplace_back(std::make_unique<UIElement>(game, "debug1", UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::TOP_LEFT))).get();
-    debug1->addComponent<BackgroundComponent>(game, debug1, UIPosition({0, 0}, UIOrigin::TOP_LEFT), "bg", 0, sf::Vector2f(100, 100), sf::Color(30, 30, 30, 180));
-
-    auto debug2 = elements.emplace_back(std::make_unique<UIElement>(game, "debug2", UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::TOP_MIDDLE))).get();
-    debug2->addComponent<BackgroundComponent>(game, debug2, UIPosition({0, 0}, UIOrigin::TOP_MIDDLE), "bg", 0, sf::Vector2f(100, 100), sf::Color(30, 30, 30, 180));
-    
-    auto debug3 = elements.emplace_back(std::make_unique<UIElement>(game, "debug3", UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::TOP_RIGHT))).get();
-    debug3->addComponent<BackgroundComponent>(game, debug3, UIPosition({0, 0}, UIOrigin::TOP_RIGHT), "bg", 0, sf::Vector2f(100, 100), sf::Color(30, 30, 30, 180));
-    
-    auto debug4 = elements.emplace_back(std::make_unique<UIElement>(game, "debug4", UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::LEFT_MIDDLE))).get();
-    debug4->addComponent<BackgroundComponent>(game, debug4, UIPosition({0, 0}, UIOrigin::LEFT_MIDDLE), "bg", 0, sf::Vector2f(100, 100), sf::Color(30, 30, 30, 180));
-    
-    auto debug5 = elements.emplace_back(std::make_unique<UIElement>(game, "debug5", UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::RIGHT_MIDDLE))).get();
-    debug5->addComponent<BackgroundComponent>(game, debug5, UIPosition({0, 0}, UIOrigin::RIGHT_MIDDLE), "bg", 0, sf::Vector2f(100, 100), sf::Color(30, 30, 30, 180));
-    
-    auto debug6 = elements.emplace_back(std::make_unique<UIElement>(game, "debug6", UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT))).get();
-    debug6->addComponent<BackgroundComponent>(game, debug6, UIPosition({0, 0}, UIOrigin::BOTTOM_LEFT), "bg", 0, sf::Vector2f(100, 100), sf::Color(30, 30, 30, 180));
-    
-    auto debug7 = elements.emplace_back(std::make_unique<UIElement>(game, "debug7", UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_MIDDLE))).get();
-    debug7->addComponent<BackgroundComponent>(game, debug7, UIPosition({0, 0}, UIOrigin::BOTTOM_MIDDLE), "bg", 0, sf::Vector2f(100, 100), sf::Color(30, 30, 30, 180));
-
-    auto debug8 = elements.emplace_back(std::make_unique<UIElement>(game, "debug8", UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_RIGHT))).get();
-    debug8->addComponent<BackgroundComponent>(game, debug8, UIPosition({0, 0}, UIOrigin::BOTTOM_RIGHT), "bg", 0, sf::Vector2f(100, 100), sf::Color(30, 30, 30, 180));
+    e6->addComponent<BackgroundComponent>(game, e6, UIPosition({0, 0}, UIOrigin::CENTER), "bg", 0, sf::Vector2f(300, 200), 40, game->getAssetManager()->getTexture("ui_default", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("background_8px", "ui/"));
 
     // std::array<sf::Texture*, 3> buttonTextures = {assetManager->getTexture("button_up", "images/ui/"), assetManager->getTexture("button_hover", "images/ui/"), assetManager->getTexture("button_down", "images/ui/")};
     // std::array<sf::Texture*, 3> blueButtonTextures = {assetManager->getTexture("blue_button_up", "images/ui/"), assetManager->getTexture("blue_button_hover", "images/ui/"), assetManager->getTexture("blue_button_down", "images/ui/")};
@@ -167,17 +143,7 @@ void UILayer::updateVisuals()
 
 void UILayer::tick()
 {
-    // TEMP
-    getElement("t3st")->position.position += toV2F(getRandInt(-3, 3), getRandInt(-3, 3));
-    getElement("debug1")->position.position += toV2F(getRandInt(-3, 3), getRandInt(-3, 3));
-    getElement("debug2")->position.position += toV2F(getRandInt(-3, 3), getRandInt(-3, 3));
-    getElement("debug3")->position.position += toV2F(getRandInt(-3, 3), getRandInt(-3, 3));
-    getElement("debug4")->position.position += toV2F(getRandInt(-3, 3), getRandInt(-3, 3));
-    getElement("debug5")->position.position += toV2F(getRandInt(-3, 3), getRandInt(-3, 3));
-    getElement("debug6")->position.position += toV2F(getRandInt(-3, 3), getRandInt(-3, 3));
-    getElement("debug7")->position.position += toV2F(getRandInt(-3, 3), getRandInt(-3, 3));
-    getElement("debug8")->position.position += toV2F(getRandInt(-3, 3), getRandInt(-3, 3));
-    updateVisuals();
+
 }
 
 void UILayer::UIUpdate(float dt)
@@ -230,7 +196,7 @@ void UILayer::draw(bool debug)
 
     for (auto e : visibleWorldElements)
     {
-        e->draw();
+        e->draw(debug);
     }
 
     if (debug)
@@ -260,7 +226,7 @@ void UILayer::draw(bool debug)
     
     for (auto e : visibleScreenElements)
     {
-        if (e->name != "CONTROLLER_INDICATOR") e->draw();
+        if (e->name != "CONTROLLER_INDICATOR") e->draw(debug);
     }
 
     // interactiveUIManager.draw();

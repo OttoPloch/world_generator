@@ -15,7 +15,7 @@ struct ButtonComponent : public UIComponent
 
     void update(float dt) override;
 
-    void draw() override;
+    void draw(bool debug) override;
     
     // sets the size, texture and atlas of the button. Leave either blank to keep it the same as before.
     void setButtonVisuals(sf::Vector2f size, bool sizeIsScale = true, sf::Texture* newTexture = nullptr, TextureAtlas* newAtlas = nullptr);

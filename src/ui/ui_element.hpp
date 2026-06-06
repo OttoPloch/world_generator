@@ -31,7 +31,7 @@ public:
 
     void update(float dt);
 
-    void draw();
+    void draw(bool debug);
 
     template<typename T>
     T* getComponent(std::string identifier = "")

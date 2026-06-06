@@ -44,7 +44,7 @@ struct UIComponent
     // include updateState in overrides to support onIdle(), onHover() and onPress()
     virtual void update(float dt);
 
-    virtual void draw();
+    virtual void draw(bool debug);
 
     Game* game;
     UIElement* myElement;
