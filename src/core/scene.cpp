@@ -243,37 +243,37 @@ void Scene::draw()
     if (debugMode && debugLevel == 1) printBlameStats(drawBlame, "SCENE_DRAW");
 }
 
-void Scene::sceneInput(std::string control, bool justPressed)
+void Scene::sceneInput(std::string control)
 {
-    if (control == "RESETZOOM" && justPressed)
+    if (control == "RESETZOOM")
     {
         camera.resetZoom();
     }
-    else if (control == "TOGGLEFOCUS" && justPressed)
+    else if (control == "TOGGLEFOCUS")
     {
         toggleFocus();
     }
-    else if (control == "DEBUG_VIEW" && justPressed)
+    else if (control == "DEBUG_VIEW")
     {
         debugMode = !debugMode;
     }
-    else if (control == "ZOOMIN" && justPressed)
+    else if (control == "ZOOMIN")
     {
         camera.zoom(1);
     }
-    else if (control == "ZOOMOUT" && justPressed)
+    else if (control == "ZOOMOUT")
     {
         camera.zoom(-1);
     }
-    else if (control == "INTERACT" && justPressed)
+    else if (control == "INTERACT")
     {
         //uiLayer.interactiveUIManager.click();
     }
-    else if (control == "EXTRA 1" && justPressed)
+    else if (control == "EXTRA 1")
     {
         debugChunkLayerView++;
     }
-    else if (control == "EXTRA 2" && justPressed)
+    else if (control == "EXTRA 2")
     {
         if (debugMode)
         {

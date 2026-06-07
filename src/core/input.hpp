@@ -12,83 +12,65 @@ class Input
 public:
     Input();
 
-    void init(Game* game);
+    Input(Game* game);
+
+    // The three is___Pressed functions below grab the raw input values every time that function is called, meaning
+    // they could be just pressed or held down. For single presses, use the get___ functions below.
+
+    //
+    bool isKeyPressed(std::string key);
+    bool isButtonPressed(std::string button); // 'DPAD xxxx' works here
+    bool isControlPressed(std::string control);
+
+    // The three get___ functions below return values stored from EventHandler, meaning if they return true the
+    // input should be considered just pressed. For continuous input, use the is___Pressed functions above.
 
     // enter key in all caps
-    bool isKeyPressed(std::string key, bool checkJustPressed = false);
-    
-    // enter key in all caps.
-    // 'DPAD xxx' works but is
-    // special because they are axes.
-    // could also use getAxis for those.
-    bool isButtonPressed(std::string button, bool checkJustPressed = false);
-    
-    bool isControlPressed(std::string control, bool checkJustPressed = false);
+    // mouse left and right click are included (even though they are not keys)
+    // so that they are supported in controls.
+    bool getKey(std::string key);
+    // Dpad buttons are considered axes, use getAxis() or isButtonPressed() for those.
+    bool getButton(std::string key);
+    bool getControl(std::string control);
 
     float getAxis(sf::Joystick::Axis axis);
     
-    float getAxis(int axis);
-
     sf::Vector2f getMovement();
 
     // gets the coordinates of the mouse in the current view.
-    // So, if the camera is offset, the mouse will inherit that offset.
+    // So, if the camera is offset, the mouse position will inherit that offset.
     sf::Vector2f getMouseCoords();
 
     // gets the coordinates of the mouse in the window, not
     // accounting for the current view.
     sf::Vector2f getMouseWindowPos();
 
-    bool getKeyPressedLastFrame(std::string key);
-    
-    bool getControlPressedLastFrame(std::string control);
-
     void update();
 
-    void shiftPressedThisFrame();
-private:
-    // enter key in all caps
-    // Dont worry about dontSetPressedThisFrame,
-    // it is only used in other functions in Input.
-    bool getKey(std::string key, bool dontSetPressedThisFrame = false);
-    
-    // enter key in all caps.
-    // 'DPAD xxx' works but is
-    // special because they are axes.
-    // Can also use getAxis for those.
-    // Dont worry about dontSetPressedThisFrame,
-    // it is only used in other functions in Input.
-    bool getButton(std::string key, bool dontSetPressedThisFrame = false);
-    
-    // Dont worry about dontSetPressedThisFrame,
-    // it is only used in other functions in Input.
-    bool getControl(std::string control, bool dontSetPressedThisFrame = false);
+    // These three ___Event functions are meant to be only used by the EventHandler
+    // left and right mouse buttons are put into keysPressedThisFrame (even though they are not keys).
+    // this is to support those buttons for controls.
+    void mouseEvent(sf::Event::MouseButtonPressed mouseButtonPressed);
+    void keyEvent(sf::Event::KeyPressed keyPressed);
+    void buttonEvent(sf::Event::JoystickButtonPressed buttonPressed);
 
+    void resetPressedThisFrame();
+private:
     Game* game;
 
     std::vector<std::string> keys;
-
     std::unordered_map<std::string, int> stringToKey;
-
     std::unordered_map<int, std::string> keyToString;
+    std::unordered_map<std::string, bool> keysPressedThisFrame;
 
     std::vector<std::string> buttons;
-
     std::unordered_map<std::string, int> stringToButton;
-
     std::unordered_map<int, std::string> buttonToString;
-
-    std::vector<std::pair<std::string, std::pair<std::string, std::string>>> controls;
-
-    std::unordered_map<std::string, bool> keysPressedThisFrame;
-    std::unordered_map<std::string, bool> keysPressedLastFrame;
-
     std::unordered_map<std::string, bool> buttonsPressedThisFrame;
-    std::unordered_map<std::string, bool> buttonsPressedLastFrame;
-    
-    std::unordered_map<std::string, bool> controlsPressedThisFrame;
-    std::unordered_map<std::string, bool> controlsPressedLastFrame;
 
+    std::unordered_map<std::string, std::pair<std::string, std::string>> controls;
+    std::unordered_map<std::string, bool> controlsPressedThisFrame;
+    
     sf::Clock controllerUI_moveClock;
 
 

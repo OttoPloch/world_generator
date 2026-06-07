@@ -7,9 +7,9 @@ void Game::init()
 {
     random = Random(settings.worldSeed);
 
-    window.create({800, 800}, "INFINITE", false, 60, sf::Color(10, 10, 12));
+    window.create({800, 800}, "INFINITE", false, 0, sf::Color(10, 10, 12));
     eventHandler.init(&window, scene.getCamera(), this, &scene);
-    input.init(this);
+    input = Input(this);
 
     scene.init(this);
 
@@ -28,17 +28,17 @@ void Game::exit()
     window.exit();
 }
 
-void Game::processInput(std::string control, bool justPressed)
+void Game::processInput(std::string control)
 {
     if (control == "EXIT")
     {
         exit();
     }
-    else if (control == "PAUSE" && justPressed)
+    else if (control == "PAUSE")
     {
         paused = !paused;
     }
-    else if (control == "STEP" && justPressed)
+    else if (control == "STEP")
     {
         if (paused)
         {
@@ -48,7 +48,7 @@ void Game::processInput(std::string control, bool justPressed)
     }
     else
     {
-        scene.sceneInput(control, justPressed);
+        scene.sceneInput(control);
     }
 }
 
@@ -109,13 +109,14 @@ void Game::run()
         
         runBlame["STAT TRACKING"] = debugClock.restart().asSeconds();
 
-        input.update();
-
-        runBlame["INPUT"] = debugClock.restart().asSeconds();
-
+        input.resetPressedThisFrame();
         eventHandler.processEvents();
-
+        
         runBlame["EVENTS"] = debugClock.restart().asSeconds();
+        
+        input.update();
+        
+        runBlame["INPUT"] = debugClock.restart().asSeconds();
 
         if (lastWindowSize != window.getSize())
         {
@@ -169,8 +170,6 @@ void Game::run()
         draw();
 
         runBlame["DRAW"] = debugClock.restart().asSeconds();
-
-        input.shiftPressedThisFrame();
 
         if (scene.debugMode && scene.debugLevel == 1) printBlameStats(runBlame, "GAME_RUN");
     }

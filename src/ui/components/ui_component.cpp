@@ -1,6 +1,7 @@
 #include "ui_component.hpp"
 #include "../ui_element.hpp"
 #include "../../core/game.hpp"
+#include <SFML/Window/Mouse.hpp>
 
 UIComponent::UIComponent(Game* game, UIElement* myElement, UIPosition position, std::string identifier, int sortIndex) : game(game), myElement(myElement), position(position), identifier(identifier), sortIndex(sortIndex), pressed(false), pressedLastFrame(false), canPress(false), selected(false), selectedLastFrame(false)
 {
@@ -127,7 +128,7 @@ void UIComponent::draw(bool debug) {}
 
 bool UIComponent::attemptedPress()
 {
-    // TEMP, TODO: account for controller, dont hardcode "LEFTCLICK".
+    // TEMP, TODO: account for controller, dont hardcode left click.
     return isSelected() && myElement->isComponentOnTopAtPoint(this, game->getInput()->getMouseWindowPos()) && game->getInput()->isKeyPressed("LEFTCLICK");
 }
 

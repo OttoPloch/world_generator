@@ -32,7 +32,7 @@ public:
 
     void draw();
 
-    void sceneInput(std::string control, bool justPressed = false);
+    void sceneInput(std::string control);
 
     bool processActionRequest(Entity* actor, Action* action);
 
