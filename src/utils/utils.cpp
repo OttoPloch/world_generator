@@ -5,6 +5,7 @@
 #include "../ui/ui_element.hpp"
 #include "../entities/collision_rect.hpp"
 #include "game_position.hpp"
+#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <cstdint>
 #include <cstdlib>
@@ -91,9 +92,17 @@ bool dynamicRectRectCollide(CollisionRect* in, sf::Vector2f inVel, CollisionRect
 }
 
 
-bool mouseRectCollide(Game* game, sf::Vector2f position, sf::Vector2f size)
+bool mouseRectCollide(Game* game, sf::Vector2f position, sf::Vector2f size, bool useWorldMousePos)
 {
-    return pointRectCollide(toV2F(sf::Mouse::getPosition(game->getWindow()->getWindow()).x, sf::Mouse::getPosition(game->getWindow()->getWindow()).y), {position, size});
+    sf::Vector2i windowPos = sf::Mouse::getPosition(game->getWindow()->getWindow());
+    sf::Vector2f mousePos;
+
+    if (useWorldMousePos)
+    {
+        mousePos = game->getWindow()->getWindow().mapPixelToCoords(windowPos);
+    }
+
+    return pointRectCollide(mousePos, {position, size});
 }
 
 bool pointRectCollide(sf::Vector2f point, sf::FloatRect rect)

@@ -7,6 +7,7 @@
 #include "chunk.hpp"
 #include "chunk_state.hpp"
 #include <SFML/Graphics/PrimitiveType.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <algorithm>
 #include <functional>
 #include <memory>

@@ -59,7 +59,7 @@ private:
     // background objects
     std::vector<sf::Vertex> bgObjectsVertices;
     sf::RenderStates bgObjectStates;
-
+    
     // for updating the chunk pos display text. Can delete if no longer used
     sf::Vector2i lastChunkPos;
 };

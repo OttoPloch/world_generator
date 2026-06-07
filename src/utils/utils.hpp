@@ -19,7 +19,7 @@ bool rayRectCollide(sf::Vector2f rayOrigin, sf::Vector2f rayDirection, Collision
 
 bool dynamicRectRectCollide(CollisionRect* in, sf::Vector2f inVel, CollisionRect* target, sf::Vector2f& contactPoint, sf::Vector2f& contactNormal, float& contactTime);
 
-bool mouseRectCollide(Game* game, sf::Vector2f position, sf::Vector2f size);
+bool mouseRectCollide(Game* game, sf::Vector2f position, sf::Vector2f size, bool useWorldMousePos = false);
 
 bool pointRectCollide(sf::Vector2f point, sf::FloatRect rect);
 

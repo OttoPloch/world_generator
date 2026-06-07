@@ -10,6 +10,7 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <algorithm>
 #include <cmath>
+#include <vector>
 
 ChunkGenerator::ChunkGenerator() {}
     
@@ -251,7 +252,8 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition)
                     // (which would not be detected otherwise since the pos value is set to the remainder of pos / chunkSize,
                     // meaning that part would just get wrapped around).
                     sf::Vector2i relativePos = pos - chunkGlobalTilePos;
-                    if (relativePos.x < 0 || relativePos.x > chunkSize || relativePos.y < 0 || relativePos.y > chunkSize)
+
+                    if (relativePos.x < 0 || relativePos.x > chunkSize - 1 || relativePos.y < 0 || relativePos.y > chunkSize - 1)
                     {
                         allPositionsValid = false;
                         break;
@@ -280,13 +282,12 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition)
                 {
                     if (!t)
                     {
-                        sf::Vector2i p = worldToTilePosition(game, decorationWorldTopLeft);
-                        std::cout << "NONEXISTANT TILE FOR DECORATION WITH TOP LEFT AT " << p.x << ", " << p.y << " TILE POS.\n";
+                        std::cout << "NONEXISTANT TILE FOR DECORATION WITH TOP LEFT AT " << decorationTileTopLeft.x << ", " << decorationTileTopLeft.y << " TILE POS.\n";
                     }    
                     
                     allTilesValid = false;
                     break;
-                }    
+                }
             }    
             if (!allTilesValid) continue;
 
@@ -298,7 +299,7 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition)
                 },
                 decorationTexCoords
             };
-
+            
             decorations.push_back(decoration);
         }
 
