@@ -282,32 +282,6 @@ void Scene::sceneInput(std::string control)
             if (debugLevel > 1) debugLevel = 0;
         }
     }
-    else if (control == "MAIN ACTION")
-    {
-        if (!uiLayer.checkUICollision())
-        {
-            if (entityLayer.player)
-            {
-                if (auto a = entityLayer.player->getComponent<ActionComponent>())
-                {
-                    a->startAction(control);
-                }
-            }
-        }
-    }
-    else if (control == "SECONDARY ACTION")
-    {
-        if (!uiLayer.checkUICollision())
-        {
-            if (entityLayer.player)
-            {
-                if (auto a = entityLayer.player->getComponent<ActionComponent>())
-                {
-                    a->startAction(control);
-                }
-            }
-        }
-    }
 }
 
 bool Scene::processActionRequest(Entity* actor, Action* action)

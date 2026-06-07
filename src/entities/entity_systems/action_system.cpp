@@ -9,6 +9,34 @@ ActionSystem::ActionSystem(Game* game, Scene* scene) : game(game), scene(scene),
 
 void ActionSystem::update(float dt)
 {
+    // player actions
+    if (entityLayer->player)
+    {
+        if (auto a = entityLayer->player->getComponent<ActionComponent>())
+        {
+            if (game->getInput()->isControlPressed("MAIN ACTION"))
+            {
+                if (!scene->getUILayer()->checkUICollision())
+                {
+                    if (entityLayer->player)
+                    {
+                        a->startAction("MAIN ACTION");
+                    }
+                }
+            }
+            else if (game->getInput()->isControlPressed("SECONDARY ACTION"))
+            {
+                if (!scene->getUILayer()->checkUICollision())
+                {
+                    if (entityLayer->player)
+                    {
+                        a->startAction("SECONDARY ACTION");
+                    }
+                }
+            }
+        }
+    }
+
     std::vector<Entity*> validEntities = entityLayer->getEntitiesWithComponent<ActionComponent>();
 
     for (auto e : validEntities)

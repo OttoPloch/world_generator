@@ -343,7 +343,7 @@ void Input::update()
             break;
         }
 
-        updateBlame["CURSOR SET"] = debugClock.restart().asSeconds();
+        updateBlame["CURSOR VISIBILITY SET"] = debugClock.restart().asSeconds();
     }
 
 
