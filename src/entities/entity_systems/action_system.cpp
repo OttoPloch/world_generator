@@ -75,7 +75,7 @@ void ActionSystem::update(float dt)
                     {
                         if (currentAction->timeProgress >= currentAction->timeToComplete)
                         {
-                            currentAction->completeAction(e, game->getInput()->getMouseCoords());
+                            currentAction->completeAction(e, game->getInput()->getCursorCoords());
                 
                             currentAction->timeProgress = 0.f;
                             currentAction->active = false;

@@ -19,6 +19,8 @@ public:
     
     UIElement* getElement(std::string name);
 
+    UIElement* createElement(std::unique_ptr<UIElement> element);
+
     sf::View getUIView();
 
     bool checkUICollision();

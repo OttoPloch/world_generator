@@ -20,4 +20,6 @@ public:
     int generation_decoration_frequency;
     int maxTileZ;
     int worldSeed; // -1 = random seed
+    float input_controllerCursorSensitivity;
+    float input_triggerMinPressValue; // -100 is completely up, +100 is all the way down in SFML
 };

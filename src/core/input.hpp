@@ -6,6 +6,7 @@
 #include <vector>
 
 class Game;
+class UIElement;
 
 class Input
 {
@@ -19,7 +20,7 @@ public:
 
     //
     bool isKeyPressed(std::string key);
-    bool isButtonPressed(std::string button); // 'DPAD xxxx' works here
+    bool isButtonPressed(std::string button); // 'DPAD xxxx' works here, also 'LTRIGGER' and 'RTRIGGER'
     bool isControlPressed(std::string control);
 
     // The three get___ functions below return values stored from EventHandler, meaning if they return true the
@@ -37,20 +38,21 @@ public:
     
     sf::Vector2f getMovement();
 
-    // gets the coordinates of the mouse in the current view.
-    // So, if the camera is offset, the mouse position will inherit that offset.
-    sf::Vector2f getMouseCoords();
+    // gets the coordinates of the cursor in the current view.
+    // So, if the camera is offset, the cursor position will inherit that offset.
+    sf::Vector2f getCursorCoords();
 
-    // gets the coordinates of the mouse in the window, not
+    // gets the coordinates of the cursor in the window, not
     // accounting for the current view.
-    sf::Vector2f getMouseWindowPos();
+    sf::Vector2f getCursorWindowPos();
 
-    void update();
+    void inputUpdate();
 
-    // These three ___Event functions are meant to be only used by the EventHandler
+    // These ___Event functions are meant to be only used by the EventHandler
     // left and right mouse buttons are put into keysPressedThisFrame (even though they are not keys).
     // this is to support those buttons for controls.
-    void mouseEvent(sf::Event::MouseButtonPressed mouseButtonPressed);
+    void mouseMoveEvent(sf::Event::MouseMoved mouseMoved);
+    void mouseButtonEvent(sf::Event::MouseButtonPressed mouseButtonPressed);
     void keyEvent(sf::Event::KeyPressed keyPressed);
     void buttonEvent(sf::Event::JoystickButtonPressed buttonPressed);
 
@@ -72,7 +74,10 @@ private:
     std::unordered_map<std::string, bool> controlsPressedThisFrame;
     
     sf::Clock controllerUI_moveClock;
-
+    
+    sf::Vector2f gameCursorPosition;
+    UIElement* cursorElement;
+    bool mouseMovedThisFrame;
 
     std::unordered_map<std::string, float> updateBlame;
     sf::Clock debugClock;

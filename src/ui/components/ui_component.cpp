@@ -129,7 +129,7 @@ void UIComponent::draw(bool debug) {}
 bool UIComponent::attemptedPress()
 {
     // TEMP, TODO: account for controller, dont hardcode left click.
-    return isSelected() && myElement->isComponentOnTopAtPoint(this, game->getInput()->getMouseWindowPos()) && game->getInput()->isKeyPressed("LEFTCLICK");
+    return isSelected() && myElement->isComponentOnTopAtPoint(this, game->getInput()->getCursorWindowPos()) && game->getInput()->isControlPressed("UI PRESS");
 }
 
 bool UIComponent::justSelected()

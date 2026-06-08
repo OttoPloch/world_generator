@@ -1,13 +1,18 @@
 #include "input.hpp"
 #include "game.hpp"
+#include "../ui/ui_element.hpp"
+#include "../ui/components/image_component.hpp"
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
+#include <cstdint>
 
 Input::Input() {}
 
 Input::Input(Game* game) : game(game)
 {
+    game->getWindow()->getWindow().setMouseCursorVisible(false);
+
     keys = {
         "A",
         "B",
@@ -123,19 +128,23 @@ Input::Input(Game* game) : game(game)
         "B",
         "X",
         "Y",
-        "LBUMPER",
         "RBUMPER",
+        "LBUMPER",
         "SELECT",
         "START",
         "?",
         "LSTICK",
         "RSTICK",
+        "LTRIGGER",
+        "RTRIGGER"
     };
 
     // ALSO DPAD LEFT,
     //      DPAD RIGHT,
     //      DPAD UP,
-    //      DPAD DOWN
+    //      DPAD DOWN,
+    //      LTRIGGER,
+    //      RTRIGGER
     // BUT THEY REGISTER AS AXES
 
     for (int i = 0; i < buttons.size(); i++)
@@ -149,26 +158,34 @@ Input::Input(Game* game) : game(game)
         {"INTERACT", {"E", "A"}},
         {"MENU", {"Q", "B"}},
         {"EXIT", {"ESCAPE", "Y"}},
+        {"MAIN ACTION", {"LEFTCLICK", "RTRIGGER"}},
+        {"SECONDARY ACTION", {"RIGHTCLICK", "LTRIGGER"}},
+        {"UI PRESS", {"LEFTCLICK", "A"}},
+        {"ZOOMIN", {"NONE", "RBUMPER"}},
+        {"ZOOMOUT", {"NONE", "LBUMPER"}},
+        {"RESETZOOM", {"ENTER", "SELECT"}},
         {"PAUSE", {"TAB", "START"}},
         {"STEP", {"RIGHT", "RSTICK"}},
-        {"RESETZOOM", {"ENTER", "SELECT"}},
-        {"TOGGLEFOCUS", {"F1", "LSTICK"}},
-        {"DEBUG_VIEW", {"F2", "NONE"}},
-        {"ZOOMIN", {"NONE", "LBUMPER"}},
-        {"ZOOMOUT", {"NONE", "RBUMPER"}},
         {"UI LEFT", {"LEFT", "DPAD LEFT"}},
         {"UI RIGHT", {"RIGHT", "DPAD RIGHT"}},
         {"UI UP", {"UP", "DPAD UP"}},
         {"UI DOWN", {"DOWN", "DPAD DOWN"}},
+        {"TOGGLEFOCUS", {"F1", "LSTICK"}},
+        {"DEBUG_VIEW", {"F2", "NONE"}},
         {"EXTRA 1", {"P", "NONE"}},
-        {"EXTRA 2", {"O", "NONE"}},
-        {"MAIN ACTION", {"LEFTCLICK", "A"}},
-        {"SECONDARY ACTION", {"RIGHTCLICK", "B"}}
+        {"EXTRA 2", {"O", "NONE"}}
     };
+
+    gameCursorPosition = toV2F(game->getWindow()->getSize().x / 2, game->getWindow()->getSize().y / 2);
+    cursorElement = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "cursor", UIPosition(getCursorWindowPos()), INT32_MAX, nullptr));
+    cursorElement->addComponent<ImageComponent>(game, cursorElement, UIPosition({0, 0}), "cursor image", 0, game->getAssetManager()->getTexture("cursor"), sf::Vector2f(30, 30), false);
+    mouseMovedThisFrame = true;
 }
 
 bool Input::isKeyPressed(std::string key)
 {
+    if (!game->getWindow()->getWindow().hasFocus()) return false;
+
     if (key == "LEFTCLICK") return sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
     else if (key == "RIGHTCLICK") return sf::Mouse::isButtonPressed(sf::Mouse::Button::Right);
     else
@@ -185,6 +202,7 @@ bool Input::isKeyPressed(std::string key)
 
 bool Input::isButtonPressed(std::string button)
 {
+    if (!game->getWindow()->getWindow().hasFocus()) return false;
     if (!sf::Joystick::isConnected(0)) return false;
     
     if (stringToButton.find(button) == stringToButton.end())
@@ -217,6 +235,22 @@ bool Input::isButtonPressed(std::string button)
             return false;
         }
     }
+    else if (button.substr(1) == "TRIGGER")
+    {
+        if (button == "LTRIGGER")
+        {
+            return getAxis(sf::Joystick::Axis::Z) > game->getSettings()->input_triggerMinPressValue;
+        }
+        else if (button == "RTRIGGER")
+        {
+            return getAxis(sf::Joystick::Axis::R) > game->getSettings()->input_triggerMinPressValue;
+        }
+        else
+        {
+            std::cout << "'" << button << "' is not a button.\n";
+            return false;
+        }
+    }
     else
     {
         return sf::Joystick::isButtonPressed(0, stringToButton[button]);
@@ -225,6 +259,8 @@ bool Input::isButtonPressed(std::string button)
 
 bool Input::isControlPressed(std::string control)
 {
+    if (!game->getWindow()->getWindow().hasFocus()) return false;
+
     if (controls.find(control) == controls.end())
     {
         std::cout << "ERROR in Input::isControlPressed(). Trying to get control '" << control << "'. That's not a control!\n";
@@ -302,20 +338,44 @@ sf::Vector2f Input::getMovement()
     }
 }
 
-sf::Vector2f Input::getMouseCoords()
+sf::Vector2f Input::getCursorCoords()
 {
-    return game->getWindow()->getWindow().mapPixelToCoords(sf::Mouse::getPosition(game->getWindow()->getWindow()));
+    return game->getWindow()->getWindow().mapPixelToCoords(toV2I(gameCursorPosition));
 }
 
-sf::Vector2f Input::getMouseWindowPos()
+sf::Vector2f Input::getCursorWindowPos()
 {
-    return toV2F(sf::Mouse::getPosition(game->getWindow()->getWindow()));
+    return gameCursorPosition;
 }
 
-void Input::update()
+void Input::inputUpdate()
 {
     updateBlame.clear();
     debugClock.restart();
+
+    if (game->getWindow()->getWindow().hasFocus())
+    {
+        // TEMP, need to fully implement controller support in a neat way
+        if (sf::Joystick::isConnected(0) && !mouseMovedThisFrame)
+        {
+            // sensitivity is divided by 100 to make it simpler to set, maybe not the right thing to do.
+            gameCursorPosition.x += getAxis(sf::Joystick::Axis::U) * game->getSettings()->input_controllerCursorSensitivity / 100;
+            gameCursorPosition.y += getAxis(sf::Joystick::Axis::V) * game->getSettings()->input_controllerCursorSensitivity / 100;
+        }
+        else
+        {
+            gameCursorPosition = toV2F(sf::Mouse::getPosition(game->getWindow()->getWindow()));
+        }
+    }
+    
+    // limits the game cursor to on the screen.
+    sf::Vector2u windowSize = game->getWindow()->getSize();
+    gameCursorPosition = {std::min(std::max(gameCursorPosition.x, 0.f), toFloat(windowSize.x)), std::min(std::max(gameCursorPosition.y, 0.f), toFloat(windowSize.y))};
+
+    cursorElement->position.position = gameCursorPosition;
+    cursorElement->updateVisuals();
+
+    updateBlame["GAME CURSOR"] = debugClock.restart().asSeconds();
     
     if (game->getWindow()->getWindow().hasFocus())
     {
@@ -330,25 +390,9 @@ void Input::update()
         }
 
         updateBlame["CONTROLS/PROCESSING"] = debugClock.restart().asSeconds();
-
-        for (auto b : buttonsPressedThisFrame)
-        {
-            if (b.second) game->getWindow()->getWindow().setMouseCursorVisible(false);
-            break;
-        }
-
-        for (auto k : keysPressedThisFrame)
-        {
-            if (k.second) game->getWindow()->getWindow().setMouseCursorVisible(true);
-            break;
-        }
-
-        updateBlame["CURSOR VISIBILITY SET"] = debugClock.restart().asSeconds();
     }
 
-
-
-    // TODL: OLD THINGS STILL NEEDING TO BE REIMPLEMENTED
+    // TODO: OLD THINGS STILL NEEDING TO BE REIMPLEMENTED
     //   \/   \/   \/   \/   \/   \/   \/   \/  \/
 
 
@@ -385,14 +429,19 @@ void Input::update()
     //             controllerUI_moveClock.restart();
     //         }
     //     }
-
-    //     updateBlame["CONTROLLER"] = debugClock.restart().asSeconds();
     // }
+
+    mouseMovedThisFrame = false;
 
     if (game->getScene()->debugMode && game->getScene()->debugLevel == 1) printBlameStats(updateBlame, "INPUT_UPDATE");
 }
 
-void Input::mouseEvent(sf::Event::MouseButtonPressed mouseButtonPressed)
+void Input::mouseMoveEvent(sf::Event::MouseMoved mouseMoved)
+{
+    mouseMovedThisFrame = true;
+}
+
+void Input::mouseButtonEvent(sf::Event::MouseButtonPressed mouseButtonPressed)
 {
     if (mouseButtonPressed.button == sf::Mouse::Button::Left)
     {

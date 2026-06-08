@@ -31,9 +31,13 @@ void EventHandler::processEvents()
         {
             mouseWheelScrolled(scroll);
         }
+        else if (const auto* mouseMoved = event->getIf<sf::Event::MouseMoved>())
+        {
+            game->getInput()->mouseMoveEvent(*mouseMoved);
+        }
         else if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>())
         {
-            game->getInput()->mouseEvent(*mouseButtonPressed);
+            game->getInput()->mouseButtonEvent(*mouseButtonPressed);
         }
         else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
         {

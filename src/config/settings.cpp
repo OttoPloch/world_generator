@@ -19,4 +19,6 @@ void Settings::init()
     generation_decoration_frequency = chunk_size * 6;
     maxTileZ = 2;
     worldSeed = 117;
+    input_controllerCursorSensitivity = 2;
+    input_triggerMinPressValue = 0;
 }

@@ -59,7 +59,7 @@ void Scene::tick()
             chunkPosText->setText("Mouse Chunk Pos: " + std::to_string(mouseChunkPos.x) + ", " + std::to_string(mouseChunkPos.y));
         }
     
-        sf::Vector2f mouseWorldPos = game->getInput()->getMouseCoords();
+        sf::Vector2f mouseWorldPos = game->getInput()->getCursorCoords();
         sf::Vector2f mouseLocalWorldPos = {std::fmod(mouseWorldPos.x, toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size), std::fmod(mouseWorldPos.y, toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size)};
         sf::Vector2i mouseLocalPos = {toInt(std::floor(mouseLocalWorldPos.x / game->getSettings()->tile_size)), toInt(std::floor(mouseLocalWorldPos.y / game->getSettings()->tile_size))};
         Chunk* mouseChunk = chunkLayer.getChunk(mouseChunkPos);
@@ -245,7 +245,15 @@ void Scene::draw()
 
 void Scene::sceneInput(std::string control)
 {
-    if (control == "RESETZOOM")
+    if (control == "ZOOMIN")
+    {
+        camera.zoom(1);
+    }
+    else if (control == "ZOOMOUT")
+    {
+        camera.zoom(-1);
+    }
+    else if (control == "RESETZOOM")
     {
         camera.resetZoom();
     }
@@ -256,18 +264,6 @@ void Scene::sceneInput(std::string control)
     else if (control == "DEBUG_VIEW")
     {
         debugMode = !debugMode;
-    }
-    else if (control == "ZOOMIN")
-    {
-        camera.zoom(1);
-    }
-    else if (control == "ZOOMOUT")
-    {
-        camera.zoom(-1);
-    }
-    else if (control == "INTERACT")
-    {
-        //uiLayer.interactiveUIManager.click();
     }
     else if (control == "EXTRA 1")
     {
@@ -300,7 +296,7 @@ bool Scene::processActionRequest(Entity* actor, Action* action)
                 {
                     // TRYING TO MINE
 
-                    sf::Vector2f mouseWorldPos = game->getInput()->getMouseCoords();
+                    sf::Vector2f mouseWorldPos = game->getInput()->getCursorCoords();
 
                     if (auto chunk = chunkLayer.getChunk(worldToChunkPosition(game, mouseWorldPos)))
                     {
@@ -324,11 +320,11 @@ bool Scene::processActionRequest(Entity* actor, Action* action)
                         }
                     }
 
-                    // EITHER THE CHUNK OR TILE DOESN'T EXIST, OR THERE THE TILE IS NOT MINEABLE
+                    // EITHER THE CHUNK OR TILE DOESN'T EXIST, OR THE TILE IS NOT MINEABLE
                     return false;
                 }
 
-                // ALL CHECKS PASSED, REQUEST IS VALID
+                // ALL GENERAL CHECKS PASSED (NO SPECIFIC ACTION CHECKS APPLIED), REQUEST IS CONSIDERED VALID
                 return true;
             }
         }
