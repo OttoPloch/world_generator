@@ -6,6 +6,7 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <memory>
 #include <unordered_map>
+#include <algorithm>
 
 Chunk::Chunk() {}
 
@@ -128,27 +129,34 @@ void Chunk::setTile(sf::Vector2i localPositon, TileTemplate* t, bool setHighestN
     
     if (tile) // replacing an old tile
     {
-        if ((tile->collides && !t->collides) || (!tile->collides && t->collides))
+        if (t->collides)
         {
-            // old tile and new tile do not have same collider value, tilesWithColliders needs to be updated.
-            
+            if (!tile->collides) tilesWithColliders.push_back(tile);
+        }
+        else
+        {
             if (tile->collides)
             {
-                // old tile collides but new one doesn't, remove this tile from tilesWithColliders
-                for (int i = 0; i < tilesWithColliders.size(); i++)
-                {
-                    if (tilesWithColliders[i] == tile)
-                    {
-                        tilesWithColliders.erase(tilesWithColliders.begin() + i);
-
-                        break;
-                    }
-                }
+                auto i = std::find(tilesWithColliders.begin(), tilesWithColliders.end(), tile);
+                if (i != tilesWithColliders.end()) tilesWithColliders.erase(i);
+                else std::cout << "TILE WITH COLLIDER NOT FOUND IN tilesWithColliders VECTOR IN CHUNK AT " << chunkPosition.x << ", " << chunkPosition.y << ". TILE POSITION IS " << tile->localPosition.x << ", " << tile->localPosition.y << " AND TYPE IS " << static_cast<int>(tile->type) << ".\n";
             }
-            else
+        }
+
+        bool oldHasAnimation = (tile->animation || tile->globalAnimation);
+        bool newHasAnimation = (t->animation || t->globalAnimation);
+
+        if (newHasAnimation)
+        {
+            if (!oldHasAnimation) tilesWithAnimations.push_back(tile);
+        }
+        else
+        {
+            if (oldHasAnimation)
             {
-                // new tile collides but old one doesn't, add tile to tilesWithColliders
-                tilesWithColliders.push_back(tile);
+                auto i = std::find(tilesWithAnimations.begin(), tilesWithAnimations.end(), tile);
+                if (i != tilesWithAnimations.end()) tilesWithAnimations.erase(i);
+                else std::cout << "TILE WITH ANIMATION NOT FOUND IN tilesWithAnimations VECTOR IN CHUNK AT " << chunkPosition.x << ", " << chunkPosition.y << ". TILE POSITION IS " << tile->localPosition.x << ", " << tile->localPosition.y << " AND TYPE IS " << static_cast<int>(tile->type) << ".\n";
             }
         }
 
@@ -162,6 +170,7 @@ void Chunk::setTile(sf::Vector2i localPositon, TileTemplate* t, bool setHighestN
         tiles[effectiveZ][y * chunkSize + x] = std::make_unique<Tile>(game, this, sf::Vector2i(x, y), *t, effectiveZ);
         
         if (t->collides) tilesWithColliders.push_back(tiles[effectiveZ][y * chunkSize + x].get());
+        if (t->animation || t->globalAnimation) tilesWithAnimations.push_back(tiles[effectiveZ][y * chunkSize + x].get());
 
         createTileVerts({x, y}, effectiveZ);
     }
@@ -249,12 +258,9 @@ void Chunk::tick()
 
 void Chunk::update(float dt)
 {
-    for (int i = 0; i < tiles.size(); i++)
+    for (auto t : tilesWithAnimations)
     {
-        for (int j = 0; j < tiles[i].size(); j++)
-        {
-            if (Tile* tile = tiles[i][j].get()) tile->update(dt);
-        }
+        t->update(dt);
     }
 }
 

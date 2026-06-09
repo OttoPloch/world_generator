@@ -81,6 +81,7 @@ private:
     // tiles have a z for their height value, this
     // 2D vector separates them by that value.
     std::vector<std::vector<std::unique_ptr<Tile>>> tiles;
+    std::vector<Tile*> tilesWithAnimations;
 
     std::vector<sf::Vertex> tileVertices;
     std::vector<sf::Vertex> tileDebugVertices;
