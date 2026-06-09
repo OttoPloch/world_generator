@@ -215,10 +215,6 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition)
         for (int i = 0; i < game->getSettings()->generation_decoration_frequency; i++)
         {
             sf::Vector2f decorationBottom(game->random.getRandInt(1, chunkLength - 1), game->random.getRandInt(1, chunkLength - 1));
-            // makes decorations line up with other pixels
-            decorationBottom = {roundToMultiple(decorationBottom.x, positionRounding), roundToMultiple(decorationBottom.y, positionRounding)};
-            // offsets the bottom to avoid stitching.
-            decorationBottom += {toFloat(game->random.getRandInt(-100, 100)) / 10000.f, toFloat(game->random.getRandInt(-100, 100)) / 10000.f};
 
             // setting tex coords from the options given in the atlas
             std::vector<sf::FloatRect> decorationOptions;            
@@ -230,6 +226,11 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition)
             
             sf::Vector2f decorationSize(decorationTexCoords.size.x * scale, decorationTexCoords.size.y * scale);
             sf::Vector2f decorationWorldTopLeft(chunkWorldPos.x + decorationBottom.x - decorationSize.x / 2.f, chunkWorldPos.y + decorationBottom.y - decorationSize.y);
+
+            // makes decorations line up with other pixels
+            decorationWorldTopLeft = {roundToMultiple(decorationWorldTopLeft.x, positionRounding), roundToMultiple(decorationWorldTopLeft.y, positionRounding)};
+            // offsets the decoration to avoid stitching.
+            decorationWorldTopLeft += {toFloat(game->random.getRandInt(-100, 100)) / 10000.f, toFloat(game->random.getRandInt(-100, 100)) / 10000.f};
 
             sf::Vector2i decorationTileTopLeft(worldToTilePosition(game, decorationWorldTopLeft));
             sf::Vector2i decorationTileBottomRight(worldToTilePosition(game, decorationWorldTopLeft + decorationSize));

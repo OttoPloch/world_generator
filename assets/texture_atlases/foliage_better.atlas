@@ -1,7 +1,7 @@
 tilesize 1
 item rocks
 coord 0,0
-size 26,16
+size 25,16
 item worms
 coord 32,0
 size 8,7
@@ -10,7 +10,7 @@ coord 0,16
 size 14,13
 item spot2
 coord 16,16
-size 16m,11
+size 15,11
 item spot3
 coord 0,32
 size 22,10
