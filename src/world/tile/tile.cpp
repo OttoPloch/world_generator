@@ -28,31 +28,6 @@ Tile::Tile(Game* game, Chunk* chunk, sf::Vector2i localPosition, const TileTempl
     this->z = z;
 }
 
-sf::FloatRect Tile::getCollRect()
-{
-    if (collides)
-    {
-        if (chunk)
-        {
-            sf::Vector2f collSize = {size * collSizeFraction.x, size * collSizeFraction.y};
-            
-            sf::FloatRect tileRect = chunk->getTileRect(localPosition);
-    
-            return sf::FloatRect({tileRect.position.x + size / 2.f - collSize.x / 2.f, tileRect.position.y + size / 2.f - collSize.y / 2.f}, collSize);
-        }
-        else
-        {
-            std::cout << "ERROR tile could not get collision rect because it doesn't have a chunk ptr.\n";
-
-            return sf::FloatRect({0, 0}, {-1, -1});
-        }
-    }
-    else
-    {
-        return sf::FloatRect({0, 0}, {-1, -1});
-    }
-}
-
 void Tile::update(float dt)
 {
     if (globalAnimation)

@@ -216,113 +216,6 @@ std::array<Chunk*, 9> ChunkLayer::getNearbyChunks(sf::Vector2f position)
     return chunks;
 }
 
-std::array<Tile*, 8> ChunkLayer::getTileNeighbors(sf::Vector2i chunkPos, int column, int row)
-{
-    std::array<Tile*, 8> neighbors;
-
-    Chunk* chunk = chunks[chunkPos].get();
-
-    if (column != 0 && column != chunkSize - 1 && row != 0 && row != chunkSize - 1)
-    {
-        neighbors[0] = chunk->getTile(column - 1, row - 1);
-        neighbors[1] = chunk->getTile(column, row - 1);
-        neighbors[2] = chunk->getTile(column + 1, row - 1);
-        neighbors[3] = chunk->getTile(column - 1, row);
-        neighbors[4] = chunk->getTile(column + 1, row);
-        neighbors[5] = chunk->getTile(column - 1, row + 1);
-        neighbors[6] = chunk->getTile(column, row + 1);
-        neighbors[7] = chunk->getTile(column + 1, row + 1);
-    }
-    else
-    {
-        if (column != 0)
-        {
-            (row != 0) ? neighbors[0] = chunk->getTile(column - 1, row - 1) : neighbors[0] = nullptr;
-            neighbors[3] = chunk->getTile(column - 1, row);
-            (row != chunkSize - 1) ? neighbors[5] = chunk->getTile(column - 1, row + 1) : neighbors[5] = nullptr;
-        }
-        else
-        {
-            Chunk* leftChunk = chunks[{chunkPos.x - 1, chunkPos.y}].get();
-
-            if (leftChunk)
-            {
-                (row != 0) ? neighbors[0] = leftChunk->getTile(-1, row - 1) : neighbors[0] = nullptr;
-                neighbors[3] = leftChunk->getTile(-1, row);
-                (row != chunkSize - 1) ? neighbors[5] = leftChunk->getTile(-1, row + 1) : neighbors[5] = nullptr;
-            }
-            else
-            {
-                neighbors[0] = nullptr;
-                neighbors[3] = nullptr;
-                neighbors[5] = nullptr;
-            }
-        }
-
-        if (column != chunkSize - 1)
-        {
-            (row != 0) ? neighbors[2] = chunk->getTile(column + 1, row - 1) : neighbors[2] = nullptr;
-            neighbors[4] = chunk->getTile(column + 1, row);
-            (row != chunkSize - 1) ? neighbors[7] = chunk->getTile(column + 1, row + 1) : neighbors[7] = nullptr;
-        }
-        else
-        {
-            Chunk* rightChunk = chunks[{chunkPos.x + 1, chunkPos.y}].get();
-
-            if (rightChunk)
-            {
-                (row != 0) ? neighbors[2] = rightChunk->getTile(0, row - 1) : neighbors[2] = nullptr;
-                neighbors[4] = rightChunk->getTile(0, row);
-                (row != chunkSize - 1) ? neighbors[7] = rightChunk->getTile(0, row + 1) : neighbors[7] = nullptr;
-            }
-            else
-            {
-                neighbors[2] = nullptr;
-                neighbors[4] = nullptr;
-                neighbors[7] = nullptr;
-            }
-        }
-
-        if (row != 0)
-        {
-            neighbors[1] = chunk->getTile(column, row - 1);
-        }
-        else
-        {
-            Chunk* topChunk = chunks[{chunkPos.x, chunkPos.y - 1}].get();
-
-            if (topChunk)
-            {
-                neighbors[1] = topChunk->getTile(column, -1);
-            }
-            else
-            {
-                neighbors[1] = nullptr;
-            }
-        }
-
-        if (row != chunkSize - 1)
-        {
-            neighbors[6] = chunk->getTile(column, row + 1);
-        }
-        else
-        {
-            Chunk* bottomChunk = chunks[{chunkPos.x, chunkPos.y + 1}].get();
-
-            if (bottomChunk)
-            {
-                neighbors[6] = bottomChunk->getTile(column, 0);
-            }
-            else
-            {
-                neighbors[6] = nullptr;
-            }
-        }
-    }
-
-    return neighbors;
-}
-
 void ChunkLayer::tick()
 {
     for (auto& i : chunks)
@@ -446,5 +339,24 @@ void ChunkLayer::draw(bool debug, int debugLayerView)
         }
         
         window->getWindow().draw(&bgObjectsVertices[0], bgObjectsVertices.size(), sf::PrimitiveType::Triangles, bgObjectStates);
+    }
+
+    if (debug)
+    {
+        sf::Vector2f cursorWorldPos = game->getInput()->getCursorCoords();
+        sf::Vector2i cursorChunkPos = worldToChunkPosition(game, cursorWorldPos);
+        Chunk* cursorChunk = getChunk(cursorChunkPos);
+
+        if (cursorChunk && cursorChunk->state == ChunkState::ACTIVE)
+        {
+            for (auto b : cursorChunk->bgObjects)
+            {
+                if (mouseRectCollide(game, b.rect.position, b.rect.size, true))
+                {
+                    std::array<sf::Vertex, 8> debugBgObjectVerts = VertexGroup::createLineVerts(b.rect.position, b.rect.size, sf::Color::Red);
+                    window->getWindow().draw(debugBgObjectVerts.data(), debugBgObjectVerts.size(), sf::PrimitiveType::Lines);
+                }
+            }
+        }
     }
 }

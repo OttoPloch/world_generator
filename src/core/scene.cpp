@@ -68,7 +68,7 @@ void Scene::tick()
 
         if (mouseChunk && mouseChunk->state == ChunkState::ACTIVE)
         {
-            Tile* mouseTile = mouseChunk->getTile(mouseLocalPos.x, mouseLocalPos.y);
+            Tile* mouseTile = mouseChunk->getTile(mouseLocalPos);
     
             if (mouseTile)
             {
@@ -305,7 +305,7 @@ bool Scene::processActionRequest(Entity* actor, Action* action)
                         sf::Vector2i tilePos = worldToTilePosition(game, mouseWorldPos);
                         tilePos = {tilePos.x % game->getSettings()->chunk_size, tilePos.y % game->getSettings()->chunk_size};
 
-                        if (auto t = chunk->getTile(tilePos.x, tilePos.y))
+                        if (auto t = chunk->getTile(tilePos))
                         {
                             // FOUND TARGETED TILE
 

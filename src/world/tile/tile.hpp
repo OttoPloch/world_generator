@@ -18,8 +18,6 @@ public:
     
     Tile(Game* game, Chunk* chunk, sf::Vector2i localPosition, const TileTemplate& t, int z = 0);
 
-    sf::FloatRect getCollRect();
-
     template<typename T>
     T* getTag()
     {

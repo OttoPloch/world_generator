@@ -60,7 +60,7 @@ void CollisionSystem::findAndResolveCollisions(Entity* e)
 
             for (auto t : nearbyTilesWithColliders)
             {
-                Tile* tile = t.first->getTile(t.second.first.x, t.second.first.y, false, t.second.second);
+                Tile* tile = t.first->getTile(t.second.first, false, t.second.second);
                 sf::FloatRect tileRect = t.first->getTileRect(t.second.first, t.second.second);
                 GamePosition tilePos(game, tileRect.position);
                 CollisionRect tileCollRect(tilePos, tileRect.size, RectType::STATIC);

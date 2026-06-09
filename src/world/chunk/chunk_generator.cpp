@@ -263,7 +263,7 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition)
                     pos.x = pos.x % chunkSize;
                     pos.y = pos.y % chunkSize;
                     
-                    decorationTiles.emplace_back(chunk->getTile(pos.x, pos.y));
+                    decorationTiles.emplace_back(chunk->getTile(pos));
                 }
 
                 if (!allPositionsValid) break;

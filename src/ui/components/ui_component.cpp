@@ -36,7 +36,7 @@ bool UIComponent::isSelected()
 {
     sf::FloatRect gb = getGlobalBounds();
 
-    return mouseRectCollide(game, gb.position, gb.size);
+    return mouseRectCollide(game, gb.position, gb.size, false);
 }
 
 bool UIComponent::isPressed()

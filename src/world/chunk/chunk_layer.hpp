@@ -31,9 +31,6 @@ public:
 
     std::array<Chunk*, 9> getNearbyChunks(sf::Vector2f position);
 
-    // can get neighbors from other chunks
-    std::array<Tile*, 8> getTileNeighbors(sf::Vector2i chunkPos, int column, int row);
-
     void tick();
     
     void loadUpdate();

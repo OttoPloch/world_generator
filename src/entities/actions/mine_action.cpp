@@ -21,7 +21,7 @@ bool MineAction::start(Game* game)
         bool getHighestNonAir = false;
         if (mineZ == -1) getHighestNonAir = true;
 
-        Tile* tile = chunk->getTile(tilePos.x, tilePos.y, getHighestNonAir, mineZ);
+        Tile* tile = chunk->getTile(tilePos, getHighestNonAir, mineZ);
         
         if (tile)
         {
@@ -76,7 +76,7 @@ void MineAction::completeAction(Entity* actor, sf::Vector2f position)
         sf::Vector2i tilePos = worldToTilePosition(actor->game, startPosition);
         tilePos = {tilePos.x % actor->game->getSettings()->chunk_size, tilePos.y % actor->game->getSettings()->chunk_size};
 
-        chunk->setTile(tilePos.x, tilePos.y, &chunk->chunkLayer->tManager.tileTemplates["air"]);
+        chunk->setTile(tilePos, &chunk->chunkLayer->tManager.tileTemplates["air"]);
     }
 
     active = false;

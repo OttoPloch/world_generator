@@ -5,6 +5,7 @@
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <memory>
+#include <unordered_map>
 
 Chunk::Chunk() {}
 
@@ -26,8 +27,10 @@ Chunk::Chunk(Game* game, ChunkLayer* chunkLayer, sf::Vector2i chunkPosition, std
         tiles[i].resize(chunkSize * chunkSize);
     }
 
+    // (z layers) * (tiles in a layer) * (6 vertices per tile)
     tileVertices.resize(tiles.size() * chunkSize * chunkSize * 6);
-    tileDebugVertices.resize(tiles.size());
+    
+    tileDebugVertices.resize(tiles.size() * chunkSize * chunkSize * 8); // 8 vertices per tile to draw line rects not triangles
 
     for (int i = 0; i < tiles.size(); i++)
     {
@@ -51,61 +54,50 @@ Chunk::Chunk(Game* game, ChunkLayer* chunkLayer, sf::Vector2i chunkPosition, std
 
 void Chunk::createTileVerts(int index, int z)
 {
-    sf::Vector2f tileWorldPos = {worldPosition.x + toFloat(tiles[z][index]->localPosition.x) * tileSize, worldPosition.y + toFloat(tiles[z][index]->localPosition.y) * tileSize};
+    Tile* tile = getTile(index, false, z);
+    if (!tile) return;
+
+    sf::Vector2f tilePosition = {worldPosition.x + tile->localPosition.x * tileSize, worldPosition.y + tile->localPosition.y * tileSize};
+    sf::FloatRect texCoords = tile->myVerts.texCoords;
     
-    sf::FloatRect texCoords = tiles[z][index]->myVerts.texCoords;
+    sf::Vector2f tileWorldSize = {tileSize, tileSize}; // just here so it can be set to 0, 0 if the tile is not meant to be visible
+    if (texCoords.size == sf::Vector2f(0, 0)) tileWorldSize = {0, 0};
 
-    // center on bottom center to allow flexible
-    // sizing for the image of the tile
-    tileWorldPos.x += tileSize / 2.f;
-    tileWorldPos.y += tileSize;
-
-    float texCoordRatio = toFloat(texCoords.size.x) / toFloat(texCoords.size.y);
-    sf::Vector2f tileFittedSize;
-    (texCoordRatio >= 1.f) ? tileFittedSize = {tileSize * texCoordRatio, tileSize} : tileFittedSize = {tileSize, tileSize / texCoordRatio};
-    sf::Vector2f tileAdjustedTl = {tileWorldPos.x - tileFittedSize.x / 2.f, tileWorldPos.y - tileFittedSize.y};
-
-    std::array<sf::Vertex, 6> verts = VertexGroup::createTriangleVerts(tileAdjustedTl, tileFittedSize, texCoords);
+    std::array<sf::Vertex, 6> verts = VertexGroup::createTriangleVerts(tilePosition, tileWorldSize, texCoords);
     for (int i = 0; i < 6; i++)
     {
-        tileVertices[(chunkSize * chunkSize * 6 * z) + (index * 6 + i)] = verts[i];
+        tileVertices[(chunkSize * chunkSize * 6 * z) + (index * 6) + i] = verts[i];
     }
 
-    if (!tiles[z][index]->collides) return;
+    
 
-    // assuming tl, tr, br, bl as the first 4 vertices of the array,
-    // this adds those to the debug vertex array, which is lines instead
-    // of triangles.
-    for (int i = 0; i < 5; i++)
+    if (tile->collides) // has a collider, set verts
     {
-        sf::Vertex debugVertex;
-
-        // goes 0, 1, 2, 3, 0 so that the tl vert
-        // gets added to the beginning and end.
-        debugVertex.position = verts[i % 4].position;
-        debugVertex.color = sf::Color::Red;
-
-        if (i == 0 || i == 4) // if first or last (tl), do once
+        std::array<sf::Vertex, 8> colliderVerts = VertexGroup::createLineVerts(tilePosition, {tileSize, tileSize}, sf::Color::Red);
+        for (int i = 0; i < 8; i++)
         {
-            tileDebugVertices[z].push_back(debugVertex);
+            tileDebugVertices[(chunkSize * chunkSize * 8 * z) + (index * 8) + i] = colliderVerts[i];
         }
-        else // otherwise, add twice
+    }
+    else // no collider, erase verts
+    {
+        std::array<sf::Vertex, 8> colliderVerts = VertexGroup::createLineVerts(tilePosition, {0, 0}, sf::Color(0, 0, 0, 0));
+        for (int i = 0; i < 8; i++)
         {
-            tileDebugVertices[z].push_back(debugVertex);
-            tileDebugVertices[z].push_back(debugVertex);
+            tileDebugVertices[(chunkSize * chunkSize * 8 * z) + (index * 8) + i] = colliderVerts[i];
         }
     }
 }
 
-void Chunk::createTileVerts(sf::Vector2i tilePosition, int z)
+void Chunk::createTileVerts(sf::Vector2i localPosition, int z)
 {
-    createTileVerts(tilePosition.y * chunkSize + tilePosition.x, z);
+    createTileVerts(localPosition.y * chunkSize + localPosition.x, z);
 }
 
-Tile* Chunk::getTile(int column, int row, bool getHighestNonAir, int z)
+Tile* Chunk::getTile(sf::Vector2i localPosition, bool getHighestNonAir, int z)
 {
-    int x = column;
-    int y = row;
+    int x = localPosition.x;
+    int y = localPosition.y;
     int effectiveZ = z;
     if (getHighestNonAir) effectiveZ = getHighestNonAirZ(x, y);
     else wrapPosition(x, y, effectiveZ);
@@ -114,12 +106,17 @@ Tile* Chunk::getTile(int column, int row, bool getHighestNonAir, int z)
     return tiles[effectiveZ][y * chunkSize + x].get();
 }
 
-void Chunk::setTile(int column, int row, TileTemplate* t, bool setHighestNonAir, int z)
+Tile* Chunk::getTile(int index, bool getHighestNonAir, int z)
+{
+    return getTile({index % chunkSize, static_cast<int>(index / chunkSize)}, getHighestNonAir, z);
+}
+
+void Chunk::setTile(sf::Vector2i localPositon, TileTemplate* t, bool setHighestNonAir, int z)
 {
     // Wrapping values //
 
-    int x = column;
-    int y = row;
+    int x = localPositon.x;
+    int y = localPositon.y;
     int effectiveZ = z;
     if (setHighestNonAir) effectiveZ = getHighestNonAirZ(x, y);
     else wrapPosition(x, y, effectiveZ);
@@ -127,7 +124,9 @@ void Chunk::setTile(int column, int row, TileTemplate* t, bool setHighestNonAir,
 
     // // // // // // //
 
-    if (Tile* tile = tiles[effectiveZ][y * chunkSize + x].get())
+    Tile* tile = tiles[effectiveZ][y * chunkSize + x].get();
+    
+    if (tile) // replacing an old tile
     {
         if ((tile->collides && !t->collides) || (!tile->collides && t->collides))
         {
@@ -156,40 +155,38 @@ void Chunk::setTile(int column, int row, TileTemplate* t, bool setHighestNonAir,
         // finally set the tile
         *tile = Tile(game, this, {x, y}, *t, effectiveZ);
 
-        createTileVerts(y * chunkSize + x, effectiveZ);
+        createTileVerts({x, y}, effectiveZ);
     }
-    else
+    else // no tile created at this position yet, do it now
     {
-        // no tile created at this position yet, do it now
-
         tiles[effectiveZ][y * chunkSize + x] = std::make_unique<Tile>(game, this, sf::Vector2i(x, y), *t, effectiveZ);
         
         if (t->collides) tilesWithColliders.push_back(tiles[effectiveZ][y * chunkSize + x].get());
 
-        createTileVerts(y * chunkSize + x, effectiveZ);
+        createTileVerts({x, y}, effectiveZ);
     }
 }
 
 void Chunk::setTile(int index, TileTemplate* t, bool setHighestNonAir, int z)
 {
-    setTile(index % chunkSize, toInt(std::floor(index / chunkSize)), t, setHighestNonAir, z);
+    setTile({index % chunkSize, static_cast<int>(index / chunkSize)}, t, setHighestNonAir, z);
 }
 
 std::vector<std::vector<std::unique_ptr<Tile>>>* Chunk::getTiles() { return &tiles; }
 
-sf::FloatRect Chunk::getTileRect(sf::Vector2i tileLocalPosition, int z, bool returnCenterPos)
+sf::FloatRect Chunk::getTileRect(sf::Vector2i localPosition, int z, bool returnCenterPos)
 {
-    Tile* tile = getTile(tileLocalPosition.x, tileLocalPosition.y, false, z);
+    Tile* tile = getTile(localPosition, false, z);
 
     sf::Vector2f tileWorldPos;
 
     if (returnCenterPos)
     {
-        tileWorldPos = {worldPosition.x + (tileLocalPosition.x + .5f) * tile->size, worldPosition.y + (tileLocalPosition.y + .5f) * tile->size};
+        tileWorldPos = {worldPosition.x + (localPosition.x + .5f) * tile->size, worldPosition.y + (localPosition.y + .5f) * tile->size};
     }
     else
     {
-        tileWorldPos = {worldPosition.x + tileLocalPosition.x * tile->size, worldPosition.y + tileLocalPosition.y * tile->size};
+        tileWorldPos = {worldPosition.x + localPosition.x * tile->size, worldPosition.y + localPosition.y * tile->size};
     }
 
     return sf::FloatRect(tileWorldPos, {tile->size, tile->size});
@@ -276,15 +273,12 @@ void Chunk::draw(bool debug, int debugLayerView)
         if (effectiveLayerView == -1)
         {
             window->getWindow().draw(tileVertices.data(), tileVertices.size(), sf::PrimitiveType::Triangles, tileStates);
-            for (int i = 0; i < tileDebugVertices.size(); i++)
-            {
-                window->getWindow().draw(tileDebugVertices[i].data(), tileDebugVertices[i].size(), sf::PrimitiveType::Lines);
-            }
+            window->getWindow().draw(tileDebugVertices.data(), tileDebugVertices.size(), sf::PrimitiveType::Lines);
         }
         else
         {
             window->getWindow().draw(&tileVertices[chunkSize * chunkSize * 6 * effectiveLayerView], (chunkSize * chunkSize * 6), sf::PrimitiveType::Triangles, tileStates);
-            window->getWindow().draw(tileDebugVertices[effectiveLayerView].data(), tileDebugVertices[effectiveLayerView].size(), sf::PrimitiveType::Lines);
+            window->getWindow().draw(&tileDebugVertices[chunkSize * chunkSize * 8 * effectiveLayerView], (chunkSize * chunkSize * 8), sf::PrimitiveType::Lines);
         }
     }
     else
