@@ -7,6 +7,7 @@
 
 class Game;
 class UIElement;
+class UIComponent;
 
 class Input
 {
@@ -46,7 +47,7 @@ public:
     // accounting for the current view.
     sf::Vector2f getCursorWindowPos();
 
-    void inputUpdate();
+    void inputUpdate(float dt);
 
     // These ___Event functions are meant to be only used by the EventHandler
     // left and right mouse buttons are put into keysPressedThisFrame (even though they are not keys).
@@ -57,6 +58,11 @@ public:
     void buttonEvent(sf::Event::JoystickButtonPressed buttonPressed);
 
     void resetPressedThisFrame();
+
+    bool isUIModeActive();
+    
+    UIElement* getSelectedElement();
+    UIComponent* getSelectedComponent();
 private:
     void moveUISelector(sf::Vector2f direction);
 
@@ -81,8 +87,10 @@ private:
 
     UIElement* UISelector;
     UIElement* selectedElement;
+    UIComponent* selectedComponent;
     bool UIMode;
     bool usingMovementForUISelector; // only used so that getMovement() can be called with UIMode on and not return (0, 0)
+    bool hideCursor;
     sf::Clock UIMoveClock;
 
     std::unordered_map<std::string, float> updateBlame;

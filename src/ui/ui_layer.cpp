@@ -9,9 +9,11 @@
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Vertex.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <algorithm>
 #include <cmath>
 #include <filesystem>
+#include <memory>
 
 UILayer::UILayer() {}
 
@@ -43,6 +45,9 @@ void UILayer::init(Game* game, Camera* camera)
     // e4->addComponent<ImageComponent>(game, e4, UIPosition({0, 0}, UIOrigin::TOP_RIGHT), "image bee", 0, game->getAssetManager()->getTexture("dr bee"), sf::Vector2f(100, 100), false);
     // e4->addComponent<ImageComponent>(game, e4, UIPosition({0, 0}, UIOrigin::TOP_RIGHT, UIAnchor::BOTTOM_LEFT), "image", 1, game->getAssetManager()->getTexture("shaq_time_out"), sf::Vector2f(100, 100), false, game->getAssetManager()->getAnimation("dot_left"));
 
+    auto inputNote = createElement(std::make_unique<UIElement>(game, "__inputNote", UIPosition({0, 10}, UIOrigin::TOP_LEFT, UIAnchor::TOP_MIDDLE)));
+    inputNote->addComponent<TextComponent>(game, inputNote, UIPosition({0, 0}, UIOrigin::TOP_MIDDLE), "text", 0, "Press B on controller to navigate the UI", game->getAssetManager()->getFont("White Storm"), 32);
+
     auto e5 = elements.emplace_back(std::make_unique<UIElement>(game, "debug text display", UIPosition({0, 0}))).get();
     e5->addComponent<TextComponent>(game, e5, UIPosition({10, 10}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT), "fps text", 0, "FPS: ", game->getAssetManager()->getFont("sfml_font"), 32);
     e5->addComponent<TextComponent>(game, e5, UIPosition({10, 10}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT), "mouse chunk pos text", 1, "Mouse Chunk Pos: ", game->getAssetManager()->getFont("sfml_font"), 32);
@@ -50,9 +55,7 @@ void UILayer::init(Game* game, Camera* camera)
     
     auto e6 = elements.emplace_back(std::make_unique<UIElement>(game, "useless button", UIPosition({10, -10}, UIOrigin::BOTTOM_LEFT, UIAnchor::BOTTOM_LEFT))).get();
     e6->addComponent<ButtonComponent>(game, e6, UIPosition({0, 0}, UIOrigin::BOTTOM_LEFT), "button", 0, game->getAssetManager()->getTexture("default_button", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("button", "ui/"), sf::Vector2f(100, 100), false);
-    
-    auto test1 = elements.emplace_back(std::make_unique<UIElement>(game, "bee", UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::CENTER))).get();
-    test1->addComponent<ImageComponent>(game, test1, UIPosition({10, 10}, UIOrigin::CENTER, UIAnchor::CENTER), "background", 0, game->getAssetManager()->getTexture("dr bee"), sf::Vector2f(100, 100), false);
+    e6->addComponent<ButtonComponent>(game, e6, UIPosition({110, 0}, UIOrigin::BOTTOM_LEFT), "button2", 0, game->getAssetManager()->getTexture("blue_button", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("button", "ui/"), sf::Vector2f(100, 100), false);
 
     // auto e6 = elements.emplace_back(std::make_unique<UIElement>(game, "t3st", UIPosition({0, 0}))).get();
     // e6->addComponent<BackgroundComponent>(game, e6, UIPosition({0, 0}), "bg", 0, sf::Vector2f(300, 200), 40, game->getAssetManager()->getTexture("ui_default", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("background_8px", "ui/"));
@@ -245,57 +248,39 @@ void UILayer::draw(bool debug)
 
 UIElement* UILayer::getNearestElement(sf::Vector2f direction, UIElement* origin)
 {
-    sf::FloatRect originBounds;
-    sf::Vector2f center;
-    float left;
-    float right;
-    float top;
-    float bottom;
+    if (direction == sf::Vector2f(0, 0)) return origin;
 
-    if (origin)
-    {
-        originBounds = origin->getGlobalBounds();
-        center = {originBounds.position.x + originBounds.size.x / 2, originBounds.position.y + originBounds.size.y / 2};
-        left = originBounds.position.x;
-        right = originBounds.position.x + originBounds.size.x;
-        top = originBounds.position.y;
-        bottom = originBounds.position.y + originBounds.size.y;
-    }
-    else
-    {
-        originBounds = {{0, 0}, {0, 0}};
-        center = {0, 0};
-        left = 0;
-        right = 0;
-        top = 0;
-        bottom = 0;
-    }
+    sf::FloatRect bounds;
+    if (origin) bounds = origin->getGlobalBounds();
+    else bounds = {{0, 0}, {0, 0}};
+
+    sf::Vector2f center = {bounds.position.x + bounds.size.x / 2, bounds.position.y + bounds.size.y / 2};
 
     UIElement* nearestElement = nullptr;
-    float nearestDist = MAXFLOAT;
+    float nearestDistance = MAXFLOAT;
+
     for (auto& e : elements)
     {
-        if (e->name == "UI_SELECTOR" || e->name == "CURSOR") continue;
-        if (origin && e.get() == origin) continue;
+        if (e->position.worldPosition || e.get() == origin || e->name.substr(0, 2) == "__") continue;
 
         sf::FloatRect eBounds = e->getGlobalBounds();
+        sf::Vector2f eCenter = {eBounds.position.x + eBounds.size.x / 2, eBounds.position.y + eBounds.size.y / 2};
 
-        float currDist;
+        float dist = getDistance(center, eCenter);
 
-        if (direction.x < 0) currDist = std::abs((eBounds.position.x) - left);
-        else if (direction.x > 0) currDist = std::abs((eBounds.position.x + eBounds.size.x) - right);
-        else if (direction.y < 0) currDist = std::abs((eBounds.position.y) - top);
-        else if (direction.y > 0) currDist = std::abs((eBounds.position.y + eBounds.size.y) - bottom);
-        else return origin;
+        // if true, this element is guarenteed to not be the closest no matter the direction.
+        if (dist >= nearestDistance) continue;
 
-        if (currDist < nearestDist)
-        {   
-            nearestElement = e.get();
-            nearestDist = currDist;
-        }
+        // making sure this element is in the correct direction and preventing movement to an element with no diff in that direction
+        sf::Vector2f diff = eCenter - center;
+        if (diff.x >= 0 && direction.x < 0) continue;
+        if (diff.x <= 0 && direction.x > 0) continue;
+        if (diff.y >= 0 && direction.y < 0) continue;
+        if (diff.y <= 0 && direction.y > 0) continue;
+
+        nearestElement = e.get();
+        nearestDistance = dist;
     }
-
-    if (!nearestElement && elements.size() > 0) nearestElement = elements.begin()->get();
 
     return nearestElement;
 }

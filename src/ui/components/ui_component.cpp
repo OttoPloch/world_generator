@@ -33,10 +33,17 @@ void UIComponent::onHover() {}
 void UIComponent::onPress() {}
 
 bool UIComponent::isSelected()
-{
-    sf::FloatRect gb = getGlobalBounds();
+{  
+    if (game->getInput()->isUIModeActive())
+    {
+        return (game->getInput()->getSelectedComponent() == this);
+    }
+    else
+    {
+        sf::FloatRect gb = getGlobalBounds();
 
-    return mouseRectCollide(game, gb.position, gb.size, false);
+        return mouseRectCollide(game, gb.position, gb.size, false);
+    }
 }
 
 bool UIComponent::isPressed()
@@ -48,6 +55,8 @@ bool UIComponent::justPressed()
 {
     return pressed && !pressedLastFrame;
 }
+
+void UIComponent::resize(sf::Vector2f newSize) {}
 
 void UIComponent::updateVisuals()
 {
@@ -128,8 +137,7 @@ void UIComponent::draw(bool debug) {}
 
 bool UIComponent::attemptedPress()
 {
-    // TEMP, TODO: account for controller, dont hardcode left click.
-    return isSelected() && myElement->isComponentOnTopAtPoint(this, game->getInput()->getCursorWindowPos()) && game->getInput()->isControlPressed("UI PRESS");
+    return isSelected() && (myElement->isComponentOnTopAtPoint(this, game->getInput()->getCursorWindowPos()) || game->getInput()->isUIModeActive()) && game->getInput()->isControlPressed("UI PRESS");
 }
 
 bool UIComponent::justSelected()

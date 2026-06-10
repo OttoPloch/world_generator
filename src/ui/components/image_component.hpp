@@ -9,6 +9,8 @@ struct ImageComponent : public UIComponent
 
     sf::FloatRect getLocalBounds() override;
 
+    void resize(sf::Vector2f newSize) override;
+
     void updateVisuals() override;
 
     void update(float dt) override;

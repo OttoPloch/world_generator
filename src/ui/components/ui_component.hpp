@@ -37,6 +37,8 @@ struct UIComponent
     // and wasn't pressed last frame.
     bool justPressed();
 
+    virtual void resize(sf::Vector2f newSize);
+
     virtual void updateVisuals();
 
     void updateState();
@@ -53,6 +55,8 @@ struct UIComponent
     sf::Vector2f originOffset;
     sf::Vector2f anchorOffset;
 
+    // if the name starts with two underscores ('__'), then this component
+    // will be exempt from things like the ui selector.
     std::string identifier;
 
     // UIElement component vector is sorted by this.

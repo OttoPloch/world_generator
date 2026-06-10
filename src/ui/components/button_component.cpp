@@ -1,6 +1,7 @@
 #include "button_component.hpp"
 #include "../../graphics/vertex_group.hpp"
 #include "../../core/game.hpp"
+#include "image_component.hpp"
 #include <SFML/Graphics/CoordinateType.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/StencilMode.hpp>
@@ -13,6 +14,11 @@ ButtonComponent::ButtonComponent(Game* game, UIElement* myElement, UIPosition po
 sf::FloatRect ButtonComponent::getLocalBounds()
 {
     return {position.position + originOffset + anchorOffset, size};
+}
+
+void ButtonComponent::resize(sf::Vector2f newSize)
+{
+    setButtonVisuals(newSize, false);
 }
 
 void ButtonComponent::updateVisuals()

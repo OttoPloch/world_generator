@@ -95,6 +95,73 @@ sf::FloatRect UIElement::getLocalBoundsUpToComponent(int sortIndex)
     return {{left, top}, {right - left, bottom - top}};
 }
 
+UIComponent* UIElement::getNearestComponent(sf::Vector2f direction, UIComponent* origin)
+{
+    if (direction == sf::Vector2f(0, 0)) return origin;
+    if (position.worldPosition)
+    {
+        std::cout << "ERROR in UIElement::getNearestComponent(), element's position is in the world, not designed to use this function with an element in the world.\n";
+        return nullptr;
+    }
+
+    sf::FloatRect bounds;
+    if (origin)
+    {
+        bounds = origin->getGlobalBounds();
+    }
+    else
+    {
+        bounds.size = {0, 0};
+
+        if (direction.x > 0)
+        {
+            bounds.position = {-999999, 0};
+        }
+        else if (direction.x < 0)
+        {
+            bounds.position = {999999, 0};
+        }
+        else if (direction.y > 0)
+        {
+            bounds.position = {0, -999999};
+        }
+        else if (direction.y < 0)
+        {
+            bounds.position = {0, 999999};
+        }
+    }
+
+    sf::Vector2f center = {bounds.position.x + bounds.size.x / 2, bounds.position.y + bounds.size.y / 2};
+
+    UIComponent* nearestComponent = nullptr;
+    float nearestDistance = MAXFLOAT;
+
+    for (auto& c : components)
+    {
+        if (c.get() == origin || c->identifier.substr(0, 2) == "__") continue;
+
+        sf::FloatRect cBounds = c->getGlobalBounds();
+        sf::Vector2f cCenter = {cBounds.position.x + cBounds.size.x / 2, cBounds.position.y + cBounds.size.y / 2};
+
+        float dist = getDistance(center, cCenter);
+
+        // if true, this component is guarenteed to not be the closest no matter the direction.
+        if (dist >= nearestDistance) continue;
+
+        // making sure this component is in the correct direction and preventing movement to a component with no diff in that direction
+        sf::Vector2f diff = cCenter - center;
+        if (diff.x >= 0 && direction.x < 0) continue;
+        if (diff.x <= 0 && direction.x > 0) continue;
+        if (diff.y >= 0 && direction.y < 0) continue;
+        if (diff.y <= 0 && direction.y > 0) continue;
+
+        nearestComponent = c.get();
+        nearestDistance = dist;
+    }
+
+    return nearestComponent;
+}
+
 void UIElement::updateVisuals()
 {
     anchorOffset = UIPosition::getAnchorOffset(position, this);
@@ -123,7 +190,7 @@ sf::Vector2f UIElement::calculateEffectivePosition()
 {
     if (parent)
     {
-        effectivePosition = parent->calculateEffectivePosition() + anchorOffset + position.position;
+        effectivePosition = parent->getGlobalBounds().position + anchorOffset + position.position;
     }
     else
     {

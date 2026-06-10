@@ -24,6 +24,12 @@ sf::FloatRect TextComponent::getLocalBounds()
     }
 }
 
+void TextComponent::resize(sf::Vector2f newSize)
+{
+    // TODO: decide on how text gets resized, if at all or it should just be text size
+    return;
+}
+
 void TextComponent::updateVisuals()
 {
     text->setOrigin(text->getLocalBounds().position);

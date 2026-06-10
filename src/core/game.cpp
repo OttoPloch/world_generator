@@ -114,7 +114,7 @@ void Game::run()
         
         runBlame["EVENTS"] = debugClock.restart().asSeconds();
         
-        input.inputUpdate();
+        input.inputUpdate(dt);
         
         runBlame["INPUT"] = debugClock.restart().asSeconds();
 

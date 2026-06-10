@@ -3,7 +3,7 @@
 #include "../../core/game.hpp"
 #include <SFML/Graphics/Texture.hpp>
 
-BackgroundComponent::BackgroundComponent(Game* game, UIElement* myElement, UIPosition position, std::string identifier, int sortIndex, sf::Vector2f size, float borderWidth, sf::Texture* texture, TextureAtlas* atlas) : UIComponent(game, myElement, position, identifier, sortIndex), size(size), borderSize(borderWidth, borderWidth), texture(texture), atlas(atlas)
+BackgroundComponent::BackgroundComponent(Game* game, UIElement* myElement, UIPosition position, std::string identifier, int sortIndex, sf::Vector2f size, float borderWidth, sf::Texture* texture, TextureAtlas* atlas, bool includeBorderAsOffset) : UIComponent(game, myElement, position, identifier, sortIndex), size(size), borderSize(borderWidth, borderWidth), texture(texture), atlas(atlas), includeBorderAsOffset(includeBorderAsOffset)
 {
     renderStates.texture = texture;
 
@@ -12,11 +12,21 @@ BackgroundComponent::BackgroundComponent(Game* game, UIElement* myElement, UIPos
 
 sf::FloatRect BackgroundComponent::getLocalBounds()
 {
-    return {position.position + originOffset + anchorOffset - borderOffset, effectiveSize};
+    return {position.position + originOffset + anchorOffset - borderSize, effectiveSize};
+}
+
+void BackgroundComponent::resize(sf::Vector2f newSize)
+{
+    // TODO: should this set effectiveSize, meaning the whole size of the component, or just the size of the center area?
+    size = newSize;
+
+    updateVisuals();
 }
 
 void BackgroundComponent::updateVisuals()
 {
+    effectiveSize = {borderSize.x * 2 + size.x, borderSize.y * 2 + size.y};
+
     originOffset = borderOffset + UIPosition::getOriginOffset(position, effectiveSize);
     anchorOffset = UIPosition::getAnchorOffset(position, myElement->getLocalBoundsUpToComponent(sortIndex));
 
@@ -48,10 +58,10 @@ void BackgroundComponent::updateVertices()
         std::array<sf::Vertex, 6> bottomLeftVerts;
         std::array<sf::Vertex, 6> bottomVerts;
         std::array<sf::Vertex, 6> bottomRightVerts;
-    
-        borderOffset = borderSize;
-        effectiveSize = {borderSize.x * 2 + size.x, borderSize.y * 2 + size.y};
-    
+
+        if (includeBorderAsOffset) borderOffset = borderSize;
+        else borderOffset = {0, 0};
+
         centerVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset, size, atlas->itemTexCoords["center"]);
         topLeftVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - borderSize, borderSize, atlas->itemTexCoords["topleft"]);
         topVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(0, borderSize.y), {size.x, borderSize.y}, atlas->itemTexCoords["top"]);
@@ -77,14 +87,12 @@ void BackgroundComponent::updateVertices()
         // rest is debug
     
         float alpha = 70;
-        sf::Color centerColor(35, 35, 35, alpha);
         sf::Color borderColor(0, 0, 0, alpha);
         sf::Color tlColor(190, 0, 0, alpha);
         sf::Color trColor(150, 150, 0, alpha);
         sf::Color blColor(0, 195, 0, alpha);
         sf::Color brColor(60, 60, 255, alpha);
     
-        centerVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset, size, centerColor);
         topLeftVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - borderSize, borderSize, tlColor);
         topVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(0, borderSize.y), {size.x, borderSize.y}, borderColor);
         topRightVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(-size.x, borderSize.y), borderSize, trColor);
@@ -94,8 +102,10 @@ void BackgroundComponent::updateVertices()
         bottomVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(0, -size.y), {size.x, borderSize.y}, borderColor);
         bottomRightVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(-size.x, -size.y), borderSize, brColor);
     
+        vertsInOrder = {&topLeftVerts, &topVerts, &topRightVerts, &leftVerts, &rightVerts, &bottomLeftVerts, &bottomVerts, &bottomRightVerts};
+
         indexOffset = 0;
-        for (int i = 0; i < 9; i++)
+        for (int i = 0; i < 8; i++)
         {
             for (int j = 0; j < 6; j++)
             {

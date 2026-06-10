@@ -1,11 +1,14 @@
 #include "input.hpp"
 #include "game.hpp"
 #include "../ui/ui_element.hpp"
+#include "../ui/components/ui_component.hpp"
 #include "../ui/components/image_component.hpp"
+#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <cstdint>
+#include <iostream>
 
 Input::Input() {}
 
@@ -177,16 +180,17 @@ Input::Input(Game* game) : game(game)
     };
 
     gameCursorPosition = toV2F(game->getWindow()->getSize().x / 2, game->getWindow()->getSize().y / 2);
-    cursorElement = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "CURSOR", UIPosition(getCursorWindowPos()), INT32_MAX, nullptr));
+    cursorElement = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "__CURSOR", UIPosition(getCursorWindowPos()), INT32_MAX, nullptr));
     cursorElement->addComponent<ImageComponent>(game, cursorElement, UIPosition({0, 0}), "CURSOR IMAGE", 0, game->getAssetManager()->getTexture("cursor"), sf::Vector2f(30, 30), false);
     mouseMovedThisFrame = true;
 
-    UISelector = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "UI_SELECTOR", UIPosition({0, 0}), INT32_MAX, nullptr));
-    UISelector->addComponent<BackgroundComponent>(game, UISelector, UIPosition({0, 0}), "SELECTOR BG", 0, sf::Vector2f(30, 30), 3, game->getAssetManager()->getTexture("white_border", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("background_8px", "ui/"));
+    UISelector = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "__UI_SELECTOR", UIPosition({-10000, -10000}), INT32_MAX, nullptr));
+    UISelector->addComponent<BackgroundComponent>(game, UISelector, UIPosition({0, 0}), "SELECTOR BG", 0, sf::Vector2f(30, 30), 3, game->getAssetManager()->getTexture("red_border", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("background_8px", "ui/"), false);
     UISelector->visible = false;
     selectedElement = nullptr;
     UIMode = false;
     usingMovementForUISelector = false;
+    hideCursor = false;
 }
 
 bool Input::isKeyPressed(std::string key)
@@ -218,23 +222,25 @@ bool Input::isButtonPressed(std::string button)
         return false;
     }
 
+    bool pressed = false;
+
     if (button.substr(0, 4) == "DPAD")
     {
         if (button == "DPAD LEFT")
         {
-            return getAxis(sf::Joystick::Axis::PovX) < 0;
+            pressed = getAxis(sf::Joystick::Axis::PovX) < 0;
         }
         else if (button == "DPAD RIGHT")
         {
-            return getAxis(sf::Joystick::Axis::PovX) > 0;
+            pressed = getAxis(sf::Joystick::Axis::PovX) > 0;
         }
         else if (button == "DPAD UP")
         {
-            return getAxis(sf::Joystick::Axis::PovY) < 0;
+            pressed = getAxis(sf::Joystick::Axis::PovY) < 0;
         }
         else if (button == "DPAD DOWN")
         {
-            return getAxis(sf::Joystick::Axis::PovY) > 0;
+            pressed = getAxis(sf::Joystick::Axis::PovY) > 0;
         }
         else
         {
@@ -246,11 +252,11 @@ bool Input::isButtonPressed(std::string button)
     {
         if (button == "LTRIGGER")
         {
-            return getAxis(sf::Joystick::Axis::Z) > game->getSettings()->input_triggerMinPressValue;
+            pressed = getAxis(sf::Joystick::Axis::Z) > game->getSettings()->input_triggerMinPressValue;
         }
         else if (button == "RTRIGGER")
         {
-            return getAxis(sf::Joystick::Axis::R) > game->getSettings()->input_triggerMinPressValue;
+            pressed = getAxis(sf::Joystick::Axis::R) > game->getSettings()->input_triggerMinPressValue;
         }
         else
         {
@@ -260,8 +266,12 @@ bool Input::isButtonPressed(std::string button)
     }
     else
     {
-        return sf::Joystick::isButtonPressed(0, stringToButton[button]);
+        pressed = sf::Joystick::isButtonPressed(0, stringToButton[button]);
     }
+
+    if (pressed) hideCursor = true;
+
+    return pressed;
 }
 
 bool Input::isControlPressed(std::string control)
@@ -284,7 +294,11 @@ bool Input::getKey(std::string key)
 
 bool Input::getButton(std::string button)
 {
-    return buttonsPressedThisFrame[button];
+    bool pressed = buttonsPressedThisFrame[button];
+
+    if (pressed) hideCursor = true;
+
+    return pressed;
 }
 
 bool Input::getControl(std::string control)
@@ -355,7 +369,7 @@ sf::Vector2f Input::getCursorWindowPos()
     return gameCursorPosition;
 }
 
-void Input::inputUpdate()
+void Input::inputUpdate(float dt)
 {
     updateBlame.clear();
     debugClock.restart();
@@ -365,13 +379,25 @@ void Input::inputUpdate()
         // TEMP, need to fully implement controller support in a neat way
         if (sf::Joystick::isConnected(0) && !mouseMovedThisFrame)
         {
-            // sensitivity is divided by 100 to make it simpler to set, maybe not the right thing to do.
-            gameCursorPosition.x += getAxis(sf::Joystick::Axis::U) * game->getSettings()->input_controllerCursorSensitivity / 100;
-            gameCursorPosition.y += getAxis(sf::Joystick::Axis::V) * game->getSettings()->input_controllerCursorSensitivity / 100;
+            sf::Vector2f cursorMovement = {
+                getAxis(sf::Joystick::Axis::U) * game->getSettings()->input_controllerCursorSensitivity * dt,
+                getAxis(sf::Joystick::Axis::V) * game->getSettings()->input_controllerCursorSensitivity * dt
+            };
+
+            gameCursorPosition.x += cursorMovement.x;
+            gameCursorPosition.y += cursorMovement.y;
+
+            if (cursorMovement != sf::Vector2f(0, 0))
+            {
+                hideCursor = false;
+                UIMode = false;
+            }
         }
         else
         {
             gameCursorPosition = toV2F(sf::Mouse::getPosition(game->getWindow()->getWindow()));
+
+            if (mouseMovedThisFrame) UIMode = false;
         }
     }
     
@@ -398,7 +424,7 @@ void Input::inputUpdate()
 
         updateBlame["CONTROLS/PROCESSING"] = debugClock.restart().asSeconds();
 
-        if (getKey("G"))
+        if (getControl("MENU"))
         {
             if (UIMode)
             {
@@ -418,59 +444,25 @@ void Input::inputUpdate()
             sf::Vector2f movement = getMovement();
             usingMovementForUISelector = false;
 
-            if (UIMoveClock.getElapsedTime().asSeconds() > .3f)
+            if (UIMoveClock.getElapsedTime().asSeconds() > game->getSettings()->input_UISelectorMoveCooldown)
             {
-                UIMoveClock.restart();
-
                 if (movement != sf::Vector2f(0, 0))
                 {
                     moveUISelector(movement);
+
+                    UIMoveClock.restart();
                 }
             }
 
         }
+
+        updateBlame["UI MODE AND SUCH"] = debugClock.restart().asSeconds();
     }
 
-    // TODO: OLD THINGS STILL NEEDING TO BE REIMPLEMENTED
-    //   \/   \/   \/   \/   \/   \/   \/   \/  \/
-
-
-    //     // if (getKey("LEFTCLICK") || getKey("RIGHTCLICK")) game->getScene()->getUILayer()->interactiveUIManager.disableControllerUI();
-    
-    //     if (controllerUI_moveClock.getElapsedTime().asSeconds() >= 0.2f)
-    //     {
-    //         sf::Vector2i UIMoveInput;
-        
-    //         UIMoveInput.x = std::round(getAxis(sf::Joystick::Axis::U) / 100.f);
-    //         UIMoveInput.y = std::round(getAxis(sf::Joystick::Axis::V) / 100.f);
-            
-    //         sf::Vector2i moveDirection = {0, 0};
-            
-    //         if (getControl("UI LEFT") || getControl("UI RIGHT") || getControl("UI UP") || getControl("UI DOWN"))
-    //         {
-    //             if (getControl("UI LEFT")) moveDirection.x = -1;
-    //             if (getControl("UI RIGHT")) moveDirection.x = 1;
-    //             if (getControl("UI UP")) moveDirection.y = -1;
-    //             if (getControl("UI DOWN")) moveDirection.y = 1;
-    //         }
-    //         else
-    //         {
-    //             if (UIMoveInput.x != 0 || UIMoveInput.y != 0)
-    //             {
-    //                 (std::abs(getAxis(sf::Joystick::Axis::U)) > std::abs(getAxis(sf::Joystick::Axis::V))) ? moveDirection.x = UIMoveInput.x : moveDirection.y = UIMoveInput.y;
-    //             }
-    //         }
-
-    //         if (UIMoveInput.x != 0 || UIMoveInput.y != 0 || moveDirection.x != 0 || moveDirection.y != 0)
-    //         {
-    //             // game->getScene()->getUILayer()->interactiveUIManager.moveIndicator(moveDirection);
-                
-    //             controllerUI_moveClock.restart();
-    //         }
-    //     }
-    // }
-
     mouseMovedThisFrame = false;
+
+    if (hideCursor) cursorElement->visible = false;
+    else cursorElement->visible = true;
 
     if (game->getScene()->debugMode && game->getScene()->debugLevel == 1) printBlameStats(updateBlame, "INPUT_UPDATE");
 }
@@ -478,6 +470,8 @@ void Input::inputUpdate()
 void Input::mouseMoveEvent(sf::Event::MouseMoved mouseMoved)
 {
     mouseMovedThisFrame = true;
+
+    hideCursor = false;
 }
 
 void Input::mouseButtonEvent(sf::Event::MouseButtonPressed mouseButtonPressed)
@@ -500,6 +494,8 @@ void Input::keyEvent(sf::Event::KeyPressed keyPressed)
 void Input::buttonEvent(sf::Event::JoystickButtonPressed buttonPressed)
 {
     buttonsPressedThisFrame[buttonToString[static_cast<int>(buttonPressed.button)]] = true;
+
+    hideCursor = true;
 }
 
 void Input::resetPressedThisFrame()
@@ -509,12 +505,53 @@ void Input::resetPressedThisFrame()
     controlsPressedThisFrame.clear();
 }
 
+bool Input::isUIModeActive()
+{
+    return UIMode;
+}
+
+UIElement* Input::getSelectedElement()
+{
+    return selectedElement;
+}
+
+UIComponent* Input::getSelectedComponent()
+{
+    return selectedComponent;
+}
+
 void Input::moveUISelector(sf::Vector2f direction)
 {
-    UIElement* choice = game->getScene()->getUILayer()->getNearestElement(direction, selectedElement);
+    UIComponent* newComponent = nullptr;
+    if (selectedElement)
+    {
+        // finding a new component to select within the selected element.
 
-    selectedElement = choice;
-    UISelector->position.position = choice->getGlobalBounds().position;
+        newComponent = selectedElement->getNearestComponent(direction, selectedComponent);
+    }
+
+    if (!newComponent)
+    {
+        // no options in the selected element or none are selected, finding a new element
+
+        UIElement* newElement = game->getScene()->getUILayer()->getNearestElement(direction, selectedElement);
+    
+        if (!newElement) return;
+    
+        selectedElement = newElement;
+        selectedComponent = newElement->getNearestComponent(direction, nullptr);
+
+        if (!selectedComponent) return;
+
+        UISelector->parent = newElement;
+    }
+    else
+    {
+        selectedComponent = newComponent;
+    }
+
+    UISelector->position.position = selectedComponent->getGlobalBounds().position - selectedElement->getGlobalBounds().position;
+    UISelector->getComponent<BackgroundComponent>()->resize(selectedComponent->getGlobalBounds().size);
 
     UISelector->updateVisuals();
 }

@@ -16,6 +16,13 @@ sf::FloatRect ImageComponent::getLocalBounds()
     return {position.position + originOffset + anchorOffset, sprite.getSize()};
 }
 
+void ImageComponent::resize(sf::Vector2f newSize)
+{
+    sprite.resize(newSize, false);
+
+    updateVisuals();
+}
+
 void ImageComponent::updateVisuals()
 {
     originOffset = UIPosition::getOriginOffset(position, sprite.getSize());

@@ -20,12 +20,15 @@ public:
     // checks if the component given has the highest or equal to the highest sortIndex
     // at the position given. Uses GLOBAL coordinates, not local. Returns false if point
     // does not collide with the given component. Designed to be used for registering presses.
+    // TODO: if inter-element functionality is ever added to this, don't forget to ignore the ui selector element.
     bool isComponentOnTopAtPoint(UIComponent* component, sf::Vector2f point);
 
     // returns the local bounds of the element, including every component UP TO
     // those with the sortIndex given. This is designed to be used by UI components
     // to get the relative space for their anchors.
     sf::FloatRect getLocalBoundsUpToComponent(int sortIndex);
+
+    UIComponent* getNearestComponent(sf::Vector2f direction, UIComponent* origin);
 
     void updateVisuals();
 
@@ -95,6 +98,9 @@ public:
     }
 
     Game* game;
+    // if the name starts with two underscores ('__'), then this element
+    // will be exempt from things like the ui selector. Currently used for the ui selector
+    // itself, and the cursor.
     std::string name;
     // the position is basically an offset, and in order to
     // find the effective position, this value must be added

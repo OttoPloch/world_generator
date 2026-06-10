@@ -10,6 +10,8 @@ struct TextComponent : public UIComponent
 
     sf::FloatRect getLocalBounds() override;
 
+    void resize(sf::Vector2f newSize) override;
+
     void updateVisuals() override;
 
     void draw(bool debug) override;
