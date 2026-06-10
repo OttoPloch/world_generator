@@ -58,6 +58,8 @@ public:
 
     void resetPressedThisFrame();
 private:
+    void moveUISelector(sf::Vector2f direction);
+
     Game* game;
 
     std::vector<std::string> keys;
@@ -73,11 +75,15 @@ private:
     std::unordered_map<std::string, std::pair<std::string, std::string>> controls;
     std::unordered_map<std::string, bool> controlsPressedThisFrame;
     
-    sf::Clock controllerUI_moveClock;
-    
     sf::Vector2f gameCursorPosition;
     UIElement* cursorElement;
     bool mouseMovedThisFrame;
+
+    UIElement* UISelector;
+    UIElement* selectedElement;
+    bool UIMode;
+    bool usingMovementForUISelector; // only used so that getMovement() can be called with UIMode on and not return (0, 0)
+    sf::Clock UIMoveClock;
 
     std::unordered_map<std::string, float> updateBlame;
     sf::Clock debugClock;

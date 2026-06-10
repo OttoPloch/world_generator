@@ -177,9 +177,16 @@ Input::Input(Game* game) : game(game)
     };
 
     gameCursorPosition = toV2F(game->getWindow()->getSize().x / 2, game->getWindow()->getSize().y / 2);
-    cursorElement = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "cursor", UIPosition(getCursorWindowPos()), INT32_MAX, nullptr));
-    cursorElement->addComponent<ImageComponent>(game, cursorElement, UIPosition({0, 0}), "cursor image", 0, game->getAssetManager()->getTexture("cursor"), sf::Vector2f(30, 30), false);
+    cursorElement = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "CURSOR", UIPosition(getCursorWindowPos()), INT32_MAX, nullptr));
+    cursorElement->addComponent<ImageComponent>(game, cursorElement, UIPosition({0, 0}), "CURSOR IMAGE", 0, game->getAssetManager()->getTexture("cursor"), sf::Vector2f(30, 30), false);
     mouseMovedThisFrame = true;
+
+    UISelector = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "UI_SELECTOR", UIPosition({0, 0}), INT32_MAX, nullptr));
+    UISelector->addComponent<BackgroundComponent>(game, UISelector, UIPosition({0, 0}), "SELECTOR BG", 0, sf::Vector2f(30, 30), 3, game->getAssetManager()->getTexture("white_border", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("background_8px", "ui/"));
+    UISelector->visible = false;
+    selectedElement = nullptr;
+    UIMode = false;
+    usingMovementForUISelector = false;
 }
 
 bool Input::isKeyPressed(std::string key)
@@ -297,7 +304,7 @@ float Input::getAxis(sf::Joystick::Axis axis)
 
 sf::Vector2f Input::getMovement()
 {
-    if (game->getWindow()->getWindow().hasFocus())
+    if (game->getWindow()->getWindow().hasFocus() && (!UIMode || usingMovementForUISelector))
     {
         sf::Vector2i movement = {0, 0};
 
@@ -390,6 +397,38 @@ void Input::inputUpdate()
         }
 
         updateBlame["CONTROLS/PROCESSING"] = debugClock.restart().asSeconds();
+
+        if (getKey("G"))
+        {
+            if (UIMode)
+            {
+                UIMode = false;
+                UISelector->visible = false;
+            }
+            else
+            {
+                UIMode = true;
+                UISelector->visible = true;
+            }
+        }
+
+        if (UIMode)
+        {
+            usingMovementForUISelector = true;
+            sf::Vector2f movement = getMovement();
+            usingMovementForUISelector = false;
+
+            if (UIMoveClock.getElapsedTime().asSeconds() > .3f)
+            {
+                UIMoveClock.restart();
+
+                if (movement != sf::Vector2f(0, 0))
+                {
+                    moveUISelector(movement);
+                }
+            }
+
+        }
     }
 
     // TODO: OLD THINGS STILL NEEDING TO BE REIMPLEMENTED
@@ -468,4 +507,14 @@ void Input::resetPressedThisFrame()
     keysPressedThisFrame.clear();
     buttonsPressedThisFrame.clear();
     controlsPressedThisFrame.clear();
+}
+
+void Input::moveUISelector(sf::Vector2f direction)
+{
+    UIElement* choice = game->getScene()->getUILayer()->getNearestElement(direction, selectedElement);
+
+    selectedElement = choice;
+    UISelector->position.position = choice->getGlobalBounds().position;
+
+    UISelector->updateVisuals();
 }

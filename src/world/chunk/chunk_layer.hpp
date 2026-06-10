@@ -41,6 +41,8 @@ public:
 
     TileTemplateManager tManager;
 private:
+    sf::Vector2i getCurrChunkPos();
+
     Game* game;
 
     Window* window;

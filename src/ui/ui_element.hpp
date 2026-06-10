@@ -105,6 +105,8 @@ public:
     UIPosition position;
     int z;
     
+    bool visible;
+
     sf::Vector2f anchorOffset;
     sf::Vector2f effectivePosition;
 

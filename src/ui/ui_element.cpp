@@ -5,7 +5,7 @@
 #include <utility>
 #include <algorithm>
 
-UIElement::UIElement(Game* game, std::string name, UIPosition position, int z, UIElement* parent) : game(game), name(name), position(position), z(z), parent(parent)
+UIElement::UIElement(Game* game, std::string name, UIPosition position, int z, UIElement* parent) : game(game), name(name), position(position), z(z), visible(true), parent(parent)
 {
     updateVisuals();
 }
@@ -114,6 +114,8 @@ void UIElement::update(float dt)
 
 void UIElement::draw(bool debug)
 {
+    if (!visible) return;
+
     for (auto& c : components) c->draw(debug);
 }
 

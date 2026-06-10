@@ -10,6 +10,7 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 #include <algorithm>
+#include <cmath>
 #include <filesystem>
 
 UILayer::UILayer() {}
@@ -47,9 +48,12 @@ void UILayer::init(Game* game, Camera* camera)
     e5->addComponent<TextComponent>(game, e5, UIPosition({10, 10}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT), "mouse chunk pos text", 1, "Mouse Chunk Pos: ", game->getAssetManager()->getFont("sfml_font"), 32);
     e5->addComponent<TextComponent>(game, e5, UIPosition({10, 10}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT), "mouse tile type text", 2, "Mouse Tile Type: ", game->getAssetManager()->getFont("sfml_font"), 32);
     
-    auto e6 = elements.emplace_back(std::make_unique<UIElement>(game, "debug text display", UIPosition({10, -10}, UIOrigin::BOTTOM_LEFT, UIAnchor::BOTTOM_LEFT))).get();
+    auto e6 = elements.emplace_back(std::make_unique<UIElement>(game, "useless button", UIPosition({10, -10}, UIOrigin::BOTTOM_LEFT, UIAnchor::BOTTOM_LEFT))).get();
     e6->addComponent<ButtonComponent>(game, e6, UIPosition({0, 0}, UIOrigin::BOTTOM_LEFT), "button", 0, game->getAssetManager()->getTexture("default_button", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("button", "ui/"), sf::Vector2f(100, 100), false);
     
+    auto test1 = elements.emplace_back(std::make_unique<UIElement>(game, "bee", UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::CENTER))).get();
+    test1->addComponent<ImageComponent>(game, test1, UIPosition({10, 10}, UIOrigin::CENTER, UIAnchor::CENTER), "background", 0, game->getAssetManager()->getTexture("dr bee"), sf::Vector2f(100, 100), false);
+
     // auto e6 = elements.emplace_back(std::make_unique<UIElement>(game, "t3st", UIPosition({0, 0}))).get();
     // e6->addComponent<BackgroundComponent>(game, e6, UIPosition({0, 0}), "bg", 0, sf::Vector2f(300, 200), 40, game->getAssetManager()->getTexture("ui_default", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("background_8px", "ui/"));
 
@@ -80,15 +84,6 @@ void UILayer::init(Game* game, Camera* camera)
     // currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "action set attack button", currID, 2, toV2F(25, -25), toV2F(100, 100), redButtonTextures);
     // currID = getNewID(); elements[currID] = std::make_unique<UIButton>(game, this, "action set heal button", currID, 2, toV2F(175, -25), toV2F(100, 100), greenButtonTextures);
     // currID = getNewID(); elements[currID] = std::make_unique<UIText>(game, this, "action set text", currID, 2, toV2F(25, -150), assetManager->getFont("White Storm"), "Set Main Action 'attack!' or 'heal!'", 25, sf::Color::Black);
-    
-
-    // if (auto e = game->getScene()->getEntityLayer()->getEntity(0)->getComponent<MovementComponent>())
-    // {
-    //     getElement("speed display")->getAsText()->setValue(std::to_string(toInt(e->stats.speed)));
-    // }
-
-    // currID = getNewID(); elements[currID] = std::make_unique<UIBackground>(game, this, "CONTROLLER_INDICATOR", getNewID(), 0, toV2F(0, 0), toV2F(50, 50), sf::Color::Transparent, assetManager->getTileSet("16px"), assetManager->getTexture("ui_select", "images/ui/"), 36.f);
-    // interactiveUIManager.init(game, &elements, getElement("CONTROLLER_INDICATOR"));
 
     setDebugVertices();
 }
@@ -165,11 +160,6 @@ void UILayer::UIUpdate(float dt)
     {
         e->update(dt);
     }
-
-    // if (interactiveUIManager.isControllerUIActive())
-    // {
-    //     interactiveUIManager.updateIndicatorPosition();
-    // }
 }
 
 void UILayer::draw(bool debug)
@@ -244,8 +234,6 @@ void UILayer::draw(bool debug)
         if (e->name != "CONTROLLER_INDICATOR") e->draw(debug);
     }
 
-    // interactiveUIManager.draw();
-
     if (debug)
     {
         game->getWindow()->getWindow().draw(debugScreenComponentBoundingBoxes.data(), debugScreenComponentBoundingBoxes.size(), sf::PrimitiveType::Lines);
@@ -253,6 +241,63 @@ void UILayer::draw(bool debug)
     }
 
     game->getWindow()->setView(camera->getView());
+}
+
+UIElement* UILayer::getNearestElement(sf::Vector2f direction, UIElement* origin)
+{
+    sf::FloatRect originBounds;
+    sf::Vector2f center;
+    float left;
+    float right;
+    float top;
+    float bottom;
+
+    if (origin)
+    {
+        originBounds = origin->getGlobalBounds();
+        center = {originBounds.position.x + originBounds.size.x / 2, originBounds.position.y + originBounds.size.y / 2};
+        left = originBounds.position.x;
+        right = originBounds.position.x + originBounds.size.x;
+        top = originBounds.position.y;
+        bottom = originBounds.position.y + originBounds.size.y;
+    }
+    else
+    {
+        originBounds = {{0, 0}, {0, 0}};
+        center = {0, 0};
+        left = 0;
+        right = 0;
+        top = 0;
+        bottom = 0;
+    }
+
+    UIElement* nearestElement = nullptr;
+    float nearestDist = MAXFLOAT;
+    for (auto& e : elements)
+    {
+        if (e->name == "UI_SELECTOR" || e->name == "CURSOR") continue;
+        if (origin && e.get() == origin) continue;
+
+        sf::FloatRect eBounds = e->getGlobalBounds();
+
+        float currDist;
+
+        if (direction.x < 0) currDist = std::abs((eBounds.position.x) - left);
+        else if (direction.x > 0) currDist = std::abs((eBounds.position.x + eBounds.size.x) - right);
+        else if (direction.y < 0) currDist = std::abs((eBounds.position.y) - top);
+        else if (direction.y > 0) currDist = std::abs((eBounds.position.y + eBounds.size.y) - bottom);
+        else return origin;
+
+        if (currDist < nearestDist)
+        {   
+            nearestElement = e.get();
+            nearestDist = currDist;
+        }
+    }
+
+    if (!nearestElement && elements.size() > 0) nearestElement = elements.begin()->get();
+
+    return nearestElement;
 }
 
 void UILayer::setDebugVertices()

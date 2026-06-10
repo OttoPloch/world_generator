@@ -6,6 +6,7 @@
 #include "../../graphics/vertex_group.hpp"
 #include "chunk.hpp"
 #include "chunk_state.hpp"
+#include "../../entities/components/position_component.hpp"
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <algorithm>
@@ -142,8 +143,8 @@ void ChunkLayer::loadNearbyChunks()
 {
     int renderDist = game->getSettings()->chunk_render_distance;
     int loadDist = game->getSettings()->chunk_load_distance;
- 
-    sf::Vector2i currChunkPos = worldToChunkPosition(game, game->getScene()->getCamera()->getCenter());
+
+    sf::Vector2i currChunkPos = getCurrChunkPos();
 
     if (currChunkPos != lastChunkPos)
     {
@@ -225,15 +226,13 @@ void ChunkLayer::tick()
             i.second->tick();
         }
     }
-
-    sf::Vector2i currChunkPos = worldToChunkPosition(game, game->getScene()->getCamera()->getCenter());
 }
 
 void ChunkLayer::loadUpdate()
 {
     int loadDist = game->getSettings()->chunk_load_distance;
 
-    sf::Vector2i currChunkPos = worldToChunkPosition(game, game->getScene()->getCamera()->getCenter());
+    sf::Vector2i currChunkPos = getCurrChunkPos();
 
     loadNearbyChunks();
 
@@ -256,8 +255,6 @@ void ChunkLayer::loadUpdate()
 
     if (currChunkPos != lastChunkPos)
     {
-        // game->getScene()->getUILayer()->getElement("chunk pos display")->getAsText()->setValue(std::to_string(currChunkPos.x) + ", " + std::to_string(currChunkPos.y));
-
         lastChunkPos = currChunkPos;
     }
 }
@@ -359,4 +356,32 @@ void ChunkLayer::draw(bool debug, int debugLayerView)
             }
         }
     }
+}
+
+sf::Vector2i ChunkLayer::getCurrChunkPos()
+{
+    sf::Vector2f currWorldPos;
+
+    auto e = game->getScene()->getEntityLayer()->player;
+    if (e)
+    {
+        currWorldPos = e->getComponent<PositionComponent>()->position.getPosition();
+    }
+    else
+    {
+        std::vector<Entity*> entitiesWithPositions = game->getScene()->getEntityLayer()->getEntitiesWithComponent<PositionComponent>();
+        e = nullptr;
+        if (entitiesWithPositions.size() > 0) e = entitiesWithPositions[0];
+
+        if (e)
+        {
+            currWorldPos = e->getComponent<PositionComponent>()->position.getPosition();
+        }
+        else
+        {
+            currWorldPos = {0, 0};
+        }
+    }
+
+    return worldToChunkPosition(game, currWorldPos);
 }

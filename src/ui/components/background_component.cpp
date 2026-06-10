@@ -35,7 +35,7 @@ void BackgroundComponent::draw(bool debug)
 
 void BackgroundComponent::updateVertices()
 {
-    // TODO, make this more efficient
+    // TODO, probably make this more efficient
 
     if (atlas)
     {
@@ -107,6 +107,6 @@ void BackgroundComponent::updateVertices()
     }
     else
     {
-
+        // TODO: support no atlas
     }
 }
