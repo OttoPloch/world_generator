@@ -424,22 +424,12 @@ void Input::inputUpdate(float dt)
 
         updateBlame["CONTROLS/PROCESSING"] = debugClock.restart().asSeconds();
 
-        if (getControl("MENU"))
-        {
-            if (UIMode)
-            {
-                UIMode = false;
-                UISelector->visible = false;
-            }
-            else
-            {
-                UIMode = true;
-                UISelector->visible = true;
-            }
-        }
+        if (getControl("MENU")) UIMode = !UIMode;
 
         if (UIMode)
         {
+            UISelector->visible = true;
+
             usingMovementForUISelector = true;
             sf::Vector2f movement = getMovement();
             usingMovementForUISelector = false;
@@ -453,7 +443,10 @@ void Input::inputUpdate(float dt)
                     UIMoveClock.restart();
                 }
             }
-
+        }
+        else
+        {
+            UISelector->visible = false;
         }
 
         updateBlame["UI MODE AND SUCH"] = debugClock.restart().asSeconds();
