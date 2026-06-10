@@ -56,6 +56,12 @@ bool UIComponent::justPressed()
     return pressed && !pressedLastFrame;
 }
 
+void UIComponent::setAnimation(UIAnimationData* data, bool startAnimation)
+{
+    animation = std::make_unique<UIAnimation>(this, data);
+    animation->restart(startAnimation);
+}
+
 void UIComponent::resize(sf::Vector2f newSize) {}
 
 void UIComponent::updateVisuals()
@@ -129,6 +135,8 @@ void UIComponent::updateState()
 
 void UIComponent::update(float dt)
 {
+    if (animation) animation->update(dt);
+
     updateState();
 }
 

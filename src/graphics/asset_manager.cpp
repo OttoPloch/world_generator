@@ -1,6 +1,7 @@
 #include "asset_manager.hpp"
 #include "texture_atlas.hpp"
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <fstream>
 
 AssetManager::AssetManager() {}
@@ -342,7 +343,7 @@ TextureAtlas* AssetManager::getTextureAtlas(std::string name, std::string pathFr
                     {
                         coords.push_back({0, 0});
 
-                        std::cout << "error getting tex coords of an item in texture atlas called " << name << ". Make sure the atlas file has coords typed properly ('coord x,y')";
+                        std::cout << "error getting tex coords of an item in texture atlas called " << name << ". Make sure the .atlas file has coords typed properly ('coord x,y')";
                     }
                 }
                 if (line.substr(0, 4) == "size")
@@ -384,6 +385,87 @@ TextureAtlas* AssetManager::getTextureAtlas(std::string name, std::string pathFr
         atlasMap[name] = newAtlas;
 
         return &atlasMap[name];
+    }
+}
+
+UIAnimationData* AssetManager::getUIAnimationData(std::string name)
+{
+    auto entry = UIAnimationDataMap.find(name);
+
+    if (entry != UIAnimationDataMap.end())
+    {
+        return &entry->second;
+    }
+    else
+    {
+        UIAnimationData newData = {};
+
+        if (!std::filesystem::exists("../../assets/ui_animations/" + name + ".uianim"))
+        {
+            std::cout << "ERROR loading UI Animation with name '" << name << "'. No .uianim file in assets/ui_animations/ with that name.\n";
+            
+            return nullptr;
+        }
+        else
+        {
+            // load animation
+            std::ifstream dataFile("../../assets/ui_animations/" + name + ".uianim");
+
+            float timeToComplete;
+            sf::Vector2f startPosition;
+            sf::Vector2f endPosition;
+
+            std::string line;
+
+            while (std::getline(dataFile, line))
+            {
+                if (line.substr(0, 4) == "time") timeToComplete = std::stof(line.substr(5));
+                if (line.substr(0, 8) == "startpos")
+                {
+                    std::string substr = line.substr(9);
+                    int commaIndex = substr.find(',');
+                    if (commaIndex != std::string::npos)
+                    {
+                        float posX = std::floor(std::stof(substr.substr(0, commaIndex)));
+                        float posY = std::floor(std::stof(substr.substr(commaIndex + 1)));
+
+                        startPosition = {posX, posY};
+                    }
+                    else
+                    {
+                        startPosition = {0, 0};
+
+                        std::cout << "error getting start position of ui animation data with name '" << name << "'. Make sure the .uianim file has its start position typed properly ('startpos x,y')";
+                    }
+                }
+                if (line.substr(0, 6) == "endpos")
+                {
+                    std::string substr = line.substr(7);
+                    int commaIndex = substr.find(',');
+                    if (commaIndex != std::string::npos)
+                    {
+                        float posX = std::floor(std::stof(substr.substr(0, commaIndex)));
+                        float posY = std::floor(std::stof(substr.substr(commaIndex + 1)));
+
+                        endPosition = {posX, posY};
+                    }
+                    else
+                    {
+                        endPosition = {0, 0};
+
+                        std::cout << "error getting end position of ui animation data with name '" << name << "'. Make sure the .uianim file has its end position typed properly ('endpos x,y')";
+                    }
+                }
+            }
+
+            dataFile.close();
+
+            newData = UIAnimationData(name, timeToComplete, startPosition, endPosition);
+        }
+
+        UIAnimationDataMap[name] = newData;
+
+        return &UIAnimationDataMap[name];
     }
 }
 

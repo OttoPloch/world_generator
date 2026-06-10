@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../ui_position.hpp"
+#include "../animations/ui_animation.hpp"
 
 class Game;
 class UIElement;
@@ -36,6 +37,8 @@ struct UIComponent
     // checks if the component was just pressed this frame,
     // and wasn't pressed last frame.
     bool justPressed();
+
+    void setAnimation(UIAnimationData* data, bool startAnimation = true);
 
     virtual void resize(sf::Vector2f newSize);
 
@@ -79,6 +82,8 @@ protected:
     bool justSelected();
 
     UIState uiState;
+
+    std::unique_ptr<UIAnimation> animation;
 private:
     bool pressed;
     bool pressedLastFrame;

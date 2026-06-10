@@ -95,6 +95,12 @@ sf::FloatRect UIElement::getLocalBoundsUpToComponent(int sortIndex)
     return {{left, top}, {right - left, bottom - top}};
 }
 
+void UIElement::setAnimation(UIAnimationData* data, bool startAnimation)
+{
+    animation = std::make_unique<UIAnimation>(this, data);
+    animation->restart(startAnimation);
+}
+
 UIComponent* UIElement::getNearestComponent(sf::Vector2f direction, UIComponent* origin)
 {
     if (direction == sf::Vector2f(0, 0)) return origin;
@@ -176,6 +182,8 @@ void UIElement::updateVisuals()
 
 void UIElement::update(float dt)
 {
+    if (animation) animation->update(dt);
+
     for (auto& c : components) c->update(dt);
 }
 

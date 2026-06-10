@@ -61,12 +61,9 @@ src/graphics/animation_set.cpp
 
 src/ui/ui_layer.cpp
 src/ui/ui_element.cpp
-src/ui/ui_background.cpp
-src/ui/ui_button.cpp
-src/ui/ui_text.cpp
-src/ui/ui_animation.cpp
-src/ui/interactive_ui_manager.cpp
 src/ui/ui_position.cpp
+src/ui/animations/ui_animation.cpp
+src/ui/animations/ui_animation_data.cpp
 src/ui/components/ui_component.cpp
 src/ui/components/background_component.cpp
 src/ui/components/text_component.cpp

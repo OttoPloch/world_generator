@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../core/common.hpp"
+#include "animations/ui_animation.hpp"
 #include "ui_position.hpp"
 #include "components/ui_component.hpp"
 #include "components/text_component.hpp"
@@ -27,6 +28,8 @@ public:
     // those with the sortIndex given. This is designed to be used by UI components
     // to get the relative space for their anchors.
     sf::FloatRect getLocalBoundsUpToComponent(int sortIndex);
+
+    void setAnimation(UIAnimationData* data, bool startAnimation = true);
 
     UIComponent* getNearestComponent(sf::Vector2f direction, UIComponent* origin);
 
@@ -123,4 +126,6 @@ private:
     sf::Vector2f calculateEffectivePosition();
     
     void sortComponents();
+
+    std::unique_ptr<UIAnimation> animation;
 };
