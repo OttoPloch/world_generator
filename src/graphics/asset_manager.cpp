@@ -415,10 +415,10 @@ UIAnimationData* AssetManager::getUIAnimationData(std::string name)
             bool relativePos;
             sf::Vector2f startPosition;
             sf::Vector2f endPosition;
-            UIOrigin startOrigin;
-            UIOrigin endOrigin;
-            UIAnchor startAnchor;
-            UIAnchor endAnchor;
+            std::unique_ptr<UIOrigin> startOrigin;
+            std::unique_ptr<UIOrigin> endOrigin;
+            std::unique_ptr<UIAnchor> startAnchor;
+            std::unique_ptr<UIAnchor> endAnchor;
 
             std::string line;
 
@@ -484,8 +484,7 @@ UIAnimationData* AssetManager::getUIAnimationData(std::string name)
                 {
                     if (line.substr(12) == "x")
                     {
-                        // x means keep the same, currently using the count value to represent that.
-                        startOrigin = UIOrigin::COUNT;
+
                     }
                     else
                     {
@@ -493,7 +492,7 @@ UIAnimationData* AssetManager::getUIAnimationData(std::string name)
     
                         if (a < enumSize<UIOrigin>())
                         {
-                            startOrigin = static_cast<UIOrigin>(a);
+                            startOrigin = std::make_unique<UIOrigin>(static_cast<UIOrigin>(a));
                         }
                         else
                         {
@@ -507,8 +506,7 @@ UIAnimationData* AssetManager::getUIAnimationData(std::string name)
                 {
                     if (line.substr(10) == "x")
                     {
-                        // x means keep the same, currently using the count value to represent that.
-                        endOrigin = UIOrigin::COUNT;
+
                     }
                     else
                     {
@@ -516,7 +514,7 @@ UIAnimationData* AssetManager::getUIAnimationData(std::string name)
 
                         if (a < enumSize<UIOrigin>())
                         {
-                            endOrigin = static_cast<UIOrigin>(a);
+                            endOrigin = std::make_unique<UIOrigin>(static_cast<UIOrigin>(a));
                         }
                         else
                         {
@@ -530,8 +528,7 @@ UIAnimationData* AssetManager::getUIAnimationData(std::string name)
                 {
                     if (line.substr(12) == "x")
                     {
-                        // x means keep the same, currently using the count value to represent that.
-                        startAnchor = UIAnchor::COUNT;
+
                     }
                     else
                     {
@@ -539,7 +536,7 @@ UIAnimationData* AssetManager::getUIAnimationData(std::string name)
 
                         if (a < enumSize<UIAnchor>())
                         {
-                            startAnchor = static_cast<UIAnchor>(a);
+                            startAnchor = std::make_unique<UIAnchor>(static_cast<UIAnchor>(a));
                         }
                         else
                         {
@@ -553,8 +550,7 @@ UIAnimationData* AssetManager::getUIAnimationData(std::string name)
                 {
                     if (line.substr(10) == "x")
                     {
-                        // x means keep the same, currently using the count value to represent that.
-                        endAnchor = UIAnchor::COUNT;
+
                     }
                     else
                     {
@@ -562,7 +558,7 @@ UIAnimationData* AssetManager::getUIAnimationData(std::string name)
 
                         if (a < enumSize<UIAnchor>())
                         {
-                            endAnchor = static_cast<UIAnchor>(a);
+                            endAnchor = std::make_unique<UIAnchor>(static_cast<UIAnchor>(a));
                         }
                         else
                         {
@@ -576,7 +572,7 @@ UIAnimationData* AssetManager::getUIAnimationData(std::string name)
 
             dataFile.close();
 
-            newData = {name, timeToComplete, relativePos, startPosition, endPosition, std::make_unique<UIOrigin>(startOrigin), std::make_unique<UIOrigin>(endOrigin), std::make_unique<UIAnchor>(startAnchor), std::make_unique<UIAnchor>(endAnchor)};
+            newData = {name, timeToComplete, relativePos, startPosition, endPosition, std::move(startOrigin), std::move(endOrigin), std::move(startAnchor), std::move(endAnchor)};
         }
 
         UIAnimationDataMap[name] = std::move(newData);

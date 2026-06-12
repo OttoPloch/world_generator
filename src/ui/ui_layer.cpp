@@ -47,7 +47,8 @@ void UILayer::init(Game* game, Camera* camera)
     // e4->addComponent<ImageComponent>(game, e4, UIPosition({0, 0}, UIOrigin::TOP_RIGHT, UIAnchor::BOTTOM_LEFT), "image", 1, game->getAssetManager()->getTexture("shaq_time_out"), sf::Vector2f(100, 100), false, game->getAssetManager()->getAnimation("dot_left"));
 
     auto inputNote = createElement(std::make_unique<UIElement>(game, "__inputNote", UIPosition({0, 10}, UIOrigin::TOP_LEFT, UIAnchor::TOP_MIDDLE)));
-    inputNote->addComponent<TextComponent>(game, inputNote, UIPosition({0, 0}, UIOrigin::TOP_MIDDLE), "text", 0, "Press B on controller to navigate the UI,\nor move the right stick to control the cursor", game->getAssetManager()->getFont("White Storm"), 32);
+    inputNote->addComponent<BackgroundComponent>(game, inputNote, UIPosition({0, 0}, UIOrigin::TOP_MIDDLE), "bg", 0, sf::Vector2f(500, 500), 10, game->getAssetManager()->getTexture("white_border", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("background_8px", "ui/"), true); // TEMP
+    inputNote->addComponent<TextComponent>(game, inputNote, UIPosition({0, 0}, UIOrigin::TOP_MIDDLE, UIAnchor::TOP_MIDDLE), "note text", 1, "Press B on controller to navigate the UI,\nor move the right stick to control the cursor", game->getAssetManager()->getFont("White Storm"), 32);
 
     auto e5 = elements.emplace_back(std::make_unique<UIElement>(game, "debug text display", UIPosition({0, 0}))).get();
     e5->addComponent<TextComponent>(game, e5, UIPosition({10, 10}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT), "fps text", 0, "FPS: ", game->getAssetManager()->getFont("sfml_font"), 32);
