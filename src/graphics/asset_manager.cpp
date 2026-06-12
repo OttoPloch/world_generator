@@ -412,14 +412,38 @@ UIAnimationData* AssetManager::getUIAnimationData(std::string name)
             std::ifstream dataFile("../../assets/ui_animations/" + name + ".uianim");
 
             float timeToComplete;
+            bool relativePos;
             sf::Vector2f startPosition;
             sf::Vector2f endPosition;
+            UIOrigin startOrigin;
+            UIOrigin endOrigin;
+            UIAnchor startAnchor;
+            UIAnchor endAnchor;
 
             std::string line;
 
             while (std::getline(dataFile, line))
             {
                 if (line.substr(0, 4) == "time") timeToComplete = std::stof(line.substr(5));
+                if (line.substr(0, 11) == "relativepos")
+                {
+                    std::string a = line.substr(12);
+
+                    if (a == "yes" || a == "1")
+                    {
+                        relativePos = true;
+                    }
+                    else if (a == "no" || a == "0")
+                    {
+                        relativePos = false;
+                    }
+                    else
+                    {
+                        std::cout << "ERROR getting relative pos of ui animation data with name '" << name << "'. '" << a << "' does not match an accepted answer. use (either yes or 1) or (either no or 0).\n";
+
+                        return nullptr;
+                    }
+                }
                 if (line.substr(0, 8) == "startpos")
                 {
                     std::string substr = line.substr(9);
@@ -456,14 +480,106 @@ UIAnimationData* AssetManager::getUIAnimationData(std::string name)
                         std::cout << "error getting end position of ui animation data with name '" << name << "'. Make sure the .uianim file has its end position typed properly ('endpos x,y')";
                     }
                 }
+                if (line.substr(0, 11) == "startorigin")
+                {
+                    if (line.substr(12) == "x")
+                    {
+                        // x means keep the same, currently using the count value to represent that.
+                        startOrigin = UIOrigin::COUNT;
+                    }
+                    else
+                    {
+                        int a = static_cast<int>(std::stof(line.substr(12)));
+    
+                        if (a < enumSize<UIOrigin>())
+                        {
+                            startOrigin = static_cast<UIOrigin>(a);
+                        }
+                        else
+                        {
+                            std::cout << "ERROR getting start origin of ui animation data with name '" << name << "'. " << a << " does not correspond to a UIOrigin.\n";
+                            
+                            return nullptr;
+                        }
+                    }
+                }
+                if (line.substr(0, 9) == "endorigin")
+                {
+                    if (line.substr(10) == "x")
+                    {
+                        // x means keep the same, currently using the count value to represent that.
+                        endOrigin = UIOrigin::COUNT;
+                    }
+                    else
+                    {
+                        int a = static_cast<int>(std::stof(line.substr(10)));
+
+                        if (a < enumSize<UIOrigin>())
+                        {
+                            endOrigin = static_cast<UIOrigin>(a);
+                        }
+                        else
+                        {
+                            std::cout << "ERROR getting end origin of ui animation data with name '" << name << "'. " << a << " does not correspond to a UIOrigin.\n";
+                            
+                            return nullptr;
+                        }
+                    }
+                }
+                if (line.substr(0, 11) == "startanchor")
+                {
+                    if (line.substr(12) == "x")
+                    {
+                        // x means keep the same, currently using the count value to represent that.
+                        startAnchor = UIAnchor::COUNT;
+                    }
+                    else
+                    {
+                        int a = static_cast<int>(std::stof(line.substr(12)));
+
+                        if (a < enumSize<UIAnchor>())
+                        {
+                            startAnchor = static_cast<UIAnchor>(a);
+                        }
+                        else
+                        {
+                            std::cout << "ERROR getting start anchor of ui animation data with name '" << name << "'. " << a << " does not correspond to a UIAnchor.\n";
+                            
+                            return nullptr;
+                        }
+                    }
+                }
+                if (line.substr(0, 9) == "endanchor")
+                {
+                    if (line.substr(10) == "x")
+                    {
+                        // x means keep the same, currently using the count value to represent that.
+                        endAnchor = UIAnchor::COUNT;
+                    }
+                    else
+                    {
+                        int a = static_cast<int>(std::stof(line.substr(10)));
+
+                        if (a < enumSize<UIAnchor>())
+                        {
+                            endAnchor = static_cast<UIAnchor>(a);
+                        }
+                        else
+                        {
+                            std::cout << "ERROR getting end anchor of ui animation data with name '" << name << "'. " << a << " does not correspond to a UIAnchor.\n";
+                            
+                            return nullptr;
+                        }
+                    }
+                }
             }
 
             dataFile.close();
 
-            newData = UIAnimationData(name, timeToComplete, startPosition, endPosition);
+            newData = {name, timeToComplete, relativePos, startPosition, endPosition, std::make_unique<UIOrigin>(startOrigin), std::make_unique<UIOrigin>(endOrigin), std::make_unique<UIAnchor>(startAnchor), std::make_unique<UIAnchor>(endAnchor)};
         }
 
-        UIAnimationDataMap[name] = newData;
+        UIAnimationDataMap[name] = std::move(newData);
 
         return &UIAnimationDataMap[name];
     }

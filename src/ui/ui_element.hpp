@@ -106,11 +106,11 @@ public:
     // itself, and the cursor.
     std::string name;
     // the position is basically an offset, and in order to
-    // find the effective position, this value must be added
-    // to the position of this element's parent, and it's parent,
-    // and so on and so forth until the final parent, whose position
-    // is an offset from 0,0 (just a normal position). This is the
-    // purpose of the getEffectivePosition() method.
+    // find the effective position (which is only needed for elements),
+    // it must be added to the position of this element's parent, and
+    // it's parent, and so on and so forth until the final parent,
+    // whose position is an offset from 0, 0 (just a normal position).
+    // This is the purpose of the getEffectivePosition() method.
     UIPosition position;
     int z;
     

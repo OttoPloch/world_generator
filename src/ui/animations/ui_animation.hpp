@@ -1,14 +1,13 @@
 #pragma once
 
 #include "../../core/common.hpp"
+#include "../ui_position.hpp"
 
 class UIComponent;
 struct UIAnimationData;
 
 struct UIAnimation
 {
-    UIAnimation();
-
     UIAnimation(UIComponent* component, UIAnimationData* data);
     
     UIAnimation(UIElement* element, UIAnimationData* data);
@@ -23,6 +22,13 @@ private:
 
     // values stay the same
     UIAnimationData* data;
+    sf::Vector2f startOriginAnchorStartPosition;
+    sf::Vector2f startOriginAnchorEndPosition;
+    sf::Vector2f endOriginAnchorEndPosition;
+    UIOrigin adjustedStartOrigin;
+    UIOrigin adjustedEndOrigin;
+    UIAnchor adjustedStartAnchor;
+    UIAnchor adjustedEndAnchor;
 
     // values that change
     float timeProgress;

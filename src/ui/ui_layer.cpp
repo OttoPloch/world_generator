@@ -57,8 +57,6 @@ void UILayer::init(Game* game, Camera* camera)
     auto e6 = elements.emplace_back(std::make_unique<UIElement>(game, "useless button", UIPosition({10, -10}, UIOrigin::BOTTOM_LEFT, UIAnchor::BOTTOM_LEFT))).get();
     e6->addComponent<ButtonComponent>(game, e6, UIPosition({0, 0}, UIOrigin::BOTTOM_LEFT), "button", 0, game->getAssetManager()->getTexture("default_button", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("button", "ui/"), sf::Vector2f(100, 100), false);
     e6->addComponent<ButtonComponent>(game, e6, UIPosition({110, 0}, UIOrigin::BOTTOM_LEFT), "button2", 0, game->getAssetManager()->getTexture("blue_button", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("button", "ui/"), sf::Vector2f(100, 100), false);
-
-    inputNote->setAnimation(game->getAssetManager()->getUIAnimationData("test"));
     
     // auto e6 = elements.emplace_back(std::make_unique<UIElement>(game, "t3st", UIPosition({0, 0}))).get();
     // e6->addComponent<BackgroundComponent>(game, e6, UIPosition({0, 0}), "bg", 0, sf::Vector2f(300, 200), 40, game->getAssetManager()->getTexture("ui_default", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("background_8px", "ui/"));

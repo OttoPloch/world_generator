@@ -170,7 +170,7 @@ UIComponent* UIElement::getNearestComponent(sf::Vector2f direction, UIComponent*
 
 void UIElement::updateVisuals()
 {
-    anchorOffset = UIPosition::getAnchorOffset(position, this);
+    anchorOffset = UIPosition::getAnchorOffset(this);
 
     calculateEffectivePosition();
 

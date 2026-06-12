@@ -66,9 +66,9 @@ sf::Vector2f UIPosition::getOriginOffset(UIPosition position, sf::Vector2f size)
     return offset;
 }
 
-sf::Vector2f UIPosition::getAnchorOffset(UIPosition position, UIElement* element)
+sf::Vector2f UIPosition::getAnchorOffset(UIElement* element)
 {
-    sf::Vector2f offset;
+    UIPosition position = element->position;
 
     // the space the element is put in. It can go beyond this,
     // but this determines where the anchor can go.

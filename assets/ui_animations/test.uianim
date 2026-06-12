@@ -1,3 +1,8 @@
-time 3
+time 1
+relativepos 0
 startpos 0,0
-endpos 300,300
+endpos 0,0
+startorigin 0
+endorigin 2
+startanchor 0
+endanchor 2

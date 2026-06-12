@@ -267,16 +267,20 @@ void Scene::sceneInput(std::string control)
     }
     else if (control == "EXTRA 1")
     {
-        debugChunkLayerView++;
+        uiLayer.getElement("__inputNote")->setAnimation(game->getAssetManager()->getUIAnimationData("test2"));
+
+        // debugChunkLayerView++;
     }
     else if (control == "EXTRA 2")
     {
-        if (debugMode)
-        {
-            debugLevel++;
+        uiLayer.getElement("__inputNote")->setAnimation(game->getAssetManager()->getUIAnimationData("test"));
+
+        // if (debugMode)
+        // {
+        //     debugLevel++;
     
-            if (debugLevel > 1) debugLevel = 0;
-        }
+        //     if (debugLevel > 1) debugLevel = 0;
+        // }
     }
 }
 

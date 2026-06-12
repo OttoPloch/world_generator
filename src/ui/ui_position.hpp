@@ -41,7 +41,7 @@ public:
     static sf::Vector2f getOriginOffset(UIPosition position, sf::Vector2f size);
     
     // for elements
-    static sf::Vector2f getAnchorOffset(UIPosition position, UIElement* element);
+    static sf::Vector2f getAnchorOffset(UIElement* element);
     
     // for components
     static sf::Vector2f getAnchorOffset(UIPosition position, sf::FloatRect bounds);
