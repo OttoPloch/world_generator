@@ -32,10 +32,6 @@ void TextComponent::resize(sf::Vector2f newSize)
 
 void TextComponent::updateVisuals()
 {
-
-    if (identifier == "note text") std::cout << static_cast<int>(position.origin) << ", " << static_cast<int>(position.anchor) << '\n';
-
-
     text->setOrigin(text->getLocalBounds().position);
 
     originOffset = UIPosition::getOriginOffset(position, text->getGlobalBounds().size);
