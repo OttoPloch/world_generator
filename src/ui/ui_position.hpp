@@ -37,7 +37,7 @@ class UIPosition
 public:
     UIPosition(sf::Vector2f position, UIOrigin origin = UIOrigin::TOP_LEFT, UIAnchor anchor = UIAnchor::TOP_LEFT, bool worldPosition = false);
 
-    // components only
+    // for components and elements
     static sf::Vector2f getOriginOffset(UIPosition position, sf::Vector2f size);
     
     // for elements

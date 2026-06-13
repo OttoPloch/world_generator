@@ -1,6 +1,7 @@
 #include "ui_element.hpp"
 #include "../core/game.hpp"
 #include "components/ui_component.hpp"
+#include "ui_position.hpp"
 #include <SFML/Graphics/Rect.hpp>
 #include <utility>
 #include <algorithm>
@@ -170,6 +171,7 @@ UIComponent* UIElement::getNearestComponent(sf::Vector2f direction, UIComponent*
 
 void UIElement::updateVisuals()
 {
+    originOffset = UIPosition::getOriginOffset(position, getGlobalBounds().size);
     anchorOffset = UIPosition::getAnchorOffset(this);
 
     calculateEffectivePosition();
@@ -198,11 +200,11 @@ sf::Vector2f UIElement::calculateEffectivePosition()
 {
     if (parent)
     {
-        effectivePosition = parent->getGlobalBounds().position + anchorOffset + position.position;
+        effectivePosition = parent->getGlobalBounds().position + originOffset + anchorOffset + position.position;
     }
     else
     {
-        effectivePosition = anchorOffset + position.position;
+        effectivePosition = originOffset + anchorOffset + position.position;
     }
 
     return effectivePosition;

@@ -116,6 +116,7 @@ public:
     
     bool visible;
 
+    sf::Vector2f originOffset;
     sf::Vector2f anchorOffset;
     sf::Vector2f effectivePosition;
 
