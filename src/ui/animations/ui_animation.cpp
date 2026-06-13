@@ -27,82 +27,77 @@ void UIAnimation::restart(bool startAnimation)
     // happen because UIAnimationData stores these as smart pointers,
     // so if they do not exist there is supposed to be no change in
     // origin or anchor.
-    if (data->startOrigin) adjustedStartOrigin = *data->startOrigin;
-    else adjustedStartOrigin = targetPosition->origin;
+    if (data->startOrigin) startOrigin = *data->startOrigin;
+    else startOrigin = targetPosition->origin;
 
-    if (data->endOrigin) adjustedEndOrigin = *data->endOrigin;
-    else adjustedEndOrigin = targetPosition->origin;
+    if (data->endOrigin) endOrigin = *data->endOrigin;
+    else endOrigin = targetPosition->origin;
 
-    if (data->startAnchor) adjustedStartAnchor = *data->startAnchor;
-    else adjustedStartAnchor = targetPosition->anchor;
+    if (data->startAnchor) startAnchor = *data->startAnchor;
+    else startAnchor = targetPosition->anchor;
     
-    if (data->endAnchor) adjustedEndAnchor = *data->endAnchor;
-    else adjustedEndAnchor = targetPosition->anchor;
+    if (data->endAnchor) endAnchor = *data->endAnchor;
+    else endAnchor = targetPosition->anchor;
 
 
 
-    targetPosition->origin = adjustedEndOrigin;
-    targetPosition->anchor = adjustedEndAnchor;
+    targetPosition->origin = endOrigin;
+    targetPosition->anchor = endAnchor;
 
-    sf::Vector2f endOriginAnchorOriginOffset;
-    sf::Vector2f endOriginAnchorAnchorOffset;
+    sf::Vector2f finalOriginOffset;
+    sf::Vector2f finalAnchorOffset;
     if (elementAnimation)
     {
         if (element)
         {
-            // NOTE: the origin has no effect on elements, only components, which
-            // is why the origin offset here is always set to {0, 0}.
-
-            endOriginAnchorOriginOffset = {0, 0};
-            endOriginAnchorAnchorOffset = UIPosition::getAnchorOffset(element);
+            finalOriginOffset = UIPosition::getOriginOffset(element->position, element->getGlobalBounds().size);
+            finalAnchorOffset = UIPosition::getAnchorOffset(element);
         }
     }
     else
     {
         if (component)
         {
-            endOriginAnchorOriginOffset = UIPosition::getOriginOffset(component->position, component->getLocalBounds().size);
-            endOriginAnchorAnchorOffset = UIPosition::getAnchorOffset(component->position, component->myElement->getLocalBoundsUpToComponent(component->sortIndex));
+            finalOriginOffset = UIPosition::getOriginOffset(component->position, component->getLocalBounds().size);
+            finalAnchorOffset = UIPosition::getAnchorOffset(component->position, component->myElement->getLocalBoundsUpToComponent(component->sortIndex));
         }
     }
     
-    endOriginAnchorEndPosition = data->endPosition;
-    if (data->relativePos) endOriginAnchorEndPosition += targetPosition->position;
+    endPosition = data->endPosition;
+    if (data->relativePos) endPosition += targetPosition->position;
 
-    targetPosition->origin = adjustedStartOrigin;
-    targetPosition->anchor = adjustedStartAnchor;
+    targetPosition->origin = startOrigin;
+    targetPosition->anchor = startAnchor;
 
-    sf::Vector2f startOriginAnchorOriginOffset;
-    sf::Vector2f startOriginAnchorAnchorOffset;
+    sf::Vector2f startOriginOffset;
+    sf::Vector2f startAnchorOffset;
     if (elementAnimation)
     {
         if (element)
         {
-            // NOTE: the origin has no effect on elements, only components, which
-            // is why the origin offset here is always set to {0, 0}.
-
-            startOriginAnchorOriginOffset = {0, 0};
-            startOriginAnchorAnchorOffset = UIPosition::getAnchorOffset(element);
+            startOriginOffset = UIPosition::getOriginOffset(element->position, element->getGlobalBounds().size);
+            startAnchorOffset = UIPosition::getAnchorOffset(element);
         }
     }
     else
     {
         if (component)
         {
-            startOriginAnchorOriginOffset = UIPosition::getOriginOffset(component->position, component->getLocalBounds().size);
-            startOriginAnchorAnchorOffset = UIPosition::getAnchorOffset(component->position, component->myElement->getLocalBoundsUpToComponent(component->sortIndex));
+            startOriginOffset = UIPosition::getOriginOffset(component->position, component->getLocalBounds().size);
+            startAnchorOffset = UIPosition::getAnchorOffset(component->position, component->myElement->getLocalBoundsUpToComponent(component->sortIndex));
         }
     }
 
-    sf::Vector2f startOriginAnchorTotalOffset = startOriginAnchorOriginOffset + startOriginAnchorAnchorOffset;
-    sf::Vector2f endOriginAnchorTotalOffset = endOriginAnchorOriginOffset + endOriginAnchorAnchorOffset;
+    sf::Vector2f startTotalOffset = startOriginOffset + startAnchorOffset;
+    sf::Vector2f endTotalOffset = finalOriginOffset + finalAnchorOffset;
     
-    startOriginAnchorStartPosition = data->startPosition; // FINISH HERE
-    startOriginAnchorEndPosition = data->endPosition + (endOriginAnchorTotalOffset - startOriginAnchorTotalOffset);
+    startPosition = data->startPosition;
+    sf::Vector2f positionAfterDistance = data->endPosition + (endTotalOffset - startTotalOffset);
+    distance = positionAfterDistance - startPosition;
     if (data->relativePos)
     {
-        startOriginAnchorStartPosition += targetPosition->position;
-        startOriginAnchorEndPosition += targetPosition->position;
+        startPosition += targetPosition->position;
+        distance += targetPosition->position;
     }
 
     if (elementAnimation)
@@ -116,7 +111,7 @@ void UIAnimation::restart(bool startAnimation)
 
     timeProgress = 0;
     running = startAnimation;
-    currentPosition = startOriginAnchorStartPosition;
+    currentPosition = startPosition;
 }
 
 void UIAnimation::update(float dt)
@@ -131,7 +126,7 @@ void UIAnimation::update(float dt)
         }
         else
         {
-            currentPosition += (startOriginAnchorEndPosition - startOriginAnchorStartPosition) * (dt / data->timeToComplete);
+            currentPosition += distance * (dt / data->timeToComplete);
     
             updateChanges();
         }
@@ -144,7 +139,11 @@ void UIAnimation::updateChanges()
     {
         if (element)
         {
-            element->position.position = currentPosition;
+            // element->position.position = currentPosition;
+
+            // since elements do not use origins in the same way as components, 
+            // this is an attempt to counteract that.
+            element->position.position = element->originOffset + currentPosition;
             element->updateVisuals();
         }
     }
@@ -162,22 +161,22 @@ void UIAnimation::complete()
 {
     timeProgress = 0.f;
     running = false;
-    currentPosition = endOriginAnchorEndPosition;
+    currentPosition = endPosition;
 
     if (elementAnimation)
     {
         if (element)
         {
-            element->position.origin = adjustedEndOrigin;
-            element->position.anchor = adjustedEndAnchor;
+            element->position.origin = endOrigin;
+            element->position.anchor = endAnchor;
         }
     }
     else
     {
         if (component)
         {
-            component->position.origin = adjustedEndOrigin;
-            component->position.anchor = adjustedEndAnchor;
+            component->position.origin = endOrigin;
+            component->position.anchor = endAnchor;
         }
     }
 

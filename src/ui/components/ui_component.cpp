@@ -18,7 +18,7 @@ sf::FloatRect UIComponent::getGlobalBounds()
 {
     sf::FloatRect lb = getLocalBounds();
 
-    return {myElement->effectivePosition + lb.position, lb.size};
+    return {myElement->effectiveTopLeft + lb.position, lb.size};
 }
 
 sf::FloatRect UIComponent::getLocalBounds()

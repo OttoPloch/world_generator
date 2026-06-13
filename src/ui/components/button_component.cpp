@@ -65,5 +65,5 @@ void ButtonComponent::setButtonVisuals(sf::Vector2f newSize, bool sizeIsScale, s
 
 void ButtonComponent::updateVertices()
 {
-    vertices = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset, size, buttonTextureAtlas->itemTexCoords[statesToItemName[uiState]]);
+    vertices = VertexGroup::createTriangleVerts(myElement->effectiveTopLeft + position.position + originOffset + anchorOffset, size, buttonTextureAtlas->itemTexCoords[statesToItemName[uiState]]);
 }

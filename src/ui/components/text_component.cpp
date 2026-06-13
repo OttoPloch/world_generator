@@ -37,7 +37,7 @@ void TextComponent::updateVisuals()
     originOffset = UIPosition::getOriginOffset(position, text->getGlobalBounds().size);
     anchorOffset = UIPosition::getAnchorOffset(position, myElement->getLocalBoundsUpToComponent(sortIndex));
 
-    text->setPosition(myElement->effectivePosition + position.position + originOffset + anchorOffset);
+    text->setPosition(myElement->effectiveTopLeft + position.position + originOffset + anchorOffset);
 }
 
 void TextComponent::draw(bool debug)

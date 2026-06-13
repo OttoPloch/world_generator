@@ -22,13 +22,13 @@ private:
 
     // values stay the same
     UIAnimationData* data;
-    sf::Vector2f startOriginAnchorStartPosition;
-    sf::Vector2f startOriginAnchorEndPosition;
-    sf::Vector2f endOriginAnchorEndPosition;
-    UIOrigin adjustedStartOrigin;
-    UIOrigin adjustedEndOrigin;
-    UIAnchor adjustedStartAnchor;
-    UIAnchor adjustedEndAnchor;
+    sf::Vector2f startPosition;
+    sf::Vector2f distance;
+    sf::Vector2f endPosition;
+    UIOrigin startOrigin;
+    UIOrigin endOrigin;
+    UIAnchor startAnchor;
+    UIAnchor endAnchor;
 
     // values that change
     float timeProgress;

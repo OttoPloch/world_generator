@@ -106,11 +106,11 @@ public:
     // itself, and the cursor.
     std::string name;
     // the position is basically an offset, and in order to
-    // find the effective position (which is only needed for elements),
+    // find the effective position (used by components),
     // it must be added to the position of this element's parent, and
     // it's parent, and so on and so forth until the final parent,
     // whose position is an offset from 0, 0 (just a normal position).
-    // This is the purpose of the getEffectivePosition() method.
+    // This is the purpose of the calculateEffectiveTopLeft() method.
     UIPosition position;
     int z;
     
@@ -118,13 +118,13 @@ public:
 
     sf::Vector2f originOffset;
     sf::Vector2f anchorOffset;
-    sf::Vector2f effectivePosition;
+    sf::Vector2f effectiveTopLeft;
 
     UIElement* parent;
     
     std::vector<std::unique_ptr<UIComponent>> components;
 private:
-    sf::Vector2f calculateEffectivePosition();
+    sf::Vector2f calculateEffectiveTopLeft();
     
     void sortComponents();
 

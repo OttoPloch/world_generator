@@ -16,7 +16,7 @@ sf::FloatRect UIElement::getGlobalBounds()
     // relative coordinates
     float left = 0, top = 0, right = 0, bottom = 0;
     
-    calculateEffectivePosition();
+    calculateEffectiveTopLeft();
 
     for (auto& c : components)
     {
@@ -29,7 +29,7 @@ sf::FloatRect UIElement::getGlobalBounds()
     }
 
     // converts to global coordinates
-    return {{effectivePosition.x + left, effectivePosition.y + top}, {right - left, bottom - top}};
+    return {effectiveTopLeft + sf::Vector2f(left, top), {right - left, bottom - top}};
 }
 
 std::vector<sf::FloatRect> UIElement::getAllComponentBounds()
@@ -79,7 +79,7 @@ sf::FloatRect UIElement::getLocalBoundsUpToComponent(int sortIndex)
 {
     float left = 0, top = 0, right = 0, bottom = 0;
 
-    calculateEffectivePosition();
+    calculateEffectiveTopLeft();
 
     for (auto& c : components)
     {
@@ -174,7 +174,7 @@ void UIElement::updateVisuals()
     originOffset = UIPosition::getOriginOffset(position, getGlobalBounds().size);
     anchorOffset = UIPosition::getAnchorOffset(this);
 
-    calculateEffectivePosition();
+    calculateEffectiveTopLeft();
 
     for (auto& c : components)
     {
@@ -196,18 +196,18 @@ void UIElement::draw(bool debug)
     for (auto& c : components) c->draw(debug);
 }
 
-sf::Vector2f UIElement::calculateEffectivePosition()
+sf::Vector2f UIElement::calculateEffectiveTopLeft()
 {
     if (parent)
     {
-        effectivePosition = parent->getGlobalBounds().position + originOffset + anchorOffset + position.position;
+        effectiveTopLeft = parent->getGlobalBounds().position + anchorOffset + position.position;
     }
     else
     {
-        effectivePosition = originOffset + anchorOffset + position.position;
+        effectiveTopLeft = anchorOffset + position.position;
     }
 
-    return effectivePosition;
+    return effectiveTopLeft;
 }
 
 void UIElement::sortComponents()
