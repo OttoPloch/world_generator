@@ -115,6 +115,23 @@ bool pointRectCollide(sf::Vector2f point, sf::FloatRect rect)
     return false;
 }
 
+void log(sf::Vector2f msg, bool newLine)
+{
+    std::cout << msg.x << ", " << msg.y;
+
+    if (newLine) std::cout << '\n';
+}
+
+void log(sf::Vector2i msg, bool newLine)
+{
+    log(static_cast<sf::Vector2f>(msg), newLine);
+}
+
+void log(sf::Vector2u msg, bool newLine)
+{
+    log(static_cast<sf::Vector2f>(msg), newLine);
+}
+
 bool isOnScreen(Game* game, sf::Vector2f tl, sf::Vector2f size, bool useCameraView)
 {
     Camera* camera = game->getScene()->getCamera();

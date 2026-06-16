@@ -32,6 +32,8 @@ enum class UIAnchor
     COUNT
 };
 
+class UIElement;
+
 class UIPosition
 {
 public:

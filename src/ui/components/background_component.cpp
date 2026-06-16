@@ -62,15 +62,15 @@ void BackgroundComponent::updateVertices()
         if (includeBorderAsOffset) borderOffset = borderSize;
         else borderOffset = {0, 0};
 
-        centerVerts = VertexGroup::createTriangleVerts(myElement->effectiveTopLeft + position.position + originOffset + anchorOffset, size, atlas->itemTexCoords["center"]);
-        topLeftVerts = VertexGroup::createTriangleVerts(myElement->effectiveTopLeft + position.position + originOffset + anchorOffset - borderSize, borderSize, atlas->itemTexCoords["topleft"]);
-        topVerts = VertexGroup::createTriangleVerts(myElement->effectiveTopLeft + position.position + originOffset + anchorOffset - sf::Vector2f(0, borderSize.y), {size.x, borderSize.y}, atlas->itemTexCoords["top"]);
-        topRightVerts = VertexGroup::createTriangleVerts(myElement->effectiveTopLeft + position.position + originOffset + anchorOffset - sf::Vector2f(-size.x, borderSize.y), borderSize, atlas->itemTexCoords["topright"]);
-        leftVerts = VertexGroup::createTriangleVerts(myElement->effectiveTopLeft + position.position + originOffset + anchorOffset - sf::Vector2f(borderSize.x, 0), {borderSize.x, size.y}, atlas->itemTexCoords["left"]);
-        rightVerts = VertexGroup::createTriangleVerts(myElement->effectiveTopLeft + position.position + originOffset + anchorOffset - sf::Vector2f(-size.x, 0), {borderSize.x, size.y}, atlas->itemTexCoords["right"]);
-        bottomLeftVerts = VertexGroup::createTriangleVerts(myElement->effectiveTopLeft + position.position + originOffset + anchorOffset - sf::Vector2f(borderSize.x, -size.y), borderSize, atlas->itemTexCoords["bottomleft"]);
-        bottomVerts = VertexGroup::createTriangleVerts(myElement->effectiveTopLeft + position.position + originOffset + anchorOffset - sf::Vector2f(0, -size.y), {size.x, borderSize.y}, atlas->itemTexCoords["bottom"]);
-        bottomRightVerts = VertexGroup::createTriangleVerts(myElement->effectiveTopLeft + position.position + originOffset + anchorOffset - sf::Vector2f(-size.x, -size.y), borderSize, atlas->itemTexCoords["bottomright"]);
+        centerVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset, size, atlas->itemTexCoords["center"]);
+        topLeftVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - borderSize, borderSize, atlas->itemTexCoords["topleft"]);
+        topVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(0, borderSize.y), {size.x, borderSize.y}, atlas->itemTexCoords["top"]);
+        topRightVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(-size.x, borderSize.y), borderSize, atlas->itemTexCoords["topright"]);
+        leftVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(borderSize.x, 0), {borderSize.x, size.y}, atlas->itemTexCoords["left"]);
+        rightVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(-size.x, 0), {borderSize.x, size.y}, atlas->itemTexCoords["right"]);
+        bottomLeftVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(borderSize.x, -size.y), borderSize, atlas->itemTexCoords["bottomleft"]);
+        bottomVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(0, -size.y), {size.x, borderSize.y}, atlas->itemTexCoords["bottom"]);
+        bottomRightVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(-size.x, -size.y), borderSize, atlas->itemTexCoords["bottomright"]);
     
         std::array<std::array<sf::Vertex, 6>*, 9> vertsInOrder = {&centerVerts, &topLeftVerts, &topVerts, &topRightVerts, &leftVerts, &rightVerts, &bottomLeftVerts, &bottomVerts, &bottomRightVerts};
         int indexOffset = 0;
@@ -93,14 +93,14 @@ void BackgroundComponent::updateVertices()
         sf::Color blColor(0, 195, 0, alpha);
         sf::Color brColor(60, 60, 255, alpha);
     
-        topLeftVerts = VertexGroup::createTriangleVerts(myElement->effectiveTopLeft + position.position + originOffset + anchorOffset - borderSize, borderSize, tlColor);
-        topVerts = VertexGroup::createTriangleVerts(myElement->effectiveTopLeft + position.position + originOffset + anchorOffset - sf::Vector2f(0, borderSize.y), {size.x, borderSize.y}, borderColor);
-        topRightVerts = VertexGroup::createTriangleVerts(myElement->effectiveTopLeft + position.position + originOffset + anchorOffset - sf::Vector2f(-size.x, borderSize.y), borderSize, trColor);
-        leftVerts = VertexGroup::createTriangleVerts(myElement->effectiveTopLeft + position.position + originOffset + anchorOffset - sf::Vector2f(borderSize.x, 0), {borderSize.x, size.y}, borderColor);
-        rightVerts = VertexGroup::createTriangleVerts(myElement->effectiveTopLeft + position.position + originOffset + anchorOffset - sf::Vector2f(-size.x, 0), {borderSize.x, size.y}, borderColor);
-        bottomLeftVerts = VertexGroup::createTriangleVerts(myElement->effectiveTopLeft + position.position + originOffset + anchorOffset - sf::Vector2f(borderSize.x, -size.y), borderSize, blColor);
-        bottomVerts = VertexGroup::createTriangleVerts(myElement->effectiveTopLeft + position.position + originOffset + anchorOffset - sf::Vector2f(0, -size.y), {size.x, borderSize.y}, borderColor);
-        bottomRightVerts = VertexGroup::createTriangleVerts(myElement->effectiveTopLeft + position.position + originOffset + anchorOffset - sf::Vector2f(-size.x, -size.y), borderSize, brColor);
+        topLeftVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - borderSize, borderSize, tlColor);
+        topVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(0, borderSize.y), {size.x, borderSize.y}, borderColor);
+        topRightVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(-size.x, borderSize.y), borderSize, trColor);
+        leftVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(borderSize.x, 0), {borderSize.x, size.y}, borderColor);
+        rightVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(-size.x, 0), {borderSize.x, size.y}, borderColor);
+        bottomLeftVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(borderSize.x, -size.y), borderSize, blColor);
+        bottomVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(0, -size.y), {size.x, borderSize.y}, borderColor);
+        bottomRightVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - sf::Vector2f(-size.x, -size.y), borderSize, brColor);
     
         vertsInOrder = {&topLeftVerts, &topVerts, &topRightVerts, &leftVerts, &rightVerts, &bottomLeftVerts, &bottomVerts, &bottomRightVerts};
 

@@ -23,12 +23,11 @@ bool mouseRectCollide(Game* game, sf::Vector2f position, sf::Vector2f size, bool
 
 bool pointRectCollide(sf::Vector2f point, sf::FloatRect rect);
 
-template<typename T>
-void log(T message, bool newLine = true)
-{
-    std::cout << message;
-    if (newLine) std::cout << '\n';
-}
+void log(sf::Vector2f msg, bool newLine = true);
+
+void log(sf::Vector2i msg, bool newLine = true);
+
+void log(sf::Vector2u msg, bool newLine = true);
 
 // if !useCameraView, then the current applied view of the window will be used.
 bool isOnScreen(Game* game, sf::Vector2f tl, sf::Vector2f size, bool useCameraView = true);

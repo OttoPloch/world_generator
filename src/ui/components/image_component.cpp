@@ -28,7 +28,7 @@ void ImageComponent::updateVisuals()
     originOffset = UIPosition::getOriginOffset(position, sprite.getSize());
     anchorOffset = UIPosition::getAnchorOffset(position, myElement->getLocalBoundsUpToComponent(sortIndex));
 
-    sprite.getPositionVar().setPosition(myElement->effectiveTopLeft + position.position + originOffset + anchorOffset + (sprite.getSize() / 2.f));
+    sprite.getPositionVar().setPosition(myElement->effectivePosition + position.position + originOffset + anchorOffset + (sprite.getSize() / 2.f));
     sprite.syncPos();
 }
 

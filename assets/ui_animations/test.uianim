@@ -2,7 +2,7 @@ time 1
 relativepos 0
 startpos 0,0
 endpos 0,0
-startorigin 0
+startorigin x
 endorigin 2
-startanchor 0
+startanchor x
 endanchor 2

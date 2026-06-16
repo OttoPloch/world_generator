@@ -110,21 +110,20 @@ public:
     // it must be added to the position of this element's parent, and
     // it's parent, and so on and so forth until the final parent,
     // whose position is an offset from 0, 0 (just a normal position).
-    // This is the purpose of the calculateEffectiveTopLeft() method.
+    // This is the purpose of the calculateEffectivePosition() method.
     UIPosition position;
     int z;
     
     bool visible;
 
-    sf::Vector2f originOffset;
     sf::Vector2f anchorOffset;
-    sf::Vector2f effectiveTopLeft;
-
+    sf::Vector2f effectivePosition;
+    
     UIElement* parent;
     
     std::vector<std::unique_ptr<UIComponent>> components;
 private:
-    sf::Vector2f calculateEffectiveTopLeft();
+    sf::Vector2f calculateEffectivePosition();
     
     void sortComponents();
 

@@ -3,6 +3,7 @@
 #include "../ui_element.hpp"
 #include "ui_animation_data.hpp"
 #include "../../core/game.hpp"
+#include <SFML/Graphics/Rect.hpp>
 
 UIAnimation::UIAnimation(UIComponent* component, UIAnimationData* data) : component(component), data(data), running(false), elementAnimation(false) {}
 
@@ -14,14 +15,24 @@ void UIAnimation::restart(bool startAnimation)
 
     if (elementAnimation)
     {
-        if (element) targetPosition = &element->position;
+        if (!element)
+        {
+            std::cout << "ERROR in UIAnimation::restart(). elementAnimation is true, but there is no element pointer. element = " << element << ".\n";
+            assert(false);
+        }
+
+        targetPosition = &element->position;
     }
     else
     {
-        if (component) targetPosition = &component->position;
+        if (!component)
+        {
+            std::cout << "ERROR in UIAnimation::restart(). elementAnimation is false (meaning component should be used), but there is no component pointer. component = " << component << ".\n";
+            assert(false);
+        }
+
+        targetPosition = &component->position;
     }
-
-
 
     // Setting the adjusted origins and anchors. This needs to
     // happen because UIAnimationData stores these as smart pointers,
@@ -44,27 +55,28 @@ void UIAnimation::restart(bool startAnimation)
     targetPosition->origin = endOrigin;
     targetPosition->anchor = endAnchor;
 
-    sf::Vector2f finalOriginOffset;
-    sf::Vector2f finalAnchorOffset;
+    sf::Vector2f endOriginOffset;
+    sf::Vector2f endAnchorOffset;
     if (elementAnimation)
     {
-        if (element)
-        {
-            finalOriginOffset = UIPosition::getOriginOffset(element->position, element->getGlobalBounds().size);
-            finalAnchorOffset = UIPosition::getAnchorOffset(element);
-        }
+        sf::FloatRect bb = element->getGlobalBounds();
+
+        endOriginOffset = UIPosition::getOriginOffset(element->position, bb.size);
+        endAnchorOffset = UIPosition::getAnchorOffset(element);
+
+        sf::Vector2f effPos = element->effectivePosition;
+        endOriginOffset += (effPos - bb.position);
     }
     else
     {
-        if (component)
-        {
-            finalOriginOffset = UIPosition::getOriginOffset(component->position, component->getLocalBounds().size);
-            finalAnchorOffset = UIPosition::getAnchorOffset(component->position, component->myElement->getLocalBoundsUpToComponent(component->sortIndex));
-        }
+        endOriginOffset = UIPosition::getOriginOffset(component->position, component->getLocalBounds().size);
+        endAnchorOffset = UIPosition::getAnchorOffset(component->position, component->myElement->getLocalBoundsUpToComponent(component->sortIndex));
     }
-    
-    endPosition = data->endPosition;
+
+    endPosition = data->endPosition + endOriginOffset;
     if (data->relativePos) endPosition += targetPosition->position;
+
+
 
     targetPosition->origin = startOrigin;
     targetPosition->anchor = startAnchor;
@@ -73,41 +85,50 @@ void UIAnimation::restart(bool startAnimation)
     sf::Vector2f startAnchorOffset;
     if (elementAnimation)
     {
-        if (element)
-        {
-            startOriginOffset = UIPosition::getOriginOffset(element->position, element->getGlobalBounds().size);
-            startAnchorOffset = UIPosition::getAnchorOffset(element);
-        }
+        // sf::FloatRect bb = element->getGlobalBounds();
+    
+        // startOriginOffset = UIPosition::getOriginOffset(element->position, bb.size);
+        startAnchorOffset = element->anchorOffset;
+
+        // sf::Vector2f effPos = element->effectivePosition;
+        // startOriginOffset += (effPos - bb.position);
     }
     else
     {
-        if (component)
-        {
-            startOriginOffset = UIPosition::getOriginOffset(component->position, component->getLocalBounds().size);
-            startAnchorOffset = UIPosition::getAnchorOffset(component->position, component->myElement->getLocalBoundsUpToComponent(component->sortIndex));
-        }
+        startOriginOffset = component->originOffset;
+        startAnchorOffset = component->anchorOffset;
     }
-
-    sf::Vector2f startTotalOffset = startOriginOffset + startAnchorOffset;
-    sf::Vector2f endTotalOffset = finalOriginOffset + finalAnchorOffset;
     
-    startPosition = data->startPosition;
-    sf::Vector2f positionAfterDistance = data->endPosition + (endTotalOffset - startTotalOffset);
-    distance = positionAfterDistance - startPosition;
-    if (data->relativePos)
-    {
-        startPosition += targetPosition->position;
-        distance += targetPosition->position;
-    }
-
     if (elementAnimation)
     {
-        if (element) element->updateVisuals();
+        startPosition = data->startPosition;
+        sf::Vector2f positionAfterDistance = data->endPosition + (endAnchorOffset - startAnchorOffset) + endOriginOffset;
+        distance = positionAfterDistance - startPosition;
+        if (data->relativePos)
+        {
+            startPosition += targetPosition->position;
+            distance += targetPosition->position;
+        }
+        
+        element->updateVisuals();
     }
     else
     {
-        if (component) component->updateVisuals();
+        sf::Vector2f startTotalOffset = startOriginOffset + startAnchorOffset;
+        sf::Vector2f endTotalOffset = endOriginOffset + endAnchorOffset;
+        
+        startPosition = data->startPosition;
+        sf::Vector2f positionAfterDistance = data->endPosition + (endTotalOffset - startTotalOffset);
+        distance = positionAfterDistance - startPosition;
+        if (data->relativePos)
+        {
+            startPosition += targetPosition->position;
+            distance += targetPosition->position;
+        }
+
+        component->updateVisuals();
     }
+
 
     timeProgress = 0;
     running = startAnimation;
@@ -139,11 +160,10 @@ void UIAnimation::updateChanges()
     {
         if (element)
         {
-            // element->position.position = currentPosition;
+            // std::cout << "curr: " << element->position.position.x << ", " << element->position.position.y << '\n';
+            // std::cout << "new: " << currentPosition.x << ", " << currentPosition.y << '\n';
 
-            // since elements do not use origins in the same way as components, 
-            // this is an attempt to counteract that.
-            element->position.position = element->originOffset + currentPosition;
+            element->position.position = currentPosition;
             element->updateVisuals();
         }
     }

@@ -1,6 +1,7 @@
 #include "ui_position.hpp"
 #include "ui_element.hpp"
 #include "../core/game.hpp"
+#include "ui_element.hpp"
 #include <SFML/Graphics/Rect.hpp>
 
 UIPosition::UIPosition(sf::Vector2f position, UIOrigin origin, UIAnchor anchor, bool worldPosition) : position(position), origin(origin), anchor(anchor), worldPosition(worldPosition) {}
