@@ -1,7 +1,7 @@
 time 1
-relativepos 0
+relativepos 1
 startpos 0,0
-endpos 0,0
+endpos 0,10
 startorigin x
 endorigin 0
 startanchor x

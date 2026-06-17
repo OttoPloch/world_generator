@@ -59,13 +59,8 @@ void UIAnimation::restart(bool startAnimation)
     sf::Vector2f endAnchorOffset;
     if (elementAnimation)
     {
-        sf::FloatRect bb = element->getGlobalBounds();
-
-        endOriginOffset = UIPosition::getOriginOffset(element->position, bb.size);
+        endOriginOffset = {0, 0};
         endAnchorOffset = UIPosition::getAnchorOffset(element);
-
-        sf::Vector2f effPos = element->effectivePosition;
-        endOriginOffset += (effPos - bb.position);
     }
     else
     {
@@ -85,13 +80,8 @@ void UIAnimation::restart(bool startAnimation)
     sf::Vector2f startAnchorOffset;
     if (elementAnimation)
     {
-        // sf::FloatRect bb = element->getGlobalBounds();
-    
-        // startOriginOffset = UIPosition::getOriginOffset(element->position, bb.size);
+        startOriginOffset = {0, 0};
         startAnchorOffset = element->anchorOffset;
-
-        // sf::Vector2f effPos = element->effectivePosition;
-        // startOriginOffset += (effPos - bb.position);
     }
     else
     {
@@ -102,13 +92,9 @@ void UIAnimation::restart(bool startAnimation)
     if (elementAnimation)
     {
         startPosition = data->startPosition;
-        sf::Vector2f positionAfterDistance = data->endPosition + (endAnchorOffset - startAnchorOffset) + endOriginOffset;
+        sf::Vector2f positionAfterDistance = data->endPosition + (endAnchorOffset - startAnchorOffset);
         distance = positionAfterDistance - startPosition;
-        if (data->relativePos)
-        {
-            startPosition += targetPosition->position;
-            distance += targetPosition->position;
-        }
+        if (data->relativePos) startPosition += targetPosition->position;
         
         element->updateVisuals();
     }

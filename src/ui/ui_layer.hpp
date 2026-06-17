@@ -33,7 +33,7 @@ public:
 
     void draw(bool debug);
     
-    UIElement* getNearestElement(sf::Vector2f direction, UIElement* origin);
+    UIElement* getNearestElement(sf::Vector2f direction, UIElement* element);
 private:
     void setDebugVertices();
 

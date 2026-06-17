@@ -102,9 +102,9 @@ void UIElement::setAnimation(UIAnimationData* data, bool startAnimation)
     animation->restart(startAnimation);
 }
 
-UIComponent* UIElement::getNearestComponent(sf::Vector2f direction, UIComponent* origin)
+UIComponent* UIElement::getNearestComponent(sf::Vector2f direction, UIComponent* component)
 {
-    if (direction == sf::Vector2f(0, 0)) return origin;
+    if (direction == sf::Vector2f(0, 0)) return component;
     if (position.worldPosition)
     {
         std::cout << "ERROR in UIElement::getNearestComponent(), element's position is in the world, not designed to use this function with an element in the world.\n";
@@ -112,9 +112,9 @@ UIComponent* UIElement::getNearestComponent(sf::Vector2f direction, UIComponent*
     }
 
     sf::FloatRect bounds;
-    if (origin)
+    if (component)
     {
-        bounds = origin->getGlobalBounds();
+        bounds = component->getGlobalBounds();
     }
     else
     {
@@ -145,7 +145,7 @@ UIComponent* UIElement::getNearestComponent(sf::Vector2f direction, UIComponent*
 
     for (auto& c : components)
     {
-        if (c.get() == origin || c->identifier.substr(0, 2) == "__") continue;
+        if (c.get() == component || c->identifier.substr(0, 2) == "__") continue;
 
         sf::FloatRect cBounds = c->getGlobalBounds();
         sf::Vector2f cCenter = {cBounds.position.x + cBounds.size.x / 2, cBounds.position.y + cBounds.size.y / 2};

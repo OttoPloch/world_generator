@@ -31,7 +31,7 @@ public:
 
     void setAnimation(UIAnimationData* data, bool startAnimation = true);
 
-    UIComponent* getNearestComponent(sf::Vector2f direction, UIComponent* origin);
+    UIComponent* getNearestComponent(sf::Vector2f direction, UIComponent* component);
 
     void updateVisuals();
 
@@ -116,6 +116,7 @@ public:
     
     bool visible;
 
+    // elements do not use the origin for anything, so no origin offset.
     sf::Vector2f anchorOffset;
     sf::Vector2f effectivePosition;
     
