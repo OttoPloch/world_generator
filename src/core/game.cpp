@@ -7,7 +7,7 @@ void Game::init()
 {
     random = Random(settings.worldSeed);
 
-    window.create({800, 800}, "INFINITE", false, 0, sf::Color(10, 10, 12));
+    window.create({800, 800}, "INFINITE", false, 60, sf::Color(10, 10, 12));
     eventHandler.init(&window, scene.getCamera(), this, &scene);
     input = Input(this);
 
