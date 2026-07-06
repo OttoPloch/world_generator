@@ -169,10 +169,6 @@ Input::Input(Game* game) : game(game)
         {"RESETZOOM", {"ENTER", "SELECT"}},
         {"PAUSE", {"TAB", "START"}},
         {"STEP", {"RIGHT", "RSTICK"}},
-        {"UI LEFT", {"LEFT", "DPAD LEFT"}},
-        {"UI RIGHT", {"RIGHT", "DPAD RIGHT"}},
-        {"UI UP", {"UP", "DPAD UP"}},
-        {"UI DOWN", {"DOWN", "DPAD DOWN"}},
         {"TOGGLEFOCUS", {"F1", "LSTICK"}},
         {"DEBUG_VIEW", {"F2", "NONE"}},
         {"EXTRA 1", {"P", "NONE"}},
@@ -185,7 +181,7 @@ Input::Input(Game* game) : game(game)
     mouseMovedThisFrame = true;
 
     UISelector = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "__UI_SELECTOR", UIPosition({-10000, -10000}), INT32_MAX, nullptr));
-    UISelector->addComponent<BackgroundComponent>(game, UISelector, UIPosition({0, 0}), "SELECTOR BG", 0, sf::Vector2f(30, 30), 3, game->getAssetManager()->getTexture("red_border", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("background_8px", "ui/"), false);
+    UISelector->addComponent<BackgroundComponent>(game, UISelector, UIPosition({0, 0}), "SELECTOR BG", 0, sf::Vector2f(30, 30), 2, game->getAssetManager()->getTexture("white_border", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("background_8px", "ui/"), false);
     UISelector->visible = false;
     selectedElement = nullptr;
     UIMode = false;
