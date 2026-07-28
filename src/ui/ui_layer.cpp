@@ -60,6 +60,14 @@ void UILayer::init(Game* game, Camera* camera)
     e6->addComponent<ButtonComponent>(game, e6, UIPosition({0, 0}, UIOrigin::BOTTOM_LEFT, UIAnchor::BOTTOM_LEFT), "button", 0, game->getAssetManager()->getTexture("default_button", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("button", "ui/"), sf::Vector2f(100, 100), false);
     e6->addComponent<ButtonComponent>(game, e6, UIPosition({10, 0}, UIOrigin::BOTTOM_LEFT, UIAnchor::BOTTOM_RIGHT), "button2", 1, game->getAssetManager()->getTexture("blue_button", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("button", "ui/"), sf::Vector2f(100, 100), false);
     
+
+    UIOrigin x = UIOrigin::BOTTOM_RIGHT;
+    UIAnchor y = static_cast<UIAnchor>(x);
+
+    auto e7 = elements.emplace_back(std::make_unique<UIElement>(game, "test", UIPosition({0, 0}, UIOrigin::TOP_LEFT, y))).get();
+    e7->addComponent<BackgroundComponent>(game, e7, UIPosition({0, 0}, x, y), "test bg", 0, sf::Vector2f(200, 200), 50, assetManager->getTexture("ui_retro", "texture_atlases/ui/"), assetManager->getTextureAtlas("background_8px", "ui/"), false);
+    e7->addComponent<TextComponent>(game, e7, UIPosition({55, 55}, UIOrigin::TOP_LEFT, UIAnchor::TOP_LEFT), "test text", 1, "Hello, World!", assetManager->getFont("sfml_font"), 32);
+
     // auto e6 = elements.emplace_back(std::make_unique<UIElement>(game, "t3st", UIPosition({0, 0}))).get();
     // e6->addComponent<BackgroundComponent>(game, e6, UIPosition({0, 0}), "bg", 0, sf::Vector2f(300, 200), 40, game->getAssetManager()->getTexture("ui_default", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("background_8px", "ui/"));
 

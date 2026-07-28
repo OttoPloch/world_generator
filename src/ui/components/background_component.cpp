@@ -27,6 +27,44 @@ void BackgroundComponent::updateVisuals()
 {
     effectiveSize = {borderSize.x * 2 + size.x, borderSize.y * 2 + size.y};
 
+    if (includeBorderAsOffset) borderOffset = borderSize;
+    else
+    {
+        switch (position.origin)
+        {
+            case UIOrigin::TOP_LEFT:
+                borderOffset = {0, 0};
+                break;
+            case UIOrigin::TOP_MIDDLE:
+                borderOffset = {borderSize.x, 0};
+                break;
+            case UIOrigin::TOP_RIGHT:
+                borderOffset = {borderSize.x * 2, 0};
+                break;
+            case UIOrigin::LEFT_MIDDLE:
+                borderOffset = {0, borderSize.y};
+                break;
+            case UIOrigin::CENTER:
+                borderOffset = borderSize;
+                break;
+            case UIOrigin::RIGHT_MIDDLE:
+                borderOffset = {borderSize.x * 2, borderSize.y};
+                break;
+            case UIOrigin::BOTTOM_LEFT:
+                borderOffset = {0, borderSize.y * 2};
+                break;
+            case UIOrigin::BOTTOM_MIDDLE:
+                borderOffset = {borderSize.x, borderSize.y * 2};
+                break;
+            case UIOrigin::BOTTOM_RIGHT:
+                borderOffset = {borderSize.x * 2, borderSize.y * 2};
+                break;
+            default:
+                borderOffset = borderSize;
+                break;
+        }
+    }
+
     originOffset = borderOffset + UIPosition::getOriginOffset(position, effectiveSize);
     anchorOffset = UIPosition::getAnchorOffset(position, myElement->getLocalBoundsUpToComponent(sortIndex));
 
@@ -58,9 +96,6 @@ void BackgroundComponent::updateVertices()
         std::array<sf::Vertex, 6> bottomLeftVerts;
         std::array<sf::Vertex, 6> bottomVerts;
         std::array<sf::Vertex, 6> bottomRightVerts;
-
-        if (includeBorderAsOffset) borderOffset = borderSize;
-        else borderOffset = {0, 0};
 
         centerVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset, size, atlas->itemTexCoords["center"]);
         topLeftVerts = VertexGroup::createTriangleVerts(myElement->effectivePosition + position.position + originOffset + anchorOffset - borderSize, borderSize, atlas->itemTexCoords["topleft"]);
