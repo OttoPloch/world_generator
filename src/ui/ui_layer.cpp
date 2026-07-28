@@ -51,7 +51,7 @@ void UILayer::init(Game* game, Camera* camera)
     auto inputNote = createElement(std::make_unique<UIElement>(game, "__inputNote", UIPosition({0, 10}, UIOrigin::TOP_LEFT, UIAnchor::TOP_MIDDLE)));
     inputNote->addComponent<TextComponent>(game, inputNote, UIPosition({0, 0}, UIOrigin::TOP_MIDDLE, UIAnchor::TOP_MIDDLE), "note text", 1, "Press B on controller to navigate the UI,\nor move the right stick to control the cursor", game->getAssetManager()->getFont("White Storm"), 32);
 
-    auto e5 = elements.emplace_back(std::make_unique<UIElement>(game, "debug text display", UIPosition({0, 0}))).get();
+    auto e5 = elements.emplace_back(std::make_unique<UIElement>(game, "__debug text display", UIPosition({0, 0}))).get();
     e5->addComponent<TextComponent>(game, e5, UIPosition({10, 10}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT), "fps text", 0, "FPS: ", game->getAssetManager()->getFont("sfml_font"), 32);
     e5->addComponent<TextComponent>(game, e5, UIPosition({10, 10}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT), "mouse chunk pos text", 1, "Mouse Chunk Pos: ", game->getAssetManager()->getFont("sfml_font"), 32);
     e5->addComponent<TextComponent>(game, e5, UIPosition({10, 10}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT), "mouse tile type text", 2, "Mouse Tile Type: ", game->getAssetManager()->getFont("sfml_font"), 32);
@@ -59,13 +59,9 @@ void UILayer::init(Game* game, Camera* camera)
     auto e6 = elements.emplace_back(std::make_unique<UIElement>(game, "useless button", UIPosition({0, 0}, UIOrigin::BOTTOM_LEFT, UIAnchor::BOTTOM_LEFT))).get();
     e6->addComponent<ButtonComponent>(game, e6, UIPosition({0, 0}, UIOrigin::BOTTOM_LEFT, UIAnchor::BOTTOM_LEFT), "button", 0, game->getAssetManager()->getTexture("default_button", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("button", "ui/"), sf::Vector2f(100, 100), false);
     e6->addComponent<ButtonComponent>(game, e6, UIPosition({10, 0}, UIOrigin::BOTTOM_LEFT, UIAnchor::BOTTOM_RIGHT), "button2", 1, game->getAssetManager()->getTexture("blue_button", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("button", "ui/"), sf::Vector2f(100, 100), false);
-    
 
-    UIOrigin x = UIOrigin::BOTTOM_RIGHT;
-    UIAnchor y = static_cast<UIAnchor>(x);
-
-    auto e7 = elements.emplace_back(std::make_unique<UIElement>(game, "test", UIPosition({0, 0}, UIOrigin::TOP_LEFT, y))).get();
-    e7->addComponent<BackgroundComponent>(game, e7, UIPosition({0, 0}, x, y), "test bg", 0, sf::Vector2f(200, 200), 50, assetManager->getTexture("ui_retro", "texture_atlases/ui/"), assetManager->getTextureAtlas("background_8px", "ui/"), false);
+    auto e7 = elements.emplace_back(std::make_unique<UIElement>(game, "test", UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_RIGHT))).get();
+    e7->addComponent<BackgroundComponent>(game, e7, UIPosition({0, 0}, UIOrigin::BOTTOM_RIGHT, UIAnchor::BOTTOM_RIGHT), "test bg", 0, sf::Vector2f(200, 200), 50, assetManager->getTexture("ui_retro", "texture_atlases/ui/"), assetManager->getTextureAtlas("background_8px", "ui/"), false);
     e7->addComponent<TextComponent>(game, e7, UIPosition({55, 55}, UIOrigin::TOP_LEFT, UIAnchor::TOP_LEFT), "test text", 1, "Hello, World!", assetManager->getFont("sfml_font"), 32);
 
     // auto e6 = elements.emplace_back(std::make_unique<UIElement>(game, "t3st", UIPosition({0, 0}))).get();
