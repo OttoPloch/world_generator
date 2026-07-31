@@ -34,12 +34,14 @@ void UIComponent::onPress() {}
 
 bool UIComponent::isSelected()
 {  
-    if (game->getInput()->isUIModeActive())
+    if (game->getInput()->cursor->isUIModeActive())
     {
-        return (game->getInput()->getSelectedComponent() == this);
+        return (game->getInput()->cursor->getSelectedComponent() == this);
     }
     else
     {
+        if (!myElement->isComponentOnTopAtPoint(this, game->getInput()->cursor->getGameCursorPosition())) return false;
+
         sf::FloatRect gb = getGlobalBounds();
 
         return mouseRectCollide(game, gb.position, gb.size, false);
@@ -145,7 +147,7 @@ void UIComponent::draw(bool debug) {}
 
 bool UIComponent::attemptedPress()
 {
-    return isSelected() && (myElement->isComponentOnTopAtPoint(this, game->getInput()->getCursorWindowPos()) || game->getInput()->isUIModeActive()) && game->getInput()->isControlPressed("UI PRESS");
+    return isSelected() && game->getInput()->isControlPressed("UI PRESS");
 }
 
 bool UIComponent::justSelected()

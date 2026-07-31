@@ -3,32 +3,254 @@
 #include "input.hpp"
 #include "../ui/ui_element.hpp"
 #include "../ui/components/image_component.hpp"
+#include <SFML/Graphics/Rect.hpp>
+#include <SFML/Window/Mouse.hpp>
+#include "../ui/ui_layer.hpp"
 
-Cursor::Cursor() {}
-
-Cursor::Cursor(Game* game) : game(game), input(game->getInput())
+Cursor::Cursor(Game* game, std::string alternativeKeyForLeftClick, std::string alternativeKeyForRightClick) : game(game), input(game->getInput()), alternativeKeyForLeftClick(alternativeKeyForLeftClick), alternativeKeyForRightClick(alternativeKeyForRightClick)
 {
-    gameCursorPosition = toV2F(game->getWindow()->getSize().x / 2, game->getWindow()->getSize().y / 2);
+    game->getWindow()->getWindow().setMouseCursorVisible(false);
 
-    cursorElement = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "__CURSOR", UIPosition(input->getCursorWindowPos()), INT32_MAX));
+    sf::Vector2u windowSize = game->getWindow()->getSize();
+    gameCursorPosition = toV2F(windowSize.x / 2, windowSize.y / 2);
+
+    cursorElement = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "__CURSOR", UIPosition(gameCursorPosition), INT32_MAX));
     cursorElement->addComponent<ImageComponent>(game, cursorElement, UIPosition({0, 0}), "CURSOR IMAGE", 0, game->getAssetManager()->getTexture("cursor"), sf::Vector2f(30, 30), false);
+
+    UIMode = false;
+    usingMovementForUISelector = false;
+    mouseMovedThisFrame = false;
+
+    UISelector = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "__UI_SELECTOR", UIPosition({windowSize.x / 2.f, windowSize.y / 2.f}), INT32_MAX, nullptr));
+    UISelector->addComponent<BackgroundComponent>(game, UISelector, UIPosition({0, 0}), "SELECTOR BG", 0, sf::Vector2f(30, 30), 2, game->getAssetManager()->getTexture("white_border", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("background_8px", "ui/"), false);
+    UISelector->visible = false;
+    selectedElement = nullptr;
+    selectedComponent = nullptr;
 }
 
-void Cursor::inputUpdate()
+void Cursor::inputUpdate(float dt)
 {
+    if (input->getControl("MENU"))
+    {
+        UIMode = !UIMode;
+
+        if (UIMode)
+        {
+            cursorElement->visible = false;
+        }
+        else
+        {
+            cursorElement->visible = true;
+        }
+    }
+
+    if (UIMode)
+    {
+        if (selectedComponent) UISelector->visible = true;
+
+        usingMovementForUISelector = true;
+        sf::Vector2f movement = input->getMovement();
+        usingMovementForUISelector = false;
+
+        if (UIMoveClock.getElapsedTime().asSeconds() > game->getSettings()->input_UISelectorMoveCooldown)
+        {
+            if (movement != sf::Vector2f(0, 0))
+            {
+                moveUISelector(movement);
+
+                UIMoveClock.restart();
+            }
+        }
+    }
+    else
+    {
+        UISelector->visible = false;
+    }
+
+    if (game->getWindow()->getWindow().hasFocus())
+    {
+        // TEMP, need to fully implement controller support in a neat way
+        if (sf::Joystick::isConnected(0) && !mouseMovedThisFrame)
+        {
+            if (!UIMode)
+            {
+                sf::Vector2f cursorMovement = {
+                    input->getAxis(sf::Joystick::Axis::U) * game->getSettings()->input_controllerCursorSensitivity * dt,
+                    input->getAxis(sf::Joystick::Axis::V) * game->getSettings()->input_controllerCursorSensitivity * dt
+                };
+    
+                gameCursorPosition.x += cursorMovement.x;
+                gameCursorPosition.y += cursorMovement.y;
+            }
+        }
+        else
+        {
+            gameCursorPosition = toV2F(sf::Mouse::getPosition(game->getWindow()->getWindow()));
+        }
+    }
+
     // limits the game cursor to on the screen.
     sf::Vector2u windowSize = game->getWindow()->getSize();
     gameCursorPosition = {std::min(std::max(gameCursorPosition.x, 0.f), toFloat(windowSize.x)), std::min(std::max(gameCursorPosition.y, 0.f), toFloat(windowSize.y))};
 
     cursorElement->position.position = gameCursorPosition;
     
-    if (input->getHideCursor()) cursorElement->visible = false;
-    else cursorElement->visible = true;
+    // if (input->getHideCursor()) cursorElement->visible = false;
+    // else cursorElement->visible = true;
 
     cursorElement->updateVisuals();
+
+    mouseMovedThisFrame = false;
 }
 
-void Cursor::draw()
+void Cursor::mouseMoveEvent(sf::Event::MouseMoved mouseMoved)
 {
+    mouseMovedThisFrame = true;
+}
 
+void Cursor::moveUISelector(sf::Vector2f direction)
+{
+    UIComponent* newComponent = nullptr;
+    if (selectedElement)
+    {
+        // finding a new component to select within the selected element.
+
+        newComponent = selectedElement->getNearestComponent(direction, selectedComponent);
+    }
+
+    if (!newComponent)
+    {
+        // no options in the selected element or none are selected, finding a new element
+
+        UIElement* newElement = game->getScene()->getUILayer()->getNearestElement(direction, selectedElement);
+    
+        if (!newElement) return;
+    
+        selectedElement = newElement;
+        selectedComponent = newElement->getNearestComponent(direction, nullptr);
+
+        if (!selectedComponent) return;
+
+        UISelector->parent = newElement;
+    }
+    else
+    {
+        selectedComponent = newComponent;
+    }
+
+    sf::FloatRect compGB = selectedComponent->getGlobalBounds();
+
+    UISelector->position.position = compGB.position - selectedElement->getGlobalBounds().position;
+    UISelector->getComponent<BackgroundComponent>()->resize(compGB.size);
+
+    UISelector->updateVisuals();
+}
+
+bool Cursor::isUIModeActive()
+{
+    return UIMode;
+}
+
+bool Cursor::isUsingMovementForUISelector()
+{
+    return usingMovementForUISelector;
+}
+
+sf::Vector2f Cursor::getGameCursorPosition()
+{
+    return gameCursorPosition;
+}
+
+sf::Vector2f Cursor::getGameCursorCoords()
+{
+    return game->getWindow()->getWindow().mapPixelToCoords(sf::Vector2i(gameCursorPosition));
+}
+
+UIElement* Cursor::getSelectedElement()
+{
+    return selectedElement;
+}
+
+UIComponent* Cursor::getSelectedComponent()
+{
+    return selectedComponent;
+}
+
+bool Cursor::processMouseButtonEvent(sf::Event::MouseButtonPressed mouseButtonPressed, std::string& responseInput)
+{
+    if (mouseButtonPressed.button == sf::Mouse::Button::Left)
+    {
+        if (UIMode)
+        {
+            responseInput = "UI LEFTCLICK";
+        }
+        else
+        {
+            responseInput = "LEFTCLICK";
+        }
+
+        return true;
+    }
+    else if (mouseButtonPressed.button == sf::Mouse::Button::Right)
+    {
+        responseInput = "RIGHTCLICK";
+
+        return true;
+    }
+    
+    return false;
+}
+
+bool Cursor::canDoInputType(std::string type)
+{
+    if (type == "TYPE:WORLD")
+    {
+        if (game->getScene()->getUILayer()->checkUICollision() || UIMode)
+        {
+            return false;
+        }
+    }
+    else if (type == "TYPE:UI")
+    {
+        if (!game->getScene()->getUILayer()->checkUICollision() && !UIMode)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool Cursor::getMouseClick(sf::Mouse::Button mouseButton)
+{
+    if (mouseButton == sf::Mouse::Button::Left)
+    {
+        bool isPressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
+        
+        if (alternativeKeyForLeftClick == "NONE")
+        {
+            if (isPressed) return true;
+        }
+        else
+        {
+            if (!UIMode && isPressed) return true;
+            if (UIMode && input->isKeyPressed(alternativeKeyForLeftClick)) return true;
+        }
+    }
+    else if (mouseButton == sf::Mouse::Button::Right)
+    {
+        bool isPressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Right);
+
+        if (alternativeKeyForRightClick == "NONE")
+        {
+            if (isPressed) return true;
+        }
+        else
+        {
+            if (!UIMode && isPressed) return true;
+            if (UIMode && input->isKeyPressed(alternativeKeyForRightClick)) return true;
+        }
+    }
+
+    return false;
 }

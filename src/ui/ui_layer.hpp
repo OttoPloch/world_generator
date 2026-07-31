@@ -23,6 +23,7 @@ public:
 
     sf::View getUIView();
 
+    // retuns true if the cursor collides with any ui.
     bool checkUICollision();
 
     void updateVisuals();

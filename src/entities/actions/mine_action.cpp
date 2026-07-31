@@ -59,7 +59,7 @@ bool MineAction::update(float dt, Game* game)
 
 
     // TODO, replace the ui collision check here if it is too expensive, or abstract that check to the Action struct so it doesn't need to be implemented in every type of action.
-    if (worldToTilePosition(game, game->getInput()->getCursorCoords()) != worldToTilePosition(game, startPosition) || game->getScene()->getUILayer()->checkUICollision())
+    if (worldToTilePosition(game, game->getInput()->cursor->getGameCursorCoords()) != worldToTilePosition(game, startPosition) || game->getScene()->getUILayer()->checkUICollision())
     {
         return false;
     }

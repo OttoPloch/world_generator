@@ -340,7 +340,7 @@ void ChunkLayer::draw(bool debug, int debugLayerView)
 
     if (debug)
     {
-        sf::Vector2f cursorWorldPos = game->getInput()->getCursorCoords();
+        sf::Vector2f cursorWorldPos = game->getInput()->cursor->getGameCursorCoords();
         sf::Vector2i cursorChunkPos = worldToChunkPosition(game, cursorWorldPos);
         Chunk* cursorChunk = getChunk(cursorChunkPos);
 

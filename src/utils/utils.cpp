@@ -94,7 +94,7 @@ bool dynamicRectRectCollide(CollisionRect* in, sf::Vector2f inVel, CollisionRect
 
 bool mouseRectCollide(Game* game, sf::Vector2f position, sf::Vector2f size, bool useWorldMousePos)
 {
-    sf::Vector2f windowPos = game->getInput()->getCursorWindowPos();
+    sf::Vector2f windowPos = game->getInput()->cursor->getGameCursorPosition();
     sf::Vector2f mousePos = windowPos;
 
     if (useWorldMousePos)

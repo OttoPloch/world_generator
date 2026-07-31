@@ -94,7 +94,7 @@ void Game::run()
 
         if (secondsSinceStatPrint > secondsToPrintStats)
         {
-            //std::cout << "FPS (smoothed): " << smoothFps << '\n';
+            // std::cout << "FPS (smoothed): " << smoothFps << '\n';
 
             // std::cout << "dt: " << dt << "; dtick: " << dtick << '\n';
             // std::cout << "average dt: " << averageDt << '\n';

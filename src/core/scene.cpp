@@ -49,7 +49,7 @@ void Scene::tick()
     uiLayer.tick();
 
     // TEMP
-    sf::Vector2i mouseChunkPos = worldToChunkPosition(game, window->getWindow().mapPixelToCoords(sf::Mouse::getPosition(window->getWindow())));
+    sf::Vector2i mouseChunkPos = worldToChunkPosition(game, game->getInput()->cursor->getGameCursorCoords());
     // uiLayer.getElement("mouse chunk pos display")->getAsText()->setValue(std::to_string(mouseChunkPos.x) + ", " + std::to_string(mouseChunkPos.y));
     auto element = uiLayer.getElement("debug text display");
     if (element)
@@ -59,7 +59,7 @@ void Scene::tick()
             chunkPosText->setText("Mouse Chunk Pos: " + std::to_string(mouseChunkPos.x) + ", " + std::to_string(mouseChunkPos.y));
         }
     
-        sf::Vector2f mouseWorldPos = game->getInput()->getCursorCoords();
+        sf::Vector2f mouseWorldPos = game->getInput()->cursor->getGameCursorCoords();
         sf::Vector2f mouseLocalWorldPos = {std::fmod(mouseWorldPos.x, toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size), std::fmod(mouseWorldPos.y, toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size)};
         sf::Vector2i mouseLocalPos = {toInt(std::floor(mouseLocalWorldPos.x / game->getSettings()->tile_size)), toInt(std::floor(mouseLocalWorldPos.y / game->getSettings()->tile_size))};
         Chunk* mouseChunk = chunkLayer.getChunk(mouseChunkPos);
@@ -296,7 +296,7 @@ bool Scene::processActionRequest(Entity* actor, Action* action)
                 {
                     // TRYING TO MINE
 
-                    sf::Vector2f mouseWorldPos = game->getInput()->getCursorCoords();
+                    sf::Vector2f mouseWorldPos = game->getInput()->cursor->getGameCursorCoords();
 
                     if (auto chunk = chunkLayer.getChunk(worldToChunkPosition(game, mouseWorldPos)))
                     {

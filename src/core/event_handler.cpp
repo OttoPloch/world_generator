@@ -33,7 +33,7 @@ void EventHandler::processEvents()
         }
         else if (const auto* mouseMoved = event->getIf<sf::Event::MouseMoved>())
         {
-            game->getInput()->mouseMoveEvent(*mouseMoved);
+            game->getInput()->cursor->mouseMoveEvent(*mouseMoved);
         }
         else if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>())
         {

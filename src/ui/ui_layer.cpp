@@ -127,10 +127,12 @@ bool UILayer::checkUICollision()
 {
     for (auto& e : elements)
     {
+        if (e->name.substr(0, 2) == "__") continue;
+
         sf::Vector2f mousePos;
         
-        if (e->position.worldPosition) mousePos = game->getInput()->getCursorCoords();
-        else mousePos = game->getInput()->getCursorWindowPos();
+        if (e->position.worldPosition) mousePos = game->getInput()->cursor->getGameCursorCoords();
+        else mousePos = game->getInput()->cursor->getGameCursorPosition();
 
         std::vector<sf::FloatRect> componentBounds = e->getAllComponentBounds();
         for (auto b : componentBounds)

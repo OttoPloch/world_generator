@@ -17,22 +17,41 @@ public:
 
     Input(Game* game);
 
+
+
     // The three is___Pressed functions below grab the raw input values every time that function is called, meaning
     // they could be just pressed or held down. For single presses, use the get___ functions below.
 
-    //
+
+
+    // Mouse left and right click are treated like keys, and are referenced as "LEFTCLICK" and "RIGHTCLICK" respectively.
+    // .
+    // Putting "TYPE:UI" or "TYPE:WORLD" at the end of a key (with a space before it!) will make it go through Cursor::getCursorInput() to make
+    // sure the cursor is in that part of the screen. If the cursor is not, the input will not be considered pressed.
     bool isKeyPressed(std::string key);
+    // Putting "TYPE:UI" or "TYPE:WORLD" at the end of a button (with a space before it!) will make it go through Cursor::getCursorInput() to make
+    // sure the cursor is in that part of the screen. If the cursor is not, the input will not be considered pressed.
     bool isButtonPressed(std::string button); // 'DPAD xxxx' works here, also 'LTRIGGER' and 'RTRIGGER'
     bool isControlPressed(std::string control);
 
+
+    
     // The three get___ functions below return values stored from EventHandler, meaning if they return true the
     // input should be considered just pressed. For continuous input, use the is___Pressed functions above.
 
-    // enter key in all caps
-    // mouse left and right click are included (even though they are not keys)
+
+
+    // Enter key in all caps.
+    // Mouse left and right click are included (even though they are not keys)
     // so that they are supported in controls.
+    // .
+    // Putting "TYPE:UI" or "TYPE:WORLD" at the end of a key (with a space before it!) will make it go through Cursor::getCursorInput() to make
+    // sure the cursor is in that part of the screen. If the cursor is not, the input will not be considered pressed.
     bool getKey(std::string key);
     // Dpad buttons are considered axes, use getAxis() or isButtonPressed() for those.
+    // .
+    // Putting "TYPE:UI" or "TYPE:WORLD" at the end of a button (with a space before it!) will make it go through Cursor::getCursorInput() to make
+    // sure the cursor is in that part of the screen. If the cursor is not, the input will not be considered pressed.
     bool getButton(std::string key);
     bool getControl(std::string control);
 
@@ -40,37 +59,20 @@ public:
     
     sf::Vector2f getMovement();
 
-    // gets the coordinates of the cursor in the current view.
-    // So, if the camera is offset, the cursor position will inherit that offset.
-    sf::Vector2f getCursorCoords();
-
-    // gets the coordinates of the cursor in the window, not
-    // accounting for the current view.
-    sf::Vector2f getCursorWindowPos();
-
     void inputUpdate(float dt);
 
     // These ___Event functions are meant to be only used by the EventHandler
     // left and right mouse buttons are put into keysPressedThisFrame (even though they are not keys).
-    // this is to support those buttons for controls.
-    void mouseMoveEvent(sf::Event::MouseMoved mouseMoved);
+    // This is to support those buttons for controls.
     void mouseButtonEvent(sf::Event::MouseButtonPressed mouseButtonPressed);
     void keyEvent(sf::Event::KeyPressed keyPressed);
     void buttonEvent(sf::Event::JoystickButtonPressed buttonPressed);
 
     void resetPressedThisFrame();
 
-    bool isUIModeActive();
-    bool getHideCursor();
-    
-    UIElement* getSelectedElement();
-    UIComponent* getSelectedComponent();
+    std::unique_ptr<Cursor> cursor;
 private:
-    void moveUISelector(sf::Vector2f direction);
-
     Game* game;
-
-    Cursor cursor;
 
     std::vector<std::string> keys;
     std::unordered_map<std::string, int> stringToKey;
@@ -84,18 +86,6 @@ private:
 
     std::unordered_map<std::string, std::pair<std::string, std::string>> controls;
     std::unordered_map<std::string, bool> controlsPressedThisFrame;
-    
-    // sf::Vector2f gameCursorPosition;
-    // UIElement* cursorElement;
-    bool mouseMovedThisFrame;
-
-    UIElement* UISelector;
-    UIElement* selectedElement;
-    UIComponent* selectedComponent;
-    bool UIMode;
-    bool usingMovementForUISelector; // only used so that getMovement() can be called with UIMode on and not return (0, 0)
-    bool hideCursor;
-    sf::Clock UIMoveClock;
 
     std::unordered_map<std::string, float> updateBlame;
     sf::Clock debugClock;
