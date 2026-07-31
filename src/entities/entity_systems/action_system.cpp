@@ -16,23 +16,11 @@ void ActionSystem::update(float dt)
         {
             if (game->getInput()->isControlPressed("MAIN ACTION"))
             {
-                if (!scene->getUILayer()->checkUICollision())
-                {
-                    if (entityLayer->player)
-                    {
-                        a->startAction("MAIN ACTION");
-                    }
-                }
+                a->startAction("MAIN ACTION");
             }
             else if (game->getInput()->isControlPressed("SECONDARY ACTION"))
             {
-                if (!scene->getUILayer()->checkUICollision())
-                {
-                    if (entityLayer->player)
-                    {
-                        a->startAction("SECONDARY ACTION");
-                    }
-                }
+                a->startAction("SECONDARY ACTION");
             }
         }
     }
