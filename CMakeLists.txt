@@ -20,6 +20,7 @@ src/core/event_handler.cpp
 src/core/camera.cpp
 src/core/input.cpp
 src/core/scene.cpp
+src/core/cursor.cpp
 
 src/utils/conversions.cpp
 src/utils/utils.cpp

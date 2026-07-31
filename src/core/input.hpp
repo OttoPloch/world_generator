@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.hpp"
+#include "cursor.hpp"
 
 #include <map>
 #include <vector>
@@ -60,6 +61,7 @@ public:
     void resetPressedThisFrame();
 
     bool isUIModeActive();
+    bool getHideCursor();
     
     UIElement* getSelectedElement();
     UIComponent* getSelectedComponent();
@@ -67,6 +69,8 @@ private:
     void moveUISelector(sf::Vector2f direction);
 
     Game* game;
+
+    Cursor cursor;
 
     std::vector<std::string> keys;
     std::unordered_map<std::string, int> stringToKey;
@@ -81,8 +85,8 @@ private:
     std::unordered_map<std::string, std::pair<std::string, std::string>> controls;
     std::unordered_map<std::string, bool> controlsPressedThisFrame;
     
-    sf::Vector2f gameCursorPosition;
-    UIElement* cursorElement;
+    // sf::Vector2f gameCursorPosition;
+    // UIElement* cursorElement;
     bool mouseMovedThisFrame;
 
     UIElement* UISelector;

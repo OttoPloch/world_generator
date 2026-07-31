@@ -16,6 +16,8 @@ Input::Input(Game* game) : game(game)
 {
     game->getWindow()->getWindow().setMouseCursorVisible(false);
 
+    cursor = Cursor(game);
+
     keys = {
         "A",
         "B",
@@ -175,9 +177,6 @@ Input::Input(Game* game) : game(game)
         {"EXTRA 2", {"O", "NONE"}}
     };
 
-    gameCursorPosition = toV2F(game->getWindow()->getSize().x / 2, game->getWindow()->getSize().y / 2);
-    cursorElement = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "__CURSOR", UIPosition(getCursorWindowPos()), INT32_MAX, nullptr));
-    cursorElement->addComponent<ImageComponent>(game, cursorElement, UIPosition({0, 0}), "CURSOR IMAGE", 0, game->getAssetManager()->getTexture("cursor"), sf::Vector2f(30, 30), false);
     mouseMovedThisFrame = true;
 
     UISelector = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "__UI_SELECTOR", UIPosition({-10000, -10000}), INT32_MAX, nullptr));
@@ -357,12 +356,12 @@ sf::Vector2f Input::getMovement()
 
 sf::Vector2f Input::getCursorCoords()
 {
-    return game->getWindow()->getWindow().mapPixelToCoords(toV2I(gameCursorPosition));
+    return game->getWindow()->getWindow().mapPixelToCoords(toV2I(cursor.gameCursorPosition));
 }
 
 sf::Vector2f Input::getCursorWindowPos()
 {
-    return gameCursorPosition;
+    return cursor.gameCursorPosition;
 }
 
 void Input::inputUpdate(float dt)
@@ -380,8 +379,8 @@ void Input::inputUpdate(float dt)
                 getAxis(sf::Joystick::Axis::V) * game->getSettings()->input_controllerCursorSensitivity * dt
             };
 
-            gameCursorPosition.x += cursorMovement.x;
-            gameCursorPosition.y += cursorMovement.y;
+            cursor.gameCursorPosition.x += cursorMovement.x;
+            cursor.gameCursorPosition.y += cursorMovement.y;
 
             if (cursorMovement != sf::Vector2f(0, 0))
             {
@@ -391,18 +390,13 @@ void Input::inputUpdate(float dt)
         }
         else
         {
-            gameCursorPosition = toV2F(sf::Mouse::getPosition(game->getWindow()->getWindow()));
+            cursor.gameCursorPosition = toV2F(sf::Mouse::getPosition(game->getWindow()->getWindow()));
 
             if (mouseMovedThisFrame) UIMode = false;
         }
     }
-    
-    // limits the game cursor to on the screen.
-    sf::Vector2u windowSize = game->getWindow()->getSize();
-    gameCursorPosition = {std::min(std::max(gameCursorPosition.x, 0.f), toFloat(windowSize.x)), std::min(std::max(gameCursorPosition.y, 0.f), toFloat(windowSize.y))};
 
-    cursorElement->position.position = gameCursorPosition;
-    cursorElement->updateVisuals();
+    cursor.inputUpdate();
 
     updateBlame["GAME CURSOR"] = debugClock.restart().asSeconds();
     
@@ -450,9 +444,6 @@ void Input::inputUpdate(float dt)
 
     mouseMovedThisFrame = false;
 
-    if (hideCursor) cursorElement->visible = false;
-    else cursorElement->visible = true;
-
     if (game->getScene()->debugMode && game->getScene()->debugLevel == 1) printBlameStats(updateBlame, "INPUT_UPDATE");
 }
 
@@ -497,6 +488,11 @@ void Input::resetPressedThisFrame()
 bool Input::isUIModeActive()
 {
     return UIMode;
+}
+
+bool Input::getHideCursor()
+{
+    return hideCursor;
 }
 
 UIElement* Input::getSelectedElement()
