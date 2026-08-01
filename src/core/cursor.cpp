@@ -69,13 +69,21 @@ void Cursor::inputUpdate(float dt)
     {
         UISelector->visible = false;
 
-        selectedEntity = game->getScene()->getEntityLayer()->getEntityAtPos(getGameCursorCoords(), false);
-        selectedTile = game->getScene()->getChunkLayer()->getTileAtPosition(getGameCursorCoords());
-
-        if (selectedTile && selectedEntity)
+        if (canDoInputType("TYPE:WORLD"))
         {
-            if (selectedTile->z > game->getSettings()->entityTileZEquivalent) selectedEntity = nullptr;
-            else selectedTile = nullptr;
+            selectedEntity = game->getScene()->getEntityLayer()->getEntityAtPos(getGameCursorCoords(), false);
+            selectedTile = game->getScene()->getChunkLayer()->getTileAtPosition(getGameCursorCoords(), true);
+    
+            if (selectedTile && selectedEntity)
+            {
+                if (selectedTile->z > game->getSettings()->entityTileZEquivalent) selectedEntity = nullptr;
+                else selectedTile = nullptr;
+            }
+        }
+        else
+        {
+            selectedEntity = nullptr;
+            selectedTile = nullptr;
         }
     }
 

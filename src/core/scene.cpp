@@ -51,7 +51,7 @@ void Scene::tick()
     // TEMP
     sf::Vector2i mouseChunkPos = worldToChunkPosition(game, game->getInput()->cursor->getGameCursorCoords());
     // uiLayer.getElement("mouse chunk pos display")->getAsText()->setValue(std::to_string(mouseChunkPos.x) + ", " + std::to_string(mouseChunkPos.y));
-    auto element = uiLayer.getElement("debug text display");
+    auto element = uiLayer.getElement("__debug text display");
     if (element)
     {
         if (auto chunkPosText = element->getComponent<TextComponent>("mouse chunk pos text"))
@@ -59,31 +59,22 @@ void Scene::tick()
             chunkPosText->setText("Mouse Chunk Pos: " + std::to_string(mouseChunkPos.x) + ", " + std::to_string(mouseChunkPos.y));
         }
     
-        sf::Vector2f mouseWorldPos = game->getInput()->cursor->getGameCursorCoords();
-        sf::Vector2f mouseLocalWorldPos = {std::fmod(mouseWorldPos.x, toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size), std::fmod(mouseWorldPos.y, toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size)};
-        sf::Vector2i mouseLocalPos = {toInt(std::floor(mouseLocalWorldPos.x / game->getSettings()->tile_size)), toInt(std::floor(mouseLocalWorldPos.y / game->getSettings()->tile_size))};
-        Chunk* mouseChunk = chunkLayer.getChunk(mouseChunkPos);
-        
         std::string mouseTileType = "none";
+        Tile* selectedTile = game->getInput()->cursor->getSelectedTile();
 
-        if (mouseChunk && mouseChunk->state == ChunkState::ACTIVE)
+        if (selectedTile)
         {
-            Tile* mouseTile = mouseChunk->getTile(mouseLocalPos);
-    
-            if (mouseTile)
-            {
-                std::map<TileType, std::string> typesToStrings {
-                    {TileType::AIR, "air"},
-                    {TileType::WATER, "water"},
-                    {TileType::GRASS, "grass"},
-                    {TileType::STONE, "stone"},
-                    {TileType::LAVA, "lava"},
-                    {TileType::COBBLE, "cobble"},
-                    {TileType::PINK, "pink"},
-                };
-            
-                mouseTileType = typesToStrings[mouseTile->type];
-            }
+            std::map<TileType, std::string> typesToStrings {
+                {TileType::AIR, "air"},
+                {TileType::WATER, "water"},
+                {TileType::GRASS, "grass"},
+                {TileType::STONE, "stone"},
+                {TileType::LAVA, "lava"},
+                {TileType::COBBLE, "cobble"},
+                {TileType::PINK, "pink"},
+            };
+        
+            mouseTileType = typesToStrings[selectedTile->type];
         }
 
         if (auto tileTypeText = element->getComponent<TextComponent>("mouse tile type text"))

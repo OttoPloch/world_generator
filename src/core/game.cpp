@@ -156,7 +156,7 @@ void Game::run()
         scene.chunkLoadUpdate();
 
         // TEMP, setting the fps display on screen to the smooth fps value.
-        auto element = scene.getUILayer()->getElement("debug text display");
+        auto element = scene.getUILayer()->getElement("__debug text display");
         if (element)
         {
             if (auto fpsText = element->getComponent<TextComponent>("fps text"))
