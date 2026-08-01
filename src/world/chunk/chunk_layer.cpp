@@ -217,6 +217,21 @@ std::array<Chunk*, 9> ChunkLayer::getNearbyChunks(sf::Vector2f position)
     return chunks;
 }
 
+Tile* ChunkLayer::getTileAtPosition(sf::Vector2f position)
+{
+    sf::Vector2i tileChunkPos(worldToChunkPosition(game, position));
+
+    Chunk* chunk = getChunk(tileChunkPos);
+    if (chunk)
+    {
+        sf::Vector2i tileLocalPos(worldToTilePosition(game, position) - sf::Vector2i(tileChunkPos.x * chunkSize, tileChunkPos.y * chunkSize));
+        
+        return chunk->getTile(tileLocalPos);
+    }
+
+    return nullptr;
+}
+
 void ChunkLayer::tick()
 {
     for (auto& i : chunks)

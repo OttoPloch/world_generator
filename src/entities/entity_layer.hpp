@@ -35,6 +35,8 @@ public:
 
     Entity* getEntity(int ID);
 
+    Entity* getEntityAtPos(sf::Vector2f position);
+
     // chunkRadius controls the distance to scan for entities.
     // The default of 0 only scans in the chunk position given.
     std::vector<Entity*> getEntitiesInChunkArea(int chunkX, int chunkY, int chunkRadius = 0);

@@ -33,7 +33,7 @@ void UIComponent::onHover() {}
 void UIComponent::onPress() {}
 
 bool UIComponent::isSelected()
-{  
+{
     if (game->getInput()->cursor->isUIModeActive())
     {
         return (game->getInput()->cursor->getSelectedComponent() == this);
@@ -74,6 +74,8 @@ void UIComponent::updateVisuals()
 
 void UIComponent::updateState()
 {
+    if (!myElement->visible) return;
+
     selectedLastFrame = selected;
     selected = isSelected();
 

@@ -2,6 +2,7 @@
 #include "../core/game.hpp"
 #include "../utils/utils.hpp"
 #include "components/position_component.hpp"
+#include "components/sprite_component.hpp"
 #include "rect_type.hpp"
 #include "states.hpp"
 #include "../graphics/asset_manager.hpp"
@@ -12,6 +13,7 @@
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <algorithm>
+#include <iterator>
 
 EntityLayer::EntityLayer() {}
 
@@ -213,6 +215,28 @@ Entity* EntityLayer::getEntity(int ID)
     if (entities.find(ID) != entities.end())
     {
         return entities[ID].get();
+    }
+
+    return nullptr;
+}
+
+Entity* EntityLayer::getEntityAtPos(sf::Vector2f position)
+{
+    std::vector<Entity*> entitiesWithSprite = getEntitiesWithComponent<SpriteComponent>();
+
+    std::sort(entitiesWithSprite.begin(), entitiesWithSprite.end(), [](Entity* a, Entity* b){
+        return a->getComponent<SpriteComponent>()->sprite.bottom() < b->getComponent<SpriteComponent>()->sprite.bottom();
+    });
+
+    for (auto itr = entitiesWithSprite.rbegin(); itr != entitiesWithSprite.rend(); itr++)
+    {
+        if (auto s = (*itr)->getComponent<SpriteComponent>())
+        {
+            if (pointRectCollide(position, s->sprite.sprite->getGlobalBounds()))
+            {
+                return *itr;
+            }
+        }
     }
 
     return nullptr;

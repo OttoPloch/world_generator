@@ -3,6 +3,7 @@
 #include "../../core/scene.hpp"
 #include "../entity_layer.hpp"
 #include "../components/components.hpp"
+#include <algorithm>
 
 RenderSystem::RenderSystem() {}
 
@@ -21,6 +22,10 @@ void RenderSystem::update(float dt)
 void RenderSystem::draw()
 {
     std::vector<Entity*> validEntities = entityLayer->getEntitiesWithComponent<SpriteComponent>();
+
+    std::sort(validEntities.begin(), validEntities.end(), [](Entity* a, Entity* b){
+        return a->getComponent<SpriteComponent>()->sprite.bottom() < b->getComponent<SpriteComponent>()->sprite.bottom();
+    });
 
     for (auto e : validEntities)
     {

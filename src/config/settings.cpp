@@ -18,6 +18,7 @@ void Settings::init()
     generation_decoration_scale = -1.f;
     generation_decoration_frequency = chunk_size * 6;
     maxTileZ = 2;
+    entityTileZEquivalent = maxTileZ - 1;
     worldSeed = 117;
     input_controllerCursorSensitivity = 20;
     input_triggerMinPressValue = 0;

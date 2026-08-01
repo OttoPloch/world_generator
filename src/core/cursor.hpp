@@ -6,6 +6,8 @@ class Game;
 class Input;
 class UIElement;
 class UIComponent;
+class Entity;
+class Tile;
 
 class Cursor
 {
@@ -33,6 +35,8 @@ public:
     
     UIElement* getSelectedElement();
     UIComponent* getSelectedComponent();
+    Entity* getSelectedEntity();
+    Tile* getSelectedTile();
 
     bool processMouseButtonEvent(sf::Event::MouseButtonPressed mouseButtonPressed, std::string& responseInput);
 
@@ -56,6 +60,8 @@ private:
     UIElement* UISelector;
     UIElement* selectedElement;
     UIComponent* selectedComponent;
+    Entity* selectedEntity;
+    Tile* selectedTile;
 
     std::string alternativeKeyForLeftClick;
     std::string alternativeKeyForRightClick;

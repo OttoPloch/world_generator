@@ -21,7 +21,7 @@ Cursor::Cursor(Game* game, std::string alternativeKeyForLeftClick, std::string a
     usingMovementForUISelector = false;
     mouseMovedThisFrame = false;
 
-    UISelector = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "__UI_SELECTOR", UIPosition({windowSize.x / 2.f, windowSize.y / 2.f}), INT32_MAX, nullptr));
+    UISelector = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "__UI SELECTOR", UIPosition({windowSize.x / 2.f, windowSize.y / 2.f}), INT32_MAX, nullptr));
     UISelector->addComponent<BackgroundComponent>(game, UISelector, UIPosition({0, 0}), "SELECTOR BG", 0, sf::Vector2f(30, 30), 2, game->getAssetManager()->getTexture("white_border", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("background_8px", "ui/"), false);
     UISelector->visible = false;
     selectedElement = nullptr;
@@ -37,6 +37,9 @@ void Cursor::inputUpdate(float dt)
         if (UIMode)
         {
             cursorElement->visible = false;
+
+            selectedEntity = nullptr;
+            selectedTile = nullptr;
         }
         else
         {
@@ -65,6 +68,15 @@ void Cursor::inputUpdate(float dt)
     else
     {
         UISelector->visible = false;
+
+        selectedEntity = game->getScene()->getEntityLayer()->getEntityAtPos(getGameCursorCoords());
+        selectedTile = game->getScene()->getChunkLayer()->getTileAtPosition(getGameCursorCoords());
+
+        if (selectedTile && selectedEntity)
+        {
+            if (selectedTile->z > game->getSettings()->entityTileZEquivalent) selectedEntity = nullptr;
+            else selectedTile = nullptr;
+        }
     }
 
     if (game->getWindow()->getWindow().hasFocus())
@@ -94,9 +106,6 @@ void Cursor::inputUpdate(float dt)
     gameCursorPosition = {std::min(std::max(gameCursorPosition.x, 0.f), toFloat(windowSize.x)), std::min(std::max(gameCursorPosition.y, 0.f), toFloat(windowSize.y))};
 
     cursorElement->position.position = gameCursorPosition;
-    
-    // if (input->getHideCursor()) cursorElement->visible = false;
-    // else cursorElement->visible = true;
 
     cursorElement->updateVisuals();
 
@@ -174,6 +183,16 @@ UIElement* Cursor::getSelectedElement()
 UIComponent* Cursor::getSelectedComponent()
 {
     return selectedComponent;
+}
+
+Entity* Cursor::getSelectedEntity()
+{
+    return selectedEntity;
+}
+
+Tile* Cursor::getSelectedTile()
+{
+    return selectedTile;
 }
 
 bool Cursor::processMouseButtonEvent(sf::Event::MouseButtonPressed mouseButtonPressed, std::string& responseInput)
