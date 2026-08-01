@@ -11,31 +11,20 @@ bool MineAction::start(Game* game)
     cooldownProgress = 0.f;
     cooldown = 0.f;
 
-    sf::Vector2i chunkPos = worldToChunkPosition(game, startPosition);
+    startTile = game->getInput()->cursor->getSelectedTile();
 
-    if (Chunk* chunk = game->getScene()->getChunkLayer()->getChunk(chunkPos))
+    if (startTile)
     {
-        sf::Vector2i tilePos = worldToTilePosition(game, startPosition);
-        tilePos = {tilePos.x % game->getSettings()->chunk_size, tilePos.y % game->getSettings()->chunk_size};
-        
-        bool getHighestNonAir = false;
-        if (mineZ == -1) getHighestNonAir = true;
+        std::vector<std::unique_ptr<TileTag>>* tags = &startTile->tags;
 
-        Tile* tile = chunk->getTile(tilePos, getHighestNonAir, mineZ);
-        
-        if (tile)
+        for (auto& t : *tags)
         {
-            std::vector<std::unique_ptr<TileTag>>* tags = &tile->tags;
-
-            for (auto& t : *tags)
+            if (auto m = dynamic_cast<MineableTag*>(t.get()))
             {
-                if (auto m = dynamic_cast<MineableTag*>(t.get()))
-                {
-                    timeToComplete = m->durability / mineSpeed;
-                    cooldown = m->durability / mineSpeed;
+                timeToComplete = m->durability / mineSpeed;
+                cooldown = m->durability / mineSpeed;
 
-                    return true;
-                }
+                return true;
             }
         }
     }
@@ -57,9 +46,8 @@ bool MineAction::update(float dt, Game* game)
     for (int j = 0; j < left; j++) std::cout << ".";
     std::cout << '\n';
 
-
-    // TODO, replace the ui collision check here if it is too expensive, or abstract that check to the Action struct so it doesn't need to be implemented in every type of action.
-    if (worldToTilePosition(game, game->getInput()->cursor->getGameCursorCoords()) != worldToTilePosition(game, startPosition) || game->getScene()->getUILayer()->checkUICollision())
+    
+    if (game->getInput()->cursor->getSelectedTile() != startTile)
     {
         return false;
     }
@@ -73,10 +61,7 @@ void MineAction::completeAction(Entity* actor, sf::Vector2f position)
 
     if (Chunk* chunk = actor->game->getScene()->getChunkLayer()->getChunk(chunkPos))
     {
-        sf::Vector2i tilePos = worldToTilePosition(actor->game, startPosition);
-        tilePos = {tilePos.x % actor->game->getSettings()->chunk_size, tilePos.y % actor->game->getSettings()->chunk_size};
-
-        chunk->setTile(tilePos, &chunk->chunkLayer->tManager.tileTemplates["air"]);
+        chunk->setTile(startTile->localPosition, &chunk->chunkLayer->tManager.tileTemplates["air"]);
     }
 
     active = false;

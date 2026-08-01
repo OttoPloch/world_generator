@@ -15,4 +15,6 @@ struct MineAction : public Action
     float mineSpeed;
 
     int mineZ;
+private:
+    Tile* startTile;
 };
