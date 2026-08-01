@@ -220,7 +220,7 @@ Entity* EntityLayer::getEntity(int ID)
     return nullptr;
 }
 
-Entity* EntityLayer::getEntityAtPos(sf::Vector2f position)
+Entity* EntityLayer::getEntityAtPos(sf::Vector2f position, bool includePlayer)
 {
     std::vector<Entity*> entitiesWithSprite = getEntitiesWithComponent<SpriteComponent>();
 
@@ -230,6 +230,8 @@ Entity* EntityLayer::getEntityAtPos(sf::Vector2f position)
 
     for (auto itr = entitiesWithSprite.rbegin(); itr != entitiesWithSprite.rend(); itr++)
     {
+        if (!includePlayer && (*itr) == player) continue;
+
         if (auto s = (*itr)->getComponent<SpriteComponent>())
         {
             if (pointRectCollide(position, s->sprite.sprite->getGlobalBounds()))

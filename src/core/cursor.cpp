@@ -69,7 +69,7 @@ void Cursor::inputUpdate(float dt)
     {
         UISelector->visible = false;
 
-        selectedEntity = game->getScene()->getEntityLayer()->getEntityAtPos(getGameCursorCoords());
+        selectedEntity = game->getScene()->getEntityLayer()->getEntityAtPos(getGameCursorCoords(), false);
         selectedTile = game->getScene()->getChunkLayer()->getTileAtPosition(getGameCursorCoords());
 
         if (selectedTile && selectedEntity)

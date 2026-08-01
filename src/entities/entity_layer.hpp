@@ -35,7 +35,7 @@ public:
 
     Entity* getEntity(int ID);
 
-    Entity* getEntityAtPos(sf::Vector2f position);
+    Entity* getEntityAtPos(sf::Vector2f position, bool includePlayer);
 
     // chunkRadius controls the distance to scan for entities.
     // The default of 0 only scans in the chunk position given.
