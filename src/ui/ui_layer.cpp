@@ -144,6 +144,37 @@ bool UILayer::checkUICollision()
     return false;
 }
 
+bool UILayer::isElementOnTopAtPoint(UIElement* element, sf::Vector2f point)
+{
+    sf::FloatRect elementGB = element->getGlobalBounds();
+    if (!pointRectCollide(point, elementGB)) return false;
+
+    float elementBottom = elementGB.position.y + elementGB.size.y;
+
+    for (auto& e : elements)
+    {
+        // TODO: fully implement world ui elements. This is not urgent,
+        // so just do it whenever those become needed.
+        if (e->position.worldPosition) continue;
+
+        if (e.get() == element) continue;
+
+        sf::FloatRect eGB = e->getGlobalBounds();
+        if (!pointRectCollide(point, eGB)) continue;
+
+        if (e->z > element->z) return false;
+        else if (e->z == element->z)
+        {
+            if (eGB.position.y + eGB.size.y > elementBottom)
+            {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
 void UILayer::updateVisuals()
 {
     sf::Vector2f viewSize = toV2F(game->getWindow()->getSize());
@@ -243,7 +274,7 @@ void UILayer::draw(bool debug)
     
     for (auto e : visibleScreenElements)
     {
-        if (e->name != "CONTROLLER_INDICATOR") e->draw(debug);
+        e->draw(debug);
     }
 
     if (debug)

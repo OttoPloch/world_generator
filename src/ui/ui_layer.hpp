@@ -26,6 +26,8 @@ public:
     // retuns true if the cursor collides with any ui.
     bool checkUICollision();
 
+    bool isElementOnTopAtPoint(UIElement* element, sf::Vector2f point);
+
     void updateVisuals();
 
     void tick();
