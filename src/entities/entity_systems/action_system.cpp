@@ -31,8 +31,8 @@ void ActionSystem::update(float dt)
     {
         auto a = e->getComponent<ActionComponent>();
 
-        a->mainAction->cooldownProgress += dt;
-        a->secondaryAction->cooldownProgress += dt;
+        if (!a->mainAction->active) a->mainAction->cooldownProgress += dt;
+        if (!a->secondaryAction->active) a->secondaryAction->cooldownProgress += dt;
     
         Action* currentAction;
         std::string currentActionInputName;
@@ -53,29 +53,20 @@ void ActionSystem::update(float dt)
             {
                 if (currentAction->mustHoldDown && !game->getInput()->isControlPressed(currentActionInputName))
                 {
-                    currentAction->cooldownProgress = currentAction->cooldown;
-                    currentAction->timeProgress = 0.f;
-                    currentAction->active = false;
+                    currentAction->reset(false);
                 }
                 else
                 {
-                    if (currentAction->update(dt, game))
+                    if (currentAction->update(dt))
                     {
                         if (currentAction->timeProgress >= currentAction->timeToComplete)
                         {
                             currentAction->completeAction(e, game->getInput()->cursor->getGameCursorCoords());
-                
-                            currentAction->timeProgress = 0.f;
-                            currentAction->active = false;
                         }
                     }
                     else
                     {
-                        currentAction->active = false;
-                        currentAction->timeProgress = 0.f;
-                        currentAction->timeToComplete = 0.f;
-                        currentAction->cooldownProgress = 0.f;
-                        currentAction->cooldown = 0.f;
+                        currentAction->reset(false);
                     }
                 }
             }

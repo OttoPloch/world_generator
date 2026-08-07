@@ -203,6 +203,11 @@ Tile* Cursor::getSelectedTile()
     return selectedTile;
 }
 
+UIElement* Cursor::getCursorElement()
+{
+    return cursorElement;
+}
+
 bool Cursor::processMouseButtonEvent(sf::Event::MouseButtonPressed mouseButtonPressed, std::string& responseInput)
 {
     if (mouseButtonPressed.button == sf::Mouse::Button::Left)

@@ -59,8 +59,6 @@ private:
 
     Camera camera;
 
-    std::vector<std::pair<Entity*, std::unique_ptr<Action>>> actions;
-
     int debugChunkLayerView;
 
     // for monitoring performance

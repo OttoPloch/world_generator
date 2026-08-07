@@ -7,26 +7,22 @@ ActionComponent::ActionComponent(Entity* myEntity, std::unique_ptr<Action> mainA
 
 void ActionComponent::startAction(std::string actionInput)
 {
-    if (actionInput == "MAIN ACTION" && mainAction->cooldownProgress >= mainAction->cooldown)
+    if (actionInput == "MAIN ACTION" && mainAction->cooldownProgress >= mainAction->cooldown && !mainAction->active)
     {
         mainAction->startPosition = myEntity->game->getInput()->cursor->getGameCursorCoords();
         
         if (myEntity->game->getScene()->processActionRequest(myEntity, mainAction.get()))
         {
-            mainAction->active = true;
-            mainAction->cooldownProgress = 0.f;
-            mainAction->start(myEntity->game);
+            mainAction->start();
         }
     }
-    else if (actionInput == "SECONDARY ACTION" && secondaryAction->cooldownProgress >= secondaryAction->cooldown)
+    else if (actionInput == "SECONDARY ACTION" && secondaryAction->cooldownProgress >= secondaryAction->cooldown && !secondaryAction->active)
     {
         secondaryAction->startPosition = myEntity->game->getInput()->cursor->getGameCursorCoords();
         
         if (myEntity->game->getScene()->processActionRequest(myEntity, secondaryAction.get()))
         {
-            secondaryAction->active = true;
-            secondaryAction->cooldownProgress = 0.f;
-            secondaryAction->start(myEntity->game);
+            secondaryAction->start();
         }
     }
 }

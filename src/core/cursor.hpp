@@ -38,6 +38,8 @@ public:
     Entity* getSelectedEntity();
     Tile* getSelectedTile();
 
+    UIElement* getCursorElement();
+
     bool processMouseButtonEvent(sf::Event::MouseButtonPressed mouseButtonPressed, std::string& responseInput);
 
     bool canDoInputType(std::string type);

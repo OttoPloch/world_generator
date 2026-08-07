@@ -85,16 +85,14 @@ void Sprite::update(float dt)
                 std::cout << "ACTIVE ANIMATION TEXTURE AND SPRITE CURRENT TEXTURE ARE DIFFERENT, UPDATING SPRITE TEXTURE.\n";
                 sprite->setTexture(*activeAnimation->texture);
             }
-
-            sf::IntRect newTexRect = {
-                toV2I(activeAnimation->frames[activeAnimation->index].position),
-                toV2I(activeAnimation->frames[activeAnimation->index].size)
-            };
-
-            setTextureRect(newTexRect);
-
+            
             activeAnimation->secondsTillNextFrame = activeAnimation->secondsPerFrame;
         }
+
+        setTextureRect({
+            toV2I(activeAnimation->frames[activeAnimation->index].position),
+            toV2I(activeAnimation->frames[activeAnimation->index].size)
+        });
     }
 }
 

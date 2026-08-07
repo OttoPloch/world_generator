@@ -21,9 +21,12 @@ public:
 
     UIElement* createElement(std::unique_ptr<UIElement> element);
 
+    // removes ALL elements with the exact name given.
+    bool removeElement(std::string elementName);
+
     sf::View getUIView();
 
-    // retuns true if the cursor collides with any ui.
+    // retuns true if the cursor collides with any ui (not including elements with a world position).
     bool checkUICollision();
 
     bool isElementOnTopAtPoint(UIElement* element, sf::Vector2f point);

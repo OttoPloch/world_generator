@@ -39,7 +39,7 @@ void EntityLayer::init(Game* game)
     pt->control = ControlComponentData();
     pt->state = StateComponentData();
     pt->collision = {{.5f, .5f}, true, RectType::ACTIVE};
-    pt->action = {std::make_unique<MineAction>(1.f, "mine!", 1.f), std::make_unique<Action>("block!", -1.f, 0.f, 4.f, true), game->getSettings()->tile_size * 15};
+    pt->action = {std::make_unique<MineAction>(game, 1.f, "mine!", 1.f), std::make_unique<Action>(game, "block!", -1.f, 0.f, 4.f, true), game->getSettings()->tile_size * 15};
 
     Entity* e = addEntity(pt, true, {0, 0});
     player = e;

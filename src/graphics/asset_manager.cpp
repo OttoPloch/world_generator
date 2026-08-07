@@ -88,7 +88,7 @@ Animation* AssetManager::getAnimation(std::string name, std::string pathFromAsse
 
             std::string textureName = "missing";
             std::string texturePath = "images/";
-            float defaultSPF = 0.5f; // SPF = seconds per frame
+            float secondsPerFrame = 0.5f;
             std::vector<sf::Vector2f> coords;
             std::vector<sf::Vector2f> sizes;
 
@@ -98,7 +98,7 @@ Animation* AssetManager::getAnimation(std::string name, std::string pathFromAsse
             {
                 if (line.substr(0, 12) == "texture name") textureName = line.substr(13);
                 if (line.substr(0, 4) == "path") texturePath = line.substr(5);
-                if (line.substr(0, 11) == "default spf") defaultSPF = std::stof(line.substr(12));
+                if (line.substr(0, 11) == "default spf") secondsPerFrame = std::stof(line.substr(12));
                 if (line.substr(0, 5) == "coord")
                 {
                     std::string substr = line.substr(6);
@@ -145,7 +145,7 @@ Animation* AssetManager::getAnimation(std::string name, std::string pathFromAsse
 
             for(int i = 0; i < coords.size(); i++) frames.emplace_back(coords[i], sizes[i]);
 
-            newAnimation = std::make_unique<Animation>(name, animTexture, frames, defaultSPF);
+            newAnimation = std::make_unique<Animation>(name, animTexture, frames, secondsPerFrame);
         }
 
         animationMap[name] = std::move(newAnimation);

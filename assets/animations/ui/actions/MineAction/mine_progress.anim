@@ -1,0 +1,35 @@
+texture name mine_progress
+path texture_atlases/ui/actions/MineAction/
+default spf 0.0625
+coord 0,0
+size 16,16
+coord 16,0
+size 16,16
+coord 32,0
+size 16,16
+coord 48,0
+size 16,16
+coord 0,16
+size 16,16
+coord 16,16
+size 16,16
+coord 32,16
+size 16,16
+coord 48,16
+size 16,16
+coord 0,32
+size 16,16
+coord 16,32
+size 16,16
+coord 32,32
+size 16,16
+coord 48,32
+size 16,16
+coord 0,48
+size 16,16
+coord 16,48
+size 16,16
+coord 32,48
+size 16,16
+coord 48,48
+size 16,16

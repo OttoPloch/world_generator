@@ -91,6 +91,10 @@ public:
                         sortComponents();
                         break;
                     }
+                    else
+                    {
+                        c++;
+                    }
                 }
             }
             else
