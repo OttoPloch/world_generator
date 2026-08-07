@@ -7,17 +7,26 @@ void Window::create(sf::Vector2u size, std::string name, bool fullscreen, int ma
 {
     sf::State windowState;
 
+    windowedSize = size;
+    this->name = name;
+    this->fullscreen = fullscreen;
+    this->maxFPS = maxFPS;
+
+    sf::VideoMode vm;
     if (fullscreen)
     {
         windowState = sf::State::Fullscreen;
-        size = sf::VideoMode::getFullscreenModes()[0].size;
+        vm = sf::VideoMode::getDesktopMode();
     }
     else
     {
         windowState = sf::State::Windowed;
+        vm = sf::VideoMode(windowedSize);
     }
 
-    window.create(sf::VideoMode(size), name, windowState);
+    window.create(vm, name, windowState);
+
+    window.setMouseCursorVisible(false);
 
     if (maxFPS > 0)
     {
@@ -45,6 +54,20 @@ void Window::display()
 void Window::exit()
 {
     window.close();
+}
+
+void Window::toggleFullscreen()
+{
+    fullscreen = !fullscreen;
+
+    create(windowedSize, name, fullscreen, maxFPS, bgColor);
+}
+
+void Window::resized(sf::View newView)
+{
+    if (!fullscreen) windowedSize = window.getSize();
+
+    setView(newView);
 }
 
 void Window::setView(sf::View view)

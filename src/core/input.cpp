@@ -174,6 +174,7 @@ Input::Input(Game* game) : game(game)
         {"PAUSE", {"TAB", "START"}},
         {"STEP", {"RIGHT", "RSTICK"}},
         {"TOGGLEFOCUS", {"F1", "LSTICK"}},
+        {"TOGGLEFULLSCREEN", {"F11", "NONE"}},
         {"DEBUG_VIEW", {"F2", "NONE"}},
         {"EXTRA 1", {"P", "NONE"}},
         {"EXTRA 2", {"O", "NONE"}}

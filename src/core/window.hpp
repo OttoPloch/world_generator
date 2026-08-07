@@ -18,13 +18,23 @@ public:
 
     void exit();
 
+    void toggleFullscreen();
+
+    void resized(sf::View newView);
+
     void setView(sf::View view);
 
     sf::RenderWindow& getWindow();
 
     sf::Vector2u getSize();
+
+    sf::Vector2u windowedSize;
 private:
     sf::RenderWindow window;
 
     sf::Color bgColor;
+
+    std::string name;
+    bool fullscreen;
+    int maxFPS;
 };

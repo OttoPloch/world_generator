@@ -46,6 +46,10 @@ void Game::processInput(std::string control)
             update();
         }
     }
+    else if (control == "TOGGLEFULLSCREEN")
+    {
+        window.toggleFullscreen();
+    }
     else
     {
         scene.sceneInput(control);

@@ -65,6 +65,6 @@ void EventHandler::mouseWheelScrolled(const sf::Event::MouseWheelScrolled* scrol
 void EventHandler::windowResized()
 {
     camera->setBaseSize(toV2F(window->getSize()));
-    window->getWindow().setView(camera->getView());
+    window->resized(camera->getView());
     scene->getUILayer()->updateVisuals();
 }

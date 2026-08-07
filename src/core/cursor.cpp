@@ -9,8 +9,6 @@
 
 Cursor::Cursor(Game* game, std::string alternativeKeyForLeftClick, std::string alternativeKeyForRightClick) : game(game), input(game->getInput()), alternativeKeyForLeftClick(alternativeKeyForLeftClick), alternativeKeyForRightClick(alternativeKeyForRightClick)
 {
-    game->getWindow()->getWindow().setMouseCursorVisible(false);
-
     sf::Vector2u windowSize = game->getWindow()->getSize();
     gameCursorPosition = toV2F(windowSize.x / 2, windowSize.y / 2);
 
