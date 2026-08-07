@@ -6,6 +6,7 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include "../ui/ui_layer.hpp"
+#include "../entities/components/control_component.hpp"
 
 Cursor::Cursor(Game* game, std::string alternativeKeyForLeftClick, std::string alternativeKeyForRightClick) : game(game), input(game->getInput()), alternativeKeyForLeftClick(alternativeKeyForLeftClick), alternativeKeyForRightClick(alternativeKeyForRightClick)
 {
@@ -235,7 +236,7 @@ bool Cursor::canDoInputType(std::string type)
 {
     if (type == "TYPE:WORLD")
     {
-        if (game->getScene()->getUILayer()->checkUICollision() || UIMode)
+        if (game->getScene()->getUILayer()->checkUICollision() || UIMode || !game->getScene()->getEntityLayer()->player->getComponent<ControlComponent>())
         {
             return false;
         }

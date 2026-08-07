@@ -173,9 +173,7 @@ bool UILayer::isElementOnTopAtPoint(UIElement* element, sf::Vector2f point)
     {
         // TODO: fully implement world ui elements. This is not urgent,
         // so just do it whenever those become needed.
-        if (e->position.worldPosition) continue;
-
-        if (e.get() == element) continue;
+        if (e->position.worldPosition || e.get() == element || e->name.substr(0, 2) == "__") continue;
 
         sf::FloatRect eGB = e->getGlobalBounds();
         if (!pointRectCollide(point, eGB)) continue;
