@@ -53,14 +53,15 @@ bool MineAction::start()
                     UIPosition({0, 0}, UIOrigin::CENTER),
                     "image",
                     0,
-                    game->getAssetManager()->getTexture("mine_progress", "texture_atlases/ui/actions/MineAction/"),
+                    game->getAssetManager()->getTexture("mine_progress_orb", "texture_atlases/ui/actions/MineAction/"),
                     sf::Vector2f(10, 10),
                     false,
-                    game->getAssetManager()->getAnimation("mine_progress", "animations/ui/actions/MineAction/"),
+                    game->getAssetManager()->getAnimation("mine_progress_orb", "animations/ui/actions/MineAction/"),
                     nullptr,
                     false,
                     sf::IntRect({0, 0}, {0, 0}),
-                    1/timeToComplete
+                    1/timeToComplete,
+                    false
                 );
                 indicator->updateVisuals();
 

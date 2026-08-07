@@ -14,7 +14,7 @@ class Sprite
 public:
     Sprite();
 
-    Sprite(GamePosition position, sf::Texture* texture, sf::Vector2f size = {1.f, 1.f}, bool sizeIsScale = true, bool usingTexCoords = false, sf::IntRect texCoords = sf::IntRect({0, 0}, {0, 0}), float animSpeedMult = 1.f);
+    Sprite(GamePosition position, sf::Texture* texture, sf::Vector2f size = {1.f, 1.f}, bool sizeIsScale = true, bool usingTexCoords = false, sf::IntRect texCoords = sf::IntRect({0, 0}, {0, 0}), float animSpeedMult = 1.f, bool repeatAnimation = true);
 
     sf::Vector2f getPosition();
     sf::Vector2f getSize();
@@ -40,6 +40,7 @@ public:
     std::unique_ptr<Animation> animation;
     std::unique_ptr<AnimationSet> animSet;
     float animSpeedMult;
+    bool repeatAnimation;
 private:
     GamePosition position;
 

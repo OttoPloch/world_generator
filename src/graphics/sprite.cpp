@@ -5,15 +5,13 @@
 
 Sprite::Sprite() : position(nullptr, {0, 0}) {}
 
-Sprite::Sprite(GamePosition position, sf::Texture* texture, sf::Vector2f size, bool sizeIsScale, bool usingTexCoords, sf::IntRect texCoords, float animSpeedMult) : position(position), texture(texture)
+Sprite::Sprite(GamePosition position, sf::Texture* texture, sf::Vector2f size, bool sizeIsScale, bool usingTexCoords, sf::IntRect texCoords, float animSpeedMult, bool repeatAnimation) : position(position), texture(texture), animSpeedMult(animSpeedMult), repeatAnimation(repeatAnimation)
 {
     sprite = std::make_unique<sf::Sprite>(*texture);
     
     sprite->setPosition(position.getPosition());
     
     if (usingTexCoords) sprite->setTextureRect(texCoords);
-    
-    this->animSpeedMult = animSpeedMult;
 
     resize(size, sizeIsScale);
 }
@@ -64,8 +62,14 @@ void Sprite::update(float dt)
 {
     Animation* activeAnimation = nullptr;
 
-    if (animation.get()) activeAnimation = animation.get();
-    else if (animSet.get()) activeAnimation = animSet->getActiveAnimation();
+    if (animation)
+    {
+        activeAnimation = animation.get();
+    }
+    else if (animSet)
+    {
+        activeAnimation = animSet->getActiveAnimation();
+    }
 
     if (activeAnimation)
     {
@@ -75,8 +79,16 @@ void Sprite::update(float dt)
         {
             (activeAnimation->reversed) ? activeAnimation->index-- : activeAnimation->index++;
             
-            if (activeAnimation->index >= activeAnimation->frames.size()) activeAnimation->index = 0;
-            if (activeAnimation->index < 0) activeAnimation->index = activeAnimation->frames.size() - 1;
+            if (repeatAnimation)
+            {
+                if (activeAnimation->index >= activeAnimation->frames.size()) activeAnimation->index = 0;
+                if (activeAnimation->index < 0) activeAnimation->index = activeAnimation->frames.size() - 1;
+            }
+            else
+            {
+                if (activeAnimation->index >= activeAnimation->frames.size()) activeAnimation->index = activeAnimation->frames.size() - 1;
+                if (activeAnimation->index < 0) activeAnimation->index = 0;
+            }
             
             // TODO: devise a better way to check if a sprite and its animation have the same texture,
             // without using getNativeHandle.
@@ -86,9 +98,9 @@ void Sprite::update(float dt)
                 sprite->setTexture(*activeAnimation->texture);
             }
             
-            activeAnimation->secondsTillNextFrame = activeAnimation->secondsPerFrame;
+            activeAnimation->secondsTillNextFrame += activeAnimation->secondsPerFrame;
         }
-
+        
         setTextureRect({
             toV2I(activeAnimation->frames[activeAnimation->index].position),
             toV2I(activeAnimation->frames[activeAnimation->index].size)
