@@ -304,44 +304,4 @@ void EntityLayer::update(float dt)
 void EntityLayer::draw(bool debug)
 {
     renderSystem.draw();
-
-    // std::vector<int> outOfBoundsEntities;
-
-    // for (auto& i : entities)
-    // {
-    //     Chunk* entityChunk = game->getScene()->getChunkLayer()->getChunk(worldToChunkPosition(game, i.second->getPosition()));
-
-    //     if (entityChunk)
-    //     {
-    //         if (entityChunk->state == ChunkState::ACTIVE)
-    //         {
-    //             Sprite* entitySprite = i.second->getSprite();
-    
-    //             if (isOnScreen(game, {entitySprite->left(), entitySprite->top()}, entitySprite->getSize()))
-    //             {
-    //                 i.second->draw(game->getWindow()->getWindow());
-
-    //                 if (debug)
-    //                 {
-    //                     if (auto c = i.second->getComponent<CollisionComponent>())
-    //                     {
-    //                         sf::RectangleShape rect(c->rect.size);
-    //                         rect.setPosition({c->rect.left(), c->rect.top()});
-    //                         rect.setFillColor(sf::Color::Transparent);
-    //                         rect.setOutlineColor(sf::Color::Red);
-    //                         rect.setOutlineThickness(.5f);
-    //                         game->getWindow()->draw(rect);
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     else
-    //     {
-    //         // TODO: When chunk saving is implemented, entities unloaded here should be saved.
-    //         outOfBoundsEntities.push_back(i.second->getID());
-    //     }
-    // }
-
-    // for (auto i : outOfBoundsEntities) removeEntity(i);
 }
