@@ -179,6 +179,8 @@ sf::Vector2f Cursor::getGameCursorPosition()
 
 sf::Vector2f Cursor::getGameCursorCoords()
 {
+    float chunkLength = game->getSettings()->tile_size * game->getSettings()->chunk_size;
+    std::cout << game->getWindow()->getWindow().mapPixelToCoords(sf::Vector2i(gameCursorPosition)).x << ", " << game->getWindow()->getWindow().mapPixelToCoords(sf::Vector2i(gameCursorPosition)).y << '\n';
     return game->getWindow()->getWindow().mapPixelToCoords(sf::Vector2i(gameCursorPosition));
 }
 

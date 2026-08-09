@@ -46,6 +46,8 @@ public:
 
     ChunkLayer* getChunkLayer();
     
+    sf::Vector2i getWorldChunkOrigin();
+    void adjustWorldChunkOrigin(sf::Vector2i amount);
     bool debugMode;
     int debugLevel;
 private:
@@ -58,6 +60,8 @@ private:
     ChunkLayer chunkLayer;
 
     Camera camera;
+
+    sf::Vector2i worldChunkOrigin;
 
     int debugChunkLayerView;
 

@@ -95,6 +95,17 @@ void Chunk::createTileVerts(sf::Vector2i localPosition, int z)
     createTileVerts(localPosition.y * chunkSize + localPosition.x, z);
 }
 
+void Chunk::createAllTileVerts()
+{
+    for (int i = 0; i < tiles.size(); i++)
+    {
+        for (int j = 0; j < tiles[i].size(); j++)
+        {
+            createTileVerts(j, i);
+        }
+    }
+}
+
 Tile* Chunk::getTile(sf::Vector2i localPosition, bool getHighestNonAir, int z)
 {
     int x = localPosition.x;

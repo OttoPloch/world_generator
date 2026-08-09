@@ -92,6 +92,38 @@ void Camera::tick()
     view.setCenter(center);
 }
 
+void Camera::update(float dt)
+{
+    sf::Vector2i worldChunkOriginChange(0, 0);
+    float threshold = game->getSettings()->worldOriginThreshold;
+    float chunkLength = game->getSettings()->tile_size * game->getSettings()->chunk_size;
+    while (center.x >= threshold)
+    {
+        center.x -= threshold;
+        worldChunkOriginChange.x += threshold / chunkLength;
+    }
+    while (center.x < -threshold)
+    {
+        center.x += threshold;
+        worldChunkOriginChange.x -= threshold / chunkLength;
+    }
+    while (center.y >= threshold)
+    {
+        center.y -= threshold;
+        worldChunkOriginChange.y += threshold / chunkLength;
+    }
+    while (center.y < -threshold)
+    {
+        center.y += threshold;
+        worldChunkOriginChange.y -= threshold / chunkLength;
+    }
+
+    if (worldChunkOriginChange != sf::Vector2i(0, 0))
+    {
+        game->getScene()->adjustWorldChunkOrigin(worldChunkOriginChange);
+    }
+}
+
 void Camera::setVelocity(sf::Vector2f newVelocity)
 {
     velocity = newVelocity;

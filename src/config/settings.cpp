@@ -23,4 +23,5 @@ void Settings::init()
     input_controllerCursorSensitivity = 20;
     input_triggerMinPressValue = 0;
     input_UISelectorMoveCooldown = 0.15f;
+    worldOriginThreshold = chunk_size * tile_size * 2;
 }

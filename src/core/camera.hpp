@@ -30,6 +30,8 @@ public:
 
     void tick();
 
+    void update(float dt);
+
     void setVelocity(sf::Vector2f newVelocity);
 
     // 'x' or 'y'

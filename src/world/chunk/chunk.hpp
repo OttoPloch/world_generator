@@ -26,6 +26,8 @@ public:
     void createTileVerts(int index, int z);
     void createTileVerts(sf::Vector2i localPosition, int z);
 
+    void createAllTileVerts();
+
     // values will wrap, so position
     // of -1 gets the opposite side and
     // 17 (in a chunk of size 16)
@@ -67,6 +69,8 @@ public:
     std::vector<Tile*> tilesWithColliders;
     
     ChunkLayer* chunkLayer;
+
+    sf::Vector2f worldPosition;
 private:
     Game* game;
     Window* window;
@@ -75,8 +79,6 @@ private:
     
     int chunkSize;
     float tileSize;
-
-    sf::Vector2f worldPosition;
     
     // tiles have a z for their height value, this
     // 2D vector separates them by that value.

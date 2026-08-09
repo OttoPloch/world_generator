@@ -217,6 +217,14 @@ std::array<Chunk*, 9> ChunkLayer::getNearbyChunks(sf::Vector2f position)
     return chunks;
 }
 
+std::vector<Chunk*> ChunkLayer::getAllLoadedChunks()
+{
+    std::vector<Chunk*> allChunks;
+    for (auto& c : chunks) allChunks.emplace_back(c.second.get());
+
+    return allChunks;
+}
+
 Tile* ChunkLayer::getTileAtPosition(sf::Vector2f position, bool activeChunksOnly)
 {
     sf::Vector2i tileChunkPos(worldToChunkPosition(game, position));
@@ -295,7 +303,7 @@ void ChunkLayer::draw(bool debug, int debugLayerView)
     {
         if (i.second->state == ChunkState::ACTIVE)
         {
-            sf::Vector2f chunkTl = chunkToWorldPosition(game, i.second->getChunkPosition());
+            sf::Vector2f chunkTl = i.second->worldPosition;
 
             if (isOnScreen(game, chunkTl, {chunkLength, chunkLength}))
             {
@@ -315,7 +323,7 @@ void ChunkLayer::draw(bool debug, int debugLayerView)
 
         if (debug)
         {
-            sf::Vector2f chunkPos = chunkToWorldPosition(game, i.second->getChunkPosition());
+            sf::Vector2f chunkPos = i.second->worldPosition;
 
             sf::Vertex tl;
             sf::Vertex tr;
@@ -377,12 +385,10 @@ void ChunkLayer::draw(bool debug, int debugLayerView)
 
 sf::Vector2i ChunkLayer::getCurrChunkPos()
 {
-    sf::Vector2f currWorldPos;
-
     auto e = game->getScene()->getEntityLayer()->player;
     if (e)
     {
-        currWorldPos = e->getComponent<PositionComponent>()->position.getPosition();
+        return game->getScene()->getWorldChunkOrigin() + worldToChunkPosition(game, e->getComponent<PositionComponent>()->position.getPosition());
     }
     else
     {
@@ -392,13 +398,11 @@ sf::Vector2i ChunkLayer::getCurrChunkPos()
 
         if (e)
         {
-            currWorldPos = e->getComponent<PositionComponent>()->position.getPosition();
+            return game->getScene()->getWorldChunkOrigin() + worldToChunkPosition(game, e->getComponent<PositionComponent>()->position.getPosition());
         }
         else
         {
-            currWorldPos = {0, 0};
+            return {0, 0};
         }
     }
-
-    return worldToChunkPosition(game, currWorldPos);
 }

@@ -40,6 +40,8 @@ void Scene::init(Game* game)
 
 void Scene::tick()
 {   
+    // std::cout << worldChunkOrigin.x << ", " << worldChunkOrigin.y << '\n';
+
     camera.tick();
 
     chunkLayer.tick();
@@ -88,6 +90,9 @@ void Scene::tick()
 void Scene::update(float dt)
 {
     debugClock.restart();
+
+    camera.update(dt);
+    updateBlame["UPDATE_CAMERA"] = debugClock.restart().asSeconds();
 
     chunkLayer.update(dt);
     updateBlame["UPDATE_CHUNK_LAYER"] = debugClock.restart().asSeconds();
@@ -345,3 +350,34 @@ EntityLayer* Scene::getEntityLayer() { return &entityLayer; }
 UILayer* Scene::getUILayer() { return &uiLayer; }
 
 ChunkLayer* Scene::getChunkLayer() { return &chunkLayer; }
+
+sf::Vector2i Scene::getWorldChunkOrigin() { return worldChunkOrigin; }
+
+void Scene::adjustWorldChunkOrigin(sf::Vector2i amount)
+{
+    worldChunkOrigin += amount;
+
+    float chunkLength = game->getSettings()->tile_size * game->getSettings()->chunk_size;
+
+    std::vector<Entity*> entitiesWithPosition = entityLayer.getEntitiesWithComponent<PositionComponent>();
+    for (auto e : entitiesWithPosition)
+    {
+        auto p = e->getComponent<PositionComponent>();
+
+        p->position.changePosition({amount.x * -chunkLength, amount.y * -chunkLength});
+    }
+
+    std::vector<Chunk*> allChunks = chunkLayer.getAllLoadedChunks();
+    for (auto c : allChunks)
+    {
+        c->worldPosition += {amount.x * -chunkLength, amount.y * -chunkLength};
+
+        c->createAllTileVerts();
+
+        for (auto& bg : c->bgObjects)
+        {
+            bg.bottom += amount.y * -chunkLength;
+            bg.rect.position += {amount.x * -chunkLength, amount.y * -chunkLength};
+        }
+    }
+}

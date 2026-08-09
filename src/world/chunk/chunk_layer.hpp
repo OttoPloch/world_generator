@@ -31,6 +31,8 @@ public:
 
     std::array<Chunk*, 9> getNearbyChunks(sf::Vector2f position);
 
+    std::vector<Chunk*> getAllLoadedChunks();
+
     Tile* getTileAtPosition(sf::Vector2f position, bool activeChunksOnly);
 
     void tick();
