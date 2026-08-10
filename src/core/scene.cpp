@@ -370,7 +370,8 @@ void Scene::adjustWorldChunkOrigin(sf::Vector2i amount)
     std::vector<Chunk*> allChunks = chunkLayer.getAllLoadedChunks();
     for (auto c : allChunks)
     {
-        c->worldPosition += {amount.x * -chunkLength, amount.y * -chunkLength};
+        c->worldPosition = {c->getChunkPosition().x * chunkLength, c->getChunkPosition().y * chunkLength};
+        c->worldPosition = {c->worldPosition.x - (worldChunkOrigin.x * chunkLength), c->worldPosition.y - (worldChunkOrigin.y * chunkLength)};
 
         c->createAllTileVerts();
 

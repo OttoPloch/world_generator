@@ -19,8 +19,9 @@ Chunk::Chunk(Game* game, ChunkLayer* chunkLayer, sf::Vector2i chunkPosition, std
 
     chunkSize = game->getSettings()->chunk_size;
     tileSize = game->getSettings()->tile_size;
+    float chunkLength = tileSize * chunkSize;
 
-    worldPosition = {chunkPosition.x * (chunkSize * tileSize), chunkPosition.y * (chunkSize * tileSize)};
+    worldPosition = {chunkPosition.x * chunkLength, chunkPosition.y * chunkLength};
 
     tiles.resize(game->getSettings()->maxTileZ + 1);
     for (int i = 0; i < tiles.size(); i++)

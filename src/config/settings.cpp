@@ -7,8 +7,8 @@ Settings::Settings()
 
 void Settings::init()
 {
-    int renderDistance = 5;
-    int loadDistanceExtra = 5;
+    int renderDistance = 1;
+    int loadDistanceExtra = 1;
 
     ui_animation_speed = 0.15f;
     tile_size = 10.f;

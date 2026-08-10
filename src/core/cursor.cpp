@@ -180,8 +180,8 @@ sf::Vector2f Cursor::getGameCursorPosition()
 sf::Vector2f Cursor::getGameCursorCoords()
 {
     float chunkLength = game->getSettings()->tile_size * game->getSettings()->chunk_size;
-    std::cout << game->getWindow()->getWindow().mapPixelToCoords(sf::Vector2i(gameCursorPosition)).x << ", " << game->getWindow()->getWindow().mapPixelToCoords(sf::Vector2i(gameCursorPosition)).y << '\n';
-    return game->getWindow()->getWindow().mapPixelToCoords(sf::Vector2i(gameCursorPosition));
+    sf::Vector2f pos(sf::Vector2f(game->getScene()->getWorldChunkOrigin().x * chunkLength, game->getScene()->getWorldChunkOrigin().y * chunkLength) + game->getWindow()->getWindow().mapPixelToCoords(sf::Vector2i(gameCursorPosition)));
+    return pos;
 }
 
 UIElement* Cursor::getSelectedElement()
