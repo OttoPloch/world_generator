@@ -55,10 +55,7 @@ sf::View Camera::getView()
     return view;
 }
 
-sf::Vector2f Camera::getCenter()
-{
-    return center;
-}
+sf::Vector2f Camera::getCenter() { return center; }
 
 sf::Vector2f Camera::getTopLeft()
 {
@@ -71,25 +68,7 @@ float Camera::getZoomFactor() { return zoomFactor; }
 
 void Camera::tick()
 {
-    lastCenter = center;
-
-    if (focus != nullptr)
-    {
-        center = focus->getComponent<PositionComponent>()->position.getPosition();
-    }
-    else
-    {
-        velocity.x = (gamerules->camera_freecamMoveSpeedBase * zoomFactor) * game->getInput()->getMovement().x;
-        velocity.y = (gamerules->camera_freecamMoveSpeedBase * zoomFactor) * game->getInput()->getMovement().y;
-
-        center.x += velocity.x;
-        center.y += velocity.y;
-    }
-
-    // center.x = std::roundf(center.x);
-    // center.y = std::roundf(center.y);
-
-    view.setCenter(center);
+    updatePosition();
 }
 
 void Camera::update(float dt)
@@ -97,30 +76,32 @@ void Camera::update(float dt)
     sf::Vector2i worldChunkOriginChange(0, 0);
     float threshold = game->getSettings()->worldOriginThreshold;
     float chunkLength = game->getSettings()->tile_size * game->getSettings()->chunk_size;
-    while (center.x >= threshold)
+    if (center.x >= threshold)
     {
-        center.x -= threshold;
-        worldChunkOriginChange.x += threshold / chunkLength;
+        worldChunkOriginChange.x += static_cast<int>(center.x / chunkLength);
+        center.x = std::fmod(center.x, threshold);
     }
-    while (center.x < -threshold)
+    if (center.x < -threshold)
     {
-        center.x += threshold;
-        worldChunkOriginChange.x -= threshold / chunkLength;
+        worldChunkOriginChange.x += static_cast<int>(center.x / chunkLength);
+        center.x = std::fmod(center.x, threshold);
     }
-    while (center.y >= threshold)
+    if (center.y >= threshold)
     {
-        center.y -= threshold;
-        worldChunkOriginChange.y += threshold / chunkLength;
+        worldChunkOriginChange.y += static_cast<int>(center.y / chunkLength);
+        center.y = std::fmod(center.y, threshold);
     }
-    while (center.y < -threshold)
+    if (center.y < -threshold)
     {
-        center.y += threshold;
-        worldChunkOriginChange.y -= threshold / chunkLength;
+        worldChunkOriginChange.y += static_cast<int>(center.y / chunkLength);
+        center.y = std::fmod(center.y, threshold);
     }
 
     if (worldChunkOriginChange != sf::Vector2i(0, 0))
     {
         game->getScene()->adjustWorldChunkOrigin(worldChunkOriginChange);
+
+        updatePosition();
     }
 }
 
@@ -231,3 +212,21 @@ void Camera::setFocus(Entity* newFocus)
 void Camera::removeFocus() { focus = nullptr; }
 
 Entity* Camera::getFocus() { return focus; }
+
+void Camera::updatePosition()
+{
+    if (focus != nullptr)
+    {
+        center = focus->getComponent<PositionComponent>()->position.getPosition();
+    }
+    else
+    {
+        velocity.x = (gamerules->camera_freecamMoveSpeedBase * zoomFactor) * game->getInput()->getMovement().x;
+        velocity.y = (gamerules->camera_freecamMoveSpeedBase * zoomFactor) * game->getInput()->getMovement().y;
+
+        center.x += velocity.x;
+        center.y += velocity.y;
+    }
+
+    view.setCenter(center);
+}

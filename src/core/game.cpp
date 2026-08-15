@@ -1,5 +1,6 @@
 #include "game.hpp"
 #include "../utils/utils.hpp"
+#include <SFML/Graphics/CircleShape.hpp>
 
 Game::Game() {}
 
@@ -202,6 +203,11 @@ void Game::draw()
     
     scene.draw();
     drawBlame["DRAW_SCENE"] = debugClock.restart().asSeconds();
+
+    sf::CircleShape origin(10.f);
+    origin.setOrigin({10.f, 10.f});
+    origin.setFillColor(sf::Color::Blue);
+    window.getWindow().draw(origin);
     
     window.display();
     drawBlame["DRAW_DISPLAY"] = debugClock.restart().asSeconds();

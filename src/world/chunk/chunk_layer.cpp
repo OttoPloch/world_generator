@@ -185,7 +185,7 @@ bool ChunkLayer::unloadChunk(sf::Vector2i chunkPosition)
     {
         chunks.erase(chunkPosition);
 
-        game->getScene()->getEntityLayer()->removeAllEntitiesInChunk(chunkPosition.x, chunkPosition.y);
+        // game->getScene()->getEntityLayer()->removeAllEntitiesInChunk(chunkPosition.x, chunkPosition.y);
 
         return true;
     }
@@ -217,12 +217,9 @@ std::array<Chunk*, 9> ChunkLayer::getNearbyChunks(sf::Vector2f position)
     return chunks;
 }
 
-std::vector<Chunk*> ChunkLayer::getAllLoadedChunks()
+std::unordered_map<sf::Vector2i, std::unique_ptr<Chunk>, Vector2iHash>* ChunkLayer::getAllLoadedChunks()
 {
-    std::vector<Chunk*> allChunks;
-    for (auto& c : chunks) allChunks.emplace_back(c.second.get());
-
-    return allChunks;
+    return &chunks;
 }
 
 Tile* ChunkLayer::getTileAtPosition(sf::Vector2f position, bool activeChunksOnly)
@@ -301,39 +298,39 @@ void ChunkLayer::draw(bool debug, int debugLayerView)
 
     for (auto& i : chunks)
     {
+        if (!isOnScreen(game, i.second->worldPosition, {chunkLength, chunkLength}, true))
+        {
+            continue;
+        }
+
         if (i.second->state == ChunkState::ACTIVE)
         {
-            sf::Vector2f chunkTl = i.second->worldPosition;
-
-            if (isOnScreen(game, chunkTl, {chunkLength, chunkLength}))
+            i.second->draw(debug, debugLayerView);
+    
+            for (int j = 0; j < i.second->bgObjects.size(); j++)
             {
-                i.second->draw(debug, debugLayerView);
-
-                for (int j = 0; j < i.second->bgObjects.size(); j++)
+                BackgroundObject* bgObject = &i.second->bgObjects[j];
+    
+                if (isOnScreen(game, bgObject->rect.position, bgObject->rect.size))
                 {
-                    BackgroundObject* bgObject = &i.second->bgObjects[j];
-
-                    if (isOnScreen(game, bgObject->rect.position, bgObject->rect.size))
-                    {
-                        visibleBgObjects.push_back(bgObject);
-                    }
+                    visibleBgObjects.push_back(bgObject);
                 }
             }
         }
 
         if (debug)
         {
-            sf::Vector2f chunkPos = i.second->worldPosition;
+            sf::Vector2f worldPos = i.second->worldPosition;
 
             sf::Vertex tl;
             sf::Vertex tr;
             sf::Vertex bl;
             sf::Vertex br;
     
-            tl.position = chunkPos;
-            tr.position = {chunkPos.x + chunkLength, chunkPos.y};
-            bl.position = {chunkPos.x, chunkPos.y + chunkLength};
-            br.position = {chunkPos.x + chunkLength, chunkPos.y + chunkLength};
+            tl.position = worldPos;
+            tr.position = {worldPos.x + chunkLength, worldPos.y};
+            bl.position = {worldPos.x, worldPos.y + chunkLength};
+            br.position = {worldPos.x + chunkLength, worldPos.y + chunkLength};
 
             std::vector<sf::Vertex> chunkOutline = {tl, tr, br, bl, tl};
 
@@ -385,24 +382,5 @@ void ChunkLayer::draw(bool debug, int debugLayerView)
 
 sf::Vector2i ChunkLayer::getCurrChunkPos()
 {
-    auto e = game->getScene()->getEntityLayer()->player;
-    if (e)
-    {
-        return game->getScene()->getWorldChunkOrigin() + worldToChunkPosition(game, e->getComponent<PositionComponent>()->position.getPosition());
-    }
-    else
-    {
-        std::vector<Entity*> entitiesWithPositions = game->getScene()->getEntityLayer()->getEntitiesWithComponent<PositionComponent>();
-        e = nullptr;
-        if (entitiesWithPositions.size() > 0) e = entitiesWithPositions[0];
-
-        if (e)
-        {
-            return game->getScene()->getWorldChunkOrigin() + worldToChunkPosition(game, e->getComponent<PositionComponent>()->position.getPosition());
-        }
-        else
-        {
-            return {0, 0};
-        }
-    }
+    return worldToChunkPosition(game, game->getScene()->getCamera()->getCenter());
 }

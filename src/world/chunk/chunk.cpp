@@ -17,11 +17,12 @@ Chunk::Chunk(Game* game, ChunkLayer* chunkLayer, sf::Vector2i chunkPosition, std
     window = game->getWindow();
     this->chunkPosition = chunkPosition;
 
-    chunkSize = game->getSettings()->chunk_size;
     tileSize = game->getSettings()->tile_size;
+    chunkSize = game->getSettings()->chunk_size;
     float chunkLength = tileSize * chunkSize;
 
-    worldPosition = {chunkPosition.x * chunkLength, chunkPosition.y * chunkLength};
+    sf::Vector2i worldOrigin(game->getScene()->getWorldChunkOrigin());
+    worldPosition = {(chunkPosition.x - worldOrigin.x) * chunkLength, (chunkPosition.y - worldOrigin.y) * chunkLength};
 
     tiles.resize(game->getSettings()->maxTileZ + 1);
     for (int i = 0; i < tiles.size(); i++)

@@ -3,6 +3,7 @@
 #include "../utils/utils.hpp"
 #include "components/position_component.hpp"
 #include "components/sprite_component.hpp"
+#include "entity_systems/entity_unload_system.hpp"
 #include "rect_type.hpp"
 #include "states.hpp"
 #include "../graphics/asset_manager.hpp"
@@ -30,15 +31,16 @@ void EntityLayer::init(Game* game)
     collisionSystem = CollisionSystem(game, game->getScene());
     renderSystem = RenderSystem(game, game->getScene());
     animationSystem = AnimationSystem(game, game->getScene());
-    actionSystem = ActionSystem(game, game->getScene());
     movementSystem = MovementSystem(game, game->getScene());
+    actionSystem = ActionSystem(game, game->getScene());
+    entityUnloadSystem = EntityUnloadSystem(game, game->getScene());
 
     auto pt = &tManager.entityTemplates["player"];
     pt->sprite = {game->getAssetManager()->getTexture("dog", "texture_atlases/"), {20, 20}, false, false, {{0, 0}, {0, 0}}, 1.6f, nullptr, game->getAssetManager()->getAnimSet("dog")};
     pt->movement = {2.f, 1.5f};
     pt->control = ControlComponentData();
     pt->state = StateComponentData();
-    pt->collision = {{.5f, .5f}, true, RectType::ACTIVE};
+    //pt->collision = {{.5f, .5f}, true, RectType::ACTIVE};
     pt->action = {std::make_unique<MineAction>(game, 1.f, "mine!", 1.f), std::make_unique<Action>(game, "block!", -1.f, 0.f, 4.f, true), game->getSettings()->tile_size * 15};
 
     Entity* e = addEntity(pt, true, {0, 0});
@@ -176,6 +178,11 @@ void EntityLayer::removeEntity(int ID)
 {
     if (entities.find(ID) != entities.end())
     {
+        if (entities[ID].get() == player) player = nullptr;
+
+        Camera* camera = game->getScene()->getCamera();
+        if (entities[ID].get() == camera->getFocus()) camera->removeFocus();
+
         entities.erase(ID);
 
         return;
@@ -184,31 +191,32 @@ void EntityLayer::removeEntity(int ID)
     std::cout << "ERROR removing entity with ID of " << ID << ". That entity was not found.\n";
 }
 
-void EntityLayer::removeAllEntitiesInChunk(int chunkX, int chunkY)
-{
-    float chunkLength = toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size;
+// void EntityLayer::removeAllEntitiesInChunk(int chunkX, int chunkY)
+// {
+//     float chunkLength = toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size;
 
-    std::vector<int> entitiesToRemove;
+//     std::vector<int> entitiesToRemove;
 
-    for (auto& i : entities)
-    {
-        sf::Vector2f entityBottom;
+//     for (auto& i : entities)
+//     {
+//         sf::Vector2f entityBottom;
         
-        // if the entity has a sprite, use the bottom of that. If not, just get the entity's position.
-        if (auto s = i.second->getComponent<SpriteComponent>()) entityBottom = {s->sprite.getPosition().x, s->sprite.bottom()};
-        else entityBottom = i.second->getComponent<PositionComponent>()->position.getPosition();
+//         // if the entity has a sprite, use the bottom of that. If not, just get the entity's position.
+//         if (auto s = i.second->getComponent<SpriteComponent>()) entityBottom = {s->sprite.getPosition().x, s->sprite.bottom()};
+//         else entityBottom = i.second->getComponent<PositionComponent>()->position.getPosition();
 
-        if (worldToChunkPosition(game, entityBottom) == sf::Vector2i(chunkX, chunkY))
-        {
-            entitiesToRemove.push_back(i.second->ID);
-        }
-    }
+//         if (i.first == 1) std::cout << "here\n";
+//         if (worldToChunkPosition(game, entityBottom) == sf::Vector2i(chunkX, chunkY))
+//         {
+//             entitiesToRemove.push_back(i.second->ID);
+//         }
+//     }
 
-    for (int i = 0; i < entitiesToRemove.size(); i++)
-    {
-        removeEntity(entitiesToRemove[i]);
-    }
-}
+//     for (int i = 0; i < entitiesToRemove.size(); i++)
+//     {
+//         removeEntity(entitiesToRemove[i]);
+//     }
+// }
 
 Entity* EntityLayer::getEntity(int ID)
 {
@@ -286,6 +294,8 @@ void EntityLayer::tick()
     positionSystem.tick();
 
     movementSystem.tick();
+
+    entityUnloadSystem.tick();
 }
 
 void EntityLayer::update(float dt)

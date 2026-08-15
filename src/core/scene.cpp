@@ -14,6 +14,7 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <memory>
+#include <string>
 
 Scene::Scene() {}
 
@@ -82,6 +83,19 @@ void Scene::tick()
         if (auto tileTypeText = element->getComponent<TextComponent>("mouse tile type text"))
         {
             tileTypeText->setText("Mouse Tile Type: " + mouseTileType);
+        }
+
+        if (auto entityText = element->getComponent<TextComponent>("mouse entity text"))
+        {
+            auto e = game->getInput()->cursor->getSelectedEntity();
+
+            if (e) entityText->setText("Entity ID: " + std::to_string(e->ID));
+            else entityText->setText("No Entity Selected");
+        }
+
+        if (auto worldOriginText = element->getComponent<TextComponent>("world origin text"))
+        {
+            worldOriginText->setText("World Chunk Origin: " + std::to_string(worldChunkOrigin.x) + ", " + std::to_string(worldChunkOrigin.y));
         }
     }
     /////
@@ -292,31 +306,21 @@ bool Scene::processActionRequest(Entity* actor, Action* action)
                 {
                     // TRYING TO MINE
 
-                    sf::Vector2f mouseWorldPos = game->getInput()->cursor->getGameCursorCoords();
-
-                    if (auto chunk = chunkLayer.getChunk(worldToChunkPosition(game, mouseWorldPos)))
+                    if (auto t = game->getInput()->cursor->getSelectedTile())
                     {
-                        // IN A VALID CHUNK
+                        // FOUND TARGETED TILE
 
-                        sf::Vector2i tilePos = worldToTilePosition(game, mouseWorldPos);
-                        tilePos = {tilePos.x % game->getSettings()->chunk_size, tilePos.y % game->getSettings()->chunk_size};
-
-                        if (auto t = chunk->getTile(tilePos))
+                        for (auto& i : t->tags)
                         {
-                            // FOUND TARGETED TILE
-
-                            for (auto& i : t->tags)
+                            if (dynamic_cast<MineableTag*>(i.get()))
                             {
-                                if (dynamic_cast<MineableTag*>(i.get()))
-                                {
-                                    // TARGETED TILE CAN BE MINED, ACTION IS VALID
-                                    return true;
-                                }
+                                // TARGETED TILE CAN BE MINED, ACTION IS VALID
+                                return true;
                             }
                         }
                     }
 
-                    // EITHER THE CHUNK OR TILE DOESN'T EXIST, OR THE TILE IS NOT MINEABLE
+                    // EITHER THERE IS NO TILE SELECTED, OR THE TILE IS NOT MINEABLE
                     return false;
                 }
 
@@ -333,6 +337,8 @@ Camera* Scene::getCamera() { return &camera; }
 
 void Scene::toggleFocus()
 {
+    if (!entityLayer.player) return;
+
     if (camera.getFocus() == nullptr)
     {
         if (!entityLayer.player->getComponent<ControlComponent>()) entityLayer.player->addComponent<ControlComponent>(entityLayer.player);
@@ -367,18 +373,20 @@ void Scene::adjustWorldChunkOrigin(sf::Vector2i amount)
         p->position.changePosition({amount.x * -chunkLength, amount.y * -chunkLength});
     }
 
-    std::vector<Chunk*> allChunks = chunkLayer.getAllLoadedChunks();
-    for (auto c : allChunks)
+    auto allChunks = chunkLayer.getAllLoadedChunks();
+    for (auto& pair : *allChunks)
     {
-        c->worldPosition = {c->getChunkPosition().x * chunkLength, c->getChunkPosition().y * chunkLength};
-        c->worldPosition = {c->worldPosition.x - (worldChunkOrigin.x * chunkLength), c->worldPosition.y - (worldChunkOrigin.y * chunkLength)};
+        Chunk* c = pair.second.get();
+
+        sf::Vector2i chunkPos = c->getChunkPosition();
+        c->worldPosition = {(chunkPos.x - worldChunkOrigin.x) * chunkLength, (chunkPos.y - worldChunkOrigin.y) * chunkLength};
 
         c->createAllTileVerts();
 
-        for (auto& bg : c->bgObjects)
-        {
-            bg.bottom += amount.y * -chunkLength;
-            bg.rect.position += {amount.x * -chunkLength, amount.y * -chunkLength};
-        }
+        // for (auto& bg : c->bgObjects)
+        // {
+        //     bg.bottom += amount.y * -chunkLength;
+        //     bg.rect.position += {amount.x * -chunkLength, amount.y * -chunkLength};
+        // }
     }
 }

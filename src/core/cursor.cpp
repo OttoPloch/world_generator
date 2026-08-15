@@ -70,7 +70,7 @@ void Cursor::inputUpdate(float dt)
 
         if (canDoInputType("TYPE:WORLD"))
         {
-            selectedEntity = game->getScene()->getEntityLayer()->getEntityAtPos(getGameCursorCoords(), false);
+            selectedEntity = game->getScene()->getEntityLayer()->getEntityAtPos(getGameCursorCoords(), true);
             selectedTile = game->getScene()->getChunkLayer()->getTileAtPosition(getGameCursorCoords(), true);
     
             if (selectedTile && selectedEntity)
@@ -179,9 +179,7 @@ sf::Vector2f Cursor::getGameCursorPosition()
 
 sf::Vector2f Cursor::getGameCursorCoords()
 {
-    float chunkLength = game->getSettings()->tile_size * game->getSettings()->chunk_size;
-    sf::Vector2f pos(sf::Vector2f(game->getScene()->getWorldChunkOrigin().x * chunkLength, game->getScene()->getWorldChunkOrigin().y * chunkLength) + game->getWindow()->getWindow().mapPixelToCoords(sf::Vector2i(gameCursorPosition)));
-    return pos;
+    return game->getWindow()->getWindow().mapPixelToCoords(sf::Vector2i(gameCursorPosition));
 }
 
 UIElement* Cursor::getSelectedElement()
@@ -238,7 +236,12 @@ bool Cursor::canDoInputType(std::string type)
 {
     if (type == "TYPE:WORLD")
     {
-        if (game->getScene()->getUILayer()->checkUICollision() || UIMode || !game->getScene()->getEntityLayer()->player->getComponent<ControlComponent>())
+        if (!game->getScene()->getEntityLayer()->player || !game->getScene()->getEntityLayer()->player->getComponent<ControlComponent>())
+        {
+            return false;
+        }
+
+        if (game->getScene()->getUILayer()->checkUICollision() || UIMode)
         {
             return false;
         }

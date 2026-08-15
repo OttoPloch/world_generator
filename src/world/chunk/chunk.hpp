@@ -77,8 +77,8 @@ private:
 
     sf::Vector2i chunkPosition;
     
-    int chunkSize;
     float tileSize;
+    int chunkSize;
     
     // tiles have a z for their height value, this
     // 2D vector separates them by that value.

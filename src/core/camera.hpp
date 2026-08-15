@@ -54,6 +54,8 @@ public:
 
     Entity* getFocus();
 private:
+    void updatePosition();
+
     Game* game;
 
     Window* window;
@@ -68,8 +70,6 @@ private:
     float defaultZoom;
 
     sf::Vector2f center;
-    sf::Vector2f lastCenter;
-
     sf::Vector2f velocity;
 
     sf::View view;

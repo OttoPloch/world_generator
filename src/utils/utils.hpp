@@ -31,26 +31,21 @@ void log(sf::Vector2u msg, bool newLine = true);
 
 // if !useCameraView, then the current applied view of the window will be used.
 bool isOnScreen(Game* game, sf::Vector2f tl, sf::Vector2f size, bool useCameraView = true);
-
-bool isOnScreen(Game* game, GamePosition position, sf::Vector2f size);
-
-// if !useCameraView, then the current applied view of the window will be used.
-bool isOnScreen(Game* game, sf::FloatRect rect, bool useCameraView = true);
-
-// if !useCameraView, then the current applied view of the window will be used.
 bool isOnScreen(Game* game, sf::Vector2f point, bool useCameraView = true);
-
-bool isOnScreen(Game* game, GamePosition position);
 
 sf::Vector2i worldToChunkPosition(Game* game, sf::Vector2f position);
 
 sf::Vector2f chunkToWorldPosition(Game* game, sf::Vector2i position);
 
-// returns a global tile position, not a position within a chunk
-sf::Vector2i worldToTilePosition(Game* game, sf::Vector2f position);
+// returns a global tile position, not a position within a chunk.
+// if applyWorldOrigin, the position returned will be the screen equivalent, not just
+// the world position / the tile size.
+sf::Vector2i worldToTilePosition(Game* game, sf::Vector2f position, bool applyWorldOrigin = true);
 
-// assumes the position given is a global position, not within a chunk
-sf::Vector2f tileToWorldPosition(Game* game, sf::Vector2i position);
+// assumes the position given is a global position, not within a chunk.
+// if applyWorldOrigin, the position given will be where the tile would show up on screen,
+// not just the tile position * the tile size.
+sf::Vector2f tileToWorldPosition(Game* game, sf::Vector2i position, bool applyWorldOrigin = true);
 
 void printBlameStats(const std::unordered_map<std::string, float>& blame, std::string category);
 

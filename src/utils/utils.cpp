@@ -181,136 +181,63 @@ bool isOnScreen(Game* game, sf::Vector2f tl, sf::Vector2f size, bool useCameraVi
     return false;
 }
 
-bool isOnScreen(Game* game, GamePosition tl, sf::Vector2f size)
-{
-    Camera* camera = game->getScene()->getCamera();
-    sf::Vector2f cameraTopLeft = camera->getTopLeft();
-    sf::Vector2f cameraSize = camera->getView().getSize();
-
-    sf::Vector2f point = tl.getPosition();
-
-    float left = point.x;
-    float right = point.x + size.x;
-    float top = point.y;
-    float bottom = point.y + size.y;
-
-    if (right >= cameraTopLeft.x)
-    {
-        if (left <= cameraTopLeft.x + cameraSize.x)
-        {
-            if (bottom >= cameraTopLeft.y)
-            {
-                if (top <= cameraTopLeft.y + cameraSize.y)
-                {
-                    return true;
-                }
-            }
-        }
-    }
-
-    return false;
-}
-
-bool isOnScreen(Game* game, sf::FloatRect rect, bool useCameraView)
-{
-    return isOnScreen(game, rect.position, rect.size, useCameraView);
-}
-
 bool isOnScreen(Game* game, sf::Vector2f point, bool useCameraView)
 {
-    Camera* camera = game->getScene()->getCamera();
-    sf::Vector2f cameraTopLeft = camera->getTopLeft();
-    sf::Vector2f cameraSize = camera->getView().getSize();
-
-    if (useCameraView)
-    {
-        if (point.x >= cameraTopLeft.x)
-        {
-            if (point.x <= cameraTopLeft.x + cameraSize.x)
-            {
-                if (point.y >= cameraTopLeft.y)
-                {
-                    if (point.y <= cameraTopLeft.y + cameraSize.y)
-                    {
-                        return true;
-                    }
-                }
-            }
-        }
-    }
-    else
-    {
-        sf::Vector2f viewSize = game->getWindow()->getWindow().getView().getSize();
-
-        if (point.x >= 0)
-        {
-            if (point.x <= viewSize.x)
-            {
-                if (point.y >= 0)
-                {
-                    if (point.y <= viewSize.y)
-                    {
-                        return true;
-                    }
-                }
-            }
-        }
-    }
-
-    return false;
-}
-
-bool isOnScreen(Game* game, GamePosition position)
-{
-    Camera* camera = game->getScene()->getCamera();
-    sf::Vector2f cameraTopLeft = camera->getTopLeft();
-    sf::Vector2f cameraSize = camera->getView().getSize();
-
-    sf::Vector2f point = position.getPosition();
-
-    if (point.x >= cameraTopLeft.x)
-    {
-        if (point.x <= cameraTopLeft.x + cameraSize.x)
-        {
-            if (point.y >= cameraTopLeft.y)
-            {
-                if (point.y <= cameraTopLeft.y + cameraSize.y)
-                {
-                    return true;
-                }
-            }
-        }
-    }
-
-    return false;
+    return isOnScreen(game, point, {0, 0}, useCameraView);
 }
 
 sf::Vector2i worldToChunkPosition(Game* game, sf::Vector2f position)
 {
-    float chunkSize = game->getSettings()->tile_size * toFloat(game->getSettings()->chunk_size);
+    float chunkLength = game->getSettings()->tile_size * toFloat(game->getSettings()->chunk_size);
 
-    return {toInt(std::floor(position.x / chunkSize)), toInt(std::floor(position.y / chunkSize))};
+    sf::Vector2i pos(toInt(std::floor(position.x / chunkLength)), toInt(std::floor(position.y / chunkLength)));
+    pos += game->getScene()->getWorldChunkOrigin();
+
+    return pos;
 }
 
 sf::Vector2f chunkToWorldPosition(Game* game, sf::Vector2i position)
 {
-    float chunkSize = game->getSettings()->tile_size * toFloat(game->getSettings()->chunk_size);
+    float chunkLength = game->getSettings()->tile_size * toFloat(game->getSettings()->chunk_size);
+    sf::Vector2i worldChunkOrigin = game->getScene()->getWorldChunkOrigin();
 
-    return {position.x * chunkSize, position.y * chunkSize};
+    sf::Vector2f pos((position.x - worldChunkOrigin.x) * chunkLength, (position.y - worldChunkOrigin.y) * chunkLength);
+
+    return pos;
 }
 
-sf::Vector2i worldToTilePosition(Game* game, sf::Vector2f position)
+sf::Vector2i worldToTilePosition(Game* game, sf::Vector2f position, bool applyWorldOrigin)
 {
     float tileSize = game->getSettings()->tile_size;
 
-    return {toInt(std::floor(position.x / tileSize)), toInt(std::floor(position.y / tileSize))};
+    sf::Vector2i pos(toInt(std::floor(position.x / tileSize)), toInt(std::floor(position.y / tileSize)));
+
+    if (applyWorldOrigin)
+    {
+        float chunkSize = game->getSettings()->chunk_size;
+        sf::Vector2i worldChunkOrigin = game->getScene()->getWorldChunkOrigin();
+
+        pos += sf::Vector2i(worldChunkOrigin.x * chunkSize, worldChunkOrigin.y * chunkSize);
+    }
+
+    return pos;
 }
 
-sf::Vector2f tileToWorldPosition(Game* game, sf::Vector2i position)
+sf::Vector2f tileToWorldPosition(Game* game, sf::Vector2i position, bool applyWorldOrigin)
 {
     float tileSize = game->getSettings()->tile_size;
 
-    return {position.x * tileSize, position.y * tileSize};
+    sf::Vector2f pos(position.x * tileSize, position.y * tileSize);
+
+    if (applyWorldOrigin)
+    {
+        float chunkLength = tileSize * game->getSettings()->chunk_size;
+        sf::Vector2i worldChunkOrigin = game->getScene()->getWorldChunkOrigin();
+
+        pos -= sf::Vector2f(worldChunkOrigin.x * chunkLength, worldChunkOrigin.y * chunkLength);
+    }
+
+    return pos;
 }
 
 void printBlameStats(const std::unordered_map<std::string, float> &blame, std::string category)

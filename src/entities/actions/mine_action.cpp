@@ -107,7 +107,5 @@ void MineAction::reset(bool restartCooldownProgress)
     cooldownProgress = 0.f;
     active = false;
 
-    // UIElement* cursorElement = game->getInput()->cursor->getCursorElement();
-    // cursorElement->removeComponent<ImageComponent>("MineAction indicator");
     game->getScene()->getUILayer()->removeElement("__MineAction indicator");
 }

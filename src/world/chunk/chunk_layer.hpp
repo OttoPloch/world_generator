@@ -31,7 +31,7 @@ public:
 
     std::array<Chunk*, 9> getNearbyChunks(sf::Vector2f position);
 
-    std::vector<Chunk*> getAllLoadedChunks();
+    std::unordered_map<sf::Vector2i, std::unique_ptr<Chunk>, Vector2iHash>* getAllLoadedChunks();
 
     Tile* getTileAtPosition(sf::Vector2f position, bool activeChunksOnly);
 
@@ -63,6 +63,5 @@ private:
     std::vector<sf::Vertex> bgObjectsVertices;
     sf::RenderStates bgObjectStates;
     
-    // for updating the chunk pos display text. Can delete if no longer used
     sf::Vector2i lastChunkPos;
 };

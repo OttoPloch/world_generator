@@ -15,6 +15,7 @@
 #include "entity_systems/movement_system.hpp"
 #include "entity_systems/action_system.hpp"
 #include "entity_systems/position_system.hpp"
+#include "entity_systems/entity_unload_system.hpp"
 
 class Game;
 
@@ -31,7 +32,7 @@ public:
 
     void removeEntity(int ID);
 
-    void removeAllEntitiesInChunk(int chunkX, int chunkY);
+    // void removeAllEntitiesInChunk(int chunkX, int chunkY);
 
     Entity* getEntity(int ID);
 
@@ -138,6 +139,7 @@ private:
     AnimationSystem animationSystem;
     MovementSystem movementSystem;
     ActionSystem actionSystem;
+    EntityUnloadSystem entityUnloadSystem;
     
     std::map<int, std::unique_ptr<Entity>> entities;
 };

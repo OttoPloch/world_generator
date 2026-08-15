@@ -56,7 +56,9 @@ void UILayer::init(Game* game, Camera* camera)
     e5->addComponent<TextComponent>(game, e5, UIPosition({10, 10}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT), "fps text", 0, "FPS: ", game->getAssetManager()->getFont("sfml_font"), 32);
     e5->addComponent<TextComponent>(game, e5, UIPosition({10, 10}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT), "mouse chunk pos text", 1, "Mouse Chunk Pos: ", game->getAssetManager()->getFont("sfml_font"), 32);
     e5->addComponent<TextComponent>(game, e5, UIPosition({10, 10}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT), "mouse tile type text", 2, "Mouse Tile Type: ", game->getAssetManager()->getFont("sfml_font"), 32);
-    
+    e5->addComponent<TextComponent>(game, e5, UIPosition({10, 10}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT), "mouse entity text", 3, "Entity ID: ", game->getAssetManager()->getFont("sfml_font"), 32);
+    e5->addComponent<TextComponent>(game, e5, UIPosition({10, 10}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT), "world origin text", 4, "World Chunk Origin: ", game->getAssetManager()->getFont("sfml_font"), 24);
+
     auto e6 = elements.emplace_back(std::make_unique<UIElement>(game, "useless buttons", UIPosition({0, 0}, UIOrigin::BOTTOM_LEFT, UIAnchor::BOTTOM_LEFT))).get();
     e6->addComponent<ButtonComponent>(game, e6, UIPosition({0, 0}, UIOrigin::BOTTOM_LEFT, UIAnchor::BOTTOM_LEFT), "button", 0, game->getAssetManager()->getTexture("default_button", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("button", "ui/"), sf::Vector2f(100, 100), false);
     e6->addComponent<ButtonComponent>(game, e6, UIPosition({10, 0}, UIOrigin::BOTTOM_LEFT, UIAnchor::BOTTOM_RIGHT), "button2", 1, game->getAssetManager()->getTexture("blue_button", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("button", "ui/"), sf::Vector2f(100, 100), false);
@@ -230,11 +232,18 @@ void UILayer::draw(bool debug)
 
     for (auto& e : elements)
     {
-        if (e->position.worldPosition && isOnScreen(game, e->getGlobalBounds(), true))
+        sf::FloatRect gb = e->getGlobalBounds();
+        // little bit of inversion there for ya, instead of checking in both ifs below. You're welcome.
+        if (!isOnScreen(game, gb.position, gb.size, e->position.worldPosition))
+        {
+            continue;
+        }
+
+        if (e->position.worldPosition)
         {
             visibleWorldElements.push_back(e.get());
         }
-        else if (!e->position.worldPosition && isOnScreen(game, e->getGlobalBounds(), false))
+        else if (!e->position.worldPosition)
         {
             visibleScreenElements.push_back(e.get());
         }
