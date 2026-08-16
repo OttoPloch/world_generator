@@ -70,7 +70,11 @@ void Cursor::inputUpdate(float dt)
 
         if (canDoInputType("TYPE:WORLD"))
         {
-            selectedEntity = game->getScene()->getEntityLayer()->getEntityAtPos(getGameCursorCoords(), true);
+            // TODO: give entities a hitbox, use that for actions and selecting.
+            // This will makes entities without a hitbox not selectable, ideal for (and this is just an idea that popped up as an example so dont take it too seriously)
+            // butterflies or something that is just visual and moves and animates but is not interactable (could be but for the example it's not). Also, that would make it
+            // necessary to give different entities different z values, instead of just using entityTileZEquivalent in Settings, so that butterflies can be above all tiles.
+            selectedEntity = game->getScene()->getEntityLayer()->getEntityAtPos(getGameCursorCoords(), false);
             selectedTile = game->getScene()->getChunkLayer()->getTileAtPosition(getGameCursorCoords(), true);
     
             if (selectedTile && selectedEntity)

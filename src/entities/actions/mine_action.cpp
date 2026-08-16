@@ -20,54 +20,38 @@ bool MineAction::start()
 
         for (auto& t : *tags)
         {
-            if (auto m = dynamic_cast<MineableTag*>(t.get()))
-            {
-                timeToComplete = m->durability / mineSpeed;
-                cooldown = m->durability / mineSpeed;
+            auto m = dynamic_cast<MineableTag*>(t.get());
+            if (!m) continue;
 
-                // UIElement* cursorElement = game->getInput()->cursor->getCursorElement();
-                // cursorElement->addComponent<ImageComponent>(
-                //     game,
-                //     cursorElement,
-                //     UIPosition({0, 0}, UIOrigin::BOTTOM_RIGHT),
-                //     "MineAction indicator",
-                //     0,
-                //     game->getAssetManager()->getTexture("mine_progress", "texture_atlases/ui/actions/MineAction/"),
-                //     sf::Vector2f(25, 25),
-                //     false,
-                //     game->getAssetManager()->getAnimation("mine_progress", "animations/ui/actions/MineAction/"),
-                //     nullptr,
-                //     false,
-                //     sf::IntRect({0, 0}, {0, 0}),
-                //     1/timeToComplete
-                // );
-                sf::Vector2f cursorWorldPos = game->getInput()->cursor->getGameCursorCoords();
-                sf::Vector2i cursorTilePos = worldToTilePosition(game, cursorWorldPos);
-                sf::Vector2f cursorTileWorldPos = tileToWorldPosition(game, cursorTilePos);
-                sf::Vector2f cursorTileWorldPosTileCenter = cursorTileWorldPos + sf::Vector2f(game->getSettings()->tile_size / 2, game->getSettings()->tile_size / 2);
+            timeToComplete = m->durability / mineSpeed;
+            cooldown = m->durability / mineSpeed;
 
-                UIElement* indicator = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "__MineAction indicator", UIPosition(cursorTileWorldPosTileCenter, UIOrigin::CENTER, UIAnchor::TOP_LEFT, true)));
-                indicator->addComponent<ImageComponent>(
-                    game,
-                    indicator,
-                    UIPosition({0, 0}, UIOrigin::CENTER),
-                    "image",
-                    0,
-                    game->getAssetManager()->getTexture("mine_progress_orb", "texture_atlases/ui/actions/MineAction/"),
-                    sf::Vector2f(10, 10),
-                    false,
-                    game->getAssetManager()->getAnimation("mine_progress_orb", "animations/ui/actions/MineAction/"),
-                    nullptr,
-                    false,
-                    sf::IntRect({0, 0}, {0, 0}),
-                    1/timeToComplete,
-                    false
-                );
-                indicator->updateVisuals();
+            sf::Vector2f cursorWorldPos(game->getInput()->cursor->getGameCursorCoords());
+            sf::Vector2i cursorTilePos = worldToTilePosition(game, cursorWorldPos, false, false);
+            sf::Vector2f cursorTileWorldPos(tileToWorldPosition(game, cursorTilePos, false));
+            sf::Vector2f cursorTileWorldPosTileCenter(cursorTileWorldPos + sf::Vector2f(game->getSettings()->tile_size / 2, game->getSettings()->tile_size / 2));
+            
+            UIElement* indicator = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "__MineAction indicator", UIPosition(cursorTileWorldPosTileCenter, UIOrigin::CENTER, UIAnchor::TOP_LEFT, true)));
+            indicator->addComponent<ImageComponent>(
+                game,
+                indicator,
+                UIPosition({0, 0}, UIOrigin::CENTER),
+                "image",
+                0,
+                game->getAssetManager()->getTexture("mine_progress_orb", "texture_atlases/ui/actions/MineAction/"),
+                sf::Vector2f(10, 10),
+                false,
+                game->getAssetManager()->getAnimation("mine_progress_orb", "animations/ui/actions/MineAction/"),
+                nullptr,
+                false,
+                sf::IntRect({0, 0}, {0, 0}),
+                1/timeToComplete,
+                false
+            );
+            indicator->updateVisuals();
 
-                active = true;
-                return true;
-            }
+            active = true;
+            return true;
         }
     }
 
@@ -108,4 +92,9 @@ void MineAction::reset(bool restartCooldownProgress)
     active = false;
 
     game->getScene()->getUILayer()->removeElement("__MineAction indicator");
+}
+
+std::unique_ptr<Action> MineAction::clone()
+{
+    return std::make_unique<MineAction>(*this);
 }

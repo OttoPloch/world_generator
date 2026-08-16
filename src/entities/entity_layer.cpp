@@ -1,6 +1,7 @@
 #include "entity_layer.hpp"
 #include "../core/game.hpp"
 #include "../utils/utils.hpp"
+#include "components/control_component.hpp"
 #include "components/position_component.hpp"
 #include "components/sprite_component.hpp"
 #include "entity_systems/entity_unload_system.hpp"
@@ -40,7 +41,7 @@ void EntityLayer::init(Game* game)
     pt->movement = {2.f, 1.5f};
     pt->control = ControlComponentData();
     pt->state = StateComponentData();
-    //pt->collision = {{.5f, .5f}, true, RectType::ACTIVE};
+    pt->collision = {{.5f, .5f}, true, RectType::ACTIVE};
     pt->action = {std::make_unique<MineAction>(game, 1.f, "mine!", 1.f), std::make_unique<Action>(game, "block!", -1.f, 0.f, 4.f, true), game->getSettings()->tile_size * 15};
 
     Entity* e = addEntity(pt, true, {0, 0});
@@ -168,7 +169,7 @@ Entity* EntityLayer::addEntity(EntityTemplate* t, bool useCustomPosition, sf::Ve
         if (t->control) e->addComponent<ControlComponent>(e);
         if (t->state) e->addComponent<StateComponent>(e);
         if (t->collision) e->addComponent<CollisionComponent>(e, e->getComponent<PositionComponent>()->position, t->collision->size, t->collision->sizeIsScaleOfSprite, t->collision->type);
-        if (t->action) e->addComponent<ActionComponent>(e, std::move(t->action->mainAction), std::move(t->action->secondaryAction), t->action->range);
+        if (t->action) e->addComponent<ActionComponent>(e, t->action->mainAction->clone(), t->action->secondaryAction->clone(), t->action->range);
     }
 
     return entities[ID].get();
@@ -296,6 +297,19 @@ void EntityLayer::tick()
     movementSystem.tick();
 
     entityUnloadSystem.tick();
+
+    // TEMP, TODO: player detection or something
+    if (player == nullptr)
+    {
+        for (auto& e : entities)
+        {
+            if (e.second->getComponent<ControlComponent>())
+            {
+                player = e.second.get();
+                break;
+            }
+        }
+    }
 }
 
 void EntityLayer::update(float dt)

@@ -277,16 +277,20 @@ void Scene::sceneInput(std::string control)
     }
     else if (control == "EXTRA 1")
     {
-        debugChunkLayerView++;
+        entityLayer.addEntity(&entityLayer.tManager.entityTemplates["player"], true, game->getInput()->cursor->getGameCursorCoords());
+        
+        // debugChunkLayerView++;
     }
     else if (control == "EXTRA 2")
     {
-        if (debugMode)
-        {
-            debugLevel++;
+        entityLayer.addEntity(&entityLayer.tManager.entityTemplates["box"], true, game->getInput()->cursor->getGameCursorCoords());
+
+        // if (debugMode)
+        // {
+        //     debugLevel++;
     
-            if (debugLevel > 1) debugLevel = 0;
-        }
+        //     if (debugLevel > 1) debugLevel = 0;
+        // }
     }
 }
 

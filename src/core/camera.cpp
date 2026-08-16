@@ -183,8 +183,8 @@ void Camera::updatePosition()
     }
     else
     {
-        velocity.x = (game->getSettings()->camera_freecamMoveSpeedBase * (size.x / baseSize.x)) * game->getInput()->getMovement().x;
-        velocity.y = (game->getSettings()->camera_freecamMoveSpeedBase * (size.x / baseSize.x)) * game->getInput()->getMovement().y;
+        velocity.x = (game->getSettings()->camera_freecamMoveSpeedBase * 5 * (size.x / baseSize.x)) * game->getInput()->getMovement().x;
+        velocity.y = (game->getSettings()->camera_freecamMoveSpeedBase * 5 * (size.x / baseSize.x)) * game->getInput()->getMovement().y;
 
         center.x += velocity.x;
         center.y += velocity.y;

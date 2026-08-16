@@ -16,6 +16,8 @@ struct MineAction : public Action
     // no matter what.
     void reset(bool restartCooldownProgress) override;
 
+    std::unique_ptr<Action> clone() override;
+
     float mineSpeed;
 
     int mineZ;

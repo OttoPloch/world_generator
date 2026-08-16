@@ -7,8 +7,8 @@ Settings::Settings()
 
 void Settings::init()
 {
-    int renderDistance = 1;
-    int loadDistanceExtra = 1;
+    int renderDistance = 5;
+    int loadDistanceExtra = 2;
 
     ui_animation_speed = 0.15f;
     tile_size = 10.f;
@@ -23,11 +23,11 @@ void Settings::init()
     input_controllerCursorSensitivity = 20;
     input_triggerMinPressValue = 0;
     input_UISelectorMoveCooldown = 0.15f;
-    worldOriginThreshold = chunk_size * tile_size * 2;
+    worldOriginThreshold = chunk_size * tile_size * 10;
     motion_friction = 0.8f;
     camera_defaultZoom = 0;
     camera_zoomSpeed = 20;
     camera_freecamMoveSpeedBase = 15;
-    camera_minSizeFraction = .02f;
-    camera_maxSizeFraction = 2.f;
+    camera_minSizeFraction = .02f; // maximum zoom in
+    camera_maxSizeFraction = 4.f; // maximum zoom out
 }

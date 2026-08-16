@@ -47,3 +47,8 @@ void Action::reset(bool restartCooldownProgress)
     else cooldownProgress = cooldown;
     active = false;
 }
+
+std::unique_ptr<Action> Action::clone()
+{
+    return std::make_unique<Action>(*this);
+}

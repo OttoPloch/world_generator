@@ -230,10 +230,8 @@ Tile* ChunkLayer::getTileAtPosition(sf::Vector2f position, bool activeChunksOnly
     if (chunk)
     {
         if (activeChunksOnly && chunk->state != ChunkState::ACTIVE) return nullptr;
-
-        sf::Vector2i tileLocalPos(worldToTilePosition(game, position) - sf::Vector2i(tileChunkPos.x * chunkSize, tileChunkPos.y * chunkSize));
         
-        return chunk->getTile(tileLocalPos);
+        return chunk->getTile(worldToTilePosition(game, position, true));
     }
 
     return nullptr;
@@ -359,17 +357,18 @@ void ChunkLayer::draw(bool debug, int debugLayerView)
 
             if (!debug) continue;
 
-            if (!mouseRectCollide(game, curr->rect.position, curr->rect.size, true)) continue;
-
-            std::array<sf::Vertex, 8> verts = VertexGroup::createLineVerts(curr->rect.position, curr->rect.size, sf::Color::Red);
-            debugBgObjectOutlineVerts.insert(debugBgObjectOutlineVerts.end(), verts.begin(), verts.end());
+            if (mouseRectCollide(game, curr->rect.position, curr->rect.size, true))
+            {
+                std::array<sf::Vertex, 8> verts = VertexGroup::createLineVerts(curr->rect.position, curr->rect.size, sf::Color::Red);
+                debugBgObjectOutlineVerts.insert(debugBgObjectOutlineVerts.end(), verts.begin(), verts.end());
+            }
         }
         
         window->getWindow().draw(&bgObjectsVertices[0], bgObjectsVertices.size(), sf::PrimitiveType::Triangles, bgObjectStates);
 
         if (debug)
         {
-            window->getWindow().draw(&debugBgObjectOutlineVerts[0], debugBgObjectOutlineVerts.size(), sf::PrimitiveType::Lines);
+            window->getWindow().draw(&debugBgObjectOutlineVerts[0], debugBgObjectOutlineVerts.size(), sf::PrimitiveType::Lines);\
         }
     }
 }

@@ -17,6 +17,9 @@ struct Action
     // action can be started again immediately.
     virtual void reset(bool restartCooldownProgress);
 
+    // Must override this function in each child class to make that class cloneable.
+    virtual std::unique_ptr<Action> clone();
+
     std::string name;
 
     // the multiplier for the range

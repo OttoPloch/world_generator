@@ -31,8 +31,8 @@ void ActionSystem::update(float dt)
     {
         auto a = e->getComponent<ActionComponent>();
 
-        if (!a->mainAction->active) a->mainAction->cooldownProgress += dt;
-        if (!a->secondaryAction->active) a->secondaryAction->cooldownProgress += dt;
+        if (a->mainAction && !a->mainAction->active) a->mainAction->cooldownProgress += dt;
+        if (a->secondaryAction && !a->secondaryAction->active) a->secondaryAction->cooldownProgress += dt;
     
         Action* currentAction;
         std::string currentActionInputName;
@@ -40,11 +40,15 @@ void ActionSystem::update(float dt)
         {
             if (i == 0)
             {
+                if (!a->mainAction) continue;
+
                 currentAction = a->mainAction.get();
                 currentActionInputName = "MAIN ACTION";
             }
             else if (i == 1)
             {
+                if (!a->secondaryAction) continue;
+
                 currentAction = a->secondaryAction.get();
                 currentActionInputName = "SECONDARY ACTION";
             }

@@ -37,10 +37,11 @@ sf::Vector2i worldToChunkPosition(Game* game, sf::Vector2f position);
 
 sf::Vector2f chunkToWorldPosition(Game* game, sf::Vector2i position);
 
-// returns a global tile position, not a position within a chunk.
-// if applyWorldOrigin, the position returned will be the screen equivalent, not just
+// If localPos, the returned position will be what the localPosition of a tile
+// at that world position would be.
+// If applyWorldOrigin, the position returned will be the screen equivalent, not just
 // the world position / the tile size.
-sf::Vector2i worldToTilePosition(Game* game, sf::Vector2f position, bool applyWorldOrigin = true);
+sf::Vector2i worldToTilePosition(Game* game, sf::Vector2f position, bool localPos, bool applyWorldOrigin = true);
 
 // assumes the position given is a global position, not within a chunk.
 // if applyWorldOrigin, the position given will be where the tile would show up on screen,

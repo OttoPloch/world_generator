@@ -188,9 +188,9 @@ bool isOnScreen(Game* game, sf::Vector2f point, bool useCameraView)
 
 sf::Vector2i worldToChunkPosition(Game* game, sf::Vector2f position)
 {
-    float chunkLength = game->getSettings()->tile_size * toFloat(game->getSettings()->chunk_size);
+    float chunkLength = game->getSettings()->tile_size * game->getSettings()->chunk_size;
 
-    sf::Vector2i pos(toInt(std::floor(position.x / chunkLength)), toInt(std::floor(position.y / chunkLength)));
+    sf::Vector2i pos(std::floor(position.x / chunkLength), std::floor(position.y / chunkLength));
     pos += game->getScene()->getWorldChunkOrigin();
 
     return pos;
@@ -206,15 +206,25 @@ sf::Vector2f chunkToWorldPosition(Game* game, sf::Vector2i position)
     return pos;
 }
 
-sf::Vector2i worldToTilePosition(Game* game, sf::Vector2f position, bool applyWorldOrigin)
+sf::Vector2i worldToTilePosition(Game* game, sf::Vector2f position, bool localPos, bool applyWorldOrigin)
 {
     float tileSize = game->getSettings()->tile_size;
 
     sf::Vector2i pos(toInt(std::floor(position.x / tileSize)), toInt(std::floor(position.y / tileSize)));
 
-    if (applyWorldOrigin)
+    if (localPos)
     {
-        float chunkSize = game->getSettings()->chunk_size;
+        // dont need to worry about applyWorldOrigin if localPos is true, because we just want the remainder
+        // of the global tile position / chunk size.
+        
+        int chunkSize = game->getSettings()->chunk_size;
+
+        pos.x %= chunkSize;
+        pos.y %= chunkSize;
+    }
+    else if (applyWorldOrigin)
+    {
+        int chunkSize = game->getSettings()->chunk_size;
         sf::Vector2i worldChunkOrigin = game->getScene()->getWorldChunkOrigin();
 
         pos += sf::Vector2i(worldChunkOrigin.x * chunkSize, worldChunkOrigin.y * chunkSize);
