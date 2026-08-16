@@ -28,9 +28,13 @@ void CollisionSystem::findAndResolveCollisions(Entity* e)
 
     if (rect.type == RectType::ACTIVE)
     {
+        sf::Vector2f contactPoint;
+        sf::Vector2f contactNormal;
+        float contactTime;
+
         // TILE COLLISION
         std::array<Chunk*, 9> nearbyChunks = scene->getChunkLayer()->getNearbyChunks(p->position.getPosition());
-        // Chunk, position, z-value
+        // Chunk, tile position, z-value
         std::vector<std::pair<Chunk*, std::pair<sf::Vector2i, int>>> nearbyTilesWithColliders;
 
         // getting the colliders of every nearby tile
@@ -38,20 +42,16 @@ void CollisionSystem::findAndResolveCollisions(Entity* e)
         {
             if (nearbyChunks[i])
             {
-                std::vector<Tile*>* currChunkTWithC = &nearbyChunks[i]->tilesWithColliders;
+                std::vector<Tile*>* currChunkTilesWithColliders = &nearbyChunks[i]->tilesWithColliders;
 
-                for (int j = 0; j < currChunkTWithC->size(); j++)
+                for (int j = 0; j < currChunkTilesWithColliders->size(); j++)
                 {
-                    Tile* currTile = (*currChunkTWithC)[j];
+                    Tile* currTile = (*currChunkTilesWithColliders)[j];
     
                     nearbyTilesWithColliders.push_back({nearbyChunks[i], {currTile->localPosition, currTile->z}});
                 }
             }
         }
-
-        sf::Vector2f contactPoint;
-        sf::Vector2f contactNormal;
-        float contactTime;
 
         if (nearbyTilesWithColliders.size() > 0)
         {
