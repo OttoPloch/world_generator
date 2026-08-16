@@ -21,6 +21,7 @@ public:
     void windowResized();
 private:
     Window* window;
+    sf::Vector2u lastWindowSize;
 
     Camera* camera;
 

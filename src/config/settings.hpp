@@ -31,4 +31,10 @@ public:
     float input_triggerMinPressValue; // -100 is completely up, +100 is all the way down in SFML
     float input_UISelectorMoveCooldown;
     float worldOriginThreshold;
+    float motion_friction;
+    float camera_defaultZoom;
+    float camera_zoomSpeed;
+    float camera_freecamMoveSpeedBase;
+    float camera_minSizeFraction; // fraction of the camera's base size.
+    float camera_maxSizeFraction; // fraction of the camera's base size.
 };

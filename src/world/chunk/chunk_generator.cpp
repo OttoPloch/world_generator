@@ -36,6 +36,8 @@ void ChunkGenerator::init(Game* game, std::unordered_map<sf::Vector2i, std::uniq
     {
         noise.SetSeed(game->random.getRandInt());
     }
+
+    decorationAtlas = game->getAssetManager()->getTextureAtlas("foliage_better");
 }
 
 void ChunkGenerator::generate(sf::Vector2i chunkPosition)
@@ -195,118 +197,168 @@ void ChunkGenerator::generate(sf::Vector2i chunkPosition)
 
     // decorations
     Chunk* chunk = (*chunks)[chunkPosition].get();
-    sf::Vector2f chunkWorldPos(chunkPosition.x * chunkLength, chunkPosition.y * chunkLength);
-    sf::Vector2i chunkGlobalTilePos(worldToTilePosition(game, chunkToWorldPosition(game, chunkPosition)));
-
-    sf::Texture* decorationTexture = game->getAssetManager()->getTexture("foliage_better", "texture_atlases/");
-    TextureAtlas* decorationAtlas = game->getAssetManager()->getTextureAtlas("foliage_better");
-    sf::FloatRect decorationTexCoords;
+    float genFrequency = game->getSettings()->generation_decoration_frequency;
     float scale = game->getSettings()->generation_decoration_scale;
-    if (scale < 0) scale = game->getSettings()->tile_size / game->getAssetManager()->getTextureAtlas("tiles_better")->tileSize;
+    // if the scale is 0 or less, use the scale of the tiles.
+    if (scale <= 0) scale = game->getSettings()->tile_size / game->getAssetManager()->getTextureAtlas("tiles_better")->tileSize;
     // TODO: don't hardcode tile atlas
     // makes decorations line up with other pixels    
     float positionRounding = game->getSettings()->tile_size * (1.f / game->getAssetManager()->getTextureAtlas("tiles_better")->tileSize);
-
+    
+    sf::Vector2f decorationLocalBottom;
+    sf::FloatRect decorationTexCoords;
+    sf::Vector2f decorationSize;
+    sf::Vector2f decorationGlobalTopleft;
     std::vector<BackgroundObject> decorations;
 
-    TileType currDecTileType = TileType::GRASS;
-    while (currDecTileType != TileType::COUNT)
+    for (int i = 0; i < genFrequency; i++)
     {
-        for (int i = 0; i < game->getSettings()->generation_decoration_frequency; i++)
+        decorationLocalBottom = sf::Vector2f(game->random.getRandInt(1, chunkLength - 1), game->random.getRandInt(1, chunkLength - 1));
+        // setting tex coords from the options given in the atlas
+        std::vector<sf::FloatRect> decorationOptions;            
+        for (auto t : decorationAtlas->itemTexCoords)
         {
-            sf::Vector2f decorationBottom(game->random.getRandInt(1, chunkLength - 1), game->random.getRandInt(1, chunkLength - 1));
-
-            // setting tex coords from the options given in the atlas
-            std::vector<sf::FloatRect> decorationOptions;            
-            for (auto t : decorationAtlas->itemTexCoords)
-            {
-                decorationOptions.emplace_back(t.second);
-            }
-            decorationTexCoords = decorationOptions[game->random.getRandInt(0, decorationOptions.size() - 1)];
-            
-            sf::Vector2f decorationSize(decorationTexCoords.size.x * scale, decorationTexCoords.size.y * scale);
-            sf::Vector2f decorationWorldTopLeft(chunkWorldPos.x + decorationBottom.x - decorationSize.x / 2.f, chunkWorldPos.y + decorationBottom.y - decorationSize.y);
-
-            // makes decorations line up with other pixels
-            decorationWorldTopLeft = {roundToMultiple(decorationWorldTopLeft.x, positionRounding), roundToMultiple(decorationWorldTopLeft.y, positionRounding)};
-            // offsets the decoration to avoid stitching.
-            decorationWorldTopLeft += {toFloat(game->random.getRandInt(-100, 100)) / 10000.f, toFloat(game->random.getRandInt(-100, 100)) / 10000.f};
-
-            sf::Vector2i decorationTileTopLeft(worldToTilePosition(game, decorationWorldTopLeft));
-            sf::Vector2i decorationTileBottomRight(worldToTilePosition(game, decorationWorldTopLeft + decorationSize));
-            // bounding box of the decoration in tileSpace
-            sf::Vector2i decorationTileSize = {
-                toInt(std::ceil(decorationTileBottomRight.x - decorationTileTopLeft.x) + 1),
-                toInt(std::ceil(decorationTileBottomRight.y - decorationTileTopLeft.y) + 1)
-            };
-
-            // getting every tile the decoration covers
-            bool allPositionsValid = true;
-            std::vector<Tile*> decorationTiles;
-            for (int y = 0; y < decorationTileSize.y; y++)
-            {
-                for (int x = 0; x < decorationTileSize.x; x++)
-                {
-                    sf::Vector2i pos = worldToTilePosition(game, {decorationWorldTopLeft.x + tileSize * x, decorationWorldTopLeft.y + tileSize * y});
-
-                    // Checks if the local position of this part of the decoration is outside of the chunk
-                    // (which would not be detected otherwise since the pos value is set to the remainder of pos / chunkSize,
-                    // meaning that part would just get wrapped around).
-                    sf::Vector2i relativePos = pos - chunkGlobalTilePos;
-
-                    if (relativePos.x < 0 || relativePos.x > chunkSize - 1 || relativePos.y < 0 || relativePos.y > chunkSize - 1)
-                    {
-                        allPositionsValid = false;
-                        break;
-                    }
-
-                    pos.x = pos.x % chunkSize;
-                    pos.y = pos.y % chunkSize;
-                    
-                    decorationTiles.emplace_back(chunk->getTile(pos));
-                }
-
-                if (!allPositionsValid) break;
-            }
-
-            if (!allPositionsValid) continue;
-
-
-            // if (currDecTileType == TileType::WATER) std::cout << "water\n";
-            // if (currDecTileType == TileType::GRASS) std::cout << "grass\n";
-
-            // making sure all covered tiles exist and are the correct type
-            bool allTilesValid = true;
-            for (auto t : decorationTiles)
-            {
-                if (!t || t->type != currDecTileType)
-                {
-                    if (!t)
-                    {
-                        std::cout << "NONEXISTANT TILE FOR DECORATION WITH TOP LEFT AT " << decorationTileTopLeft.x << ", " << decorationTileTopLeft.y << " TILE POS.\n";
-                    }    
-                    
-                    allTilesValid = false;
-                    break;
-                }
-            }    
-            if (!allTilesValid) continue;
-
-
-            BackgroundObject decoration = {
-                {
-                    decorationWorldTopLeft,
-                    decorationSize
-                },
-                decorationTexCoords
-            };
-            
-            decorations.push_back(decoration);
+            decorationOptions.emplace_back(t.second);
         }
 
-        // TODO: make this decoration generation system better
-        if (currDecTileType == TileType::GRASS) currDecTileType = TileType::COUNT;
+        decorationTexCoords = decorationOptions[game->random.getRandInt(0, decorationOptions.size() - 1)];
+        decorationSize = {decorationTexCoords.size.x * scale, decorationTexCoords.size.y * scale};
+        decorationGlobalTopleft = {
+            chunk->worldPosition.x + decorationLocalBottom.x - decorationSize.x / 2.f,
+            chunk->worldPosition.y + decorationLocalBottom.y - decorationSize.y
+        };
+
+        // makes decorations line up with other pixels
+        decorationGlobalTopleft = {roundToMultiple(decorationGlobalTopleft.x, positionRounding), roundToMultiple(decorationGlobalTopleft.y, positionRounding)};
+        // offsets the decoration to avoid stitching.
+        decorationGlobalTopleft += {toFloat(game->random.getRandInt(-1000, 1000)) / 1000000.f, toFloat(game->random.getRandInt(-1000, 1000)) / 1000000.f};
+
+        BackgroundObject decoration = {
+            {
+                decorationGlobalTopleft,
+                decorationSize
+            },
+            decorationTexCoords
+        };
+        
+        decorations.push_back(decoration);
     }
 
     chunk->bgObjects = decorations;
+
+    // Chunk* chunk = (*chunks)[chunkPosition].get();
+    // sf::Vector2f chunkWorldPos(chunkPosition.x * chunkLength, chunkPosition.y * chunkLength);
+    // sf::Vector2i chunkGlobalTilePos(worldToTilePosition(game, chunkToWorldPosition(game, chunkPosition)));
+
+    // sf::Texture* decorationTexture = game->getAssetManager()->getTexture("foliage_better", "texture_atlases/");
+    // TextureAtlas* decorationAtlas = game->getAssetManager()->getTextureAtlas("foliage_better");
+    // sf::FloatRect decorationTexCoords;
+    // float scale = game->getSettings()->generation_decoration_scale;
+    // if (scale < 0) scale = game->getSettings()->tile_size / game->getAssetManager()->getTextureAtlas("tiles_better")->tileSize;
+    // // TODO: don't hardcode tile atlas
+    // // makes decorations line up with other pixels    
+    // float positionRounding = game->getSettings()->tile_size * (1.f / game->getAssetManager()->getTextureAtlas("tiles_better")->tileSize);
+
+    // std::vector<BackgroundObject> decorations;
+
+    // TileType currDecTileType = TileType::GRASS;
+    // while (currDecTileType != TileType::COUNT)
+    // {
+    //     for (int i = 0; i < game->getSettings()->generation_decoration_frequency; i++)
+    //     {
+    //         sf::Vector2f decorationBottom(game->random.getRandInt(1, chunkLength - 1), game->random.getRandInt(1, chunkLength - 1));
+
+    //         // setting tex coords from the options given in the atlas
+    //         std::vector<sf::FloatRect> decorationOptions;            
+    //         for (auto t : decorationAtlas->itemTexCoords)
+    //         {
+    //             decorationOptions.emplace_back(t.second);
+    //         }
+    //         decorationTexCoords = decorationOptions[game->random.getRandInt(0, decorationOptions.size() - 1)];
+            
+    //         sf::Vector2f decorationSize(decorationTexCoords.size.x * scale, decorationTexCoords.size.y * scale);
+    //         sf::Vector2f decorationWorldTopLeft(chunkWorldPos.x + decorationBottom.x - decorationSize.x / 2.f, chunkWorldPos.y + decorationBottom.y - decorationSize.y);
+
+    //         // makes decorations line up with other pixels
+    //         decorationWorldTopLeft = {roundToMultiple(decorationWorldTopLeft.x, positionRounding), roundToMultiple(decorationWorldTopLeft.y, positionRounding)};
+    //         // offsets the decoration to avoid stitching.
+    //         decorationWorldTopLeft += {toFloat(game->random.getRandInt(-100, 100)) / 10000.f, toFloat(game->random.getRandInt(-100, 100)) / 10000.f};
+
+    //         sf::Vector2i decorationTileTopLeft(worldToTilePosition(game, decorationWorldTopLeft));
+    //         sf::Vector2i decorationTileBottomRight(worldToTilePosition(game, decorationWorldTopLeft + decorationSize));
+    //         // bounding box of the decoration in tileSpace
+    //         sf::Vector2i decorationTileSize = {
+    //             toInt(std::ceil(decorationTileBottomRight.x - decorationTileTopLeft.x) + 1),
+    //             toInt(std::ceil(decorationTileBottomRight.y - decorationTileTopLeft.y) + 1)
+    //         };
+
+    //         // getting every tile the decoration covers
+    //         bool allPositionsValid = true;
+    //         std::vector<Tile*> decorationTiles;
+    //         for (int y = 0; y < decorationTileSize.y; y++)
+    //         {
+    //             for (int x = 0; x < decorationTileSize.x; x++)
+    //             {
+    //                 sf::Vector2i pos = worldToTilePosition(game, {decorationWorldTopLeft.x + tileSize * x, decorationWorldTopLeft.y + tileSize * y});
+
+    //                 // Checks if the local position of this part of the decoration is outside of the chunk
+    //                 // (which would not be detected otherwise since the pos value is set to the remainder of pos / chunkSize,
+    //                 // meaning that part would just get wrapped around).
+    //                 sf::Vector2i relativePos = pos - chunkGlobalTilePos;
+
+    //                 if (relativePos.x < 0 || relativePos.x > chunkSize - 1 || relativePos.y < 0 || relativePos.y > chunkSize - 1)
+    //                 {
+    //                     allPositionsValid = false;
+    //                     break;
+    //                 }
+
+    //                 pos.x = pos.x % chunkSize;
+    //                 pos.y = pos.y % chunkSize;
+                    
+    //                 decorationTiles.emplace_back(chunk->getTile(pos));
+    //             }
+
+    //             if (!allPositionsValid) break;
+    //         }
+
+    //         if (!allPositionsValid) continue;
+
+
+    //         // if (currDecTileType == TileType::WATER) std::cout << "water\n";
+    //         // if (currDecTileType == TileType::GRASS) std::cout << "grass\n";
+
+    //         // making sure all covered tiles exist and are the correct type
+    //         bool allTilesValid = true;
+    //         for (auto t : decorationTiles)
+    //         {
+    //             if (!t || t->type != currDecTileType)
+    //             {
+    //                 if (!t)
+    //                 {
+    //                     std::cout << "NONEXISTANT TILE FOR DECORATION WITH TOP LEFT AT " << decorationTileTopLeft.x << ", " << decorationTileTopLeft.y << " TILE POS.\n";
+    //                 }    
+                    
+    //                 allTilesValid = false;
+    //                 break;
+    //             }
+    //         }    
+    //         if (!allTilesValid) continue;
+
+
+    //         BackgroundObject decoration = {
+    //             {
+    //                 decorationWorldTopLeft,
+    //                 decorationSize
+    //             },
+    //             decorationTexCoords
+    //         };
+            
+    //         decorations.push_back(decoration);
+    //     }
+
+    //     // TODO: make this decoration generation system better
+    //     if (currDecTileType == TileType::GRASS) currDecTileType = TileType::COUNT;
+    // }
+
+    // chunk->bgObjects = decorations;
 }

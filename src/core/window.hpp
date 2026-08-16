@@ -27,6 +27,8 @@ public:
     sf::RenderWindow& getWindow();
 
     sf::Vector2u getSize();
+    
+    float getAspectRatio();
 
     sf::Vector2u windowedSize;
 private:

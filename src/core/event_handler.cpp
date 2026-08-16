@@ -7,6 +7,7 @@ EventHandler::EventHandler() {}
 void EventHandler::init(Window* window, Camera* camera, Game* game, Scene* scene)
 {
     this->window = window;
+    lastWindowSize = window->getSize();
 
     this->camera = camera;
 
@@ -48,6 +49,8 @@ void EventHandler::processEvents()
             game->getInput()->buttonEvent(*buttonPressed);
         }
     }
+
+    lastWindowSize = window->getSize();
 }
 
 void EventHandler::mouseWheelScrolled(const sf::Event::MouseWheelScrolled* scroll)
@@ -64,7 +67,7 @@ void EventHandler::mouseWheelScrolled(const sf::Event::MouseWheelScrolled* scrol
 
 void EventHandler::windowResized()
 {
-    camera->setBaseSize(toV2F(window->getSize()));
+    camera->windowResized(lastWindowSize, window->getSize());
     window->resized(camera->getView());
     scene->getUILayer()->updateVisuals();
 }

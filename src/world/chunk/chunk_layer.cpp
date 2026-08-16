@@ -295,6 +295,7 @@ void ChunkLayer::update(float dt)
 void ChunkLayer::draw(bool debug, int debugLayerView)
 {
     std::vector<BackgroundObject*> visibleBgObjects;
+    std::vector<sf::Vertex> debugBgObjectOutlineVerts;
 
     for (auto& i : chunks)
     {
@@ -355,27 +356,20 @@ void ChunkLayer::draw(bool debug, int debugLayerView)
 
             std::array<sf::Vertex, 6> currObjVertices = VertexGroup::createTriangleVerts(curr->rect.position, curr->rect.size, curr->texCoords);
             bgObjectsVertices.insert(bgObjectsVertices.end(), currObjVertices.begin(), currObjVertices.end());
+
+            if (!debug) continue;
+
+            if (!mouseRectCollide(game, curr->rect.position, curr->rect.size, true)) continue;
+
+            std::array<sf::Vertex, 8> verts = VertexGroup::createLineVerts(curr->rect.position, curr->rect.size, sf::Color::Red);
+            debugBgObjectOutlineVerts.insert(debugBgObjectOutlineVerts.end(), verts.begin(), verts.end());
         }
         
         window->getWindow().draw(&bgObjectsVertices[0], bgObjectsVertices.size(), sf::PrimitiveType::Triangles, bgObjectStates);
-    }
 
-    if (debug)
-    {
-        sf::Vector2f cursorWorldPos = game->getInput()->cursor->getGameCursorCoords();
-        sf::Vector2i cursorChunkPos = worldToChunkPosition(game, cursorWorldPos);
-        Chunk* cursorChunk = getChunk(cursorChunkPos);
-
-        if (cursorChunk && cursorChunk->state == ChunkState::ACTIVE)
+        if (debug)
         {
-            for (auto b : cursorChunk->bgObjects)
-            {
-                if (mouseRectCollide(game, b.rect.position, b.rect.size, true))
-                {
-                    std::array<sf::Vertex, 8> debugBgObjectVerts = VertexGroup::createLineVerts(b.rect.position, b.rect.size, sf::Color::Red);
-                    window->getWindow().draw(debugBgObjectVerts.data(), debugBgObjectVerts.size(), sf::PrimitiveType::Lines);
-                }
-            }
+            window->getWindow().draw(&debugBgObjectOutlineVerts[0], debugBgObjectOutlineVerts.size(), sf::PrimitiveType::Lines);
         }
     }
 }

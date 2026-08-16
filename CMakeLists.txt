@@ -28,7 +28,6 @@ src/utils/game_position.cpp
 src/utils/random.cpp
 
 src/config/settings.cpp
-src/config/gamerules.cpp
 
 src/entities/entity_layer.cpp
 src/entities/entity.cpp

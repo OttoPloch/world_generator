@@ -59,8 +59,6 @@ void Game::processInput(std::string control)
 
 Window* Game::getWindow() { return &window; }
 
-Gamerules* Game::getGamerules() { return &gamerules; }
-
 Settings* Game::getSettings() { return &settings; }
 
 AssetManager* Game::getAssetManager() { return &assetManager; }
@@ -204,8 +202,8 @@ void Game::draw()
     scene.draw();
     drawBlame["DRAW_SCENE"] = debugClock.restart().asSeconds();
 
-    sf::CircleShape origin(10.f);
-    origin.setOrigin({10.f, 10.f});
+    sf::CircleShape origin(2.f);
+    origin.setOrigin({2.f, 2.f});
     origin.setFillColor(sf::Color::Blue);
     window.getWindow().draw(origin);
     

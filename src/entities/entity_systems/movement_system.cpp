@@ -45,8 +45,8 @@ void MovementSystem::update(float dt)
         }
         else
         {
-            (std::abs(m->velocity.x) > 0.001f) ? m->velocity.x *= game->getGamerules()->motion_friction : m->velocity.x = 0.f;
-            (std::abs(m->velocity.y) > 0.001f) ? m->velocity.y *= game->getGamerules()->motion_friction : m->velocity.y = 0.f;
+            (std::abs(m->velocity.x) > 0.001f) ? m->velocity.x *= game->getSettings()->motion_friction : m->velocity.x = 0.f;
+            (std::abs(m->velocity.y) > 0.001f) ? m->velocity.y *= game->getSettings()->motion_friction : m->velocity.y = 0.f;
         }
     }
 

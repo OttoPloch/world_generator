@@ -99,7 +99,7 @@ bool mouseRectCollide(Game* game, sf::Vector2f position, sf::Vector2f size, bool
 
     if (useWorldMousePos)
     {
-        mousePos = game->getWindow()->getWindow().mapPixelToCoords(toV2I(windowPos));
+        mousePos = game->getInput()->cursor->getGameCursorCoords();
     }
 
     return pointRectCollide(mousePos, {position, size});

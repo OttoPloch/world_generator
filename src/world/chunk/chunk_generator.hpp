@@ -8,6 +8,7 @@
 #include "../tile/tile.hpp"
 
 class Game;
+class TextureAtlas;
 
 class ChunkGenerator
 {
@@ -25,4 +26,6 @@ private:
     std::unordered_map<sf::Vector2i, std::unique_ptr<Chunk>, Vector2iHash>* chunks;
 
     FastNoiseLite noise;
+
+    TextureAtlas* decorationAtlas;
 };

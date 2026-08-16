@@ -8,33 +8,22 @@ Camera::Camera() {}
 void Camera::init(Game* game, bool setTopLeftPos, sf::Vector2f position, sf::Vector2f size, Entity* focus)
 {
     this->game = game;
-
     window = game->getWindow();
 
-    gamerules = game->getGamerules();
-
     baseSize = size;
-    
-    this->size = baseSize;
+    defaultZoom = game->getSettings()->camera_defaultZoom;
+    zoomSpeed = game->getSettings()->camera_zoomSpeed;
+    zoomAmount = defaultZoom;
+    updateZoom();
 
     this->focus = focus;
 
-    defaultZoom = game->getGamerules()->camera_defaultZoom;
-    zoomFactor = defaultZoom;
-
     velocity = {0, 0};
 
-    if (setTopLeftPos)
-    {
-        setTopLeft(position);
-    }
-    else
-    {
-        setCenter(position);
-    }
+    if (setTopLeftPos) setTopLeft(position);
+    else setCenter(position);
 
     view.setCenter(center);
-    view.setSize(size);
 }
 
 void Camera::setCenter(sf::Vector2f center)
@@ -63,8 +52,6 @@ sf::Vector2f Camera::getTopLeft()
 }
 
 sf::Vector2f Camera::getSize() { return size; }
-
-float Camera::getZoomFactor() { return zoomFactor; }
 
 void Camera::tick()
 {
@@ -152,56 +139,31 @@ void Camera::changeVelocity(char direction, float amount)
 void Camera::zoom(int amount)
 {
     if (amount == 0) return;
-    if (zoomFactor <= gamerules->camera_minZoomFactor && amount < 0) return;
-    if (zoomFactor >= gamerules->camera_maxZoomFactor && amount > 0) return;
 
-    if (amount > 0)
-    {
-        if (zoomFactor >= 1.f)
-        {
-            zoomFactor *= gamerules->camera_bigZoomFactor;
-        }
-        else if (zoomFactor < 1.f)
-        {
-            zoomFactor += gamerules->camera_smallZoomAmount;
-        }
-    }
-    else if (amount < 0)
-    {
-        if (zoomFactor > 1.f)
-        {
-            zoomFactor /= gamerules->camera_bigZoomFactor;
-        }
-        else if (zoomFactor <= 1.f)
-        {
-            zoomFactor -= gamerules->camera_smallZoomAmount;
-        }
-    }
+    zoomAmount += zoomSpeed * amount;
 
-    size = baseSize * zoomFactor;
-
-    view.setSize(size);
+    updateZoom();
 }
 
 void Camera::resetZoom()
 {
-    zoomFactor = defaultZoom;
+    zoomAmount = defaultZoom;
 
-    size = baseSize * zoomFactor;
+    updateZoom();
+}
 
-    view.setSize(size);
+void Camera::windowResized(sf::Vector2u oldSize, sf::Vector2u newSize)
+{
+    zoomAmount *= static_cast<float>(newSize.y) / static_cast<float>(oldSize.y);
+
+    setBaseSize(sf::Vector2f(newSize));
 }
 
 void Camera::setBaseSize(sf::Vector2f newSize)
 {
     baseSize = newSize;
 
-    size = {
-        baseSize.x * zoomFactor,
-        baseSize.y * zoomFactor
-    };
-
-    view.setSize(size);
+    updateZoom();
 }
 
 void Camera::setFocus(Entity* newFocus)
@@ -221,12 +183,35 @@ void Camera::updatePosition()
     }
     else
     {
-        velocity.x = (gamerules->camera_freecamMoveSpeedBase * zoomFactor) * game->getInput()->getMovement().x;
-        velocity.y = (gamerules->camera_freecamMoveSpeedBase * zoomFactor) * game->getInput()->getMovement().y;
+        velocity.x = (game->getSettings()->camera_freecamMoveSpeedBase * (size.x / baseSize.x)) * game->getInput()->getMovement().x;
+        velocity.y = (game->getSettings()->camera_freecamMoveSpeedBase * (size.x / baseSize.x)) * game->getInput()->getMovement().y;
 
         center.x += velocity.x;
         center.y += velocity.y;
     }
 
     view.setCenter(center);
+}
+
+void Camera::updateZoom()
+{
+    size = baseSize + sf::Vector2f(zoomAmount * game->getWindow()->getAspectRatio(), zoomAmount);
+
+    float minSizeFraction = game->getSettings()->camera_minSizeFraction;
+    float maxSizeFraction = game->getSettings()->camera_maxSizeFraction;
+
+    if (size.x < baseSize.x * minSizeFraction || size.y < baseSize.y * minSizeFraction)
+    {
+        size = baseSize * minSizeFraction;
+
+        zoomAmount = size.y - baseSize.y;
+    }
+    else if (size.x > baseSize.x * maxSizeFraction || size.y > baseSize.y * maxSizeFraction)
+    {
+        size = baseSize * maxSizeFraction;
+
+        zoomAmount = size.y - baseSize.y;
+    }
+
+    view.setSize(size);
 }

@@ -78,3 +78,8 @@ void Window::setView(sf::View view)
 sf::RenderWindow& Window::getWindow() { return window; }
 
 sf::Vector2u Window::getSize() { return window.getSize(); }
+
+float Window::getAspectRatio()
+{
+    return static_cast<float>(window.getSize().x) / static_cast<float>(window.getSize().y);
+}

@@ -2,7 +2,6 @@
 
 #include "common.hpp"
 #include "../entities/entity.hpp"
-#include "../config/gamerules.hpp"
 
 class Game;
 class Window;
@@ -26,8 +25,6 @@ public:
 
     sf::Vector2f getSize();
 
-    float getZoomFactor();
-
     void tick();
 
     void update(float dt);
@@ -46,6 +43,8 @@ public:
 
     void resetZoom();
 
+    void windowResized(sf::Vector2u oldSize, sf::Vector2u newSize);
+
     void setBaseSize(sf::Vector2f newSize);
 
     void setFocus(Entity* newFocus);
@@ -56,18 +55,19 @@ public:
 private:
     void updatePosition();
 
+    void updateZoom();
+
     Game* game;
 
     Window* window;
 
-    Gamerules* gamerules;
-
     sf::Vector2f baseSize;
-
-    sf::Vector2f size;
     
-    float zoomFactor;
+    sf::Vector2f size;
+
     float defaultZoom;
+    float zoomSpeed;
+    float zoomAmount;
 
     sf::Vector2f center;
     sf::Vector2f velocity;

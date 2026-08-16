@@ -383,10 +383,10 @@ void Scene::adjustWorldChunkOrigin(sf::Vector2i amount)
 
         c->createAllTileVerts();
 
-        // for (auto& bg : c->bgObjects)
-        // {
-        //     bg.bottom += amount.y * -chunkLength;
-        //     bg.rect.position += {amount.x * -chunkLength, amount.y * -chunkLength};
-        // }
+        for (auto& bg : c->bgObjects)
+        {
+            bg.bottom += amount.y * -chunkLength;
+            bg.rect.position += {amount.x * -chunkLength, amount.y * -chunkLength};
+        }
     }
 }

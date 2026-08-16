@@ -9,7 +9,6 @@
 #include "scene.hpp"
 #include "../entities/entity.hpp"
 #include "../graphics/asset_manager.hpp"
-#include "../config/gamerules.hpp"
 #include "../config/settings.hpp"
 #include "../utils/random.hpp"
 
@@ -25,8 +24,6 @@ public:
     void processInput(std::string control);
     
     Window* getWindow();
-    
-    Gamerules* getGamerules();
 
     Settings* getSettings();
 
@@ -47,7 +44,6 @@ private:
     void draw();
     
     Window window;
-    Gamerules gamerules;
     Settings settings;
     EventHandler eventHandler;
     AssetManager assetManager;
