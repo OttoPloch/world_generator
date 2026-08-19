@@ -77,7 +77,7 @@ void MineAction::completeAction(Entity* actor, sf::Vector2f position)
 
     if (Chunk* chunk = actor->game->getScene()->getChunkLayer()->getChunk(chunkPos))
     {
-        chunk->setTile(startTile->localPosition, &chunk->chunkLayer->tManager.tileTemplates["air"]);
+        chunk->destroyTile(startTile->localPosition, &chunk->chunkLayer->tManager.tileTemplates["air"]);
     }
 
     reset(true);

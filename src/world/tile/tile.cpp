@@ -66,3 +66,15 @@ void Tile::update(float dt)
         }
     }
 }
+
+void Tile::destroy()
+{
+    bool endHere = false;
+
+    for (auto& t: tags)
+    {
+        t->onTileDestroy(this, endHere);
+
+        if (endHere) break;
+    }
+}

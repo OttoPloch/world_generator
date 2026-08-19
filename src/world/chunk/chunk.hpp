@@ -35,8 +35,12 @@ public:
     Tile* getTile(sf::Vector2i localPosition, bool getHighestNonAir = true, int z = 0);
     Tile* getTile(int index, bool getHighestNonAir = true, int z = 0);
 
+    // If a tile is at this location already, it will be destroyed without any reaction.
     void setTile(sf::Vector2i localPosition, TileTemplate* t, bool setHighestNonAir = true, int z = 0);
     void setTile(int index, TileTemplate* t, bool setHighestNonAir = true, int z = 0);
+
+    // Calls a tile's destroy() function, then sets that tile to the replacement tile.
+    void destroyTile(sf::Vector2i localPosition, TileTemplate* replacement, bool setHighestNonAir = true, int z = 0);
 
     std::vector<std::vector<std::unique_ptr<Tile>>>* getTiles();
 

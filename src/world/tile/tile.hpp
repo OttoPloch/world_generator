@@ -56,6 +56,8 @@ public:
 
     void update(float dt);
 
+    void destroy();
+
     Chunk* chunk;
 
     sf::Vector2i localPosition;

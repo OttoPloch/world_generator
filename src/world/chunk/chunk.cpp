@@ -125,12 +125,12 @@ Tile* Chunk::getTile(int index, bool getHighestNonAir, int z)
     return getTile({index % chunkSize, static_cast<int>(index / chunkSize)}, getHighestNonAir, z);
 }
 
-void Chunk::setTile(sf::Vector2i localPositon, TileTemplate* t, bool setHighestNonAir, int z)
+void Chunk::setTile(sf::Vector2i localPosition, TileTemplate* t, bool setHighestNonAir, int z)
 {
     // Wrapping values //
 
-    int x = localPositon.x;
-    int y = localPositon.y;
+    int x = localPosition.x;
+    int y = localPosition.y;
     int effectiveZ = z;
     if (setHighestNonAir) effectiveZ = getHighestNonAirZ(x, y);
     else wrapPosition(x, y, effectiveZ);
@@ -192,6 +192,26 @@ void Chunk::setTile(sf::Vector2i localPositon, TileTemplate* t, bool setHighestN
 void Chunk::setTile(int index, TileTemplate* t, bool setHighestNonAir, int z)
 {
     setTile({index % chunkSize, static_cast<int>(index / chunkSize)}, t, setHighestNonAir, z);
+}
+
+void Chunk::destroyTile(sf::Vector2i localPosition, TileTemplate* replacement, bool setHighestNonAir, int z)
+{
+    // Wrapping values //
+
+    int x = localPosition.x;
+    int y = localPosition.y;
+    int effectiveZ = z;
+    if (setHighestNonAir) effectiveZ = getHighestNonAirZ(x, y);
+    else wrapPosition(x, y, effectiveZ);
+    if (effectiveZ == -1) effectiveZ = 0;
+
+    // // // // // // //
+
+    Tile* tile = tiles[effectiveZ][y * chunkSize + x].get();
+
+    if (tile) tile->destroy();
+
+    setTile({x, y}, replacement, false, effectiveZ);
 }
 
 std::vector<std::vector<std::unique_ptr<Tile>>>* Chunk::getTiles() { return &tiles; }

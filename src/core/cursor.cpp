@@ -238,6 +238,11 @@ bool Cursor::processMouseButtonEvent(sf::Event::MouseButtonPressed mouseButtonPr
 
 bool Cursor::canDoInputType(std::string type)
 {
+    if (!mouseRectCollide(game, {0, 0}, sf::Vector2f(game->getWindow()->getSize()), false))
+    {
+        return false;
+    }
+
     if (type == "TYPE:WORLD")
     {
         if (!game->getScene()->getEntityLayer()->player || !game->getScene()->getEntityLayer()->player->getComponent<ControlComponent>())
