@@ -16,6 +16,7 @@
 #include "entity_systems/action_system.hpp"
 #include "entity_systems/position_system.hpp"
 #include "entity_systems/entity_unload_system.hpp"
+#include "entity_systems/item_system.hpp"
 
 class Game;
 
@@ -140,6 +141,7 @@ private:
     MovementSystem movementSystem;
     ActionSystem actionSystem;
     EntityUnloadSystem entityUnloadSystem;
+    ItemSystem itemSystem;
     
     std::map<int, std::unique_ptr<Entity>> entities;
 };

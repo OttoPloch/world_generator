@@ -18,8 +18,9 @@ CollisionComponent::CollisionComponent(Entity* myEntity, GamePosition position, 
         {
             sf::Vector2f spriteSize = s->sprite.getSize();
             adjustedSize = {spriteSize.x * size.x, spriteSize.y * size.y};
+
         }
     }
-
+    
     rect = {position, adjustedSize, type};
 }

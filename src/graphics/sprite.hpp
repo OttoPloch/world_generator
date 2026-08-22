@@ -26,6 +26,8 @@ public:
     float top();
     float bottom();
 
+    void setTexture(sf::Texture* newTexture);
+
     void resize(sf::Vector2f newSize, bool sizeIsScale = true);
     void setTextureRect(sf::IntRect newTexRect);
 
@@ -45,6 +47,7 @@ private:
     GamePosition position;
 
     sf::Vector2f size;
+    bool sizeIsScale;
 
     sf::Texture* texture;
 };

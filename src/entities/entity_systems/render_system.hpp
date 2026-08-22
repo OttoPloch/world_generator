@@ -13,7 +13,7 @@ public:
 
     void update(float dt);
 
-    void draw();
+    void draw(bool debug);
 private:
     Game* game;
     Scene* scene;

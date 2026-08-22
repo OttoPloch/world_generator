@@ -24,7 +24,8 @@ void Settings::init()
     input_triggerMinPressValue = 0;
     input_UISelectorMoveCooldown = 0.15f;
     worldOriginThreshold = chunk_size * tile_size * 10;
-    motion_friction = 0.8f;
+    motion_friction = .8f;
+    item_maxSpawnVelocity = 1;
     camera_defaultZoom = 0;
     camera_zoomSpeed = 20;
     camera_freecamMoveSpeedBase = 15;

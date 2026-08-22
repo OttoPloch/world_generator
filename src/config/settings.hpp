@@ -32,6 +32,7 @@ public:
     float input_UISelectorMoveCooldown;
     float worldOriginThreshold;
     float motion_friction;
+    float item_maxSpawnVelocity;
     float camera_defaultZoom;
     float camera_zoomSpeed;
     float camera_freecamMoveSpeedBase;

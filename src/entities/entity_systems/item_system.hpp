@@ -4,12 +4,12 @@ class Game;
 class Scene;
 class EntityLayer;
 
-class MovementSystem
+class ItemSystem
 {
 public:
-    MovementSystem();
+    ItemSystem();
 
-    MovementSystem(Game* game, Scene* scene);
+    ItemSystem(Game* game, Scene* scene);
 
     void tick();
 private:

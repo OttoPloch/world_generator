@@ -7,8 +7,11 @@ Sprite::Sprite() : position(nullptr, {0, 0}) {}
 
 Sprite::Sprite(GamePosition position, sf::Texture* texture, sf::Vector2f size, bool sizeIsScale, bool usingTexCoords, sf::IntRect texCoords, float animSpeedMult, bool repeatAnimation) : position(position), texture(texture), animSpeedMult(animSpeedMult), repeatAnimation(repeatAnimation)
 {
-    sprite = std::make_unique<sf::Sprite>(*texture);
-    
+    if (texture)
+    {
+        sprite = std::make_unique<sf::Sprite>(*texture);
+    }
+
     sprite->setPosition(position.getPosition());
     
     if (usingTexCoords) sprite->setTextureRect(texCoords);
@@ -30,17 +33,26 @@ float Sprite::top() { return position.getPosition().y - size.y / 2.f; }
 
 float Sprite::bottom() { return position.getPosition().y + size.y / 2.f; }
 
+void Sprite::setTexture(sf::Texture* newTexture)
+{
+    texture = newTexture;
+    
+    sprite->setTexture(*newTexture);
+}
+
 void Sprite::resize(sf::Vector2f newSize, bool sizeIsScale)
 {
+    this->sizeIsScale = sizeIsScale;
+
     if (sizeIsScale)
     {
         sprite->setScale(newSize);
-        this->size = {sprite->getTextureRect().size.x * newSize.x, sprite->getTextureRect().size.y * newSize.y};
+        size = {sprite->getTextureRect().size.x * newSize.x, sprite->getTextureRect().size.y * newSize.y};
     }
     else
     {
         sprite->setScale({newSize.x / sprite->getTextureRect().size.x, newSize.y / sprite->getTextureRect().size.y});
-        this->size = newSize;
+        size = newSize;
     }
 
     sprite->setOrigin({sprite->getTextureRect().size.x / 2.f, sprite->getTextureRect().size.y / 2.f});
@@ -50,7 +62,7 @@ void Sprite::setTextureRect(sf::IntRect newTexRect)
 {
     sprite->setTextureRect(newTexRect);
 
-    resize(size, false);
+    resize(size, sizeIsScale);
 }
 
 void Sprite::syncPos()

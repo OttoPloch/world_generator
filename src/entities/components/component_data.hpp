@@ -53,3 +53,9 @@ struct ActionComponentData
 
     float range;
 };
+
+struct ItemComponentData
+{
+    sf::Vector2f spawnAreaOffset;
+    sf::Vector2f spawnAreaSize;
+};

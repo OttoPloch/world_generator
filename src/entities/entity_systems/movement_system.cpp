@@ -9,25 +9,20 @@ MovementSystem::MovementSystem(Game* game, Scene* scene) : game(game), scene(sce
 
 void MovementSystem::tick()
 {
-    std::vector<Entity*> validEntities = entityLayer->getEntitiesWithComponents<PositionComponent, MovementComponent>();
-
-    for (auto e : validEntities)
-    {
-        auto m = e->getComponent<MovementComponent>();
-        auto p = e->getComponent<PositionComponent>();
-
-        p->position.changePosition(m->velocity);
-    }
-}
-
-void MovementSystem::update(float dt)
-{
     std::vector<Entity*> validEntities = entityLayer->getEntitiesWithComponent<MovementComponent>();
 
     for (auto e : validEntities)
     {
         auto m = e->getComponent<MovementComponent>();
 
+        if (auto p = e->getComponent<PositionComponent>())
+        {
+            p->position.changePosition(m->velocity);
+    
+            std::vector<Entity*> validEntities = entityLayer->getEntitiesWithComponent<MovementComponent>();
+        }
+
+        
         sf::Vector2f movementVector = {0, 0};
         float speedMult = 1.f;
     
@@ -49,5 +44,4 @@ void MovementSystem::update(float dt)
             (std::abs(m->velocity.y) > 0.001f) ? m->velocity.y *= game->getSettings()->motion_friction : m->velocity.y = 0.f;
         }
     }
-
 }

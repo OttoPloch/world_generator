@@ -8,3 +8,4 @@
 #include "action_component.hpp"
 #include "sprite_component.hpp"
 #include "position_component.hpp"
+#include "item_component.hpp"

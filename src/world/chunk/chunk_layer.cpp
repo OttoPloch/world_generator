@@ -111,7 +111,7 @@ void ChunkLayer::init(Game* game)
 
     std::vector<std::unique_ptr<TileTag>> cobbleTags;
     cobbleTags.emplace_back(std::make_unique<MineableTag>(1.f));
-    cobbleTags.emplace_back(std::make_unique<ResourceTag>("tile.cobble", 1, 1));
+    cobbleTags.emplace_back(std::make_unique<ResourceTag>("item.cobble", 1, 1));
     tManager.tileTemplates["cobble"] = {
         TileType::COBBLE,
         false,

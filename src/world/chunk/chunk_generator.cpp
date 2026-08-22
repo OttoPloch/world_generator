@@ -207,10 +207,10 @@ void ChunkGenerator::generateDecorations(Chunk* chunk)
     float genFrequency = game->getSettings()->generation_decoration_frequency;
     float scale = game->getSettings()->generation_decoration_scale;
     // if the scale is 0 or less, use the scale of the tiles. This makes decorations always have the same individual pixel size as tiles.
-    if (scale <= 0) scale = game->getSettings()->tile_size / game->getAssetManager()->getTextureAtlas("tiles_better")->tileSize;
+    if (scale <= 0) scale = getTileScale(game);
     // TODO: don't hardcode tile atlas
     // makes decorations line up with other pixels    
-    float positionRounding = game->getSettings()->tile_size * (1.f / game->getAssetManager()->getTextureAtlas("tiles_better")->tileSize);
+    float positionRounding = scale;
     
     // TEMP, TODO: add a way to know what tile types a decoration is valid on? Only have grass right now,
     // but maybe i'll add water or rock decorations?
@@ -249,14 +249,8 @@ void ChunkGenerator::createDecoration(sf::Vector2f& chunkWorldPosition, float& s
     float chunkLength = tileSize * chunkSize;
     
     decorationLocalBottom = sf::Vector2f(game->random.getRandInt(1, chunkLength - 1), game->random.getRandInt(1, chunkLength - 1));
-    // setting tex coords from the options given in the atlas
-    std::vector<sf::FloatRect> decorationOptions;            
-    for (auto t : decorationAtlas->itemTexCoords)
-    {
-        decorationOptions.emplace_back(t.second);
-    }
 
-    decorationTexCoords = decorationOptions[game->random.getRandInt(0, decorationOptions.size() - 1)];
+    decorationTexCoords = getRandomTextureAtlasChoice(game, decorationAtlas);
     decorationSize = {decorationTexCoords.size.x * scale, decorationTexCoords.size.y * scale};
     decorationGlobalTopleft = {
         chunkWorldPosition.x + decorationLocalBottom.x - decorationSize.x / 2.f,

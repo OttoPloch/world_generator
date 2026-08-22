@@ -10,6 +10,7 @@ class UILayer;
 class UIElement;
 class CollisionRect;
 class GamePosition;
+class TextureAtlas;
 
 float getDistance(sf::Vector2f vec1, sf::Vector2f vec2);
 
@@ -51,3 +52,7 @@ sf::Vector2f tileToWorldPosition(Game* game, sf::Vector2i position, bool applyWo
 void printBlameStats(const std::unordered_map<std::string, float>& blame, std::string category);
 
 float roundToMultiple(float numToRound, float multiple);
+
+sf::FloatRect getRandomTextureAtlasChoice(Game* game, TextureAtlas* atlas);
+
+float getTileScale(Game* game);

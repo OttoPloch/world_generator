@@ -300,3 +300,20 @@ float roundToMultiple(float numToRound, float multiple)
         return roundUp;
     }
 }
+
+sf::FloatRect getRandomTextureAtlasChoice(Game* game, TextureAtlas* atlas)
+{
+    // setting tex coords from the options given in the atlas
+    std::vector<sf::FloatRect> options;            
+    for (auto t : atlas->itemTexCoords)
+    {
+        options.emplace_back(t.second);
+    }
+
+    return options[game->random.getRandInt(0, options.size() - 1)];
+}
+
+float getTileScale(Game* game)
+{
+    return game->getSettings()->tile_size / game->getAssetManager()->getTextureAtlas("tiles_better")->tileSize;
+}
