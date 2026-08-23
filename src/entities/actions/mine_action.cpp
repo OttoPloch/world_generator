@@ -30,8 +30,9 @@ bool MineAction::start()
             sf::Vector2i cursorTilePos = worldToTilePosition(game, cursorWorldPos, false, false);
             sf::Vector2f cursorTileWorldPos(tileToWorldPosition(game, cursorTilePos, false));
             sf::Vector2f cursorTileWorldPosTileCenter(cursorTileWorldPos + sf::Vector2f(game->getSettings()->tile_size / 2, game->getSettings()->tile_size / 2));
-            
-            UIElement* indicator = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "__MineAction indicator", UIPosition(cursorTileWorldPosTileCenter, UIOrigin::CENTER, UIAnchor::TOP_LEFT, true)));
+            float tileSize = game->getSettings()->tile_size;
+
+            UIElement* indicator = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "__MineAction indicator", UIPosition(cursorTileWorldPosTileCenter, UIOrigin::TOP_LEFT, UIAnchor::TOP_LEFT, true)));
             indicator->addComponent<ImageComponent>(
                 game,
                 indicator,
@@ -39,7 +40,7 @@ bool MineAction::start()
                 "image",
                 0,
                 game->getAssetManager()->getTexture("mine_progress_orb", "texture_atlases/ui/actions/MineAction/"),
-                sf::Vector2f(10, 10),
+                sf::Vector2f(tileSize, tileSize),
                 false,
                 game->getAssetManager()->getAnimation("mine_progress_orb", "animations/ui/actions/MineAction/"),
                 nullptr,
@@ -63,6 +64,8 @@ bool MineAction::update(float dt)
 {   
     timeProgress += dt;
     
+    game->getScene()->getUILayer()->getElement("__MineAction indicator")->updateVisuals();
+
     if (game->getInput()->cursor->getSelectedTile() != startTile)
     {
         return false;
