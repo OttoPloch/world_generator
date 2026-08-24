@@ -7,8 +7,8 @@ struct ItemComponent : EntityComponent
 {
     ItemComponent(Entity* myEntity, sf::Vector2f spawnAreaOffset, sf::Vector2f spawnAreaSize);
 
-    void init(std::string resource, int amount);
+    void init(std::string resource, unsigned int amount);
 
     std::string resource;
-    int amount;
+    unsigned int amount;
 };

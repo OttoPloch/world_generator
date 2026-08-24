@@ -17,7 +17,7 @@ ItemComponent::ItemComponent(Entity* myEntity, sf::Vector2f spawnAreaOffset, sf:
     }
 }
 
-void ItemComponent::init(std::string resource, int amount)
+void ItemComponent::init(std::string resource, unsigned int amount)
 {
     this->resource = resource;
     this->amount = amount;

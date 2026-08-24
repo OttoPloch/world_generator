@@ -59,3 +59,10 @@ struct ItemComponentData
     sf::Vector2f spawnAreaOffset;
     sf::Vector2f spawnAreaSize;
 };
+
+struct InventoryComponentData
+{
+    int inventorySize;
+    float pickupRange;
+    bool rangeIsInTiles;
+};

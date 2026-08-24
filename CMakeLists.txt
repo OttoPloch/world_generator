@@ -41,6 +41,7 @@ src/entities/components/collision_component.cpp
 src/entities/components/action_component.cpp
 src/entities/components/sprite_component.cpp
 src/entities/components/item_component.cpp
+src/entities/components/inventory_component.cpp
 src/entities/actions/action.cpp
 src/entities/actions/mine_action.cpp
 src/entities/template_manager.cpp

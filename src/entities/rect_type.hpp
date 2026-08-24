@@ -2,9 +2,9 @@
 
 enum class RectType
 {
-    ACTIVE, // collides with all
-    PASSIVE, // only collides with active and static. Other rect types do not collide with this, meaning this type is pushed by other types.
-    STATIC, // does not move from collision resolutions
+    ACTIVE, // collides with all.
+    PASSIVE, // Other rect types do not collide with this type, meaning this type is pushed by other types. Does not collide with other PASSIVE rects.
+    STATIC, // does not move from collision resolutions.
 
     COUNT
 };

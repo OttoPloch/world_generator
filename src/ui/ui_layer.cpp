@@ -155,7 +155,7 @@ bool UILayer::checkUICollision()
         else mousePos = game->getInput()->cursor->getGameCursorPosition();
 
         std::vector<sf::FloatRect> componentBounds = e->getAllComponentBounds();
-        for (auto b : componentBounds)
+        for (auto& b : componentBounds)
         {
             if (pointRectCollide(mousePos, b)) return true;
         }

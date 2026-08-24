@@ -56,3 +56,5 @@ float roundToMultiple(float numToRound, float multiple);
 sf::FloatRect getRandomTextureAtlasChoice(Game* game, TextureAtlas* atlas);
 
 float getTileScale(Game* game);
+
+float getAngle(sf::Vector2f vec1, sf::Vector2f vec2);

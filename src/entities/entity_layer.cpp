@@ -2,6 +2,7 @@
 #include "../core/game.hpp"
 #include "../utils/utils.hpp"
 #include "components/control_component.hpp"
+#include "components/inventory_component.hpp"
 #include "components/position_component.hpp"
 #include "components/sprite_component.hpp"
 #include "entity_systems/entity_unload_system.hpp"
@@ -13,6 +14,7 @@
 #include "components/components.hpp"
 
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <algorithm>
 #include <iterator>
@@ -40,11 +42,12 @@ void EntityLayer::init(Game* game)
 
     auto pt = &tManager.entityTemplates["player"];
     pt->sprite = {game->getAssetManager()->getTexture("dog", "texture_atlases/"), {20, 20}, false, false, {{0, 0}, {0, 0}}, 1.6f, nullptr, game->getAssetManager()->getAnimSet("dog")};
-    pt->movement = {2.f, 1.5f};
+    pt->movement = {1.f, 1.5f};
     pt->control = ControlComponentData();
     pt->state = StateComponentData();
     pt->collision = {{.5f, .5f}, true, RectType::ACTIVE};
     pt->action = {std::make_unique<MineAction>(game, 1, "mine!", 1.f), std::make_unique<Action>(game, "block!", -1.f, 0.f, 4.f, true), game->getSettings()->tile_size * 15};
+    pt->inventory = {16, 3, true};
 
     Entity* e = addEntity(pt, true, {0, 0});
     player = e;
@@ -60,7 +63,6 @@ void EntityLayer::init(Game* game)
     it->movement = {0, 0};
     it->collision = {{1, 1}, false, RectType::PASSIVE};
     it->item = {{game->getSettings()->tile_size / 2, game->getSettings()->tile_size / 2}, {0, 0}};
-    // it->item = {{0, 0}, {game->getSettings()->tile_size, game->getSettings()->tile_size}};
 
     // // PERFORMANCE TEST
     // for (int y = 0; y < 20; y++)
@@ -180,6 +182,7 @@ Entity* EntityLayer::addEntity(EntityTemplate* t, bool useCustomPosition, sf::Ve
         if (t->collision) e->addComponent<CollisionComponent>(e, e->getComponent<PositionComponent>()->position, t->collision->size, t->collision->sizeIsScaleOfSprite, t->collision->type);
         if (t->action) e->addComponent<ActionComponent>(e, t->action->mainAction->clone(), t->action->secondaryAction->clone(), t->action->range);
         if (t->item) e->addComponent<ItemComponent>(e, t->item->spawnAreaOffset, t->item->spawnAreaSize);
+        if (t->inventory) e->addComponent<InventoryComponent>(e, t->inventory->inventorySize, t->inventory->pickupRange, t->inventory->rangeIsInTiles);
     }
 
     return entities[ID].get();
@@ -306,11 +309,11 @@ void EntityLayer::tick()
 
     movementSystem.tick();
 
+    itemSystem.tick();
+
     collisionSystem.tick();
 
     entityUnloadSystem.tick();
-
-    itemSystem.tick();
 
     // TEMP, TODO: player detection or something
     if (player == nullptr)

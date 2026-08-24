@@ -317,3 +317,8 @@ float getTileScale(Game* game)
 {
     return game->getSettings()->tile_size / game->getAssetManager()->getTextureAtlas("tiles_better")->tileSize;
 }
+
+float getAngle(sf::Vector2f vec1, sf::Vector2f vec2)
+{
+    return std::fmod(std::atan2(vec2.x - vec1.x, vec2.y - vec1.y) + 3 * M_PI / 2, 2 * M_PI);
+}

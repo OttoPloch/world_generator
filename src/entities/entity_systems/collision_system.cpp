@@ -112,6 +112,7 @@ void CollisionSystem::entityCollision(Entity* e, CollisionRect& rect, MovementCo
         {
             if (rect.type != RectType::PASSIVE && i->getComponent<CollisionComponent>()->rect.type == RectType::PASSIVE) continue;
             if (rect.type == RectType::PASSIVE && i->getComponent<CollisionComponent>()->rect.type == RectType::PASSIVE) continue;
+            if (e->getComponent<ItemComponent>() && i->getComponent<InventoryComponent>()) continue;
 
             CollisionRect* other = &c->rect;
 

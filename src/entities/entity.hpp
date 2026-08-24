@@ -21,11 +21,11 @@ public:
     }
 
     template<typename T, typename... Args>
-    T& addComponent(Args&&... args)
+    T* addComponent(Args&&... args)
     {
         T* comp = new T(std::forward<Args>(args)...);
         components.emplace_back(comp);
-        return *comp;
+        return comp;
     }
 
     template<typename T>

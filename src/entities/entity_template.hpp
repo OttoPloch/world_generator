@@ -14,4 +14,5 @@ struct EntityTemplate
     std::optional<CollisionComponentData> collision;
     std::optional<ActionComponentData> action;
     std::optional<ItemComponentData> item;
+    std::optional<InventoryComponentData> inventory;
 };

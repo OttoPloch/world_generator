@@ -26,6 +26,8 @@ void Settings::init()
     worldOriginThreshold = chunk_size * tile_size * 10;
     motion_friction = .8f;
     item_maxSpawnVelocity = 1;
+    item_collectMoveMultiplier = 2;
+    item_stackSize = 24;
     camera_defaultZoom = 0;
     camera_zoomSpeed = 20;
     camera_freecamMoveSpeedBase = 15;

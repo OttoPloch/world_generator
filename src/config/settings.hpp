@@ -33,6 +33,8 @@ public:
     float worldOriginThreshold;
     float motion_friction;
     float item_maxSpawnVelocity;
+    float item_collectMoveMultiplier;
+    unsigned int item_stackSize;
     float camera_defaultZoom;
     float camera_zoomSpeed;
     float camera_freecamMoveSpeedBase;
