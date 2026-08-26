@@ -307,8 +307,8 @@ void ChunkLayer::draw(bool debug, int debugLayerView)
 
         if (i.second->state == ChunkState::ACTIVE)
         {
-            i.second->draw(debug, debugLayerView);
-    
+            i.second->draw(debug, debugLayerView);    
+
             for (int j = 0; j < i.second->bgObjects.size(); j++)
             {
                 BackgroundObject* bgObject = &i.second->bgObjects[j];
@@ -369,9 +369,9 @@ void ChunkLayer::draw(bool debug, int debugLayerView)
         
         window->getWindow().draw(&bgObjectsVertices[0], bgObjectsVertices.size(), sf::PrimitiveType::Triangles, bgObjectStates);
 
-        if (debug)
+        if (debug && debugBgObjectOutlineVerts.size() > 0)
         {
-            window->getWindow().draw(&debugBgObjectOutlineVerts[0], debugBgObjectOutlineVerts.size(), sf::PrimitiveType::Lines);\
+            window->getWindow().draw(&debugBgObjectOutlineVerts[0], debugBgObjectOutlineVerts.size(), sf::PrimitiveType::Lines);
         }
     }
 }
