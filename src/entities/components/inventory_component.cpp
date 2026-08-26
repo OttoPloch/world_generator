@@ -55,7 +55,7 @@ void InventoryComponent::pickupItem(std::string item, unsigned int amount, unsig
     std::string amountMessage = std::to_string(static_cast<unsigned int>(getItemAmount(item) / stackSize)) + " stacks and " + std::to_string (getItemAmount(item) % stackSize);
     // if (amount - extra > 0) std::cout << "entity with ID " << myEntity->ID << " picked up " << amount - extra << " " << item << ". This entity now has " << amountMessage << " " << item << "\n";
     
-    std::cout << "---------------\n"; for (auto i : items) std::cout << i.first << ": " << i.second << '\n'; std::cout << "---------------\n";
+    std::cout << "---------------\nEntity with ID " << myEntity->ID << ":\n"; for (auto i : items) std::cout << i.first << ": " << i.second << '\n'; std::cout << "---------------\n";
     
     if (extra > 0) std::cout << "could not pick up all of '" << item << "'. There is " << extra << " extra.\n";
 }
