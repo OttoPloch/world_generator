@@ -6,7 +6,7 @@
 #include "../rect_type.hpp"
 #include "../actions/action.hpp"
 
-struct PositionComponentData
+struct PositionData
 {
     sf::Vector2f position;
 };

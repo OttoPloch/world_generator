@@ -1,6 +1,5 @@
 #include "position_system.hpp"
 #include "../../core/scene.hpp"
-#include "../components/position_component.hpp"
 
 PositionSystem::PositionSystem() {}
 
@@ -8,12 +7,10 @@ PositionSystem::PositionSystem(Game* game, Scene* scene) : game(game), scene(sce
 
 void PositionSystem::tick()
 {
-    std::vector<Entity*> validEntities = entityLayer->getEntitiesWithComponent<PositionComponent>();
+    auto allEntities = entityLayer->getAllEntities();
 
-    for (auto e : validEntities)
+    for (auto& e : *allEntities)
     {
-        auto p = e->getComponent<PositionComponent>();
-
-        p->lastPosition = p->position.getPosition();
+        e.second->lastPosition = e.second->position.getPosition();
     }
 }

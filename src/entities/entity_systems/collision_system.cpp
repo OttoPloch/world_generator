@@ -10,7 +10,7 @@ CollisionSystem::CollisionSystem(Game* game, Scene* scene) : game(game), scene(s
 
 void CollisionSystem::tick()
 {
-    std::vector<Entity*> validEntities = entityLayer->getEntitiesWithComponents<PositionComponent, MovementComponent, CollisionComponent>();
+    std::vector<Entity*> validEntities = entityLayer->getEntitiesWithComponents<MovementComponent, CollisionComponent>();
 
     for (auto e : validEntities)
     {
@@ -20,25 +20,24 @@ void CollisionSystem::tick()
 
 void CollisionSystem::findAndResolveCollisions(Entity* e)
 {
-    auto p = e->getComponent<PositionComponent>();
     auto m = e->getComponent<MovementComponent>();
     auto c = e->getComponent<CollisionComponent>();
 
     CollisionRect& rect = c->rect;
 
-    tileCollision(rect, m, p);
+    tileCollision(e, rect, m);
 
     entityCollision(e, rect, m);
 }
 
-void CollisionSystem::tileCollision(CollisionRect& rect, MovementComponent* m, PositionComponent* p)
+void CollisionSystem::tileCollision(Entity* e, CollisionRect& rect, MovementComponent* m)
 {
     sf::Vector2f contactPoint;
     sf::Vector2f contactNormal;
     float contactTime;
 
 
-    std::array<Chunk*, 9> nearbyChunks = scene->getChunkLayer()->getNearbyChunks(p->position.getPosition());
+    std::array<Chunk*, 9> nearbyChunks = scene->getChunkLayer()->getNearbyChunks(e->position.getPosition());
     // Chunk, tile position, z-value
     std::vector<std::pair<Chunk*, std::pair<sf::Vector2i, int>>> nearbyTilesWithColliders;
 

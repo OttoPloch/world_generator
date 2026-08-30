@@ -179,7 +179,7 @@ void Camera::updatePosition()
 {
     if (focus != nullptr)
     {
-        center = focus->getComponent<PositionComponent>()->position.getPosition();
+        center = focus->position.getPosition();
     }
     else
     {

@@ -211,7 +211,7 @@ void Chunk::destroyTile(sf::Vector2i localPosition, TileTemplate* replacement, b
 
     if (tile) tile->destroy();
 
-    setTile({x, y}, replacement, false, effectiveZ);
+    if (replacement) setTile({x, y}, replacement, false, effectiveZ);
 }
 
 std::vector<std::vector<std::unique_ptr<Tile>>>* Chunk::getTiles() { return &tiles; }

@@ -4,7 +4,6 @@
 #include "../components/item_component.hpp"
 #include "../components/collision_component.hpp"
 #include "../components/inventory_component.hpp"
-#include "../components/position_component.hpp"
 #include "../components/sprite_component.hpp"
 #include "../../core/game.hpp"
 #include <SFML/Graphics/Rect.hpp>
@@ -39,8 +38,8 @@ void ItemSystem::tickItems()
 
 void ItemSystem::tickInventories()
 {
-    std::vector<Entity*> validEntities = entityLayer->getEntitiesWithComponents<InventoryComponent, PositionComponent>();
-    std::vector<Entity*> itemEntities = entityLayer->getEntitiesWithComponents<ItemComponent, PositionComponent>();
+    std::vector<Entity*> validEntities = entityLayer->getEntitiesWithComponent<InventoryComponent>();
+    std::vector<Entity*> itemEntities = entityLayer->getEntitiesWithComponent<ItemComponent>();
 
     std::vector<int> itemsToRemove;
 
@@ -66,8 +65,8 @@ void ItemSystem::tickItemCollect(std::vector<int>& itemsToRemove, Entity* itemEn
 {
     auto inventory = inventoryEntity->getComponent<InventoryComponent>();
 
-    sf::Vector2f inventoryEntityPos = inventoryEntity->getComponent<PositionComponent>()->position.getPosition();
-    sf::Vector2f itemEntityPos = itemEntity->getComponent<PositionComponent>()->position.getPosition();
+    sf::Vector2f inventoryEntityPos = inventoryEntity->position.getPosition();
+    sf::Vector2f itemEntityPos = itemEntity->position.getPosition();
 
     auto item = itemEntity->getComponent<ItemComponent>();
     if (inventory->canPickup(item->resource) == 0) return;

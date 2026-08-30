@@ -1,14 +1,15 @@
 #pragma once
 
 #include "components/entity_component.hpp"
+#include "../utils/game_position.hpp"
 
 class Game;
 
 class Entity
 {
 public:
-    Entity(int ID, Game* game);
-
+    Entity(int ID, Game* game, sf::Vector2f position);
+    
     template<typename T>
     T* getComponent()
     {
@@ -48,6 +49,10 @@ public:
     const int ID;
 
     Game* game;
+
+    GamePosition position;
+    sf::Vector2f lastPosition;
+    sf::Vector2i chunkPosition;
 private:
     std::vector<std::unique_ptr<EntityComponent>> components;
 };

@@ -33,7 +33,6 @@ src/entities/entity_layer.cpp
 src/entities/entity.cpp
 
 src/entities/components/entity_component.cpp
-src/entities/components/position_component.cpp
 src/entities/components/movement_component.cpp
 src/entities/components/control_component.cpp
 src/entities/components/state_component.cpp
@@ -52,8 +51,8 @@ src/entities/entity_systems/render_system.cpp
 src/entities/entity_systems/animation_system.cpp
 src/entities/entity_systems/movement_system.cpp
 src/entities/entity_systems/action_system.cpp
-src/entities/entity_systems/entity_unload_system.cpp
 src/entities/entity_systems/item_system.cpp
+src/entities/entity_systems/entity_chunk_system.cpp
 
 src/graphics/sprite.cpp
 src/graphics/asset_manager.cpp

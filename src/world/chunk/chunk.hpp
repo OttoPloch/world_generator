@@ -55,7 +55,6 @@ public:
     int getHighestNonAirZ(int& column, int& row, bool alsoWrapPosition = true);
 
     void wrapPosition(int& column, int& row);
-
     void wrapPosition(int& column, int& row, int& z);
 
     sf::Vector2i getChunkPosition();
@@ -75,6 +74,8 @@ public:
     ChunkLayer* chunkLayer;
 
     sf::Vector2f worldPosition;
+
+    std::vector<Entity*> entitiesInChunk;
 private:
     Game* game;
     Window* window;

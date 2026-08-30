@@ -26,13 +26,13 @@ void Scene::init(Game* game)
 
     assetManager = game->getAssetManager();
     
+    chunkLayer.init(game);
+
     entityLayer.init(game);
 
     camera.init(game, false, {0, 0}, toV2F(window->getSize()), entityLayer.player);
 
     uiLayer.init(game, &camera);
-
-    chunkLayer.init(game);
 
     debugMode = false;
     debugLevel = 0;
@@ -302,7 +302,7 @@ bool Scene::processActionRequest(Entity* actor, Action* action)
         {
             // CHECKS
 
-            if (action->rangeMultiplier < 0.f || getDistance(actor->getComponent<PositionComponent>()->position.getPosition(), action->startPosition) <= a->range * action->rangeMultiplier)
+            if (action->rangeMultiplier < 0.f || getDistance(actor->position.getPosition(), action->startPosition) <= a->range * action->rangeMultiplier)
             {
                 // IS WITHIN RANGE
 
@@ -369,12 +369,10 @@ void Scene::adjustWorldChunkOrigin(sf::Vector2i amount)
 
     float chunkLength = game->getSettings()->tile_size * game->getSettings()->chunk_size;
 
-    std::vector<Entity*> entitiesWithPosition = entityLayer.getEntitiesWithComponent<PositionComponent>();
-    for (auto e : entitiesWithPosition)
+    auto allEntities = entityLayer.getAllEntities();
+    for (auto& e : *allEntities)
     {
-        auto p = e->getComponent<PositionComponent>();
-
-        p->position.changePosition({amount.x * -chunkLength, amount.y * -chunkLength});
+        e.second->position.changePosition({amount.x * -chunkLength, amount.y * -chunkLength});
     }
 
     auto allChunks = chunkLayer.getAllLoadedChunks();

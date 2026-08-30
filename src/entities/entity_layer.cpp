@@ -3,9 +3,8 @@
 #include "../utils/utils.hpp"
 #include "components/control_component.hpp"
 #include "components/inventory_component.hpp"
-#include "components/position_component.hpp"
 #include "components/sprite_component.hpp"
-#include "entity_systems/entity_unload_system.hpp"
+#include "entity_systems/entity_chunk_system.hpp"
 #include "rect_type.hpp"
 #include "states.hpp"
 #include "../graphics/asset_manager.hpp"
@@ -37,8 +36,8 @@ void EntityLayer::init(Game* game)
     animationSystem = AnimationSystem(game, game->getScene());
     movementSystem = MovementSystem(game, game->getScene());
     actionSystem = ActionSystem(game, game->getScene());
-    entityUnloadSystem = EntityUnloadSystem(game, game->getScene());
     itemSystem = ItemSystem(game, game->getScene());
+    entityChunkSystem = EntityChunkSystem(game, game->getScene());
 
     auto pt = &tManager.entityTemplates["player"];
     pt->sprite = {game->getAssetManager()->getTexture("dog", "texture_atlases/"), {20, 20}, false, false, {{0, 0}, {0, 0}}, 1.6f, nullptr, game->getAssetManager()->getAnimSet("dog")};
@@ -165,21 +164,21 @@ Entity* EntityLayer::addEntity(EntityTemplate* t, bool useCustomPosition, sf::Ve
 {
     int ID = getNewID();
 
-    entities[ID] = std::make_unique<Entity>(ID, game);
+    sf::Vector2f usedPosition = position;
+    if (t && t->positionData) usedPosition = t->positionData->position;
+
+    entities[ID] = std::make_unique<Entity>(ID, game, usedPosition);
     
     Entity* e = entities[ID].get();
+    entityChunkSystem.entityChunkInit(e);
 
     if (t)
     {
-        sf::Vector2f usedPosition = position;
-        if (t->position) usedPosition = t->position->position;
-
-        if (t->position || useCustomPosition) e->addComponent<PositionComponent>(e, GamePosition(game, usedPosition));
         if (t->sprite) e->addComponent<SpriteComponent>(e, t->sprite->texture, t->sprite->size, t->sprite->sizeIsScale, t->sprite->animation, t->sprite->animSet, t->sprite->usingTexCoords, t->sprite->texCoords, t->sprite->animSpeedMult);
         if (t->movement) e->addComponent<MovementComponent>(e, sf::Vector2f(0, 0), t->movement.value());
         if (t->control) e->addComponent<ControlComponent>(e);
         if (t->state) e->addComponent<StateComponent>(e);
-        if (t->collision) e->addComponent<CollisionComponent>(e, e->getComponent<PositionComponent>()->position, t->collision->size, t->collision->sizeIsScaleOfSprite, t->collision->type);
+        if (t->collision) e->addComponent<CollisionComponent>(e, e->position, t->collision->size, t->collision->sizeIsScaleOfSprite, t->collision->type);
         if (t->action) e->addComponent<ActionComponent>(e, t->action->mainAction->clone(), t->action->secondaryAction->clone(), t->action->range);
         if (t->item) e->addComponent<ItemComponent>(e, t->item->spawnAreaOffset, t->item->spawnAreaSize);
         if (t->inventory) e->addComponent<InventoryComponent>(e, t->inventory->inventorySize, t->inventory->pickupRange, t->inventory->rangeIsInTiles);
@@ -217,7 +216,7 @@ void EntityLayer::removeEntity(int ID)
         
 //         // if the entity has a sprite, use the bottom of that. If not, just get the entity's position.
 //         if (auto s = i.second->getComponent<SpriteComponent>()) entityBottom = {s->sprite.getPosition().x, s->sprite.bottom()};
-//         else entityBottom = i.second->getComponent<PositionComponent>()->position.getPosition();
+//         else entityBottom = i.second->position.getPosition();
 
 //         if (i.first == 1) std::cout << "here\n";
 //         if (worldToChunkPosition(game, entityBottom) == sf::Vector2i(chunkX, chunkY))
@@ -277,7 +276,7 @@ std::vector<Entity*> EntityLayer::getEntitiesInChunkArea(int chunkX, int chunkY,
 
     for (auto& i : entities)
     {
-        sf::Vector2f entityBottom = i.second->getComponent<PositionComponent>()->position.getPosition();
+        sf::Vector2f entityBottom = i.second->position.getPosition();
         int entityChunkBottomX = toInt(std::floor(entityBottom.x / chunkLength));
         int entityChunkBottomY = toInt(std::floor(entityBottom.y / chunkLength));
 
@@ -303,6 +302,11 @@ std::vector<Entity*> EntityLayer::getEntitiesInChunkArea(sf::Vector2f position, 
     return getEntitiesInChunkArea(chunkX, chunkY, chunkRadius);   
 }
 
+std::map<int, std::unique_ptr<Entity>>* EntityLayer::getAllEntities()
+{
+    return &entities;
+}
+
 void EntityLayer::tick()
 {
     positionSystem.tick();
@@ -313,7 +317,7 @@ void EntityLayer::tick()
 
     collisionSystem.tick();
 
-    entityUnloadSystem.tick();
+    entityChunkSystem.tick();
 
     // TEMP, TODO: player detection or something
     if (player == nullptr)

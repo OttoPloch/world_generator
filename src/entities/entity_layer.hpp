@@ -15,8 +15,8 @@
 #include "entity_systems/movement_system.hpp"
 #include "entity_systems/action_system.hpp"
 #include "entity_systems/position_system.hpp"
-#include "entity_systems/entity_unload_system.hpp"
 #include "entity_systems/item_system.hpp"
+#include "entity_systems/entity_chunk_system.hpp"
 
 class Game;
 
@@ -120,6 +120,8 @@ public:
         return entitiesWithRequiredComponents;
     }
 
+    std::map<int, std::unique_ptr<Entity>>* getAllEntities();
+
     void tick();
 
     void update(float dt);
@@ -140,8 +142,8 @@ private:
     AnimationSystem animationSystem;
     MovementSystem movementSystem;
     ActionSystem actionSystem;
-    EntityUnloadSystem entityUnloadSystem;
     ItemSystem itemSystem;
+    EntityChunkSystem entityChunkSystem;
     
     std::map<int, std::unique_ptr<Entity>> entities;
 };

@@ -16,7 +16,6 @@ public:
     void setPosition(char direction, float value);
     
     void changePosition(sf::Vector2f amount);
-
 private:
     Game* game;
 

@@ -1,20 +1,16 @@
 #include "item_component.hpp"
 #include "entity_component.hpp"
 #include "../entity.hpp"
-#include "position_component.hpp"
 #include "../../core/game.hpp"
 #include "sprite_component.hpp"
 
 ItemComponent::ItemComponent(Entity* myEntity, sf::Vector2f spawnAreaOffset, sf::Vector2f spawnAreaSize) : EntityComponent(myEntity)
 {
-    if (auto p = myEntity->getComponent<PositionComponent>())
-    {
-        p->position.changePosition(spawnAreaOffset);
-        p->position.changePosition({
-            static_cast<float>(myEntity->game->random.getRandInt(0, spawnAreaSize.x)),
-            static_cast<float>(myEntity->game->random.getRandInt(0, spawnAreaSize.y)),
-        });
-    }
+    myEntity->position.changePosition(spawnAreaOffset);
+    myEntity->position.changePosition({
+        static_cast<float>(myEntity->game->random.getRandInt(0, spawnAreaSize.x)),
+        static_cast<float>(myEntity->game->random.getRandInt(0, spawnAreaSize.y)),
+    });
 }
 
 void ItemComponent::init(std::string resource, unsigned int amount)

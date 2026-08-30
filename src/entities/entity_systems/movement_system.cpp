@@ -14,14 +14,7 @@ void MovementSystem::tick()
     for (auto e : validEntities)
     {
         auto m = e->getComponent<MovementComponent>();
-
-        if (auto p = e->getComponent<PositionComponent>())
-        {
-            p->position.changePosition(m->velocity);
-    
-            std::vector<Entity*> validEntities = entityLayer->getEntitiesWithComponent<MovementComponent>();
-        }
-
+        e->position.changePosition(m->velocity);
         
         sf::Vector2f movementVector = {0, 0};
         float speedMult = 1.f;

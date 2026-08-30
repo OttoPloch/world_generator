@@ -20,10 +20,6 @@ void ResourceTag::onTileDestroy(Tile* tile, bool& endHere)
     int extra = tile->game->random.getRandInt(0, amountRange);
     int total = amountBase + extra;
 
-    /////// TEMP ///////
-    std::cout << "dropping " << total << " (base " << amountBase << ", range " << amountRange << ", extra " << extra << ") " << resource << '\n';
-    ////////////////////
-
     auto eLayer = tile->game->getScene()->getEntityLayer();
     
     for (int i = 0; i < total; i++)

@@ -55,9 +55,9 @@ private:
     Window* window;
     AssetManager* assetManager;    
 
+    ChunkLayer chunkLayer;
     EntityLayer entityLayer;
     UILayer uiLayer;
-    ChunkLayer chunkLayer;
 
     Camera camera;
 

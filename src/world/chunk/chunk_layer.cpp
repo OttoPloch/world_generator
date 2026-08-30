@@ -6,7 +6,6 @@
 #include "../../graphics/vertex_group.hpp"
 #include "chunk.hpp"
 #include "chunk_state.hpp"
-#include "../../entities/components/position_component.hpp"
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <algorithm>
