@@ -267,12 +267,9 @@ void ChunkLayer::loadUpdate()
         }
     }
 
-    if (chunksToDelete.size() > 0)
+    for (auto chunk : chunksToDelete)
     {
-        for (int i = 0; i < chunksToDelete.size(); i++)
-        {
-            unloadChunk(chunksToDelete[i]);
-        }
+        unloadChunk(chunk);
     }
 
     if (currChunkPos != lastChunkPos)
@@ -285,10 +282,9 @@ void ChunkLayer::update(float dt)
 {
     for (auto& i : chunks)
     {
-        if (i.second->state == ChunkState::ACTIVE)
-        {
-            i.second->update(dt);
-        }
+        if (i.second->state != ChunkState::ACTIVE) continue;
+
+        i.second->update(dt);
     }
 }
 

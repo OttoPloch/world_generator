@@ -18,6 +18,8 @@ public:
     ItemSystem(Game* game, Scene* scene);
 
     void tick();
+
+    void refactorEntityCache();
 private:
     void tickItems();
 
@@ -27,9 +29,13 @@ private:
 
     void moveItemTowardsInventory(Entity* itemEntity, sf::Vector2f itemEntityPos, sf::Vector2f inventoryEntityPos, float distance);
 
-    void pickupItem(std::vector<int>& itemsToRemove, InventoryComponent* inventory, ItemComponent* item, Entity* itemEntity);
+    void pickupItem(std::vector<int>& itemsToRemove, InventoryComponent* inventoryEntityInventoryComponent, ItemComponent* itemEntityItemComponent, Entity* itemEntity);
 
     Game* game;
     Scene* scene;
     EntityLayer* entityLayer;
+
+    std::vector<Entity*> itemsWithMovement;
+    std::vector<Entity*> entitiesWithInventories;
+    std::vector<Entity*> items;
 };

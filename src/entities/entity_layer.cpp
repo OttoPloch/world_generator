@@ -151,6 +151,7 @@ void EntityLayer::init(Game* game)
     // giveEntitySprite(17, assetManager->getTexture("crate"), {200.f, 200.f}, -1);
     // giveEntityCollision(17, "wall", STATIC);
 
+    refactorEntitySystemCaches();
 }
 
 int EntityLayer::getNewID()
@@ -184,10 +185,12 @@ Entity* EntityLayer::addEntity(EntityTemplate* t, bool useCustomPosition, sf::Ve
         if (t->inventory) e->addComponent<InventoryComponent>(e, t->inventory->inventorySize, t->inventory->pickupRange, t->inventory->rangeIsInTiles);
     }
 
+    refactorEntitySystemCaches();
+
     return entities[ID].get();
 }
 
-void EntityLayer::removeEntity(int ID)
+void EntityLayer::removeEntity(int ID, bool refactorEntityCaches)
 {
     if (entities.find(ID) != entities.end())
     {
@@ -198,38 +201,24 @@ void EntityLayer::removeEntity(int ID)
 
         entities.erase(ID);
 
+        if (refactorEntityCaches) refactorEntitySystemCaches();
+
         return;
     }
 
     std::cout << "ERROR removing entity with ID of " << ID << ". That entity was not found.\n";
 }
 
-// void EntityLayer::removeAllEntitiesInChunk(int chunkX, int chunkY)
-// {
-//     float chunkLength = toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size;
+void EntityLayer::removeEntityBatch(std::vector<int> IDs)
+{
+    if (IDs.size() == 0) return;
 
-//     std::vector<int> entitiesToRemove;
-
-//     for (auto& i : entities)
-//     {
-//         sf::Vector2f entityBottom;
-        
-//         // if the entity has a sprite, use the bottom of that. If not, just get the entity's position.
-//         if (auto s = i.second->getComponent<SpriteComponent>()) entityBottom = {s->sprite.getPosition().x, s->sprite.bottom()};
-//         else entityBottom = i.second->position.getPosition();
-
-//         if (i.first == 1) std::cout << "here\n";
-//         if (worldToChunkPosition(game, entityBottom) == sf::Vector2i(chunkX, chunkY))
-//         {
-//             entitiesToRemove.push_back(i.second->ID);
-//         }
-//     }
-
-//     for (int i = 0; i < entitiesToRemove.size(); i++)
-//     {
-//         removeEntity(entitiesToRemove[i]);
-//     }
-// }
+    for (int i = 0; i < IDs.size(); i++)
+    {
+        // only refactor caches on the last removed entity, don't need to in between.
+        removeEntity(IDs[i], (i == IDs.size() - 1));
+    }
+}
 
 Entity* EntityLayer::getEntity(int ID)
 {
@@ -340,9 +329,48 @@ void EntityLayer::update(float dt)
     animationSystem.update(dt);
 
     renderSystem.update(dt);
+
+    // // // // // // // // // // // // // // //
+
+    // This code refactors the entity system caches ('validEntities' is the variable name) when any entity
+    // has added a component in the last frame. This could make that entity part of a system it had not been
+    // in before, so it needs to be added to the cache. Removing components is handled in each system, since
+    // doing once per update would risk having entities part of systems they don't belong in because a component
+    // was removed previously in the same update. Adding components cannot make that happen, since it will only add
+    // to the cache (one frame later). This COULD be an issue if systems ever excluded entities based on components
+    // instead of including them, but that is not a problem right now.
+    bool refactorCaches = false;
+    for (auto& i : entities)
+    {
+        Entity* entity = i.second.get();
+        if (entity->addedComponentThisFrame)
+        {
+            refactorCaches = true;
+
+            entity->addedComponentThisFrame = false;
+            break;
+        }
+    }
+
+    if (refactorCaches) refactorEntitySystemCaches();
+
+    // // // // // // // // // // // // // // //
 }
 
 void EntityLayer::draw(bool debug)
 {
     renderSystem.draw(debug);
+}
+
+void EntityLayer::refactorEntitySystemCaches()
+{
+    for (int i = 0; i < game->random.getRandInt(0, 10); i++) std::cout << " ";
+    std::cout << "refactored!\n";
+
+    actionSystem.refactorEntityCache();
+    animationSystem.refactorEntityCache();
+    collisionSystem.refactorEntityCache();
+    itemSystem.refactorEntityCache();
+    movementSystem.refactorEntityCache();
+    renderSystem.refactorEntityCache();
 }

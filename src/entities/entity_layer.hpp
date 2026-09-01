@@ -18,6 +18,26 @@
 #include "entity_systems/item_system.hpp"
 #include "entity_systems/entity_chunk_system.hpp"
 
+// for entity systems to remove entities from their caches.
+inline void removeAllEntityIDsInVec(std::vector<Entity*>& entityVec, std::vector<int> IDsToRemove)
+{
+    if (entityVec.size() == 0 || IDsToRemove.size() == 0) return;
+
+    for (auto currIDtoRemove : IDsToRemove)
+    {
+        for (int i = 0; i < entityVec.size(); i++)
+        {
+            if (entityVec[i]->ID == currIDtoRemove)
+            {
+                entityVec.erase(entityVec.begin() + i);
+
+                // found the entity and removed it, go to the next ID to remove.
+                break;
+            }
+        }
+    }
+};
+
 class Game;
 
 class EntityLayer
@@ -31,9 +51,10 @@ public:
 
     Entity* addEntity(EntityTemplate* t = nullptr, bool useCustomPosition = false, sf::Vector2f position = {0, 0});
 
-    void removeEntity(int ID);
+    void removeEntity(int ID, bool refactorEntityCaches = true);
 
-    // void removeAllEntitiesInChunk(int chunkX, int chunkY);
+    // will refactor entity system caches after the last entity is removed.
+    void removeEntityBatch(std::vector<int> IDs);
 
     Entity* getEntity(int ID);
 
@@ -132,6 +153,8 @@ public:
     
     TemplateManager tManager;
 private:
+    void refactorEntitySystemCaches();
+
     Game* game;
 
     int IDCounter;
@@ -144,6 +167,6 @@ private:
     ActionSystem actionSystem;
     ItemSystem itemSystem;
     EntityChunkSystem entityChunkSystem;
-    
+
     std::map<int, std::unique_ptr<Entity>> entities;
 };

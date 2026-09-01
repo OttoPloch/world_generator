@@ -3,14 +3,14 @@
 
 PositionSystem::PositionSystem() {}
 
-PositionSystem::PositionSystem(Game* game, Scene* scene) : game(game), scene(scene), entityLayer(scene->getEntityLayer()) {}
+PositionSystem::PositionSystem(Game* game, Scene* scene) : game(game), scene(scene), entityLayer(scene->getEntityLayer()), allEntities(entityLayer->getAllEntities()) {}
 
 void PositionSystem::tick()
 {
-    auto allEntities = entityLayer->getAllEntities();
-
-    for (auto& e : *allEntities)
+    for (auto& i : *allEntities)
     {
-        e.second->lastPosition = e.second->position.getPosition();
+        auto entity = i.second.get();
+
+        entity->lastPosition = entity->position.getPosition();
     }
 }

@@ -1,8 +1,12 @@
 #pragma once
 
+#include <map>
+#include <memory>
+
 class Game;
 class Scene;
 class EntityLayer;
+class Entity;
 
 class PositionSystem
 {
@@ -16,4 +20,6 @@ private:
     Game* game;
     Scene* scene;
     EntityLayer* entityLayer;
+
+    std::map<int, std::unique_ptr<Entity>>* allEntities;
 };

@@ -12,37 +12,64 @@ RenderSystem::RenderSystem(Game* game, Scene* scene) : game(game), scene(scene),
 
 void RenderSystem::update(float dt)
 {
-    std::vector<Entity*> validEntities = entityLayer->getEntitiesWithComponent<SpriteComponent>();
+    std::vector<int> noLongerValidEntities;
 
-    for (auto e : validEntities)
+    for (auto entity : validEntities)
     {
-        e->getComponent<SpriteComponent>()->sprite.update(dt);
+        auto entitySpriteComponent = entity->getComponent<SpriteComponent>();
+
+        if (!entitySpriteComponent)
+        {
+            noLongerValidEntities.emplace_back(entity->ID);
+            continue;
+        }
+
+        entitySpriteComponent->sprite.update(dt);
     }
+
+    removeAllEntityIDsInVec(validEntities, noLongerValidEntities);
 }
 
 void RenderSystem::draw(bool debug)
 {
-    std::vector<Entity*> validEntities = entityLayer->getEntitiesWithComponent<SpriteComponent>();
-
     std::sort(validEntities.begin(), validEntities.end(), [](Entity* a, Entity* b){
         return a->getComponent<SpriteComponent>()->sprite.bottom() < b->getComponent<SpriteComponent>()->sprite.bottom();
     });
 
-    for (auto e : validEntities)
+    std::vector<int> noLongerValidEntities;
+
+    for (auto entity : validEntities)
     {
-        auto& sprite = e->getComponent<SpriteComponent>()->sprite;
+        auto entitySpriteComponent = entity->getComponent<SpriteComponent>();
 
-        sprite.syncPos();
+        if (!entitySpriteComponent)
+        {
+            noLongerValidEntities.emplace_back(entity->ID);
+            continue;
+        }
 
-        sprite.draw(game->getWindow()->getWindow());
+        auto& entitySprite = entitySpriteComponent->sprite;
+
+        entitySprite.syncPos();
+
+        entitySprite.draw(game->getWindow()->getWindow());
 
         if (debug)
         {
-            if (auto c = e->getComponent<CollisionComponent>())
+            if (auto entityCollisionComponent = entity->getComponent<CollisionComponent>())
             {
-                std::array<sf::Vertex, 8> debugVertices = VertexGroup::createLineVerts(c->rect.position.getPosition() - sf::Vector2f(c->rect.size.x / 2, c->rect.size.y / 2), c->rect.size, sf::Color::Red);
+                sf::Vector2f entityCollisionComponentTopleft = entityCollisionComponent->rect.position.getPosition() - (entityCollisionComponent->rect.size / 2.f);
+
+                std::array<sf::Vertex, 8> debugVertices = VertexGroup::createLineVerts(entityCollisionComponentTopleft, entityCollisionComponent->rect.size, sf::Color::Red);
                 game->getWindow()->getWindow().draw(debugVertices.data(), debugVertices.size(), sf::PrimitiveType::Lines);
             }
         }
     }
+
+    removeAllEntityIDsInVec(validEntities, noLongerValidEntities);
+}
+
+void RenderSystem::refactorEntityCache()
+{
+    validEntities = entityLayer->getEntitiesWithComponent<SpriteComponent>();
 }

@@ -8,25 +8,38 @@ AnimationSystem::AnimationSystem(Game* game, Scene* scene) : game(game), scene(s
 
 void AnimationSystem::update(float dt)
 {
-    std::vector<Entity*> validEntities = entityLayer->getEntitiesWithComponents<MovementComponent, SpriteComponent>();
+    std::vector<int> noLongerValidEntities;
 
-    for (auto e : validEntities)
+    for (auto entity : validEntities)
     {
-        auto m = e->getComponent<MovementComponent>();
-        auto s = e->getComponent<SpriteComponent>();
+        auto entityMovementComponent = entity->getComponent<MovementComponent>();
+        auto entitySpriteComponent = entity->getComponent<SpriteComponent>();
+
+        if (!entityMovementComponent || !entitySpriteComponent)
+        {
+            noLongerValidEntities.emplace_back(entity->ID);
+            continue;
+        }
 
         AnimState activeAnimState = AnimState::IDLE;
 
-        if      (m->velocity.x < -0.1f) activeAnimState = AnimState::LEFT;
-        else if (m->velocity.x > 0.1f) activeAnimState = AnimState::RIGHT;
-        else if (m->velocity.y < -0.1f) activeAnimState = AnimState::UP;
-        else if (m->velocity.y > 0.1f) activeAnimState = AnimState::DOWN;
+        if      (entityMovementComponent->velocity.x < -0.1f) activeAnimState = AnimState::LEFT;
+        else if (entityMovementComponent->velocity.x > 0.1f) activeAnimState = AnimState::RIGHT;
+        else if (entityMovementComponent->velocity.y < -0.1f) activeAnimState = AnimState::UP;
+        else if (entityMovementComponent->velocity.y > 0.1f) activeAnimState = AnimState::DOWN;
 
-        auto animSet = s->sprite.animSet.get();
+        auto animSet = entitySpriteComponent->sprite.animSet.get();
 
         if (animSet)
         {
             if (animSet->getActiveState() != activeAnimState) animSet->setActiveAnimation(activeAnimState);
         }
     }
+
+    removeAllEntityIDsInVec(validEntities, noLongerValidEntities);
+}
+
+void AnimationSystem::refactorEntityCache()
+{
+    validEntities = entityLayer->getEntitiesWithComponents<MovementComponent, SpriteComponent>();
 }

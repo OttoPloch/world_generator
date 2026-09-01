@@ -25,14 +25,20 @@ void ActionSystem::update(float dt)
         }
     }
 
-    std::vector<Entity*> validEntities = entityLayer->getEntitiesWithComponent<ActionComponent>();
+    std::vector<int> noLongerValidEntities;
 
-    for (auto e : validEntities)
+    for (auto entity : validEntities)
     {
-        auto a = e->getComponent<ActionComponent>();
+        auto entityActionComponent = entity->getComponent<ActionComponent>();
 
-        if (a->mainAction && !a->mainAction->active) a->mainAction->cooldownProgress += dt;
-        if (a->secondaryAction && !a->secondaryAction->active) a->secondaryAction->cooldownProgress += dt;
+        if (!entityActionComponent)
+        {
+            noLongerValidEntities.emplace_back(entity->ID);
+            continue;
+        }
+
+        if (entityActionComponent->mainAction && !entityActionComponent->mainAction->active) entityActionComponent->mainAction->cooldownProgress += dt;
+        if (entityActionComponent->secondaryAction && !entityActionComponent->secondaryAction->active) entityActionComponent->secondaryAction->cooldownProgress += dt;
     
         Action* currentAction;
         std::string currentActionInputName;
@@ -40,40 +46,46 @@ void ActionSystem::update(float dt)
         {
             if (i == 0)
             {
-                if (!a->mainAction) continue;
+                if (!entityActionComponent->mainAction) continue;
 
-                currentAction = a->mainAction.get();
+                currentAction = entityActionComponent->mainAction.get();
                 currentActionInputName = "MAIN ACTION";
             }
             else if (i == 1)
             {
-                if (!a->secondaryAction) continue;
+                if (!entityActionComponent->secondaryAction) continue;
 
-                currentAction = a->secondaryAction.get();
+                currentAction = entityActionComponent->secondaryAction.get();
                 currentActionInputName = "SECONDARY ACTION";
             }
             
-            if (currentAction->active)
+            if (!currentAction->active) continue;
+            
+            if (currentAction->mustHoldDown && !game->getInput()->isControlPressed(currentActionInputName))
             {
-                if (currentAction->mustHoldDown && !game->getInput()->isControlPressed(currentActionInputName))
+                currentAction->reset(false);
+            }
+            else
+            {
+                if (currentAction->update(dt))
                 {
-                    currentAction->reset(false);
+                    if (currentAction->timeProgress >= currentAction->timeToComplete)
+                    {
+                        currentAction->completeAction(entity, game->getInput()->cursor->getGameCursorCoords());
+                    }
                 }
                 else
                 {
-                    if (currentAction->update(dt))
-                    {
-                        if (currentAction->timeProgress >= currentAction->timeToComplete)
-                        {
-                            currentAction->completeAction(e, game->getInput()->cursor->getGameCursorCoords());
-                        }
-                    }
-                    else
-                    {
-                        currentAction->reset(false);
-                    }
+                    currentAction->reset(false);
                 }
             }
         }
     }
+
+    removeAllEntityIDsInVec(validEntities, noLongerValidEntities);
+}
+
+void ActionSystem::refactorEntityCache()
+{
+    validEntities = entityLayer->getEntitiesWithComponent<ActionComponent>();
 }

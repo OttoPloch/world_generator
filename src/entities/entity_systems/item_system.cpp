@@ -21,32 +21,59 @@ void ItemSystem::tick()
     tickInventories();
 }
 
+void ItemSystem::refactorEntityCache()
+{
+    itemsWithMovement = entityLayer->getEntitiesWithComponents<ItemComponent, MovementComponent>();
+    entitiesWithInventories = entityLayer->getEntitiesWithComponent<InventoryComponent>();
+    items = entityLayer->getEntitiesWithComponent<ItemComponent>();
+}
+
 void ItemSystem::tickItems()
 {
-    std::vector<Entity*> validEntities = entityLayer->getEntitiesWithComponents<ItemComponent, MovementComponent>();
+    std::vector<int> noLongerValidEntities;
 
-    for (auto e : validEntities)
+    for (auto entity : itemsWithMovement)
     {
-        auto m = e->getComponent<MovementComponent>();
+        auto entityMovementComponent = entity->getComponent<MovementComponent>();
 
-        if (m->velocity == sf::Vector2f(0, 0))
+        if (!entity->getComponent<ItemComponent>() || !entityMovementComponent)
         {
-            e->removeComponent<MovementComponent>();
+            noLongerValidEntities.emplace_back(entity->ID);
+            continue;
+        }
+
+        if (entityMovementComponent->velocity == sf::Vector2f(0, 0))
+        {
+            entity->removeComponent<MovementComponent>();
         }
     }
+
+    removeAllEntityIDsInVec(itemsWithMovement, noLongerValidEntities);
 }
 
 void ItemSystem::tickInventories()
 {
-    std::vector<Entity*> validEntities = entityLayer->getEntitiesWithComponent<InventoryComponent>();
-    std::vector<Entity*> itemEntities = entityLayer->getEntitiesWithComponent<ItemComponent>();
+    std::vector<int> noLongerValidInventoryEntities;
+    std::vector<int> noLongerValidItemEntities;
 
     std::vector<int> itemsToRemove;
 
-    for (auto inventoryEntity : validEntities)
+    for (auto inventoryEntity : entitiesWithInventories)
     {
-        for (auto itemEntity : itemEntities)
+        if (!inventoryEntity->getComponent<InventoryComponent>())
         {
+            noLongerValidInventoryEntities.emplace_back(inventoryEntity->ID);
+            continue;
+        }
+
+        for (auto itemEntity : items)
+        {
+            if (!itemEntity->getComponent<ItemComponent>())
+            {
+                noLongerValidItemEntities.emplace_back(itemEntity->ID);
+                continue;
+            }
+
             // skip items that have been picked up
             if (std::find(itemsToRemove.begin(), itemsToRemove.end(), itemEntity->ID) == itemsToRemove.end())
             {
@@ -55,33 +82,33 @@ void ItemSystem::tickInventories()
         }
     }
 
-    for (auto itemID : itemsToRemove)
-    {
-        entityLayer->removeEntity(itemID);
-    }
+    entityLayer->removeEntityBatch(itemsToRemove);
+
+    removeAllEntityIDsInVec(entitiesWithInventories, noLongerValidInventoryEntities);
+    removeAllEntityIDsInVec(items, noLongerValidItemEntities);
 }
 
 void ItemSystem::tickItemCollect(std::vector<int>& itemsToRemove, Entity* itemEntity, Entity* inventoryEntity)
 {
-    auto inventory = inventoryEntity->getComponent<InventoryComponent>();
+    auto inventoryEntityInventoryComponent = inventoryEntity->getComponent<InventoryComponent>();
 
     sf::Vector2f inventoryEntityPos = inventoryEntity->position.getPosition();
     sf::Vector2f itemEntityPos = itemEntity->position.getPosition();
 
-    auto item = itemEntity->getComponent<ItemComponent>();
-    if (inventory->canPickup(item->resource) == 0) return;
+    auto itemEntityItemComponent = itemEntity->getComponent<ItemComponent>();
+    if (inventoryEntityInventoryComponent->canPickup(itemEntityItemComponent->resource) == 0) return;
 
     float distance = getDistance(inventoryEntityPos, itemEntityPos);
-    if (distance > inventory->pickupRange) return;
+    if (distance > inventoryEntityInventoryComponent->pickupRange) return;
     
     bool pickUpItem = false;
     
-    auto inventoryEntityCollider = inventoryEntity->getComponent<CollisionComponent>();
-    auto itemEntityCollider = itemEntity->getComponent<CollisionComponent>();
-    if (inventoryEntityCollider && itemEntityCollider)
+    auto inventoryEntityCollisionComponent = inventoryEntity->getComponent<CollisionComponent>();
+    auto itemEntityCollisionComponent = itemEntity->getComponent<CollisionComponent>();
+    if (inventoryEntityCollisionComponent && itemEntityCollisionComponent)
     {
-        sf::FloatRect inventoryEntityRect(inventoryEntityCollider->rect.position.getPosition(), inventoryEntityCollider->rect.size);
-        sf::FloatRect itemEntityRect(itemEntityCollider->rect.position.getPosition(), itemEntityCollider->rect.size);
+        sf::FloatRect inventoryEntityRect(inventoryEntityCollisionComponent->rect.position.getPosition(), inventoryEntityCollisionComponent->rect.size);
+        sf::FloatRect itemEntityRect(itemEntityCollisionComponent->rect.position.getPosition(), itemEntityCollisionComponent->rect.size);
 
         if (rectRectCollide(inventoryEntityRect, itemEntityRect, true))
         {
@@ -95,7 +122,7 @@ void ItemSystem::tickItemCollect(std::vector<int>& itemsToRemove, Entity* itemEn
 
     if (pickUpItem)
     {
-        pickupItem(itemsToRemove, inventory, item, itemEntity);
+        pickupItem(itemsToRemove, inventoryEntityInventoryComponent, itemEntityItemComponent, itemEntity);
     }
     else
     {
@@ -105,11 +132,11 @@ void ItemSystem::tickItemCollect(std::vector<int>& itemsToRemove, Entity* itemEn
 
 void ItemSystem::moveItemTowardsInventory(Entity* itemEntity, sf::Vector2f itemEntityPos, sf::Vector2f inventoryEntityPos, float distance)
 {
-    auto m = itemEntity->getComponent<MovementComponent>();
+    auto itemEntityMovementComponent = itemEntity->getComponent<MovementComponent>();
 
-    if (!m)
+    if (!itemEntityMovementComponent)
     {
-        m = itemEntity->addComponent<MovementComponent>(itemEntity, sf::Vector2f(0, 0), MovementComponentData({0, 0}));
+        itemEntityMovementComponent = itemEntity->addComponent<MovementComponent>(itemEntity, sf::Vector2f(0, 0), MovementComponentData({0, 0}));
     }
 
     float angle = getAngle(itemEntityPos, inventoryEntityPos);
@@ -117,15 +144,15 @@ void ItemSystem::moveItemTowardsInventory(Entity* itemEntity, sf::Vector2f itemE
     float velocityMultiplier = game->getSettings()->item_collectMoveMultiplier;
     sf::Vector2f itemVelocity(std::cos(angle) * velocityMultiplier / distance, -std::sin(angle) * velocityMultiplier / distance);
 
-    m->velocity += itemVelocity;
+    itemEntityMovementComponent->velocity += itemVelocity;
 }
 
-void ItemSystem::pickupItem(std::vector<int>& itemsToRemove, InventoryComponent* inventory, ItemComponent* item, Entity* itemEntity)
+void ItemSystem::pickupItem(std::vector<int>& itemsToRemove, InventoryComponent* inventoryEntityInventoryComponent, ItemComponent* itemEntityItemComponent, Entity* itemEntity)
 {
     unsigned int extra;
-    inventory->pickupItem(item->resource, item->amount, extra);
+    inventoryEntityInventoryComponent->pickupItem(itemEntityItemComponent->resource, itemEntityItemComponent->amount, extra);
 
-    item->amount = extra;
+    itemEntityItemComponent->amount = extra;
 
-    if (item->amount == 0) itemsToRemove.emplace_back(itemEntity->ID);
+    if (itemEntityItemComponent->amount == 0) itemsToRemove.emplace_back(itemEntity->ID);
 }

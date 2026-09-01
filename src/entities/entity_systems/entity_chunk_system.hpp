@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <map>
+#include <memory>
 
 class Game;
 class Scene;
@@ -22,9 +24,11 @@ private:
 
     void tickEntityUnload(std::vector<int>& entitiesToUnload, Entity* entity);
 
-    void unloadEntity(int ID);
+    void unloadEntities(std::vector<int> entitiesToUnload);
 
     Game* game;
     Scene* scene;
     EntityLayer* entityLayer;
+
+    std::map<int, std::unique_ptr<Entity>>* allEntities;
 };

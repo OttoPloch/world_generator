@@ -26,6 +26,9 @@ public:
     {
         T* comp = new T(std::forward<Args>(args)...);
         components.emplace_back(comp);
+        
+        addedComponentThisFrame = true;
+
         return comp;
     }
 
@@ -53,6 +56,8 @@ public:
     GamePosition position;
     sf::Vector2f lastPosition;
     sf::Vector2i chunkPosition;
+    
+    bool addedComponentThisFrame;
 private:
     std::vector<std::unique_ptr<EntityComponent>> components;
 };

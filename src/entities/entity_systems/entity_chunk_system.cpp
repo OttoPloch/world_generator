@@ -4,65 +4,60 @@
 
 EntityChunkSystem::EntityChunkSystem() {}
 
-EntityChunkSystem::EntityChunkSystem(Game* game, Scene* scene) : game(game), scene(scene), entityLayer(scene->getEntityLayer()) {}
+EntityChunkSystem::EntityChunkSystem(Game* game, Scene* scene) : game(game), scene(scene), entityLayer(scene->getEntityLayer()), allEntities(entityLayer->getAllEntities()) {}
 
 void EntityChunkSystem::entityChunkInit(Entity* entity)
 {
-    sf::Vector2i eChunkPosition = worldToChunkPosition(game, entity->position.getPosition());
-    entity->chunkPosition = eChunkPosition;
+    sf::Vector2i entityChunkPosition = worldToChunkPosition(game, entity->position.getPosition());
+    entity->chunkPosition = entityChunkPosition;
 
-    auto eChunk = scene->getChunkLayer()->getChunk(eChunkPosition);
-    if (eChunk)
+    auto entityChunk = scene->getChunkLayer()->getChunk(entityChunkPosition);
+    if (entityChunk)
     {
-        eChunk->entitiesInChunk.emplace_back(entity);
+        entityChunk->entitiesInChunk.emplace_back(entity);
     }
     else
     {
-        unloadEntity(entity->ID);
+        unloadEntities({entity->ID});
     }
 }
 
 void EntityChunkSystem::tick()
 {
-    auto entities = entityLayer->getAllEntities();
-
     std::vector<int> entitiesToUnload;
 
-    for (auto& e : *entities)
+    for (auto& i : *allEntities)
     {
-        Entity* curr = e.second.get();
+        auto entity = i.second.get();
 
-        tickEntityChunkSync(entitiesToUnload, curr);
+        tickEntityChunkSync(entitiesToUnload, entity);
 
-        tickEntityUnload(entitiesToUnload, curr);
+        tickEntityUnload(entitiesToUnload, entity);
     }
 
-    for (auto ID : entitiesToUnload)
-    {
-        unloadEntity(ID);
-    }
+    unloadEntities(entitiesToUnload);
 }
 
 void EntityChunkSystem::tickEntityChunkSync(std::vector<int>& entitiesToUnload, Entity* entity)
 {
-    sf::Vector2i eChunkPosition = worldToChunkPosition(game, entity->position.getPosition());
+    sf::Vector2i entityChunkPosition = worldToChunkPosition(game, entity->position.getPosition());
     
     // if the entity hasn't moved chunks, continue.
-    if (eChunkPosition == entity->chunkPosition)
+    if (entityChunkPosition == entity->chunkPosition)
     {
         return;
     }
 
     // entity has moved chunks.
 
-    auto oldEChunk = scene->getChunkLayer()->getChunk(entity->chunkPosition);
-    auto eInCvec = &oldEChunk->entitiesInChunk;
+    auto oldEntityChunk = scene->getChunkLayer()->getChunk(entity->chunkPosition);
+    auto entitiesInChunkVec = &oldEntityChunk->entitiesInChunk;
 
     // finding entity pointer in old chunk to remove it
-    auto i = std::find(eInCvec->begin(), eInCvec->end(), entity);
-    if (i != eInCvec->end()) eInCvec->erase(i);
+    auto i = std::find(entitiesInChunkVec->begin(), entitiesInChunkVec->end(), entity);
+    if (i != entitiesInChunkVec->end()) entitiesInChunkVec->erase(i);
 
-    auto newEChunk = scene->getChunkLayer()->getChunk(eChunkPosition);
+    auto newEChunk = scene->getChunkLayer()->getChunk(entityChunkPosition);
     if (newEChunk)
     {
         // found entity's new chunk, adding entity pointer to entitiesInChunk.
@@ -76,20 +71,20 @@ void EntityChunkSystem::tickEntityChunkSync(std::vector<int>& entitiesToUnload, 
         entitiesToUnload.emplace_back(entity->ID);
     }
 
-    entity->chunkPosition = eChunkPosition;
+    entity->chunkPosition = entityChunkPosition;
 }
 
 void EntityChunkSystem::tickEntityUnload(std::vector<int>& entitiesToUnload, Entity* entity)
 {
-    auto eChunk = scene->getChunkLayer()->getChunk(entity->chunkPosition);
+    auto entityChunk = scene->getChunkLayer()->getChunk(entity->chunkPosition);
 
-    if (!eChunk)
+    if (!entityChunk)
     {
         entitiesToUnload.emplace_back(entity->ID);
     }
 }
 
-void EntityChunkSystem::unloadEntity(int ID)
+void EntityChunkSystem::unloadEntities(std::vector<int> entitiesToUnload)
 {
-    entityLayer->removeEntity(ID);
+    entityLayer->removeEntityBatch(entitiesToUnload);
 }

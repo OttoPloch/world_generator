@@ -10,34 +10,47 @@ CollisionSystem::CollisionSystem(Game* game, Scene* scene) : game(game), scene(s
 
 void CollisionSystem::tick()
 {
-    std::vector<Entity*> validEntities = entityLayer->getEntitiesWithComponents<MovementComponent, CollisionComponent>();
+    std::vector<int> noLongerValidEntities;
 
-    for (auto e : validEntities)
+    for (auto entity : validEntities)
     {
-        findAndResolveCollisions(e);
+        auto entityMovementComponent = entity->getComponent<MovementComponent>();
+        auto entityCollisionComponent = entity->getComponent<CollisionComponent>();
+
+        if (!entityMovementComponent || !entityCollisionComponent)
+        {
+            noLongerValidEntities.emplace_back(entity->ID);
+            continue;
+        }
+
+        findAndResolveCollisions(entity, entityMovementComponent, entityCollisionComponent);
     }
+
+    removeAllEntityIDsInVec(validEntities, noLongerValidEntities);
 }
 
-void CollisionSystem::findAndResolveCollisions(Entity* e)
+void CollisionSystem::refactorEntityCache()
 {
-    auto m = e->getComponent<MovementComponent>();
-    auto c = e->getComponent<CollisionComponent>();
-
-    CollisionRect& rect = c->rect;
-
-    tileCollision(e, rect, m);
-
-    entityCollision(e, rect, m);
+    validEntities = entityLayer->getEntitiesWithComponents<MovementComponent, CollisionComponent>();
 }
 
-void CollisionSystem::tileCollision(Entity* e, CollisionRect& rect, MovementComponent* m)
+void CollisionSystem::findAndResolveCollisions(Entity* entity, MovementComponent* entityMovementComponent, CollisionComponent* entityCollisionComponent)
+{
+    CollisionRect& rect = entityCollisionComponent->rect;
+
+    tileCollision(entity, rect, entityMovementComponent);
+
+    entityCollision(entity, rect, entityMovementComponent);
+}
+
+void CollisionSystem::tileCollision(Entity* entity, CollisionRect& rect, MovementComponent* entityMovementComponent)
 {
     sf::Vector2f contactPoint;
     sf::Vector2f contactNormal;
     float contactTime;
 
 
-    std::array<Chunk*, 9> nearbyChunks = scene->getChunkLayer()->getNearbyChunks(e->position.getPosition());
+    std::array<Chunk*, 9> nearbyChunks = scene->getChunkLayer()->getNearbyChunks(entity->position.getPosition());
     // Chunk, tile position, z-value
     std::vector<std::pair<Chunk*, std::pair<sf::Vector2i, int>>> nearbyTilesWithColliders;
 
@@ -69,7 +82,7 @@ void CollisionSystem::tileCollision(Entity* e, CollisionRect& rect, MovementComp
             GamePosition tilePos(game, tileRect.position);
             CollisionRect tileCollRect(tilePos, tileRect.size, RectType::STATIC);
 
-            if (dynamicRectRectCollide(&rect, m->velocity, &tileCollRect, contactPoint, contactNormal, contactTime))
+            if (dynamicRectRectCollide(&rect, entityMovementComponent->velocity, &tileCollRect, contactPoint, contactNormal, contactTime))
             {
                 collidingTiles.emplace_back(tileCollRect, contactTime);
             }
@@ -82,42 +95,42 @@ void CollisionSystem::tileCollision(Entity* e, CollisionRect& rect, MovementComp
 
         for (auto t : collidingTiles)
         {
-            if (dynamicRectRectCollide(&rect, m->velocity, &t.first, contactPoint, contactNormal, contactTime))
+            if (dynamicRectRectCollide(&rect, entityMovementComponent->velocity, &t.first, contactPoint, contactNormal, contactTime))
             {
-                m->velocity += sf::Vector2f(std::abs(m->velocity.x) * contactNormal.x, std::abs(m->velocity.y) * contactNormal.y) * (1.f - contactTime);
-                m->velocity += {contactNormal.x * .001f, contactNormal.y * .001f};
+                entityMovementComponent->velocity += sf::Vector2f(std::abs(entityMovementComponent->velocity.x) * contactNormal.x, std::abs(entityMovementComponent->velocity.y) * contactNormal.y) * (1.f - contactTime);
+                entityMovementComponent->velocity += {contactNormal.x * .001f, contactNormal.y * .001f};
             }
         }
     }
 }
 
-void CollisionSystem::entityCollision(Entity* e, CollisionRect& rect, MovementComponent* m)
+void CollisionSystem::entityCollision(Entity* entity, CollisionRect& rect, MovementComponent* entityMovementComponent)
 {
     sf::Vector2f contactPoint;
     sf::Vector2f contactNormal;
     float contactTime;
 
 
-    std::vector<Entity*> entities = entityLayer->getEntitiesInChunkArea(rect.position.getPosition(), 1);
+    std::vector<Entity*> nearbyEntities = entityLayer->getEntitiesInChunkArea(rect.position.getPosition(), 1);
 
     // <rect, contact time>
     std::vector<std::pair<CollisionRect*, float>> z;
 
-    for (auto i : entities)
+    for (auto curr : nearbyEntities)
     {
-        if (i->ID == e->ID) continue;
+        if (curr->ID == entity->ID) continue;
         
-        if (auto c = i->getComponent<CollisionComponent>())
+        if (auto currCollisionComponent = curr->getComponent<CollisionComponent>())
         {
-            if (rect.type != RectType::PASSIVE && i->getComponent<CollisionComponent>()->rect.type == RectType::PASSIVE) continue;
-            if (rect.type == RectType::PASSIVE && i->getComponent<CollisionComponent>()->rect.type == RectType::PASSIVE) continue;
-            if (e->getComponent<ItemComponent>() && i->getComponent<InventoryComponent>()) continue;
+            if (rect.type != RectType::PASSIVE && currCollisionComponent->rect.type == RectType::PASSIVE) continue;
+            if (rect.type == RectType::PASSIVE && currCollisionComponent->rect.type == RectType::PASSIVE) continue;
+            if (entity->getComponent<ItemComponent>() && curr->getComponent<InventoryComponent>()) continue;
 
-            CollisionRect* other = &c->rect;
+            CollisionRect* other = &currCollisionComponent->rect;
 
-            if (dynamicRectRectCollide(&rect, m->velocity, other, contactPoint, contactNormal, contactTime))
+            if (dynamicRectRectCollide(&rect, entityMovementComponent->velocity, other, contactPoint, contactNormal, contactTime))
             {
-                z.emplace_back(&c->rect, contactTime);
+                z.emplace_back(&currCollisionComponent->rect, contactTime);
             }
         }
     }
@@ -129,12 +142,12 @@ void CollisionSystem::entityCollision(Entity* e, CollisionRect& rect, MovementCo
             return a.second < b.second;
         });
 
-        for (auto i : z)
+        for (auto pair : z)
         {
-            if (dynamicRectRectCollide(&rect, m->velocity, i.first, contactPoint, contactNormal, contactTime))
+            if (dynamicRectRectCollide(&rect, entityMovementComponent->velocity, pair.first, contactPoint, contactNormal, contactTime))
             {
-                m->velocity += sf::Vector2f(std::abs(m->velocity.x) * contactNormal.x, std::abs(m->velocity.y) * contactNormal.y) * (1.f - contactTime);
-                m->velocity += {contactNormal.x * .001f, contactNormal.y * .001f};
+                entityMovementComponent->velocity += sf::Vector2f(std::abs(entityMovementComponent->velocity.x) * contactNormal.x, std::abs(entityMovementComponent->velocity.y) * contactNormal.y) * (1.f - contactTime);
+                entityMovementComponent->velocity += {contactNormal.x * .001f, contactNormal.y * .001f};
             }
         }
     }
