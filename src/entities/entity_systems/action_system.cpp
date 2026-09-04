@@ -27,8 +27,10 @@ void ActionSystem::update(float dt)
 
     std::vector<int> noLongerValidEntities;
 
-    for (auto entity : validEntities)
+    for (int i = 0; i < validEntities.size(); i++)
     {
+        auto entity = validEntities[i];
+
         auto entityActionComponent = entity->getComponent<ActionComponent>();
 
         if (!entityActionComponent)
