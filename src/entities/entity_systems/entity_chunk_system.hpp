@@ -18,6 +18,8 @@ public:
 
     void entityChunkInit(Entity* entity);
 
+    void removeEntityFromChunkVec(Entity* entity);
+
     void tick();
 private:
     void tickEntityChunkSync(std::vector<int>& entitiesToUnload, Entity* entity);

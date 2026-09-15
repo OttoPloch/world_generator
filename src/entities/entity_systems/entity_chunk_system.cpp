@@ -22,6 +22,18 @@ void EntityChunkSystem::entityChunkInit(Entity* entity)
     }
 }
 
+void EntityChunkSystem::removeEntityFromChunkVec(Entity* entity)
+{
+    auto entityChunk = scene->getChunkLayer()->getChunk(entity->chunkPosition);
+
+    if (!entityChunk)
+    {
+        return; // entity is not in a valid chunk position, shouldn't be associated with any chunks.
+    }
+
+    removeAllEntityIDsInVec(entityChunk->entitiesInChunk, {entity->ID});
+}
+
 void EntityChunkSystem::tick()
 {
     std::vector<int> entitiesToUnload;

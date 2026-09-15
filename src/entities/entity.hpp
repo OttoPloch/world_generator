@@ -55,7 +55,7 @@ public:
 
     GamePosition position;
     sf::Vector2f lastPosition;
-    sf::Vector2i chunkPosition;
+    sf::Vector2i chunkPosition; // should only be updated in EntityChunkSystem::tickEntityChunkSync so that it is consistant with the vectors that chunks keep of their entities.
     
     bool addedComponentThisFrame;
 private:

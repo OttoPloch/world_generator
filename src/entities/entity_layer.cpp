@@ -199,6 +199,8 @@ void EntityLayer::removeEntity(int ID, bool refactorEntityCaches)
         Camera* camera = game->getScene()->getCamera();
         if (entities[ID].get() == camera->getFocus()) camera->removeFocus();
 
+        entityChunkSystem.removeEntityFromChunkVec(entities[ID].get());
+
         entities.erase(ID);
 
         if (refactorEntityCaches) refactorEntitySystemCaches();
