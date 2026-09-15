@@ -263,18 +263,15 @@ std::vector<Entity*> EntityLayer::getEntitiesInChunkArea(int chunkX, int chunkY,
     sf::Vector2i chunkMin = {chunkX - chunkRadius, chunkY - chunkRadius};
     sf::Vector2i chunkMax = {chunkX + chunkRadius, chunkY + chunkRadius};
 
-    for (auto& i : entities)
-    {
-        sf::Vector2f entityBottom = i.second->position.getPosition();
-        int entityChunkBottomX = toInt(std::floor(entityBottom.x / chunkLength));
-        int entityChunkBottomY = toInt(std::floor(entityBottom.y / chunkLength));
+    auto chunkLayer = game->getScene()->getChunkLayer();
 
-        if (entityChunkBottomX >= chunkMin.x && entityChunkBottomX <= chunkMax.x)
+    for (int y = chunkMin.y; y <= chunkMax.y; y++)
+    {
+        for (int x = chunkMin.x; x <= chunkMax.x; x++)
         {
-            if (entityChunkBottomY >= chunkMin.y && entityChunkBottomY <= chunkMax.y)
-            {
-                entitiesWithin.push_back(i.second.get());
-            }
+            auto currChunk = chunkLayer->getChunk({x, y});
+
+            entitiesWithin.insert(entitiesWithin.end(), currChunk->entitiesInChunk.begin(), currChunk->entitiesInChunk.end());
         }
     }
 
