@@ -2,6 +2,7 @@
 #include "../core/game.hpp"
 #include "../utils/utils.hpp"
 #include "components/control_component.hpp"
+#include "components/entity_ui_component.hpp"
 #include "components/inventory_component.hpp"
 #include "components/sprite_component.hpp"
 #include "entity_systems/entity_chunk_system.hpp"
@@ -38,6 +39,7 @@ void EntityLayer::init(Game* game)
     actionSystem = ActionSystem(game, game->getScene());
     itemSystem = ItemSystem(game, game->getScene());
     entityChunkSystem = EntityChunkSystem(game, game->getScene());
+    entityUISystem = EntityUISystem(game, game->getScene());
 
     auto pt = &tManager.entityTemplates["player"];
     pt->sprite = {game->getAssetManager()->getTexture("dog", "texture_atlases/"), {20, 20}, false, false, {{0, 0}, {0, 0}}, 1.6f, nullptr, game->getAssetManager()->getAnimSet("dog")};
@@ -47,6 +49,7 @@ void EntityLayer::init(Game* game)
     pt->collision = {{.5f, .5f}, true, RectType::ACTIVE};
     pt->action = {std::make_unique<MineAction>(game, 1, "mine!", 1.f), std::make_unique<Action>(game, "block!", -1.f, 0.f, 4.f, true), game->getSettings()->tile_size * 15};
     pt->inventory = {16, 3, true};
+    pt->ui = {{"inventory"}};
 
     Entity* e = addEntity(pt, true, {0, 0});
     player = e;
@@ -183,6 +186,7 @@ Entity* EntityLayer::addEntity(EntityTemplate* t, bool useCustomPosition, sf::Ve
         if (t->action) e->addComponent<ActionComponent>(e, t->action->mainAction->clone(), t->action->secondaryAction->clone(), t->action->range);
         if (t->item) e->addComponent<ItemComponent>(e, t->item->spawnAreaOffset, t->item->spawnAreaSize);
         if (t->inventory) e->addComponent<InventoryComponent>(e, t->inventory->inventorySize, t->inventory->pickupRange, t->inventory->rangeIsInTiles);
+        if (t->ui) e->addComponent<EntityUIComponent>(e, t->ui->componentTypesToShow);
     }
 
     refactorEntitySystemCaches();
@@ -307,6 +311,8 @@ void EntityLayer::tick()
 
     entityChunkSystem.tick();
 
+    entityUISystem.tick();
+
     // TEMP, TODO: player detection or something
     if (player == nullptr)
     {
@@ -372,4 +378,5 @@ void EntityLayer::refactorEntitySystemCaches()
     itemSystem.refactorEntityCache();
     movementSystem.refactorEntityCache();
     renderSystem.refactorEntityCache();
+    entityUISystem.refactorEntityCache();
 }

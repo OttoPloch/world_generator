@@ -43,6 +43,8 @@ public:
 private:
     void setDebugVertices();
 
+    void setUIViewSize();
+
     Game* game;
     AssetManager* assetManager;
     Camera* camera;

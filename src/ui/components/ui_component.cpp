@@ -40,6 +40,8 @@ bool UIComponent::isSelected()
     }
     else
     {
+        if (identifier.substr(0, 2) == "//") return false;
+
         if (!myElement->isComponentOnTopAtPoint(this, game->getInput()->cursor->getGameCursorPosition()) || !game->getScene()->getUILayer()->isElementOnTopAtPoint(myElement, game->getInput()->cursor->getGameCursorPosition())) return false;
 
         sf::FloatRect gb = getGlobalBounds();

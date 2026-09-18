@@ -8,7 +8,7 @@
 #include <cstddef>
 #include <algorithm>
 
-CollisionComponent::CollisionComponent(Entity* myEntity, GamePosition position, sf::Vector2f size, bool sizeIsScaleOfSprite, RectType type) : EntityComponent(myEntity)
+CollisionComponent::CollisionComponent(Entity* myEntity, GamePosition position, sf::Vector2f size, bool sizeIsScaleOfSprite, RectType type) : EntityComponent(myEntity, "collision")
 {
     sf::Vector2f adjustedSize = size;
 

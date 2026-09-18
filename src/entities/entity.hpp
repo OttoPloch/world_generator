@@ -21,6 +21,8 @@ public:
         return nullptr;
     }
 
+    EntityComponent* getComponent(std::string componentTypeName);
+
     template<typename T, typename... Args>
     T* addComponent(Args&&... args)
     {

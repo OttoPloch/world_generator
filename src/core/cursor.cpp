@@ -14,7 +14,7 @@ Cursor::Cursor(Game* game, std::string alternativeKeyForLeftClick, std::string a
     gameCursorPosition = toV2F(windowSize.x / 2, windowSize.y / 2);
 
     cursorElement = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "__CURSOR", UIPosition(gameCursorPosition), INT32_MAX));
-    cursorElement->addComponent<ImageComponent>(game, cursorElement, UIPosition({0, 0}), "CURSOR IMAGE", 0, game->getAssetManager()->getTexture("cursor"), sf::Vector2f(30, 30), false);
+    cursorElement->addComponent<ImageComponent>(game, cursorElement, UIPosition({0, 0}), "//CURSOR IMAGE", 0, game->getAssetManager()->getTexture("cursor"), sf::Vector2f(30, 30), false);
 
     UIMode = false;
     usingMovementForUISelector = false;
@@ -116,7 +116,12 @@ void Cursor::inputUpdate(float dt)
     sf::Vector2u windowSize = game->getWindow()->getSize();
     gameCursorPosition = {std::min(std::max(gameCursorPosition.x, 0.f), toFloat(windowSize.x)), std::min(std::max(gameCursorPosition.y, 0.f), toFloat(windowSize.y))};
 
-    cursorElement->position.position = gameCursorPosition;
+    sf::Vector2f cursorPositionFraction(gameCursorPosition.x / windowSize.x, gameCursorPosition.y / windowSize.y);
+    sf::Vector2f UIViewCursorPosition = game->getScene()->getUILayer()->getUIView().getSize();
+    UIViewCursorPosition.x *= cursorPositionFraction.x;
+    UIViewCursorPosition.y *= cursorPositionFraction.y;
+    
+    cursorElement->position.position = UIViewCursorPosition;
 
     cursorElement->updateVisuals();
 

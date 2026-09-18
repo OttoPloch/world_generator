@@ -66,3 +66,8 @@ struct InventoryComponentData
     float pickupRange;
     bool rangeIsInTiles;
 };
+
+struct EntityUIComponentData
+{
+    std::vector<std::string> componentTypesToShow;
+};

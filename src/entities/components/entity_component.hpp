@@ -6,9 +6,11 @@ class Entity;
 
 struct EntityComponent
 {
-    EntityComponent(Entity* myEntity);
+    EntityComponent(Entity* myEntity, std::string componentTypeName);
 
     virtual ~EntityComponent();
 
     Entity* myEntity;
+
+    std::string componentTypeName;
 };

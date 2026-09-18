@@ -25,7 +25,7 @@ void UILayer::init(Game* game, Camera* camera)
     this->assetManager = game->getAssetManager();
     this->camera = camera;
 
-    UIView.setSize(toV2F(game->getWindow()->getSize()));
+    setUIViewSize();
 
     // auto e = elements.emplace_back(std::make_unique<UIElement>(game, "test", UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_RIGHT))).get();
     // e->addComponent<BackgroundComponent>(game, e, UIPosition({0, 0}, UIOrigin::BOTTOM_RIGHT), "bg", 0, sf::Vector2f(400, 100), sf::Color(30, 30, 30, 180));
@@ -50,14 +50,14 @@ void UILayer::init(Game* game, Camera* camera)
 
 
     auto inputNote = createElement(std::make_unique<UIElement>(game, "__inputNote", UIPosition({0, 10}, UIOrigin::TOP_LEFT, UIAnchor::TOP_MIDDLE), 100000));
-    inputNote->addComponent<TextComponent>(game, inputNote, UIPosition({0, 0}, UIOrigin::TOP_MIDDLE, UIAnchor::TOP_MIDDLE), "note text", 1, "Press B on controller to navigate the UI,\nor move the right stick to control the cursor", game->getAssetManager()->getFont("White Storm"), 32);
+    inputNote->addComponent<TextComponent>(game, inputNote, UIPosition({0, 0}, UIOrigin::TOP_MIDDLE, UIAnchor::TOP_MIDDLE), "//note text", 1, "Press B on controller to navigate the UI,\nor move the right stick to control the cursor", game->getAssetManager()->getFont("White Storm"), 32);
 
     auto e5 = elements.emplace_back(std::make_unique<UIElement>(game, "__debug text display", UIPosition({0, 0}))).get();
-    e5->addComponent<TextComponent>(game, e5, UIPosition({10, 10}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT), "fps text", 0, "FPS: ", game->getAssetManager()->getFont("sfml_font"), 32);
-    e5->addComponent<TextComponent>(game, e5, UIPosition({10, 10}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT), "mouse chunk pos text", 1, "Mouse Chunk Pos: ", game->getAssetManager()->getFont("sfml_font"), 32);
-    e5->addComponent<TextComponent>(game, e5, UIPosition({10, 10}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT), "mouse tile type text", 2, "Mouse Tile Type: ", game->getAssetManager()->getFont("sfml_font"), 32);
-    e5->addComponent<TextComponent>(game, e5, UIPosition({10, 10}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT), "mouse entity text", 3, "Entity ID: ", game->getAssetManager()->getFont("sfml_font"), 32);
-    e5->addComponent<TextComponent>(game, e5, UIPosition({10, 10}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT), "world origin text", 4, "World Chunk Origin: ", game->getAssetManager()->getFont("sfml_font"), 24);
+    e5->addComponent<TextComponent>(game, e5, UIPosition({10, 10}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT), "//fps text", 0, "FPS: ", game->getAssetManager()->getFont("sfml_font"), 32);
+    e5->addComponent<TextComponent>(game, e5, UIPosition({10, 10}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT), "//mouse chunk pos text", 1, "Mouse Chunk Pos: ", game->getAssetManager()->getFont("sfml_font"), 32);
+    e5->addComponent<TextComponent>(game, e5, UIPosition({10, 10}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT), "//mouse tile type text", 2, "Mouse Tile Type: ", game->getAssetManager()->getFont("sfml_font"), 32);
+    e5->addComponent<TextComponent>(game, e5, UIPosition({10, 10}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT), "//mouse entity text", 3, "Entity ID: ", game->getAssetManager()->getFont("sfml_font"), 32);
+    e5->addComponent<TextComponent>(game, e5, UIPosition({10, 10}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_LEFT), "//world origin text", 4, "World Chunk Origin: ", game->getAssetManager()->getFont("sfml_font"), 24);
 
     auto e6 = elements.emplace_back(std::make_unique<UIElement>(game, "useless buttons", UIPosition({0, 0}, UIOrigin::BOTTOM_LEFT, UIAnchor::BOTTOM_LEFT))).get();
     e6->addComponent<ButtonComponent>(game, e6, UIPosition({0, 0}, UIOrigin::BOTTOM_LEFT, UIAnchor::BOTTOM_LEFT), "button", 0, game->getAssetManager()->getTexture("default_button", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("button", "ui/"), sf::Vector2f(100, 100), false);
@@ -195,9 +195,8 @@ bool UILayer::isElementOnTopAtPoint(UIElement* element, sf::Vector2f point)
 
 void UILayer::updateVisuals()
 {
-    sf::Vector2f viewSize = toV2F(game->getWindow()->getSize());
-    UIView.setCenter({viewSize.x / 2.f, viewSize.y / 2.f});
-    UIView.setSize(viewSize);
+    setUIViewSize();
+    UIView.setCenter({UIView.getSize().x / 2.f, UIView.getSize().y / 2.f});
 
     if (elements.size() > 0)
     {
@@ -390,5 +389,29 @@ void UILayer::setDebugVertices()
             }
         }
 
+    }
+}
+
+void UILayer::setUIViewSize()
+{
+    sf::Vector2u windowSize = game->getWindow()->getSize();
+
+    float aspectRatio = game->getWindow()->getAspectRatio();
+    sf::Vector2f maxUIViewSize(1080 * aspectRatio, 1080);
+
+    float areaOfMaxUIViewSize = maxUIViewSize.x * maxUIViewSize.y;
+    float areaOfWindowSize = windowSize.x * windowSize.y;
+
+    std::cout << maxUIViewSize.x << ", " << maxUIViewSize.y << "; " << areaOfMaxUIViewSize << ". " << windowSize.x << ", " << windowSize.y << "; " << areaOfWindowSize << ".\n";
+
+    if (areaOfWindowSize > areaOfMaxUIViewSize)
+    {
+        std::cout << "max\n";
+        UIView.setSize(maxUIViewSize);
+    }
+    else
+    {
+        std::cout << "otherwise\n";
+        UIView.setSize(static_cast<sf::Vector2f>(windowSize));
     }
 }

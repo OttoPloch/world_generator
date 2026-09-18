@@ -57,7 +57,7 @@ void Scene::tick()
     auto element = uiLayer.getElement("__debug text display");
     if (element)
     {
-        if (auto chunkPosText = element->getComponent<TextComponent>("mouse chunk pos text"))
+        if (auto chunkPosText = element->getComponent<TextComponent>("//mouse chunk pos text"))
         {
             chunkPosText->setText("Mouse Chunk Pos: " + std::to_string(mouseChunkPos.x) + ", " + std::to_string(mouseChunkPos.y));
         }
@@ -80,12 +80,12 @@ void Scene::tick()
             mouseTileType = typesToStrings[selectedTile->type];
         }
 
-        if (auto tileTypeText = element->getComponent<TextComponent>("mouse tile type text"))
+        if (auto tileTypeText = element->getComponent<TextComponent>("//mouse tile type text"))
         {
             tileTypeText->setText("Mouse Tile Type: " + mouseTileType);
         }
 
-        if (auto entityText = element->getComponent<TextComponent>("mouse entity text"))
+        if (auto entityText = element->getComponent<TextComponent>("//mouse entity text"))
         {
             auto e = game->getInput()->cursor->getSelectedEntity();
 
@@ -93,7 +93,7 @@ void Scene::tick()
             else entityText->setText("No Entity Selected");
         }
 
-        if (auto worldOriginText = element->getComponent<TextComponent>("world origin text"))
+        if (auto worldOriginText = element->getComponent<TextComponent>("//world origin text"))
         {
             worldOriginText->setText("World Chunk Origin: " + std::to_string(worldChunkOrigin.x) + ", " + std::to_string(worldChunkOrigin.y));
         }

@@ -3,7 +3,7 @@
 #include "../../core/game.hpp"
 #include <algorithm>
 
-InventoryComponent::InventoryComponent(Entity* myEntity, unsigned int inventorySize, float pickupRange, bool rangeIsInTiles) : EntityComponent(myEntity), inventorySize(inventorySize)
+InventoryComponent::InventoryComponent(Entity* myEntity, unsigned int inventorySize, float pickupRange, bool rangeIsInTiles) : EntityComponent(myEntity, "inventory"), inventorySize(inventorySize)
 {
     this->pickupRange = pickupRange;
     if (rangeIsInTiles) this->pickupRange *= myEntity->game->getSettings()->tile_size;

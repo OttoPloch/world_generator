@@ -9,3 +9,4 @@
 #include "sprite_component.hpp"
 #include "item_component.hpp"
 #include "inventory_component.hpp"
+#include "entity_ui_component.hpp"

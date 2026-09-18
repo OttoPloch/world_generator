@@ -4,7 +4,7 @@
 #include "../../core/game.hpp"
 #include "sprite_component.hpp"
 
-ItemComponent::ItemComponent(Entity* myEntity, sf::Vector2f spawnAreaOffset, sf::Vector2f spawnAreaSize) : EntityComponent(myEntity)
+ItemComponent::ItemComponent(Entity* myEntity, sf::Vector2f spawnAreaOffset, sf::Vector2f spawnAreaSize) : EntityComponent(myEntity, "item")
 {
     myEntity->position.changePosition(spawnAreaOffset);
     myEntity->position.changePosition({

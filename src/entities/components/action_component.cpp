@@ -3,7 +3,7 @@
 #include "../../core/game.hpp"
 #include <SFML/Window/Mouse.hpp>
 
-ActionComponent::ActionComponent(Entity* myEntity, std::unique_ptr<Action> mainAction, std::unique_ptr<Action> secondaryAction, float range) : EntityComponent(myEntity), mainAction(std::move(mainAction)), secondaryAction(std::move(secondaryAction)), range(range) {}
+ActionComponent::ActionComponent(Entity* myEntity, std::unique_ptr<Action> mainAction, std::unique_ptr<Action> secondaryAction, float range) : EntityComponent(myEntity, "action"), mainAction(std::move(mainAction)), secondaryAction(std::move(secondaryAction)), range(range) {}
 
 void ActionComponent::startAction(std::string actionInput)
 {

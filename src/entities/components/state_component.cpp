@@ -2,4 +2,4 @@
 #include "components.hpp"
 #include "../entity.hpp"
 
-StateComponent::StateComponent(Entity* myEntity) : EntityComponent(myEntity) {}
+StateComponent::StateComponent(Entity* myEntity) : EntityComponent(myEntity, "state") {}

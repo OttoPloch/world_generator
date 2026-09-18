@@ -162,7 +162,7 @@ void Game::run()
         auto element = scene.getUILayer()->getElement("__debug text display");
         if (element)
         {
-            if (auto fpsText = element->getComponent<TextComponent>("fps text"))
+            if (auto fpsText = element->getComponent<TextComponent>("//fps text"))
             {
                 fpsText->setText("FPS: " + std::to_string(toInt(smoothFps)));
             }
