@@ -30,10 +30,10 @@ void EntityUIComponent::createUIFor(EntityComponent* component)
 
     if (componentTypeName == "inventory")
     {
-        auto newInventoryElement = myEntity->game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(myEntity->game, "Entity " + std::to_string(myEntity->ID) + " " + componentTypeName + " ui", UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_MIDDLE)));
+        auto newInventoryElement = myEntity->game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(myEntity->game, "__Entity " + std::to_string(myEntity->ID) + " " + componentTypeName + " ui", UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::BOTTOM_MIDDLE)));
 
         componentUIElements["inventory"] = std::pair<EntityComponent*, std::vector<UIElement*>>(component, {newInventoryElement});
 
-        newInventoryElement->addComponent<TextComponent>(myEntity->game, newInventoryElement, UIPosition({0, 0}, UIOrigin::BOTTOM_MIDDLE), "text", 0, "Stone In Inventory: ", myEntity->game->getAssetManager()->getFont("sfml_font"), 32);
+        newInventoryElement->addComponent<TextComponent>(myEntity->game, newInventoryElement, UIPosition({0, 0}, UIOrigin::BOTTOM_MIDDLE), "//text", 0, "Stone In Inventory: ", myEntity->game->getAssetManager()->getFont("sfml_font"), 32);
     }
 }

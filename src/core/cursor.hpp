@@ -26,12 +26,9 @@ public:
     bool isUIModeActive();
     bool isUsingMovementForUISelector();
 
-    // gets the coordinates of the cursor in the window,
-    // not accounting for the current view.
-    sf::Vector2f getGameCursorPosition();
-    // gets the coordinates of the cursor in the current view.
-    // So, if the camera is offset, the cursor position will inherit that offset.
-    sf::Vector2f getGameCursorCoords();
+    sf::Vector2f getGameCursorWindowPosition();
+    sf::Vector2f getGameCursorWorldPosition();
+    sf::Vector2f getGameCursorUIPosition();
     
     UIElement* getSelectedElement();
     UIComponent* getSelectedComponent();

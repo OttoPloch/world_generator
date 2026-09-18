@@ -52,6 +52,8 @@ bool UIElement::isComponentOnTopAtPoint(UIComponent* component, sf::Vector2f poi
 
     for (auto& c : components)
     {
+        if (c->identifier.substr(0, 2) == "//") continue;
+
         if (pointRectCollide(point, c->getGlobalBounds()))
         {
             collidedComponents.emplace_back(c.get());
@@ -145,7 +147,7 @@ UIComponent* UIElement::getNearestComponent(sf::Vector2f direction, UIComponent*
 
     for (auto& c : components)
     {
-        if (c.get() == component || c->identifier.substr(0, 2) == "__") continue;
+        if (c.get() == component || c->identifier.substr(0, 2) == "//") continue;
 
         sf::FloatRect cBounds = c->getGlobalBounds();
         sf::Vector2f cCenter = {cBounds.position.x + cBounds.size.x / 2, cBounds.position.y + cBounds.size.y / 2};

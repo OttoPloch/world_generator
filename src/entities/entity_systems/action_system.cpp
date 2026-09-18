@@ -73,7 +73,7 @@ void ActionSystem::update(float dt)
                 {
                     if (currentAction->timeProgress >= currentAction->timeToComplete)
                     {
-                        currentAction->completeAction(entity, game->getInput()->cursor->getGameCursorCoords());
+                        currentAction->completeAction(entity, game->getInput()->cursor->getGameCursorWorldPosition());
                     }
                 }
                 else

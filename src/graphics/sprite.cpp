@@ -87,7 +87,7 @@ void Sprite::update(float dt)
     {
         activeAnimation->secondsTillNextFrame -= dt * animSpeedMult;
 
-        if (activeAnimation->secondsTillNextFrame <= 0.f)
+        while (activeAnimation->secondsTillNextFrame <= 0.f)
         {
             (activeAnimation->reversed) ? activeAnimation->index-- : activeAnimation->index++;
             

@@ -26,7 +26,7 @@ bool MineAction::start()
             timeToComplete = m->durability / mineSpeed;
             cooldown = m->durability / mineSpeed;
 
-            sf::Vector2f cursorWorldPos(game->getInput()->cursor->getGameCursorCoords());
+            sf::Vector2f cursorWorldPos(game->getInput()->cursor->getGameCursorWorldPosition());
             sf::Vector2i cursorTilePos = worldToTilePosition(game, cursorWorldPos, false, false);
             sf::Vector2f cursorTileWorldPos(tileToWorldPosition(game, cursorTilePos, false));
             sf::Vector2f cursorTileWorldPosTileCenter(cursorTileWorldPos + sf::Vector2f(game->getSettings()->tile_size / 2, game->getSettings()->tile_size / 2));

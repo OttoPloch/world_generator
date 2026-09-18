@@ -52,7 +52,7 @@ void Scene::tick()
     uiLayer.tick();
 
     // TEMP
-    sf::Vector2i mouseChunkPos = worldToChunkPosition(game, game->getInput()->cursor->getGameCursorCoords());
+    sf::Vector2i mouseChunkPos = worldToChunkPosition(game, game->getInput()->cursor->getGameCursorWorldPosition());
     // uiLayer.getElement("mouse chunk pos display")->getAsText()->setValue(std::to_string(mouseChunkPos.x) + ", " + std::to_string(mouseChunkPos.y));
     auto element = uiLayer.getElement("__debug text display");
     if (element)
@@ -277,13 +277,13 @@ void Scene::sceneInput(std::string control)
     }
     else if (control == "EXTRA 1")
     {
-        entityLayer.addEntity(&entityLayer.tManager.entityTemplates["player"], true, game->getInput()->cursor->getGameCursorCoords());
+        entityLayer.addEntity(&entityLayer.tManager.entityTemplates["player"], true, game->getInput()->cursor->getGameCursorWorldPosition());
         
         // debugChunkLayerView++;
     }
     else if (control == "EXTRA 2")
     {
-        entityLayer.addEntity(&entityLayer.tManager.entityTemplates["box"], true, game->getInput()->cursor->getGameCursorCoords());
+        entityLayer.addEntity(&entityLayer.tManager.entityTemplates["box"], true, game->getInput()->cursor->getGameCursorWorldPosition());
 
         // if (debugMode)
         // {

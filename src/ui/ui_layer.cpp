@@ -151,8 +151,8 @@ bool UILayer::checkUICollision()
 
         sf::Vector2f mousePos;
         
-        if (e->position.worldPosition) mousePos = game->getInput()->cursor->getGameCursorCoords();
-        else mousePos = game->getInput()->cursor->getGameCursorPosition();
+        if (e->position.worldPosition) mousePos = game->getInput()->cursor->getGameCursorWorldPosition();
+        else mousePos = game->getInput()->cursor->getGameCursorUIPosition();
 
         std::vector<sf::FloatRect> componentBounds = e->getAllComponentBounds();
         for (auto& b : componentBounds)

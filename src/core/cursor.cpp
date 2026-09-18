@@ -74,8 +74,8 @@ void Cursor::inputUpdate(float dt)
             // This will makes entities without a hitbox not selectable, ideal for (and this is just an idea that popped up as an example so dont take it too seriously)
             // butterflies or something that is just visual and moves and animates but is not interactable (could be but for the example it's not). Also, that would make it
             // necessary to give different entities different z values, instead of just using entityTileZEquivalent in Settings, so that butterflies can be above all tiles.
-            selectedEntity = game->getScene()->getEntityLayer()->getEntityAtPos(getGameCursorCoords(), false);
-            selectedTile = game->getScene()->getChunkLayer()->getTileAtPosition(getGameCursorCoords(), true);
+            selectedEntity = game->getScene()->getEntityLayer()->getEntityAtPos(getGameCursorWorldPosition(), false);
+            selectedTile = game->getScene()->getChunkLayer()->getTileAtPosition(getGameCursorWorldPosition(), true);
     
             if (selectedTile && selectedEntity)
             {
@@ -115,13 +115,8 @@ void Cursor::inputUpdate(float dt)
     // limits the game cursor to on the screen.
     sf::Vector2u windowSize = game->getWindow()->getSize();
     gameCursorPosition = {std::min(std::max(gameCursorPosition.x, 0.f), toFloat(windowSize.x)), std::min(std::max(gameCursorPosition.y, 0.f), toFloat(windowSize.y))};
-
-    sf::Vector2f cursorPositionFraction(gameCursorPosition.x / windowSize.x, gameCursorPosition.y / windowSize.y);
-    sf::Vector2f UIViewCursorPosition = game->getScene()->getUILayer()->getUIView().getSize();
-    UIViewCursorPosition.x *= cursorPositionFraction.x;
-    UIViewCursorPosition.y *= cursorPositionFraction.y;
     
-    cursorElement->position.position = UIViewCursorPosition;
+    cursorElement->position.position = getGameCursorUIPosition();
 
     cursorElement->updateVisuals();
 
@@ -181,14 +176,26 @@ bool Cursor::isUsingMovementForUISelector()
     return usingMovementForUISelector;
 }
 
-sf::Vector2f Cursor::getGameCursorPosition()
+sf::Vector2f Cursor::getGameCursorWindowPosition()
 {
     return gameCursorPosition;
 }
 
-sf::Vector2f Cursor::getGameCursorCoords()
+sf::Vector2f Cursor::getGameCursorWorldPosition()
 {
     return game->getWindow()->getWindow().mapPixelToCoords(sf::Vector2i(gameCursorPosition));
+}
+
+sf::Vector2f Cursor::getGameCursorUIPosition()
+{
+    sf::Vector2u windowSize(game->getWindow()->getSize());
+    sf::Vector2f cursorPositionFraction(gameCursorPosition.x / windowSize.x, gameCursorPosition.y / windowSize.y);
+    
+    sf::Vector2f UICursorPosition = game->getScene()->getUILayer()->getUIView().getSize();
+    UICursorPosition.x *= cursorPositionFraction.x;
+    UICursorPosition.y *= cursorPositionFraction.y;
+
+    return UICursorPosition;
 }
 
 UIElement* Cursor::getSelectedElement()

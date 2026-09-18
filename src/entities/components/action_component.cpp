@@ -9,7 +9,7 @@ void ActionComponent::startAction(std::string actionInput)
 {
     if (actionInput == "MAIN ACTION" && mainAction->cooldownProgress >= mainAction->cooldown && !mainAction->active)
     {
-        mainAction->startPosition = myEntity->game->getInput()->cursor->getGameCursorCoords();
+        mainAction->startPosition = myEntity->game->getInput()->cursor->getGameCursorWorldPosition();
         
         if (myEntity->game->getScene()->processActionRequest(myEntity, mainAction.get()))
         {
@@ -18,7 +18,7 @@ void ActionComponent::startAction(std::string actionInput)
     }
     else if (actionInput == "SECONDARY ACTION" && secondaryAction->cooldownProgress >= secondaryAction->cooldown && !secondaryAction->active)
     {
-        secondaryAction->startPosition = myEntity->game->getInput()->cursor->getGameCursorCoords();
+        secondaryAction->startPosition = myEntity->game->getInput()->cursor->getGameCursorWorldPosition();
         
         if (myEntity->game->getScene()->processActionRequest(myEntity, secondaryAction.get()))
         {
