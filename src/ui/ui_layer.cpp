@@ -402,16 +402,12 @@ void UILayer::setUIViewSize()
     float areaOfMaxUIViewSize = maxUIViewSize.x * maxUIViewSize.y;
     float areaOfWindowSize = windowSize.x * windowSize.y;
 
-    std::cout << maxUIViewSize.x << ", " << maxUIViewSize.y << "; " << areaOfMaxUIViewSize << ". " << windowSize.x << ", " << windowSize.y << "; " << areaOfWindowSize << ".\n";
-
     if (areaOfWindowSize > areaOfMaxUIViewSize)
     {
-        std::cout << "max\n";
         UIView.setSize(maxUIViewSize);
     }
     else
     {
-        std::cout << "otherwise\n";
         UIView.setSize(static_cast<sf::Vector2f>(windowSize));
     }
 }
