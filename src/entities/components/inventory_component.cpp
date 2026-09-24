@@ -96,6 +96,11 @@ unsigned int InventoryComponent::getItemAmount(std::string item)
     return amount;
 }
 
+std::pair<std::string, unsigned int> InventoryComponent::getItemSlot(unsigned int slot)
+{
+    return items[slot];
+}
+
 void InventoryComponent::resetInventory()
 {
     items.clear();

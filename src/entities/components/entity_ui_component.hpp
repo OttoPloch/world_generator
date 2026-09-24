@@ -9,5 +9,5 @@ public:
 
     void createUIFor(EntityComponent* component);
 
-    std::map<std::string, std::pair<EntityComponent*, std::vector<UIElement*>>> componentUIElements;
+    std::map<std::string, std::pair<EntityComponent*, std::vector<UIElement*>>> componentUI;
 };

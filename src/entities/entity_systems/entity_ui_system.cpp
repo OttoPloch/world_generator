@@ -15,13 +15,44 @@ void EntityUISystem::tick()
 
     for (auto entity : validEntities)
     {
-        auto& componentUIElements = entity->getComponent<EntityUIComponent>()->componentUIElements;
-
-        if (componentUIElements["inventory"].second.size() > 0)
+        auto entityUIComponent = entity->getComponent<EntityUIComponent>();
+        
+        if (!entityUIComponent)
         {
-            InventoryComponent* inventoryComponent = dynamic_cast<InventoryComponent*>(componentUIElements["inventory"].first);
-            
-            componentUIElements["inventory"].second[0]->getComponent<TextComponent>()->setText("Stone In Inventory: " + std::to_string(inventoryComponent->getItemAmount("item.stone")));
+            noLongerValidEntities.emplace_back(entity->ID);
+            continue;
+        }
+
+        auto& componentUIMap = entityUIComponent->componentUI;
+
+        for (auto& componentUI : componentUIMap)
+        {
+            if (componentUI.first == "inventory")
+            {
+                auto inventoryComponent = dynamic_cast<InventoryComponent*>(componentUI.second.first);
+
+                if (!inventoryComponent) continue;
+
+                for (int i = 0; i < inventoryComponent->inventorySize; i++)
+                {
+                    if (auto textComponent = componentUI.second.second[0]->getComponent<TextComponent>("//item " + std::to_string(i) + " text"))
+                    {
+                        auto currSlot = inventoryComponent->getItemSlot(i);
+
+                        std::string slotText;
+                        if (currSlot.second > 0)
+                        {
+                            slotText = currSlot.first.substr(5) + ": " + std::to_string(currSlot.second);
+                        }
+                        else
+                        {
+                            slotText = "empty";
+                        }
+
+                        textComponent->setText(slotText);
+                    }
+                }
+            }
         }
     }
 

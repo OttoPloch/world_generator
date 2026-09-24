@@ -1,16 +1,19 @@
 #include "entity.hpp"
+#include "components/entity_component.hpp"
 
 Entity::Entity(int ID, Game* game, sf::Vector2f position) : ID(ID), game(game), position(game, position) {}
 
-EntityComponent* Entity::getComponent(std::string componentTypeName)
+std::vector<EntityComponent*> Entity::getComponentsOfType(std::string componentTypeIdentifier)
 {
+    std::vector<EntityComponent*> componentsOfType;
+
     for (auto& c : components)
     {
-        if (c->componentTypeName == componentTypeName)
+        if (c->componentTypeIdentifier == componentTypeIdentifier)
         {
-            return c.get();
+            componentsOfType.emplace_back(c.get());
         }
     }
 
-    return nullptr;
+    return componentsOfType;
 }

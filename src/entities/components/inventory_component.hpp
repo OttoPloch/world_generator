@@ -13,6 +13,8 @@ struct InventoryComponent : EntityComponent
     
     unsigned int getItemAmount(std::string item);
 
+    std::pair<std::string, unsigned int> getItemSlot(unsigned int slot);
+
     unsigned int inventorySize;
     float pickupRange;
     unsigned int stackSize;
