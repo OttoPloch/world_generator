@@ -1,57 +1,56 @@
 #include "cursor.hpp"
 #include "game.hpp"
-#include "input.hpp"
-#include "../ui/ui_element.hpp"
-#include "../ui/components/image_component.hpp"
+#include "input_manager.hpp"
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Window/Mouse.hpp>
-#include "../ui/ui_layer.hpp"
 #include "../entities/components/control_component.hpp"
 
-Cursor::Cursor(Game* game, std::string alternativeKeyForLeftClick, std::string alternativeKeyForRightClick) : game(game), input(game->getInput()), alternativeKeyForLeftClick(alternativeKeyForLeftClick), alternativeKeyForRightClick(alternativeKeyForRightClick)
+Cursor::Cursor(Game* game, std::string alternativeKeyForLeftClick, std::string alternativeKeyForRightClick) : game(game), inputManager(game->getInputManager()), alternativeKeyForLeftClick(alternativeKeyForLeftClick), alternativeKeyForRightClick(alternativeKeyForRightClick)
 {
     sf::Vector2u windowSize = game->getWindow()->getSize();
     gameCursorPosition = toV2F(windowSize.x / 2, windowSize.y / 2);
 
-    cursorElement = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "__CURSOR", UIPosition(gameCursorPosition), INT32_MAX));
-    cursorElement->addComponent<ImageComponent>(game, cursorElement, UIPosition({0, 0}), "//CURSOR IMAGE", 0, game->getAssetManager()->getTexture("cursor"), sf::Vector2f(30, 30), false);
+    // REFACTOR
+    // cursorElement = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "__CURSOR", UIPosition(gameCursorPosition), INT32_MAX));
+    // cursorElement->addComponent<ImageComponent>(game, cursorElement, UIPosition({0, 0}), "//CURSOR IMAGE", 0, game->getAssetManager()->getTexture("cursor"), sf::Vector2f(30, 30), false);
 
     UIMode = false;
     usingMovementForUISelector = false;
     mouseMovedThisFrame = false;
 
-    UISelector = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "__UI SELECTOR", UIPosition({windowSize.x / 2.f, windowSize.y / 2.f}), INT32_MAX, nullptr));
-    UISelector->addComponent<BackgroundComponent>(game, UISelector, UIPosition({0, 0}), "SELECTOR BG", 0, sf::Vector2f(30, 30), 2, game->getAssetManager()->getTexture("white_border", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("background_8px", "ui/"), false);
-    UISelector->visible = false;
+    // REFACTOR
+    // UISelector = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "__UI SELECTOR", UIPosition({windowSize.x / 2.f, windowSize.y / 2.f}), INT32_MAX, nullptr));
+    // UISelector->addComponent<BackgroundComponent>(game, UISelector, UIPosition({0, 0}), "SELECTOR BG", 0, sf::Vector2f(30, 30), 2, game->getAssetManager()->getTexture("white_border", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("background_8px", "ui/"), false);
+    // UISelector->visible = false;
     selectedElement = nullptr;
     selectedComponent = nullptr;
 }
 
 void Cursor::inputUpdate(float dt)
 {
-    if (input->getControl("MENU"))
+    if (inputManager->getControl("MENU"))
     {
         UIMode = !UIMode;
 
         if (UIMode)
         {
-            cursorElement->visible = false;
+            // cursorElement->visible = false;
 
             selectedEntity = nullptr;
             selectedTile = nullptr;
         }
         else
         {
-            cursorElement->visible = true;
+            // cursorElement->visible = true;
         }
     }
 
     if (UIMode)
     {
-        if (selectedComponent) UISelector->visible = true;
+        // if (selectedComponent) UISelector->visible = true;
 
         usingMovementForUISelector = true;
-        sf::Vector2f movement = input->getMovement();
+        sf::Vector2f movement = inputManager->getMovement();
         usingMovementForUISelector = false;
 
         if (UIMoveClock.getElapsedTime().asSeconds() > game->getSettings()->input_UISelectorMoveCooldown)
@@ -66,7 +65,7 @@ void Cursor::inputUpdate(float dt)
     }
     else
     {
-        UISelector->visible = false;
+        // UISelector->visible = false;
 
         if (canDoInputType("TYPE:WORLD"))
         {
@@ -98,8 +97,8 @@ void Cursor::inputUpdate(float dt)
             if (!UIMode)
             {
                 sf::Vector2f cursorMovement = {
-                    input->getAxis(sf::Joystick::Axis::U) * game->getSettings()->input_controllerCursorSensitivity * dt,
-                    input->getAxis(sf::Joystick::Axis::V) * game->getSettings()->input_controllerCursorSensitivity * dt
+                    inputManager->getAxis(sf::Joystick::Axis::U) * game->getSettings()->input_controllerCursorSensitivity * dt,
+                    inputManager->getAxis(sf::Joystick::Axis::V) * game->getSettings()->input_controllerCursorSensitivity * dt
                 };
     
                 gameCursorPosition.x += cursorMovement.x;
@@ -116,9 +115,9 @@ void Cursor::inputUpdate(float dt)
     sf::Vector2u windowSize = game->getWindow()->getSize();
     gameCursorPosition = {std::min(std::max(gameCursorPosition.x, 0.f), toFloat(windowSize.x)), std::min(std::max(gameCursorPosition.y, 0.f), toFloat(windowSize.y))};
     
-    cursorElement->position.position = getGameCursorUIPosition();
+    // cursorElement->position.position = getGameCursorUIPosition();
 
-    cursorElement->updateVisuals();
+    // cursorElement->updateVisuals();
 
     mouseMovedThisFrame = false;
 }
@@ -135,35 +134,36 @@ void Cursor::moveUISelector(sf::Vector2f direction)
     {
         // finding a new component to select within the selected element.
 
-        newComponent = selectedElement->getNearestComponent(direction, selectedComponent);
+        // newComponent = selectedElement->getNearestComponent(direction, selectedComponent);
     }
 
     if (!newComponent)
     {
         // no options in the selected element or none are selected, finding a new element
 
-        UIElement* newElement = game->getScene()->getUILayer()->getNearestElement(direction, selectedElement);
+        // REFACTOR
+        // UIElement* newElement = game->getScene()->getUILayer()->getNearestElement(direction, selectedElement);
     
-        if (!newElement) return;
+        // if (!newElement) return;
     
-        selectedElement = newElement;
-        selectedComponent = newElement->getNearestComponent(direction, nullptr);
+        // selectedElement = newElement;
+        // selectedComponent = newElement->getNearestComponent(direction, nullptr);
 
         if (!selectedComponent) return;
 
-        UISelector->parent = newElement;
+        // UISelector->parent = newElement;
     }
     else
     {
         selectedComponent = newComponent;
     }
 
-    sf::FloatRect compGB = selectedComponent->getGlobalBounds();
+    // sf::FloatRect compGB = selectedComponent->getGlobalBounds();
 
-    UISelector->position.position = compGB.position - selectedElement->getGlobalBounds().position;
-    UISelector->getComponent<BackgroundComponent>()->resize(compGB.size);
+    // UISelector->position.position = compGB.position - selectedElement->getGlobalBounds().position;
+    // UISelector->getComponent<BackgroundComponent>()->resize(compGB.size);
 
-    UISelector->updateVisuals();
+    // UISelector->updateVisuals();
 }
 
 bool Cursor::isUIModeActive()
@@ -188,14 +188,15 @@ sf::Vector2f Cursor::getGameCursorWorldPosition()
 
 sf::Vector2f Cursor::getGameCursorUIPosition()
 {
-    sf::Vector2u windowSize(game->getWindow()->getSize());
-    sf::Vector2f cursorPositionFraction(gameCursorPosition.x / windowSize.x, gameCursorPosition.y / windowSize.y);
+    // REFACTOR
+    // sf::Vector2u windowSize(game->getWindow()->getSize());
+    // sf::Vector2f cursorPositionFraction(gameCursorPosition.x / windowSize.x, gameCursorPosition.y / windowSize.y);
     
-    sf::Vector2f UICursorPosition = game->getScene()->getUILayer()->getUIView().getSize();
-    UICursorPosition.x *= cursorPositionFraction.x;
-    UICursorPosition.y *= cursorPositionFraction.y;
+    // sf::Vector2f UICursorPosition = game->getScene()-getUILayer>()->getUIView().getSize();
+    // UICursorPosition.x *= cursorPositionFraction.x;
+    // UICursorPosition.y *= cursorPositionFraction.y;
 
-    return UICursorPosition;
+    return {100, 100};//UICursorPosition;
 }
 
 UIElement* Cursor::getSelectedElement()
@@ -261,15 +262,17 @@ bool Cursor::canDoInputType(std::string type)
         {
             return false;
         }
-
-        if (game->getScene()->getUILayer()->checkUICollision() || UIMode)
+        
+        // REFACTOR
+        if (false)//game->getScene()->getUILayer()->checkUICollision() || UIMode)
         {
             return false;
         }
     }
     else if (type == "TYPE:UI")
     {
-        if (!game->getScene()->getUILayer()->checkUICollision() && !UIMode)
+        // REFACTOR
+        if (false)//!game->getScene()->getUILayer()->checkUICollision() && !UIMode)
         {
             return false;
         }
@@ -291,7 +294,7 @@ bool Cursor::getMouseClick(sf::Mouse::Button mouseButton)
         else
         {
             if (!UIMode && isPressed) return true;
-            if (UIMode && input->isKeyPressed(alternativeKeyForLeftClick)) return true;
+            if (UIMode && inputManager->isKeyPressed(alternativeKeyForLeftClick)) return true;
         }
     }
     else if (mouseButton == sf::Mouse::Button::Right)
@@ -305,7 +308,7 @@ bool Cursor::getMouseClick(sf::Mouse::Button mouseButton)
         else
         {
             if (!UIMode && isPressed) return true;
-            if (UIMode && input->isKeyPressed(alternativeKeyForRightClick)) return true;
+            if (UIMode && inputManager->isKeyPressed(alternativeKeyForRightClick)) return true;
         }
     }
 

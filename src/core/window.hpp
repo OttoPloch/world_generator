@@ -6,9 +6,7 @@
 class Window
 {
 public:
-    Window();
-
-    void create(sf::Vector2u size, std::string name, bool fullscreen, int maxFPS = 0, sf::Color bgColor = sf::Color::Black);
+    Window(sf::Vector2u size, std::string name, bool fullscreen, int maxFPS = 0, sf::Color bgColor = sf::Color::Black);
 
     void clear();
 
@@ -32,6 +30,8 @@ public:
 
     sf::Vector2u windowedSize;
 private:
+    void createWindow(sf::Vector2u size, std::string name, bool fullscreen, int maxFPS, sf::Color bgColor);
+
     sf::RenderWindow window;
 
     sf::Color bgColor;

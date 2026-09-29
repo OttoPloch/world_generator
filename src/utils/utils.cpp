@@ -94,9 +94,9 @@ bool dynamicRectRectCollide(CollisionRect* in, sf::Vector2f inVel, CollisionRect
 
 bool mouseRectCollide(Game* game, sf::Vector2f position, sf::Vector2f size, bool useWorldMousePos)
 {
-    sf::Vector2f mousePos = game->getInput()->cursor->getGameCursorUIPosition();
+    sf::Vector2f mousePos = game->getInputManager()->cursor->getGameCursorUIPosition();
 
-    if (useWorldMousePos) mousePos = game->getInput()->cursor->getGameCursorWorldPosition();
+    if (useWorldMousePos) mousePos = game->getInputManager()->cursor->getGameCursorWorldPosition();
 
     return pointRectCollide(mousePos, {position, size});
 }
@@ -157,21 +157,23 @@ bool isOnScreen(Game* game, sf::Vector2f tl, sf::Vector2f size, bool useCameraVi
     }
     else
     {
-        sf::Vector2f UIViewSize = game->getScene()->getUILayer()->getUIView().getSize();
+        return true;
+        // REFACTOR
+        // sf::Vector2f UIViewSize = game->getScene()->getUILayer()->getUIView().getSize();
 
-        if (right >= 0)
-        {
-            if (left <= UIViewSize.x)
-            {
-                if (bottom >= 0)
-                {
-                    if (top <= UIViewSize.y)
-                    {
-                        return true;
-                    }
-                }
-            }
-        }
+        // if (right >= 0)
+        // {
+        //     if (left <= UIViewSize.x)
+        //     {
+        //         if (bottom >= 0)
+        //         {
+        //             if (top <= UIViewSize.y)
+        //             {
+        //                 return true;
+        //             }
+        //         }
+        //     }
+        // }
     }
 
     return false;

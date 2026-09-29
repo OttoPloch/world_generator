@@ -53,11 +53,11 @@
 // {
 //     if (uiLayer->interactiveUIManager.isControllerUIActive())
 //     {
-//         return (hover() && game->getInput()->isControlPressed("INTERACT"));
+//         return (hover() && game->getInputManager()->isControlPressed("INTERACT"));
 //     }
 //     else
 //     {
-//         return (hover() && game->getInput()->isKeyPressed("LEFTCLICK"));
+//         return (hover() && game->getInputManager()->isKeyPressed("LEFTCLICK"));
 //     }
 // }
 
@@ -70,7 +70,7 @@
 //     }
 //     else
 //     {
-//         return (hover() && game->getInput()->isKeyPressed("LEFTCLICK") && !game->getInput()->getKeyPressedLastFrame("LEFTCLICK"));
+//         return (hover() && game->getInputManager()->isKeyPressed("LEFTCLICK") && !game->getInputManager()->getKeyPressedLastFrame("LEFTCLICK"));
 //     }
 // }
 

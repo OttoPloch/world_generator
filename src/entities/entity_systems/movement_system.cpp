@@ -9,7 +9,7 @@ MovementSystem::MovementSystem(Game* game, Scene* scene) : game(game), scene(sce
 
 void MovementSystem::tick()
 {
-    std::vector<int> noLongerValidEntities;
+    std::vector<unsigned int> noLongerValidEntities;
 
     for (auto entity : validEntities)
     {
@@ -28,9 +28,9 @@ void MovementSystem::tick()
     
         if (entity->getComponent<ControlComponent>())
         {
-            movementVector = game->getInput()->getMovement();
+            movementVector = game->getInputManager()->getMovement();
     
-            if (game->getInput()->isControlPressed("SPRINT")) speedMult = entityMovementComponent->stats.sprintMultilpier;
+            if (game->getInputManager()->isControlPressed("SPRINT")) speedMult = entityMovementComponent->stats.sprintMultilpier;
         }
     
         if (movementVector != sf::Vector2f(0, 0))

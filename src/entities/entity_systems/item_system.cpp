@@ -30,7 +30,7 @@ void ItemSystem::refactorEntityCache()
 
 void ItemSystem::tickItems()
 {
-    std::vector<int> noLongerValidEntities;
+    std::vector<unsigned int> noLongerValidEntities;
 
     for (auto entity : itemsWithMovement)
     {
@@ -53,10 +53,10 @@ void ItemSystem::tickItems()
 
 void ItemSystem::tickInventories()
 {
-    std::vector<int> noLongerValidInventoryEntities;
-    std::vector<int> noLongerValidItemEntities;
+    std::vector<unsigned int> noLongerValidInventoryEntities;
+    std::vector<unsigned int> noLongerValidItemEntities;
 
-    std::vector<int> itemsToRemove;
+    std::vector<unsigned int> itemsToRemove;
 
     for (auto inventoryEntity : entitiesWithInventories)
     {
@@ -88,7 +88,7 @@ void ItemSystem::tickInventories()
     removeAllEntityIDsInVec(items, noLongerValidItemEntities);
 }
 
-void ItemSystem::tickItemCollect(std::vector<int>& itemsToRemove, Entity* itemEntity, Entity* inventoryEntity)
+void ItemSystem::tickItemCollect(std::vector<unsigned int>& itemsToRemove, Entity* itemEntity, Entity* inventoryEntity)
 {
     auto inventoryEntityInventoryComponent = inventoryEntity->getComponent<InventoryComponent>();
 
@@ -147,7 +147,7 @@ void ItemSystem::moveItemTowardsInventory(Entity* itemEntity, sf::Vector2f itemE
     itemEntityMovementComponent->velocity += itemVelocity;
 }
 
-void ItemSystem::pickupItem(std::vector<int>& itemsToRemove, InventoryComponent* inventoryEntityInventoryComponent, ItemComponent* itemEntityItemComponent, Entity* itemEntity)
+void ItemSystem::pickupItem(std::vector<unsigned int>& itemsToRemove, InventoryComponent* inventoryEntityInventoryComponent, ItemComponent* itemEntityItemComponent, Entity* itemEntity)
 {
     unsigned int extra;
     inventoryEntityInventoryComponent->pickupItem(itemEntityItemComponent->resource, itemEntityItemComponent->amount, extra);

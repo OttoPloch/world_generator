@@ -10,12 +10,12 @@ class Game;
 class UIElement;
 class UIComponent;
 
-class Input
+class InputManager
 {
 public:
-    Input();
+    InputManager();
 
-    Input(Game* game);
+    InputManager(Game* game);
 
 
 

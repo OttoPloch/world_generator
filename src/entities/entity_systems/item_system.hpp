@@ -25,11 +25,11 @@ private:
 
     void tickInventories();
 
-    void tickItemCollect(std::vector<int>& itemsToRemove, Entity* itemEntity, Entity* inventoryEntity);
+    void tickItemCollect(std::vector<unsigned int>& itemsToRemove, Entity* itemEntity, Entity* inventoryEntity);
 
     void moveItemTowardsInventory(Entity* itemEntity, sf::Vector2f itemEntityPos, sf::Vector2f inventoryEntityPos, float distance);
 
-    void pickupItem(std::vector<int>& itemsToRemove, InventoryComponent* inventoryEntityInventoryComponent, ItemComponent* itemEntityItemComponent, Entity* itemEntity);
+    void pickupItem(std::vector<unsigned int>& itemsToRemove, InventoryComponent* inventoryEntityInventoryComponent, ItemComponent* itemEntityItemComponent, Entity* itemEntity);
 
     Game* game;
     Scene* scene;

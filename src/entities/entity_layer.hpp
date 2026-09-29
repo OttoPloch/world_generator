@@ -20,7 +20,7 @@
 #include "entity_systems/entity_ui_system.hpp"
 
 // for entity systems to remove entities from their caches.
-inline void removeAllEntityIDsInVec(std::vector<Entity*>& entityVec, std::vector<int> IDsToRemove)
+inline void removeAllEntityIDsInVec(std::vector<Entity*>& entityVec, std::vector<unsigned int> IDsToRemove)
 {
     if (entityVec.size() == 0 || IDsToRemove.size() == 0) return;
 
@@ -48,16 +48,14 @@ public:
 
     void init(Game* game);
 
-    int getNewID();    
-
     Entity* addEntity(EntityTemplate* t = nullptr, bool useCustomPosition = false, sf::Vector2f position = {0, 0});
 
-    void removeEntity(int ID, bool refactorEntityCaches = true);
+    void removeEntity(unsigned int ID, bool refactorEntityCaches = true);
 
     // will refactor entity system caches after the last entity is removed.
-    void removeEntityBatch(std::vector<int> IDs);
+    void removeEntityBatch(std::vector<unsigned int> IDs);
 
-    Entity* getEntity(int ID);
+    Entity* getEntity(unsigned int ID);
 
     Entity* getEntityAtPos(sf::Vector2f position, bool includePlayer);
 
@@ -142,7 +140,7 @@ public:
         return entitiesWithRequiredComponents;
     }
 
-    std::map<int, std::unique_ptr<Entity>>* getAllEntities();
+    std::map<unsigned int, std::unique_ptr<Entity>>* getAllEntities();
 
     void tick();
 
@@ -154,11 +152,13 @@ public:
     
     TemplateManager tManager;
 private:
+    unsigned int getNewID();    
+
     void refactorEntitySystemCaches();
 
+    unsigned int IDCounter;
+    
     Game* game;
-
-    int IDCounter;
 
     PositionSystem positionSystem;
     CollisionSystem collisionSystem;
@@ -170,5 +170,5 @@ private:
     EntityChunkSystem entityChunkSystem;
     EntityUISystem entityUISystem;
 
-    std::map<int, std::unique_ptr<Entity>> entities;
+    std::map<unsigned int, std::unique_ptr<Entity>> entities;
 };

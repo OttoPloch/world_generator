@@ -5,11 +5,11 @@
 #include "window.hpp"
 #include "../graphics/asset_manager.hpp"
 #include "../entities/entity_layer.hpp"
-#include "../ui/ui_layer.hpp"
 #include "../world/chunk/chunk_layer.hpp"
 #include "../entities/components/entity_component.hpp"
 #include "../entities/components/movement_component.hpp"
 #include "../entities/actions/action.hpp"
+#include "../ui/ui_layer.hpp"
 
 #include <vector>
 
@@ -18,9 +18,7 @@ class Game;
 class Scene
 {
 public:
-    Scene();
-
-    void init(Game* game);
+    Scene(Game* p_game);
 
     void tick();
 
@@ -51,7 +49,7 @@ public:
     bool debugMode;
     int debugLevel;
 private:
-    Game* game;
+    Game* m_game;
     Window* window;
     AssetManager* assetManager;    
 

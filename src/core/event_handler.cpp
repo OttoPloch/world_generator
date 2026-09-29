@@ -34,19 +34,19 @@ void EventHandler::processEvents()
         }
         else if (const auto* mouseMoved = event->getIf<sf::Event::MouseMoved>())
         {
-            game->getInput()->cursor->mouseMoveEvent(*mouseMoved);
+            game->getInputManager()->cursor->mouseMoveEvent(*mouseMoved);
         }
         else if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>())
         {
-            game->getInput()->mouseButtonEvent(*mouseButtonPressed);
+            game->getInputManager()->mouseButtonEvent(*mouseButtonPressed);
         }
         else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
         {
-            game->getInput()->keyEvent(*keyPressed);
+            game->getInputManager()->keyEvent(*keyPressed);
         }
         else if (const auto* buttonPressed = event->getIf<sf::Event::JoystickButtonPressed>())
         {
-            game->getInput()->buttonEvent(*buttonPressed);
+            game->getInputManager()->buttonEvent(*buttonPressed);
         }
     }
 

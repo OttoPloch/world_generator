@@ -388,198 +388,198 @@ TextureAtlas* AssetManager::getTextureAtlas(std::string name, std::string pathFr
     }
 }
 
-UIAnimationData* AssetManager::getUIAnimationData(std::string name)
-{
-    auto entry = UIAnimationDataMap.find(name);
+// UIAnimationData* AssetManager::getUIAnimationData(std::string name)
+// {
+//     auto entry = UIAnimationDataMap.find(name);
 
-    if (entry != UIAnimationDataMap.end())
-    {
-        return &entry->second;
-    }
-    else
-    {
-        UIAnimationData newData = {};
+//     if (entry != UIAnimationDataMap.end())
+//     {
+//         return &entry->second;
+//     }
+//     else
+//     {
+//         UIAnimationData newData = {};
 
-        if (!std::filesystem::exists("../../assets/ui_animations/" + name + ".uianim"))
-        {
-            std::cout << "ERROR loading UI Animation with name '" << name << "'. No .uianim file in assets/ui_animations/ with that name.\n";
+//         if (!std::filesystem::exists("../../assets/ui_animations/" + name + ".uianim"))
+//         {
+//             std::cout << "ERROR loading UI Animation with name '" << name << "'. No .uianim file in assets/ui_animations/ with that name.\n";
             
-            return nullptr;
-        }
-        else
-        {
-            // load animation
-            std::ifstream dataFile("../../assets/ui_animations/" + name + ".uianim");
+//             return nullptr;
+//         }
+//         else
+//         {
+//             // load animation
+//             std::ifstream dataFile("../../assets/ui_animations/" + name + ".uianim");
 
-            float timeToComplete;
-            bool relativePos;
-            sf::Vector2f startPosition;
-            sf::Vector2f endPosition;
-            std::unique_ptr<UIOrigin> startOrigin;
-            std::unique_ptr<UIOrigin> endOrigin;
-            std::unique_ptr<UIAnchor> startAnchor;
-            std::unique_ptr<UIAnchor> endAnchor;
+//             float timeToComplete;
+//             bool relativePos;
+//             sf::Vector2f startPosition;
+//             sf::Vector2f endPosition;
+//             std::unique_ptr<UIOrigin> startOrigin;
+//             std::unique_ptr<UIOrigin> endOrigin;
+//             std::unique_ptr<UIAnchor> startAnchor;
+//             std::unique_ptr<UIAnchor> endAnchor;
 
-            std::string line;
+//             std::string line;
 
-            while (std::getline(dataFile, line))
-            {
-                if (line.substr(0, 4) == "time") timeToComplete = std::stof(line.substr(5));
-                if (line.substr(0, 11) == "relativepos")
-                {
-                    std::string a = line.substr(12);
+//             while (std::getline(dataFile, line))
+//             {
+//                 if (line.substr(0, 4) == "time") timeToComplete = std::stof(line.substr(5));
+//                 if (line.substr(0, 11) == "relativepos")
+//                 {
+//                     std::string a = line.substr(12);
 
-                    if (a == "yes" || a == "1")
-                    {
-                        relativePos = true;
-                    }
-                    else if (a == "no" || a == "0")
-                    {
-                        relativePos = false;
-                    }
-                    else
-                    {
-                        std::cout << "ERROR getting relative pos of ui animation data with name '" << name << "'. '" << a << "' does not match an accepted answer. use (either yes or 1) or (either no or 0).\n";
+//                     if (a == "yes" || a == "1")
+//                     {
+//                         relativePos = true;
+//                     }
+//                     else if (a == "no" || a == "0")
+//                     {
+//                         relativePos = false;
+//                     }
+//                     else
+//                     {
+//                         std::cout << "ERROR getting relative pos of ui animation data with name '" << name << "'. '" << a << "' does not match an accepted answer. use (either yes or 1) or (either no or 0).\n";
 
-                        return nullptr;
-                    }
-                }
-                if (line.substr(0, 8) == "startpos")
-                {
-                    std::string substr = line.substr(9);
-                    int commaIndex = substr.find(',');
-                    if (commaIndex != std::string::npos)
-                    {
-                        float posX = std::floor(std::stof(substr.substr(0, commaIndex)));
-                        float posY = std::floor(std::stof(substr.substr(commaIndex + 1)));
+//                         return nullptr;
+//                     }
+//                 }
+//                 if (line.substr(0, 8) == "startpos")
+//                 {
+//                     std::string substr = line.substr(9);
+//                     int commaIndex = substr.find(',');
+//                     if (commaIndex != std::string::npos)
+//                     {
+//                         float posX = std::floor(std::stof(substr.substr(0, commaIndex)));
+//                         float posY = std::floor(std::stof(substr.substr(commaIndex + 1)));
 
-                        startPosition = {posX, posY};
-                    }
-                    else
-                    {
-                        startPosition = {0, 0};
+//                         startPosition = {posX, posY};
+//                     }
+//                     else
+//                     {
+//                         startPosition = {0, 0};
 
-                        std::cout << "error getting start position of ui animation data with name '" << name << "'. Make sure the .uianim file has its start position typed properly ('startpos x,y')";
-                    }
-                }
-                if (line.substr(0, 6) == "endpos")
-                {
-                    std::string substr = line.substr(7);
-                    int commaIndex = substr.find(',');
-                    if (commaIndex != std::string::npos)
-                    {
-                        float posX = std::floor(std::stof(substr.substr(0, commaIndex)));
-                        float posY = std::floor(std::stof(substr.substr(commaIndex + 1)));
+//                         std::cout << "error getting start position of ui animation data with name '" << name << "'. Make sure the .uianim file has its start position typed properly ('startpos x,y')";
+//                     }
+//                 }
+//                 if (line.substr(0, 6) == "endpos")
+//                 {
+//                     std::string substr = line.substr(7);
+//                     int commaIndex = substr.find(',');
+//                     if (commaIndex != std::string::npos)
+//                     {
+//                         float posX = std::floor(std::stof(substr.substr(0, commaIndex)));
+//                         float posY = std::floor(std::stof(substr.substr(commaIndex + 1)));
 
-                        endPosition = {posX, posY};
-                    }
-                    else
-                    {
-                        endPosition = {0, 0};
+//                         endPosition = {posX, posY};
+//                     }
+//                     else
+//                     {
+//                         endPosition = {0, 0};
 
-                        std::cout << "error getting end position of ui animation data with name '" << name << "'. Make sure the .uianim file has its end position typed properly ('endpos x,y')";
-                    }
-                }
-                if (line.substr(0, 11) == "startorigin")
-                {
-                    if (line.substr(12) == "x")
-                    {
+//                         std::cout << "error getting end position of ui animation data with name '" << name << "'. Make sure the .uianim file has its end position typed properly ('endpos x,y')";
+//                     }
+//                 }
+//                 if (line.substr(0, 11) == "startorigin")
+//                 {
+//                     if (line.substr(12) == "x")
+//                     {
 
-                    }
-                    else
-                    {
-                        int a = static_cast<int>(std::stof(line.substr(12)));
+//                     }
+//                     else
+//                     {
+//                         int a = static_cast<int>(std::stof(line.substr(12)));
     
-                        if (a < enumSize<UIOrigin>())
-                        {
-                            startOrigin = std::make_unique<UIOrigin>(static_cast<UIOrigin>(a));
-                        }
-                        else
-                        {
-                            std::cout << "ERROR getting start origin of ui animation data with name '" << name << "'. " << a << " does not correspond to a UIOrigin.\n";
+//                         if (a < enumSize<UIOrigin>())
+//                         {
+//                             startOrigin = std::make_unique<UIOrigin>(static_cast<UIOrigin>(a));
+//                         }
+//                         else
+//                         {
+//                             std::cout << "ERROR getting start origin of ui animation data with name '" << name << "'. " << a << " does not correspond to a UIOrigin.\n";
                             
-                            return nullptr;
-                        }
-                    }
-                }
-                if (line.substr(0, 9) == "endorigin")
-                {
-                    if (line.substr(10) == "x")
-                    {
+//                             return nullptr;
+//                         }
+//                     }
+//                 }
+//                 if (line.substr(0, 9) == "endorigin")
+//                 {
+//                     if (line.substr(10) == "x")
+//                     {
 
-                    }
-                    else
-                    {
-                        int a = static_cast<int>(std::stof(line.substr(10)));
+//                     }
+//                     else
+//                     {
+//                         int a = static_cast<int>(std::stof(line.substr(10)));
 
-                        if (a < enumSize<UIOrigin>())
-                        {
-                            endOrigin = std::make_unique<UIOrigin>(static_cast<UIOrigin>(a));
-                        }
-                        else
-                        {
-                            std::cout << "ERROR getting end origin of ui animation data with name '" << name << "'. " << a << " does not correspond to a UIOrigin.\n";
+//                         if (a < enumSize<UIOrigin>())
+//                         {
+//                             endOrigin = std::make_unique<UIOrigin>(static_cast<UIOrigin>(a));
+//                         }
+//                         else
+//                         {
+//                             std::cout << "ERROR getting end origin of ui animation data with name '" << name << "'. " << a << " does not correspond to a UIOrigin.\n";
                             
-                            return nullptr;
-                        }
-                    }
-                }
-                if (line.substr(0, 11) == "startanchor")
-                {
-                    if (line.substr(12) == "x")
-                    {
+//                             return nullptr;
+//                         }
+//                     }
+//                 }
+//                 if (line.substr(0, 11) == "startanchor")
+//                 {
+//                     if (line.substr(12) == "x")
+//                     {
 
-                    }
-                    else
-                    {
-                        int a = static_cast<int>(std::stof(line.substr(12)));
+//                     }
+//                     else
+//                     {
+//                         int a = static_cast<int>(std::stof(line.substr(12)));
 
-                        if (a < enumSize<UIAnchor>())
-                        {
-                            startAnchor = std::make_unique<UIAnchor>(static_cast<UIAnchor>(a));
-                        }
-                        else
-                        {
-                            std::cout << "ERROR getting start anchor of ui animation data with name '" << name << "'. " << a << " does not correspond to a UIAnchor.\n";
+//                         if (a < enumSize<UIAnchor>())
+//                         {
+//                             startAnchor = std::make_unique<UIAnchor>(static_cast<UIAnchor>(a));
+//                         }
+//                         else
+//                         {
+//                             std::cout << "ERROR getting start anchor of ui animation data with name '" << name << "'. " << a << " does not correspond to a UIAnchor.\n";
                             
-                            return nullptr;
-                        }
-                    }
-                }
-                if (line.substr(0, 9) == "endanchor")
-                {
-                    if (line.substr(10) == "x")
-                    {
+//                             return nullptr;
+//                         }
+//                     }
+//                 }
+//                 if (line.substr(0, 9) == "endanchor")
+//                 {
+//                     if (line.substr(10) == "x")
+//                     {
 
-                    }
-                    else
-                    {
-                        int a = static_cast<int>(std::stof(line.substr(10)));
+//                     }
+//                     else
+//                     {
+//                         int a = static_cast<int>(std::stof(line.substr(10)));
 
-                        if (a < enumSize<UIAnchor>())
-                        {
-                            endAnchor = std::make_unique<UIAnchor>(static_cast<UIAnchor>(a));
-                        }
-                        else
-                        {
-                            std::cout << "ERROR getting end anchor of ui animation data with name '" << name << "'. " << a << " does not correspond to a UIAnchor.\n";
+//                         if (a < enumSize<UIAnchor>())
+//                         {
+//                             endAnchor = std::make_unique<UIAnchor>(static_cast<UIAnchor>(a));
+//                         }
+//                         else
+//                         {
+//                             std::cout << "ERROR getting end anchor of ui animation data with name '" << name << "'. " << a << " does not correspond to a UIAnchor.\n";
                             
-                            return nullptr;
-                        }
-                    }
-                }
-            }
+//                             return nullptr;
+//                         }
+//                     }
+//                 }
+//             }
 
-            dataFile.close();
+//             dataFile.close();
 
-            newData = {name, timeToComplete, relativePos, startPosition, endPosition, std::move(startOrigin), std::move(endOrigin), std::move(startAnchor), std::move(endAnchor)};
-        }
+//             newData = {name, timeToComplete, relativePos, startPosition, endPosition, std::move(startOrigin), std::move(endOrigin), std::move(startAnchor), std::move(endAnchor)};
+//         }
 
-        UIAnimationDataMap[name] = std::move(newData);
+//         UIAnimationDataMap[name] = std::move(newData);
 
-        return &UIAnimationDataMap[name];
-    }
-}
+//         return &UIAnimationDataMap[name];
+//     }
+// }
 
 void AssetManager::updateGlobalAnimations(float dt)
 {

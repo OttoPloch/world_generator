@@ -1,60 +1,38 @@
 #pragma once
 
-#include "../core/common.hpp"
-#include "../core/camera.hpp"
-#include "../graphics/asset_manager.hpp"
+#include <map>
+#include <memory>
+#include <SFML/Graphics/View.hpp>
 #include "ui_element.hpp"
 
-#include <vector>
-#include <map>
-
 class Game;
+class Camera;
 
 class UILayer
 {
 public:
-    UILayer();
+    UILayer(Game* p_game, Camera* p_camera);
 
-    void init(Game* game, Camera* camera);
-    
-    UIElement* getElement(std::string name);
-
-    UIElement* createElement(std::unique_ptr<UIElement> element);
-
-    // removes ALL elements with the exact name given.
-    bool removeElement(std::string elementName);
-
-    sf::View getUIView();
-
-    // retuns true if the cursor collides with any ui (not including elements with a world position).
-    bool checkUICollision();
-
-    bool isElementOnTopAtPoint(UIElement* element, sf::Vector2f point);
+    void addElement(std::unique_ptr<UIElement> p_newElement);
 
     void updateVisuals();
 
+    void update(float p_dt);
+
     void tick();
 
-    void UIUpdate(float dt);
-
-    void draw(bool debug);
-    
-    UIElement* getNearestElement(sf::Vector2f direction, UIElement* element);
+    void draw(bool p_debug);
 private:
-    void setDebugVertices();
+    unsigned int getNewID();
 
     void setUIViewSize();
 
-    Game* game;
-    AssetManager* assetManager;
-    Camera* camera;
-    
-    sf::View UIView;
-    
-    std::vector<std::unique_ptr<UIElement>> elements;
+    unsigned int m_IDCounter;
 
-    std::vector<sf::Vertex> debugWorldComponentBoundingBoxes;
-    std::vector<sf::Vertex> debugWorldElementBoundingBoxes;
-    std::vector<sf::Vertex> debugScreenComponentBoundingBoxes;
-    std::vector<sf::Vertex> debugScreenElementBoundingBoxes;
+    Game* m_game;
+    Camera* m_camera;
+
+    sf::View UIView;
+
+    std::map<unsigned int, std::unique_ptr<UIElement>> m_elements;
 };

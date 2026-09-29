@@ -1,10 +1,10 @@
 #pragma once
 
-#include "common.hpp"
-#include "../entities/entity.hpp"
+#include <SFML/Graphics.hpp>
 
 class Game;
 class Window;
+class Entity;
 
 class Camera
 {

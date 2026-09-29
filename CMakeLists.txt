@@ -18,7 +18,7 @@ src/core/game.cpp
 src/core/window.cpp
 src/core/event_handler.cpp
 src/core/camera.cpp
-src/core/input.cpp
+src/core/input_manager.cpp
 src/core/scene.cpp
 src/core/cursor.cpp
 
@@ -42,10 +42,13 @@ src/entities/components/sprite_component.cpp
 src/entities/components/item_component.cpp
 src/entities/components/inventory_component.cpp
 src/entities/components/entity_ui_component.cpp
+
 src/entities/actions/action.cpp
 src/entities/actions/mine_action.cpp
+
 src/entities/template_manager.cpp
 src/entities/collision_rect.cpp
+
 src/entities/entity_systems/position_system.cpp
 src/entities/entity_systems/collision_system.cpp
 src/entities/entity_systems/render_system.cpp
@@ -66,14 +69,7 @@ src/graphics/animation_set.cpp
 
 src/ui/ui_layer.cpp
 src/ui/ui_element.cpp
-src/ui/ui_position.cpp
-src/ui/animations/ui_animation.cpp
-src/ui/animations/ui_animation_data.cpp
-src/ui/components/ui_component.cpp
-src/ui/components/background_component.cpp
-src/ui/components/text_component.cpp
-src/ui/components/button_component.cpp
-src/ui/components/image_component.cpp
+src/ui/text_ui_element.cpp
 
 src/world/background_object.cpp
 

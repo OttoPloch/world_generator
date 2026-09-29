@@ -21,5 +21,5 @@ private:
     Scene* scene;
     EntityLayer* entityLayer;
 
-    std::map<int, std::unique_ptr<Entity>>* allEntities;
+    std::map<unsigned int, std::unique_ptr<Entity>>* allEntities;
 };

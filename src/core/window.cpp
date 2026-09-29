@@ -1,9 +1,60 @@
 #include "window.hpp"
 #include <SFML/Window/VideoMode.hpp>
 
-Window::Window() {}
+Window::Window(sf::Vector2u size, std::string name, bool fullscreen, int maxFPS, sf::Color bgColor)
+{
+    createWindow(size, name, fullscreen, maxFPS, bgColor);
+}
 
-void Window::create(sf::Vector2u size, std::string name, bool fullscreen, int maxFPS, sf::Color bgColor)
+void Window::clear()
+{
+    window.clear(bgColor);
+}
+
+void Window::draw(sf::Drawable& drawable)
+{
+    window.draw(drawable);
+}
+
+void Window::display()
+{
+    window.display();
+}
+
+void Window::exit()
+{
+    window.close();
+}
+
+void Window::toggleFullscreen()
+{
+    fullscreen = !fullscreen;
+
+    createWindow(windowedSize, name, fullscreen, maxFPS, bgColor);
+}
+
+void Window::resized(sf::View newView)
+{
+    if (!fullscreen) windowedSize = window.getSize();
+
+    setView(newView);
+}
+
+void Window::setView(sf::View view)
+{
+    window.setView(view);
+}
+
+sf::RenderWindow& Window::getWindow() { return window; }
+
+sf::Vector2u Window::getSize() { return window.getSize(); }
+
+float Window::getAspectRatio()
+{
+    return static_cast<float>(window.getSize().x) / static_cast<float>(window.getSize().y);
+}
+
+void Window::createWindow(sf::Vector2u size, std::string name, bool fullscreen, int maxFPS, sf::Color bgColor)
 {
     sf::State windowState;
 
@@ -34,52 +85,4 @@ void Window::create(sf::Vector2u size, std::string name, bool fullscreen, int ma
     }
     
     this->bgColor = bgColor;
-}
-
-void Window::clear()
-{
-    window.clear(bgColor);
-}
-
-void Window::draw(sf::Drawable& drawable)
-{
-    window.draw(drawable);
-}
-
-void Window::display()
-{
-    window.display();
-}
-
-void Window::exit()
-{
-    window.close();
-}
-
-void Window::toggleFullscreen()
-{
-    fullscreen = !fullscreen;
-
-    create(windowedSize, name, fullscreen, maxFPS, bgColor);
-}
-
-void Window::resized(sf::View newView)
-{
-    if (!fullscreen) windowedSize = window.getSize();
-
-    setView(newView);
-}
-
-void Window::setView(sf::View view)
-{
-    window.setView(view);
-}
-
-sf::RenderWindow& Window::getWindow() { return window; }
-
-sf::Vector2u Window::getSize() { return window.getSize(); }
-
-float Window::getAspectRatio()
-{
-    return static_cast<float>(window.getSize().x) / static_cast<float>(window.getSize().y);
 }

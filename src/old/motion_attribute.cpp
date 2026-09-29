@@ -28,12 +28,12 @@
 
 //     if (controlling)
 //     {   
-//         sf::Vector2f movement = game->getInput()->getMovement();
+//         sf::Vector2f movement = game->getInputManager()->getMovement();
 
 //         float baseSpeed = gamerules->player_moveSpeed;
 //         float speed = baseSpeed;
 
-//         if (game->getInput()->getControl("SPRINT")) speed *= 2.f;
+//         if (game->getInputManager()->getControl("SPRINT")) speed *= 2.f;
 
 //         if (movement.x != 0)
 //         {
@@ -48,7 +48,7 @@
         
 //         if (std::fabs(velocity.y) <= std::fabs(velocity.x))
 //         {
-//             if (game->getInput()->getControl("SPRINT"))
+//             if (game->getInputManager()->getControl("SPRINT"))
 //             {
 //                 if (velocity.x < 0) states->set("animation", ANIM_RUNNINGLEFT, (baseSpeed / speed));
 //                 if (velocity.x > 0) states->set("animation", ANIM_RUNNINGRIGHT, .8f);
@@ -71,7 +71,7 @@
 //             (std::fabs(velocity.y) > velocityCutoff) ? velocity.y *= friction : velocity.y = 0.f;
 //         }
 
-//         if (game->getInput()->getControl("SPRINT"))
+//         if (game->getInputManager()->getControl("SPRINT"))
 //         {
 //             if (velocity.y < 0) states->set("animation", ANIM_RUNNINGUP, (baseSpeed / speed));
 //             if (velocity.y > 0) states->set("animation", ANIM_RUNNINGDOWN, (baseSpeed / speed));

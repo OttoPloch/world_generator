@@ -8,7 +8,7 @@ AnimationSystem::AnimationSystem(Game* game, Scene* scene) : game(game), scene(s
 
 void AnimationSystem::update(float dt)
 {
-    std::vector<int> noLongerValidEntities;
+    std::vector<unsigned int> noLongerValidEntities;
 
     for (auto entity : validEntities)
     {

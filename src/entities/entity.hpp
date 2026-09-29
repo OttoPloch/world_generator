@@ -8,7 +8,7 @@ class Game;
 class Entity
 {
 public:
-    Entity(int ID, Game* game, sf::Vector2f position);
+    Entity(unsigned int ID, Game* game, sf::Vector2f position);
     
     template<typename T>
     T* getComponent()
@@ -51,7 +51,7 @@ public:
         }
     }
     
-    const int ID;
+    const unsigned int ID;
 
     Game* game;
 

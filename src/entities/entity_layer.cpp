@@ -157,7 +157,7 @@ void EntityLayer::init(Game* game)
     refactorEntitySystemCaches();
 }
 
-int EntityLayer::getNewID()
+unsigned int EntityLayer::getNewID()
 {
     IDCounter++;
 
@@ -166,7 +166,7 @@ int EntityLayer::getNewID()
 
 Entity* EntityLayer::addEntity(EntityTemplate* t, bool useCustomPosition, sf::Vector2f position)
 {
-    int ID = getNewID();
+    unsigned int ID = getNewID();
 
     sf::Vector2f usedPosition = position;
     if (t && t->positionData) usedPosition = t->positionData->position;
@@ -194,7 +194,7 @@ Entity* EntityLayer::addEntity(EntityTemplate* t, bool useCustomPosition, sf::Ve
     return entities[ID].get();
 }
 
-void EntityLayer::removeEntity(int ID, bool refactorEntityCaches)
+void EntityLayer::removeEntity(unsigned int ID, bool refactorEntityCaches)
 {
     if (entities.find(ID) != entities.end())
     {
@@ -215,7 +215,7 @@ void EntityLayer::removeEntity(int ID, bool refactorEntityCaches)
     std::cout << "ERROR removing entity with ID of " << ID << ". That entity was not found.\n";
 }
 
-void EntityLayer::removeEntityBatch(std::vector<int> IDs)
+void EntityLayer::removeEntityBatch(std::vector<unsigned int> IDs)
 {
     if (IDs.size() == 0) return;
 
@@ -226,7 +226,7 @@ void EntityLayer::removeEntityBatch(std::vector<int> IDs)
     }
 }
 
-Entity* EntityLayer::getEntity(int ID)
+Entity* EntityLayer::getEntity(unsigned int ID)
 {
     if (entities.find(ID) != entities.end())
     {
@@ -294,7 +294,7 @@ std::vector<Entity*> EntityLayer::getEntitiesInChunkArea(sf::Vector2f position, 
     return getEntitiesInChunkArea(chunkX, chunkY, chunkRadius);   
 }
 
-std::map<int, std::unique_ptr<Entity>>* EntityLayer::getAllEntities()
+std::map<unsigned int, std::unique_ptr<Entity>>* EntityLayer::getAllEntities()
 {
     return &entities;
 }

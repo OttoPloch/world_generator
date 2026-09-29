@@ -12,7 +12,7 @@ RenderSystem::RenderSystem(Game* game, Scene* scene) : game(game), scene(scene),
 
 void RenderSystem::update(float dt)
 {
-    std::vector<int> noLongerValidEntities;
+    std::vector<unsigned int> noLongerValidEntities;
 
     for (auto entity : validEntities)
     {
@@ -36,7 +36,7 @@ void RenderSystem::draw(bool debug)
         return a->getComponent<SpriteComponent>()->sprite.bottom() < b->getComponent<SpriteComponent>()->sprite.bottom();
     });
 
-    std::vector<int> noLongerValidEntities;
+    std::vector<unsigned int> noLongerValidEntities;
 
     for (auto entity : validEntities)
     {

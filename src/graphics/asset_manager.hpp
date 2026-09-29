@@ -5,7 +5,6 @@
 #include "global_animation.hpp"
 #include "animation_set.hpp"
 #include "texture_atlas.hpp"
-#include "../ui/animations/ui_animation_data.hpp"
 
 #include <map>
 #include <string>
@@ -29,7 +28,7 @@ public:
 
     TextureAtlas* getTextureAtlas(std::string name, std::string pathFromTextureAtlases = "");
 
-    UIAnimationData* getUIAnimationData(std::string name);
+    // UIAnimationData* getUIAnimationData(std::string name);
 
     void updateGlobalAnimations(float dt);
 private:
@@ -45,5 +44,5 @@ private:
 
     std::unordered_map<std::string, TextureAtlas> atlasMap;
 
-    std::unordered_map<std::string, UIAnimationData> UIAnimationDataMap;
+    // std::unordered_map<std::string, UIAnimationData> UIAnimationDataMap;
 };

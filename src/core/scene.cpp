@@ -1,12 +1,11 @@
 #include "scene.hpp"
 #include "game.hpp"
-#include "input.hpp"
+#include "input_manager.hpp"
 #include "../entities/states.hpp"
 #include "../utils/utils.hpp"
 #include "../entities/actions/action.hpp"
 #include "../entities/actions/mine_action.hpp"
 #include "../entities/actions/mine_action.hpp"
-#include "../ui/components/button_component.hpp"
 #include "../entities/components/components.hpp"
 
 #include <SFML/Graphics/CircleShape.hpp>
@@ -16,33 +15,23 @@
 #include <memory>
 #include <string>
 
-Scene::Scene() {}
-
-void Scene::init(Game* game)
+Scene::Scene(Game* p_game) : m_game(p_game), window(m_game->getWindow()), uiLayer(p_game, &camera)
 {
-    this->game = game;
-
-    window = game->getWindow();
-
-    assetManager = game->getAssetManager();
+    assetManager = m_game->getAssetManager();
     
-    chunkLayer.init(game);
+    chunkLayer.init(m_game);
 
-    entityLayer.init(game);
+    entityLayer.init(m_game);
 
-    camera.init(game, false, {0, 0}, toV2F(window->getSize()), entityLayer.player);
-
-    uiLayer.init(game, &camera);
+    camera.init(m_game, false, {0, 0}, toV2F(window->getSize()), entityLayer.player);
 
     debugMode = false;
     debugLevel = 0;
-    debugChunkLayerView = -1;
+    debugChunkLayerView = -1;   
 }
 
 void Scene::tick()
-{   
-    // std::cout << worldChunkOrigin.x << ", " << worldChunkOrigin.y << '\n';
-
+{
     camera.tick();
 
     chunkLayer.tick();
@@ -51,54 +40,54 @@ void Scene::tick()
 
     uiLayer.tick();
 
-    // TEMP
-    sf::Vector2i mouseChunkPos = worldToChunkPosition(game, game->getInput()->cursor->getGameCursorWorldPosition());
-    // uiLayer.getElement("mouse chunk pos display")->getAsText()->setValue(std::to_string(mouseChunkPos.x) + ", " + std::to_string(mouseChunkPos.y));
-    auto element = uiLayer.getElement("__debug text display");
-    if (element)
-    {
-        if (auto chunkPosText = element->getComponent<TextComponent>("//mouse chunk pos text"))
-        {
-            chunkPosText->setText("Mouse Chunk Pos: " + std::to_string(mouseChunkPos.x) + ", " + std::to_string(mouseChunkPos.y));
-        }
+    // // TEMP
+    // sf::Vector2i mouseChunkPos = worldToChunkPosition(game, game->getInputManager()->cursor->getGameCursorWorldPosition());
+    // // uiLayer.getElement("mouse chunk pos display")->getAsText()->setValue(std::to_string(mouseChunkPos.x) + ", " + std::to_string(mouseChunkPos.y));
+    // auto element = uiLayer.getElement("__debug text display");
+    // if (element)
+    // {
+    //     if (auto chunkPosText = element->getComponent<TextComponent>("//mouse chunk pos text"))
+    //     {
+    //         chunkPosText->setText("Mouse Chunk Pos: " + std::to_string(mouseChunkPos.x) + ", " + std::to_string(mouseChunkPos.y));
+    //     }
     
-        std::string mouseTileType = "none";
-        Tile* selectedTile = game->getInput()->cursor->getSelectedTile();
+    //     std::string mouseTileType = "none";
+    //     Tile* selectedTile = game->getInputManager()->cursor->getSelectedTile();
 
-        if (selectedTile)
-        {
-            std::map<TileType, std::string> typesToStrings {
-                {TileType::AIR, "air"},
-                {TileType::WATER, "water"},
-                {TileType::GRASS, "grass"},
-                {TileType::STONE, "stone"},
-                {TileType::LAVA, "lava"},
-                {TileType::COBBLE, "cobble"},
-                {TileType::PINK, "pink"},
-            };
+    //     if (selectedTile)
+    //     {
+    //         std::map<TileType, std::string> typesToStrings {
+    //             {TileType::AIR, "air"},
+    //             {TileType::WATER, "water"},
+    //             {TileType::GRASS, "grass"},
+    //             {TileType::STONE, "stone"},
+    //             {TileType::LAVA, "lava"},
+    //             {TileType::COBBLE, "cobble"},
+    //             {TileType::PINK, "pink"},
+    //         };
         
-            mouseTileType = typesToStrings[selectedTile->type];
-        }
+    //         mouseTileType = typesToStrings[selectedTile->type];
+    //     }
 
-        if (auto tileTypeText = element->getComponent<TextComponent>("//mouse tile type text"))
-        {
-            tileTypeText->setText("Mouse Tile Type: " + mouseTileType);
-        }
+    //     if (auto tileTypeText = element->getComponent<TextComponent>("//mouse tile type text"))
+    //     {
+    //         tileTypeText->setText("Mouse Tile Type: " + mouseTileType);
+    //     }
 
-        if (auto entityText = element->getComponent<TextComponent>("//mouse entity text"))
-        {
-            auto e = game->getInput()->cursor->getSelectedEntity();
+    //     if (auto entityText = element->getComponent<TextComponent>("//mouse entity text"))
+    //     {
+    //         auto e = game->getInputManager()->cursor->getSelectedEntity();
 
-            if (e) entityText->setText("Entity ID: " + std::to_string(e->ID));
-            else entityText->setText("No Entity Selected");
-        }
+    //         if (e) entityText->setText("Entity ID: " + std::to_string(e->ID));
+    //         else entityText->setText("No Entity Selected");
+    //     }
 
-        if (auto worldOriginText = element->getComponent<TextComponent>("//world origin text"))
-        {
-            worldOriginText->setText("World Chunk Origin: " + std::to_string(worldChunkOrigin.x) + ", " + std::to_string(worldChunkOrigin.y));
-        }
-    }
-    /////
+    //     if (auto worldOriginText = element->getComponent<TextComponent>("//world origin text"))
+    //     {
+    //         worldOriginText->setText("World Chunk Origin: " + std::to_string(worldChunkOrigin.x) + ", " + std::to_string(worldChunkOrigin.y));
+    //     }
+    // }
+    // /////
 }
 
 void Scene::update(float dt)
@@ -114,51 +103,54 @@ void Scene::update(float dt)
     entityLayer.update(dt);
     updateBlame["UPDATE_ENTITY_LAYER"] = debugClock.restart().asSeconds();
 
+    uiLayer.update(dt);
+    updateBlame["UPDATE_UI_LAYER"] = debugClock.restart().asSeconds();
+
     if (debugMode && debugLevel == 1) printBlameStats(updateBlame, "SCENE_UPDATE");
 }
 
-void Scene::UIUpdate(float dt)
-{
-    if (auto e = uiLayer.getElement("speed buttons"))
-    {
-        if (auto slower = e->getComponent<ButtonComponent>("slower button"))
-        {
-            if (slower->justPressed())
-            {
-                if (entityLayer.player)
-                {
-                    if (auto c = entityLayer.player->getComponent<MovementComponent>())
-                    {
-                        c->stats.speed -= 2;
+// void Scene::UIUpdate(float dt)
+// {
+    // if (auto e = uiLayer.getElement("speed buttons"))
+    // {
+    //     if (auto slower = e->getComponent<ButtonComponent>("slower button"))
+    //     {
+    //         if (slower->justPressed())
+    //         {
+    //             if (entityLayer.player)
+    //             {
+    //                 if (auto c = entityLayer.player->getComponent<MovementComponent>())
+    //                 {
+    //                     c->stats.speed -= 2;
 
-                        if (auto t = e->getComponent<TextComponent>("speed display"))
-                        {
-                            t->setText(std::to_string(toInt(c->stats.speed)));
-                        }
-                    }
-                }
-            }
-        }
+    //                     if (auto t = e->getComponent<TextComponent>("speed display"))
+    //                     {
+    //                         t->setText(std::to_string(toInt(c->stats.speed)));
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
         
-        if (auto faster = e->getComponent<ButtonComponent>("faster button"))
-        {
-            if (faster->justPressed())
-            {
-                if (entityLayer.player)
-                {
-                    if (auto c = entityLayer.player->getComponent<MovementComponent>())
-                    {
-                        c->stats.speed += 2;
+    //     if (auto faster = e->getComponent<ButtonComponent>("faster button"))
+    //     {
+    //         if (faster->justPressed())
+    //         {
+    //             if (entityLayer.player)
+    //             {
+    //                 if (auto c = entityLayer.player->getComponent<MovementComponent>())
+    //                 {
+    //                     c->stats.speed += 2;
 
-                        if (auto t = e->getComponent<TextComponent>("speed display"))
-                        {
-                            t->setText(std::to_string(toInt(c->stats.speed)));
-                        }
-                    }
-                }
-            }
-        }
-    }
+    //                     if (auto t = e->getComponent<TextComponent>("speed display"))
+    //                     {
+    //                         t->setText(std::to_string(toInt(c->stats.speed)));
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 
     // if (uiLayer.getElement("faster button")->getAsButton()->getActive())
     // {
@@ -226,8 +218,8 @@ void Scene::UIUpdate(float dt)
     //     }
     // }
 
-    uiLayer.UIUpdate(dt);
-}
+    // uiLayer.UIUpdate(dt);
+// }
 
 void Scene::chunkLoadUpdate()
 {
@@ -243,10 +235,10 @@ void Scene::draw()
 
     chunkLayer.draw(debugMode, debugChunkLayerView);
     drawBlame["DRAW_CHUNK_LAYER"] = debugClock.restart().asSeconds();
-    
+
     entityLayer.draw(debugMode);
     drawBlame["DRAW_ENTITY_LAYER"] = debugClock.restart().asSeconds();
-
+    
     uiLayer.draw(debugMode);
     drawBlame["DRAW_UI_LAYER"] = debugClock.restart().asSeconds();
 
@@ -277,13 +269,13 @@ void Scene::sceneInput(std::string control)
     }
     else if (control == "EXTRA 1")
     {
-        entityLayer.addEntity(&entityLayer.tManager.entityTemplates["player"], true, game->getInput()->cursor->getGameCursorWorldPosition());
+        entityLayer.addEntity(&entityLayer.tManager.entityTemplates["player"], true, m_game->getInputManager()->cursor->getGameCursorWorldPosition());
         
         // debugChunkLayerView++;
     }
     else if (control == "EXTRA 2")
     {
-        entityLayer.addEntity(&entityLayer.tManager.entityTemplates["box"], true, game->getInput()->cursor->getGameCursorWorldPosition());
+        entityLayer.addEntity(&entityLayer.tManager.entityTemplates["box"], true, m_game->getInputManager()->cursor->getGameCursorWorldPosition());
 
         // if (debugMode)
         // {
@@ -310,7 +302,7 @@ bool Scene::processActionRequest(Entity* actor, Action* action)
                 {
                     // TRYING TO MINE
 
-                    if (auto t = game->getInput()->cursor->getSelectedTile())
+                    if (auto t = m_game->getInputManager()->cursor->getSelectedTile())
                     {
                         // FOUND TARGETED TILE
 
@@ -367,7 +359,7 @@ void Scene::adjustWorldChunkOrigin(sf::Vector2i amount)
 {
     worldChunkOrigin += amount;
 
-    float chunkLength = game->getSettings()->tile_size * game->getSettings()->chunk_size;
+    float chunkLength = m_game->getSettings()->tile_size * m_game->getSettings()->chunk_size;
 
     auto allEntities = entityLayer.getAllEntities();
     for (auto& e : *allEntities)

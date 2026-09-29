@@ -5,7 +5,7 @@
 #include <iostream>
 #include <cmath>
 
-#include "input.hpp"
+#include "input_manager.hpp"
 #include "../utils/conversions.hpp"
 #include "../utils/utils.hpp"
 

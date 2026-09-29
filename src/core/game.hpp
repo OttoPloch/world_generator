@@ -17,7 +17,7 @@ class Game
 public:
     Game();
     
-    void init();
+    void start();
 
     void exit();
     
@@ -29,7 +29,7 @@ public:
 
     AssetManager* getAssetManager();
 
-    Input* getInput();
+    InputManager* getInputManager();
 
     Scene* getScene();
 
@@ -42,12 +42,14 @@ private:
     void update();
 
     void draw();
+
+    bool running;
     
     Window window;
     Settings settings;
     EventHandler eventHandler;
     AssetManager assetManager;
-    Input input;
+    InputManager inputManager;
     
     Scene scene;
 

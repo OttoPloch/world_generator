@@ -1,8 +1,6 @@
-#include "input.hpp"
+#include "input_manager.hpp"
 #include "game.hpp"
 #include "../ui/ui_element.hpp"
-#include "../ui/components/ui_component.hpp"
-#include "../ui/components/image_component.hpp"
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/Keyboard.hpp>
@@ -11,9 +9,9 @@
 #include <iostream>
 #include <algorithm>
 
-Input::Input() {}
+InputManager::InputManager() {}
 
-Input::Input(Game* game) : game(game)
+InputManager::InputManager(Game* game) : game(game)
 {
     cursor = std::make_unique<Cursor>(game, "SPACE", "LCONTROL");
 
@@ -181,7 +179,7 @@ Input::Input(Game* game) : game(game)
     };
 }
 
-bool Input::isKeyPressed(std::string key)
+bool InputManager::isKeyPressed(std::string key)
 {
     if (!game->getWindow()->getWindow().hasFocus()) return false;
     if (key == "NONE") return false;
@@ -198,7 +196,7 @@ bool Input::isKeyPressed(std::string key)
     {
         if (key.find("LEFTCLICK") == std::string::npos && key.find("RIGHTCLICK") == std::string::npos)
         {
-            std::cout << "ERROR in Input::isKeyPressed(). Trying to get key '" << key << "'. That's not a key!\n";
+            std::cout << "ERROR in InputManager::isKeyPressed(). Trying to get key '" << key << "'. That's not a key!\n";
             return false;
         }
     }
@@ -208,7 +206,7 @@ bool Input::isKeyPressed(std::string key)
     else return sf::Keyboard::isKeyPressed(static_cast<sf::Keyboard::Key>(stringToKey[key]));
 }
 
-bool Input::isButtonPressed(std::string button)
+bool InputManager::isButtonPressed(std::string button)
 {
     if (!game->getWindow()->getWindow().hasFocus()) return false;
     if (!sf::Joystick::isConnected(0)) return false;
@@ -224,7 +222,7 @@ bool Input::isButtonPressed(std::string button)
 
     if (stringToButton.find(button) == stringToButton.end())
     {
-        std::cout << "ERROR in Input::isButtonPressed(). Trying to get button '" << button << "'. That's not a button!\n";
+        std::cout << "ERROR in InputManager::isButtonPressed(). Trying to get button '" << button << "'. That's not a button!\n";
         return false;
     }
 
@@ -278,21 +276,21 @@ bool Input::isButtonPressed(std::string button)
     return pressed;
 }
 
-bool Input::isControlPressed(std::string control)
+bool InputManager::isControlPressed(std::string control)
 {
     if (!game->getWindow()->getWindow().hasFocus()) return false;
     if (control == "NONE") return false;
 
     if (controls.find(control) == controls.end())
     {
-        std::cout << "ERROR in Input::isControlPressed(). Trying to get control '" << control << "'. That's not a control!\n";
+        std::cout << "ERROR in InputManager::isControlPressed(). Trying to get control '" << control << "'. That's not a control!\n";
         return false;
     }
     
     return (isKeyPressed(controls[control].first) || isButtonPressed(controls[control].second));
 }
 
-bool Input::getKey(std::string key)
+bool InputManager::getKey(std::string key)
 {
     if (key == "NONE") return false;
 
@@ -309,7 +307,7 @@ bool Input::getKey(std::string key)
     else return keysPressedThisFrame[key];
 }
 
-bool Input::getButton(std::string button)
+bool InputManager::getButton(std::string button)
 {
     if (button == "NONE") return false;
 
@@ -324,13 +322,13 @@ bool Input::getButton(std::string button)
     return buttonsPressedThisFrame[button];
 }
 
-bool Input::getControl(std::string control)
+bool InputManager::getControl(std::string control)
 {
     if (control == "NONE") return false;
     return controlsPressedThisFrame[control];
 }
 
-float Input::getAxis(sf::Joystick::Axis axis)
+float InputManager::getAxis(sf::Joystick::Axis axis)
 {
     if (sf::Joystick::isConnected(0))
     {
@@ -340,7 +338,7 @@ float Input::getAxis(sf::Joystick::Axis axis)
     return 0.f;
 }
 
-sf::Vector2f Input::getMovement()
+sf::Vector2f InputManager::getMovement()
 {
     if (game->getWindow()->getWindow().hasFocus() && (!cursor->isUIModeActive() || cursor->isUsingMovementForUISelector()))
     {
@@ -381,7 +379,7 @@ sf::Vector2f Input::getMovement()
     return {0.f, 0.f};
 }
 
-void Input::inputUpdate(float dt)
+void InputManager::inputUpdate(float dt)
 {
     updateBlame.clear();
     debugClock.restart();
@@ -408,7 +406,7 @@ void Input::inputUpdate(float dt)
     if (game->getScene()->debugMode && game->getScene()->debugLevel == 1) printBlameStats(updateBlame, "INPUT_UPDATE");
 }
 
-void Input::mouseButtonEvent(sf::Event::MouseButtonPressed mouseButtonPressed)
+void InputManager::mouseButtonEvent(sf::Event::MouseButtonPressed mouseButtonPressed)
 {
     std::string responseInput;
 
@@ -418,17 +416,17 @@ void Input::mouseButtonEvent(sf::Event::MouseButtonPressed mouseButtonPressed)
     }
 }
     
-void Input::keyEvent(sf::Event::KeyPressed keyPressed)
+void InputManager::keyEvent(sf::Event::KeyPressed keyPressed)
 {
     keysPressedThisFrame[keyToString[static_cast<int>(keyPressed.code)]] = true;
 }
 
-void Input::buttonEvent(sf::Event::JoystickButtonPressed buttonPressed)
+void InputManager::buttonEvent(sf::Event::JoystickButtonPressed buttonPressed)
 {
     buttonsPressedThisFrame[buttonToString[static_cast<int>(buttonPressed.button)]] = true;
 }
 
-void Input::resetPressedThisFrame()
+void InputManager::resetPressedThisFrame()
 {
     keysPressedThisFrame.clear();
     buttonsPressedThisFrame.clear();

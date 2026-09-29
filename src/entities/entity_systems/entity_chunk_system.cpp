@@ -36,7 +36,7 @@ void EntityChunkSystem::removeEntityFromChunkVec(Entity* entity)
 
 void EntityChunkSystem::tick()
 {
-    std::vector<int> entitiesToUnload;
+    std::vector<unsigned int> entitiesToUnload;
 
     for (auto& i : *allEntities)
     {
@@ -50,7 +50,7 @@ void EntityChunkSystem::tick()
     unloadEntities(entitiesToUnload);
 }
 
-void EntityChunkSystem::tickEntityChunkSync(std::vector<int>& entitiesToUnload, Entity* entity)
+void EntityChunkSystem::tickEntityChunkSync(std::vector<unsigned int>& entitiesToUnload, Entity* entity)
 {
     sf::Vector2i entityChunkPosition = worldToChunkPosition(game, entity->position.getPosition());
     
@@ -86,7 +86,7 @@ void EntityChunkSystem::tickEntityChunkSync(std::vector<int>& entitiesToUnload, 
     entity->chunkPosition = entityChunkPosition;
 }
 
-void EntityChunkSystem::tickEntityUnload(std::vector<int>& entitiesToUnload, Entity* entity)
+void EntityChunkSystem::tickEntityUnload(std::vector<unsigned int>& entitiesToUnload, Entity* entity)
 {
     auto entityChunk = scene->getChunkLayer()->getChunk(entity->chunkPosition);
 
@@ -96,7 +96,7 @@ void EntityChunkSystem::tickEntityUnload(std::vector<int>& entitiesToUnload, Ent
     }
 }
 
-void EntityChunkSystem::unloadEntities(std::vector<int> entitiesToUnload)
+void EntityChunkSystem::unloadEntities(std::vector<unsigned int> entitiesToUnload)
 {
     entityLayer->removeEntityBatch(entitiesToUnload);
 }

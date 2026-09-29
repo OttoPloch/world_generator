@@ -14,18 +14,18 @@ void ActionSystem::update(float dt)
     {
         if (auto a = entityLayer->player->getComponent<ActionComponent>())
         {
-            if (game->getInput()->isControlPressed("MAIN ACTION"))
+            if (game->getInputManager()->isControlPressed("MAIN ACTION"))
             {
                 a->startAction("MAIN ACTION");
             }
-            else if (game->getInput()->isControlPressed("SECONDARY ACTION"))
+            else if (game->getInputManager()->isControlPressed("SECONDARY ACTION"))
             {
                 a->startAction("SECONDARY ACTION");
             }
         }
     }
 
-    std::vector<int> noLongerValidEntities;
+    std::vector<unsigned int> noLongerValidEntities;
 
     for (int i = 0; i < validEntities.size(); i++)
     {
@@ -63,7 +63,7 @@ void ActionSystem::update(float dt)
             
             if (!currentAction->active) continue;
             
-            if (currentAction->mustHoldDown && !game->getInput()->isControlPressed(currentActionInputName))
+            if (currentAction->mustHoldDown && !game->getInputManager()->isControlPressed(currentActionInputName))
             {
                 currentAction->reset(false);
             }
@@ -73,7 +73,7 @@ void ActionSystem::update(float dt)
                 {
                     if (currentAction->timeProgress >= currentAction->timeToComplete)
                     {
-                        currentAction->completeAction(entity, game->getInput()->cursor->getGameCursorWorldPosition());
+                        currentAction->completeAction(entity, game->getInputManager()->cursor->getGameCursorWorldPosition());
                     }
                 }
                 else

@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 
 class Game;
-class Input;
+class InputManager;
 class UIElement;
 class UIComponent;
 class Entity;
@@ -46,14 +46,14 @@ private:
     void moveUISelector(sf::Vector2f direction);
     
     Game* game;
-    Input* input;
+    InputManager* inputManager;
     
     sf::Vector2f gameCursorPosition;
     UIElement* cursorElement;
 
     bool UIMode;
     sf::Clock UIMoveClock;
-    bool usingMovementForUISelector; // only used so that Input::getMovement() can be called with UIMode on and not return (0, 0)
+    bool usingMovementForUISelector; // only used so that InputManager::getMovement() can be called with UIMode on and not return (0, 0)
     bool mouseMovedThisFrame; // used to decide when to switch between controller and mouse cursor movement;
 
     UIElement* UISelector;

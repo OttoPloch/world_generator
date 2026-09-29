@@ -2,17 +2,12 @@
 #include "../utils/utils.hpp"
 #include <SFML/Graphics/CircleShape.hpp>
 
-Game::Game() {}
-
-void Game::init()
+Game::Game() : running(false), window({800, 800}, "INFINITE", false, 60, sf::Color(10, 10, 12)), scene(this)
 {
     random = Random(settings.worldSeed);
 
-    window.create({800, 800}, "INFINITE", false, 60, sf::Color(10, 10, 12));
     eventHandler.init(&window, scene.getCamera(), this, &scene);
-    input = Input(this);
-
-    scene.init(this);
+    inputManager = InputManager(this);
 
     paused = false;
 
@@ -20,7 +15,13 @@ void Game::init()
     secondsPerTick = 1.f / ticksPerSecond;
 
     lastWindowSize = window.getSize();
+}
 
+void Game::start()
+{
+    if (running) return;
+    
+    running = true;
     run();
 }
 
@@ -63,7 +64,7 @@ Settings* Game::getSettings() { return &settings; }
 
 AssetManager* Game::getAssetManager() { return &assetManager; }
 
-Input* Game::getInput() { return &input; }
+InputManager* Game::getInputManager() { return &inputManager; }
 
 Scene* Game::getScene() { return &scene; }
 
@@ -112,12 +113,12 @@ void Game::run()
         
         runBlame["STAT TRACKING"] = debugClock.restart().asSeconds();
 
-        input.resetPressedThisFrame();
+        inputManager.resetPressedThisFrame();
         eventHandler.processEvents();
         
         runBlame["EVENTS"] = debugClock.restart().asSeconds();
         
-        input.inputUpdate(dt);
+        inputManager.inputUpdate(dt);
         
         runBlame["INPUT"] = debugClock.restart().asSeconds();
 
@@ -155,18 +156,18 @@ void Game::run()
             runBlame["UPDATE"] = 0;
         }
 
-        scene.UIUpdate(dt);
         scene.chunkLoadUpdate();
 
         // TEMP, setting the fps display on screen to the smooth fps value.
-        auto element = scene.getUILayer()->getElement("__debug text display");
-        if (element)
-        {
-            if (auto fpsText = element->getComponent<TextComponent>("//fps text"))
-            {
-                fpsText->setText("FPS: " + std::to_string(toInt(smoothFps)));
-            }
-        }
+        // REFACTOR
+        // auto element = scene.getUILayer()->getElement("__debug text display");
+        // if (element)
+        // {
+        //     if (auto fpsText = element->getComponent<TextComponent>("//fps text"))
+        //     {
+        //         fpsText->setText("FPS: " + std::to_string(toInt(smoothFps)));
+        //     }
+        // }
 
         runBlame["UI/CHUNK LOAD UPDATE"] = debugClock.restart().asSeconds();
 
@@ -177,6 +178,7 @@ void Game::run()
         if (scene.debugMode && scene.debugLevel == 1) printBlameStats(runBlame, "GAME_RUN");
     }
 
+    running = false;
     exit();
 }
 

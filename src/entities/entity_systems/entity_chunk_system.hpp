@@ -22,15 +22,15 @@ public:
 
     void tick();
 private:
-    void tickEntityChunkSync(std::vector<int>& entitiesToUnload, Entity* entity);
+    void tickEntityChunkSync(std::vector<unsigned int>& entitiesToUnload, Entity* entity);
 
-    void tickEntityUnload(std::vector<int>& entitiesToUnload, Entity* entity);
+    void tickEntityUnload(std::vector<unsigned int>& entitiesToUnload, Entity* entity);
 
-    void unloadEntities(std::vector<int> entitiesToUnload);
+    void unloadEntities(std::vector<unsigned int> entitiesToUnload);
 
     Game* game;
     Scene* scene;
     EntityLayer* entityLayer;
 
-    std::map<int, std::unique_ptr<Entity>>* allEntities;
+    std::map<unsigned int, std::unique_ptr<Entity>>* allEntities;
 };
