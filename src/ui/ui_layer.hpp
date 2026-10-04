@@ -15,6 +15,8 @@ public:
 
     void addElement(std::unique_ptr<UIElement> p_newElement);
 
+    UIElement* getElement(unsigned int ID);
+
     void updateVisuals();
 
     void update(float p_dt);
