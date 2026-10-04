@@ -32,17 +32,38 @@ void TextUIElement::processDataCommand_Child(std::string p_key, std::string p_va
     }
     if (p_key == "font")
     {
-        sf::Font* font = m_game->getAssetManager()->getFont(p_value);
-        if (font) m_text.setFont(*font);
+        sf::Font* l_font = m_game->getAssetManager()->getFont(p_value);
+        if (l_font) m_text.setFont(*l_font);
     }
     if (p_key == "style")
     {
-        std::uint32_t style = std::stoul(p_value);
-        m_text.setStyle(style);
+        std::uint32_t l_style = std::stoul(p_value);
+        m_text.setStyle(l_style);
     }
     if (p_key == "character_size")
     {
-        unsigned int size = std::stoul(p_value);
-        setCharacterSize(size);
+        unsigned int l_charSize = std::stoul(p_value);
+        setCharacterSize(l_charSize);
+    }
+    if (p_key == "color")
+    {
+        int colors[3] = {0, 0, 0};
+
+        std::string l_valueTrimmed = p_value;
+        for (int i = 0; i < 3; i++)
+        {
+            auto l_commaIndex = l_valueTrimmed.find(", ");
+            if (l_commaIndex == std::string::npos)
+            {
+                colors[i] = std::stoi(l_valueTrimmed);
+                break;
+            }
+
+            colors[i] = std::stoi(l_valueTrimmed.substr(0, l_commaIndex));
+            
+            l_valueTrimmed.erase(0, l_commaIndex + 2);
+        }
+
+        m_text.setFillColor(sf::Color(colors[0], colors[1], colors[2]));
     }
 }
