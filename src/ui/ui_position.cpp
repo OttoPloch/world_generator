@@ -64,7 +64,7 @@ void UIPosition::setAnchorOffset(UIElement* p_element)
     UIPosition l_elementPosition = p_element->getUIPosition();
     sf::FloatRect l_elementRelativeSpace;
 
-    UIElement* l_parentElement = p_element->m_parent;
+    UIElement* l_parentElement = p_element->getParent();
     if (l_parentElement)
     {
         l_elementRelativeSpace = l_parentElement->getGlobalBounds();;
