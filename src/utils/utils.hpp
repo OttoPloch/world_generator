@@ -2,8 +2,6 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "../core/common.hpp"
-
 class Entity;
 class Game;
 class UILayer;
@@ -58,3 +56,7 @@ sf::FloatRect getRandomTextureAtlasChoice(Game* game, TextureAtlas* atlas);
 float getTileScale(Game* game);
 
 float getAngle(sf::Vector2f vec1, sf::Vector2f vec2);
+
+std::vector<std::string> getSegmentsFromString(std::string p_string, std::string p_splitter);
+
+std::vector<float> getValuesFromString(std::string p_string, std::string p_splitter);

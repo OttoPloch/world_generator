@@ -10,6 +10,7 @@ TextUIElement::TextUIElement(Game* pf_game, sf::Vector2f pf_position, std::strin
 
 void TextUIElement::updateVisuals()
 {
+    m_text.setOrigin(m_text.getLocalBounds().position);
     m_text.setPosition(m_position);
 }
 
@@ -30,40 +31,31 @@ void TextUIElement::processDataCommand_Child(std::string p_key, std::string p_va
     {
         m_text.setString(p_value);
     }
-    if (p_key == "font")
+    else if (p_key == "font")
     {
         sf::Font* l_font = m_game->getAssetManager()->getFont(p_value);
         if (l_font) m_text.setFont(*l_font);
     }
-    if (p_key == "style")
+    else if (p_key == "style")
     {
         std::uint32_t l_style = std::stoul(p_value);
         m_text.setStyle(l_style);
     }
-    if (p_key == "character_size")
+    else if (p_key == "character_size")
     {
         unsigned int l_charSize = std::stoul(p_value);
         setCharacterSize(l_charSize);
     }
-    if (p_key == "color")
+    else if (p_key == "color")
     {
-        int colors[3] = {0, 0, 0};
+        std::vector<float> l_values = getValuesFromString(p_value, ", ");
+        int l_colors[3] = {0, 0, 0};
 
-        std::string l_valueTrimmed = p_value;
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < std::min(static_cast<int>(l_values.size()), 3); i++)
         {
-            auto l_commaIndex = l_valueTrimmed.find(", ");
-            if (l_commaIndex == std::string::npos)
-            {
-                colors[i] = std::stoi(l_valueTrimmed);
-                break;
-            }
-
-            colors[i] = std::stoi(l_valueTrimmed.substr(0, l_commaIndex));
-            
-            l_valueTrimmed.erase(0, l_commaIndex + 2);
+            l_colors[i] = static_cast<int>(l_values[i]);
         }
 
-        m_text.setFillColor(sf::Color(colors[0], colors[1], colors[2]));
+        m_text.setFillColor(sf::Color(l_colors[0], l_colors[1], l_colors[2]));
     }
 }

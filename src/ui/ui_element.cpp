@@ -18,31 +18,11 @@ void UIElement::setPosition(sf::Vector2f p_newPosition)
 
 void UIElement::setData(std::string p_data)
 {
-    auto l_splitterIndex = p_data.find("; ");
+    std::vector<std::string> l_commands = getSegmentsFromString(p_data, "; ");
 
-    if (l_splitterIndex != std::string::npos)
+    for (auto i_command : l_commands)
     {
-        std::string l_dataTrimmed = p_data;
-        std::vector<std::string> l_dataSegments;
-    
-        while (l_splitterIndex != std::string::npos)
-        {
-            std::string l_currSegment = l_dataTrimmed.substr(0, l_splitterIndex);
-            if (l_currSegment.size() == 0) break;
-            l_dataSegments.emplace_back(l_currSegment);
-    
-            l_dataTrimmed.erase(0, l_splitterIndex + 2);
-            l_splitterIndex = l_dataTrimmed.find("; ");
-        }
-
-        for (auto i_segment : l_dataSegments)
-        {
-            processDataCommand(i_segment);
-        }
-    }
-    else
-    {
-        processDataCommand(p_data);
+        processDataCommand(i_command);
     }
 }
 

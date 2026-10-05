@@ -320,3 +320,40 @@ float getAngle(sf::Vector2f vec1, sf::Vector2f vec2)
 {
     return std::fmod(std::atan2(vec2.x - vec1.x, vec2.y - vec1.y) + 3 * M_PI / 2, 2 * M_PI);
 }
+
+std::vector<std::string> getSegmentsFromString(std::string p_string, std::string p_splitter)
+{
+    std::vector<std::string> l_segments;
+
+    std::string l_stringTrimmed = p_string;
+
+    auto l_splitterIndex = l_stringTrimmed.find(p_splitter);
+    if (l_splitterIndex == std::string::npos) return {p_string};
+
+    while (l_splitterIndex != std::string::npos)
+    {
+        std::string l_currSegment = l_stringTrimmed.substr(0, l_splitterIndex);
+        l_segments.emplace_back(l_currSegment);
+
+        l_stringTrimmed.erase(0, l_splitterIndex + 2);
+
+        l_splitterIndex = l_stringTrimmed.find(p_splitter);
+    }
+
+    if (l_stringTrimmed.size() > 0) l_segments.emplace_back(l_stringTrimmed);
+
+    return l_segments;
+}
+
+std::vector<float> getValuesFromString(std::string p_string, std::string p_splitter)
+{
+    std::vector<std::string> l_segments = getSegmentsFromString(p_string, p_splitter);
+    std::vector<float> l_values;
+
+    for (auto i_segment : l_segments)
+    {
+        l_values.emplace_back(std::stof(i_segment));
+    }
+
+    return l_values;
+}
