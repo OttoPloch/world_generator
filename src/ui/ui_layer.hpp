@@ -13,7 +13,9 @@ class UILayer
 public:
     UILayer(Game* p_game, Camera* p_camera);
 
-    void addElement(std::unique_ptr<UIElement> p_newElement);
+    sf::Vector2f getUIViewSize();
+
+    UIElement* addElement(std::unique_ptr<UIElement> p_newElement);
 
     UIElement* getElement(unsigned int ID);
 

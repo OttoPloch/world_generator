@@ -1,19 +1,10 @@
 #include "ui_element.hpp"
 #include "../core/game.hpp"
+#include <SFML/System/Vector2.hpp>
 
-UIElement::UIElement(Game* p_game, sf::Vector2f p_position) : m_game(p_game), m_window(p_game->getWindow())
+UIElement::UIElement(Game* p_game, UIPosition p_position, UIElement* p_parent) : m_game(p_game), m_window(p_game->getWindow()), m_position(p_position), m_parent(p_parent)
 {
-    setPosition(p_position);
-}
 
-sf::Vector2f UIElement::getPosition()
-{
-    return m_position;
-}
-
-void UIElement::setPosition(sf::Vector2f p_newPosition)
-{
-    m_position = p_newPosition;
 }
 
 void UIElement::setData(std::string p_data)
@@ -26,12 +17,37 @@ void UIElement::setData(std::string p_data)
     }
 }
 
+void UIElement::updateVisuals()
+{
+    m_position.setOriginOffset(this);
+    m_position.setAnchorOffset(this);
+
+    m_globalPosition = calculateGlobalPosition();
+
+    updateVisuals_Child();
+}
+
+UIPosition UIElement::getUIPosition()
+{
+    return m_position;
+}
+
+sf::FloatRect UIElement::getGlobalBounds()
+{
+    return {m_globalPosition, getSize()};
+}
+
+sf::Vector2f UIElement::getSize()
+{
+    return {0, 0};
+}
+
 void UIElement::update()
 {
 
 }
 
-void UIElement::draw()
+void UIElement::draw(bool p_debug)
 {
 
 }
@@ -51,4 +67,14 @@ void UIElement::processDataCommand(std::string p_command)
     auto l_value = p_command.substr(l_splitterIndex + 2);
 
     processDataCommand_Child(l_key, l_value);
+}
+
+sf::Vector2f UIElement::calculateGlobalPosition()
+{
+    return m_position.m_anchorOffset + m_position.m_originOffset + m_position.m_offset;
+}
+
+void UIElement::updateVisuals_Child()
+{
+
 }

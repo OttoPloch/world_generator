@@ -71,6 +71,7 @@ src/ui/ui_layer.cpp
 src/ui/ui_element.cpp
 src/ui/text_ui_element.cpp
 src/ui/frame_ui_element.cpp
+src/ui/ui_position.cpp
 
 src/world/background_object.cpp
 

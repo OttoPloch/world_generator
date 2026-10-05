@@ -188,15 +188,14 @@ sf::Vector2f Cursor::getGameCursorWorldPosition()
 
 sf::Vector2f Cursor::getGameCursorUIPosition()
 {
-    // REFACTOR
-    // sf::Vector2u windowSize(game->getWindow()->getSize());
-    // sf::Vector2f cursorPositionFraction(gameCursorPosition.x / windowSize.x, gameCursorPosition.y / windowSize.y);
+    sf::Vector2u windowSize(game->getWindow()->getSize());
+    sf::Vector2f cursorPositionFraction(gameCursorPosition.x / windowSize.x, gameCursorPosition.y / windowSize.y);
     
-    // sf::Vector2f UICursorPosition = game->getScene()-getUILayer>()->getUIView().getSize();
-    // UICursorPosition.x *= cursorPositionFraction.x;
-    // UICursorPosition.y *= cursorPositionFraction.y;
+    sf::Vector2f UICursorPosition = game->getScene()->getUILayer()->getUIViewSize();
+    UICursorPosition.x *= cursorPositionFraction.x;
+    UICursorPosition.y *= cursorPositionFraction.y;
 
-    return {100, 100};//UICursorPosition;
+    return UICursorPosition;
 }
 
 UIElement* Cursor::getSelectedElement()

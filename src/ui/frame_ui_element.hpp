@@ -8,13 +8,15 @@
 class FrameUIElement : public UIElement
 {
 public:
-    FrameUIElement(Game* pf_game, sf::Vector2f pf_position, std::string p_data);
+    FrameUIElement(Game* pf_game, UIPosition pf_position, std::string p_data, UIElement* pf_parent = nullptr);
 
-    void updateVisuals() override;
+    sf::Vector2f getSize() override;
 
-    void draw() override;
+    void draw(bool p_debug) override;
 private:
     void processDataCommand_Child(std::string p_key, std::string p_value) override;
+
+    void updateVisuals_Child() override;
 
     std::array<sf::Vertex, 6> m_vertices;
 

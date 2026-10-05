@@ -3,20 +3,38 @@
 #include <cstdint>
 #include <string>
 
-TextUIElement::TextUIElement(Game* pf_game, sf::Vector2f pf_position, std::string p_data) : UIElement(pf_game, pf_position), m_text(*pf_game->getAssetManager()->getFont("sfml_font"), "PLACEHOLDER", 100)
+TextUIElement::TextUIElement(Game* pf_game, UIPosition pf_position, std::string p_data, UIElement* pf_parent) : UIElement(pf_game, pf_position, pf_parent), m_text(*pf_game->getAssetManager()->getFont("sfml_font"), "PLACEHOLDER", 100)
 {
     setData(p_data);
 }
 
-void TextUIElement::updateVisuals()
+sf::Vector2f TextUIElement::getSize()
 {
-    m_text.setOrigin(m_text.getLocalBounds().position);
-    m_text.setPosition(m_position);
+    return m_text.getGlobalBounds().size;
 }
 
-void TextUIElement::draw()
+void TextUIElement::draw(bool p_debug)
 {
+    // TEMP
+    if (m_text.getString() == "X")
+    {
+        m_position.m_offset = m_game->getInputManager()->cursor->getGameCursorUIPosition();
+        updateVisuals();
+    }
+    ///////
+
     m_window->draw(m_text);
+
+    if (p_debug)
+    {
+        sf::RectangleShape rect(getSize());
+        rect.setPosition(m_globalPosition);
+        rect.setFillColor(sf::Color::Transparent);
+        rect.setOutlineColor(sf::Color::Blue);
+        rect.setOutlineThickness(1.f);
+
+        m_window->draw(rect);
+    }
 }
 
 void TextUIElement::setCharacterSize(unsigned int p_characterSize)
@@ -49,13 +67,25 @@ void TextUIElement::processDataCommand_Child(std::string p_key, std::string p_va
     else if (p_key == "color")
     {
         std::vector<float> l_values = getValuesFromString(p_value, ", ");
-        int l_colors[3] = {0, 0, 0};
+        int l_colors[4] = {0, 0, 0, 255};
 
-        for (int i = 0; i < std::min(static_cast<int>(l_values.size()), 3); i++)
+        for (int i = 0; i < std::min(static_cast<int>(l_values.size()), 4); i++)
         {
             l_colors[i] = static_cast<int>(l_values[i]);
         }
 
-        m_text.setFillColor(sf::Color(l_colors[0], l_colors[1], l_colors[2]));
+        m_text.setFillColor(sf::Color(l_colors[0], l_colors[1], l_colors[2], l_colors[3]));
     }
+    else if (p_key == "outline_thickness")
+    {
+        float l_thickness = std::stof(p_value);
+
+        m_text.setOutlineThickness(l_thickness);
+    }
+}
+
+void TextUIElement::updateVisuals_Child()
+{
+    m_text.setOrigin(m_text.getLocalBounds().position);
+    m_text.setPosition(m_globalPosition);
 }
