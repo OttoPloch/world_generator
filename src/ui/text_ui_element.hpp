@@ -8,7 +8,7 @@
 class TextUIElement : public UIElement
 {
 public:
-    TextUIElement(Game* pf_game, UIPosition pf_position, std::string p_data, UIElement* pf_parent = nullptr);
+    TextUIElement(Game* pf_game, std::string p_data, UIElement* pf_parent = nullptr);
 
     sf::Vector2f getSize() override;
 

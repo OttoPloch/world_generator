@@ -12,7 +12,7 @@ class Window;
 class UIElement
 {
 public:
-    UIElement(Game* p_game, UIPosition p_position, UIElement* p_parent = nullptr);
+    UIElement(Game* p_game, std::string p_data, UIElement* p_parent = nullptr);
 
     void setData(std::string p_data);
 
@@ -21,6 +21,8 @@ public:
     UIPosition getUIPosition();
     
     sf::FloatRect getGlobalBounds();
+    
+    void setParent(UIElement* p_parent);
 
     UIElement* getParent();
 
@@ -39,9 +41,9 @@ public:
     Game* m_game;
     Window* m_window;
 protected:
-    void setParent(UIElement* p_parent);
+    UIElement(Game* p_game, UIElement* p_parent = nullptr);
 
-    virtual void processDataCommand_Child(std::string p_key, std::string p_value) = 0;
+    virtual void processDataCommand_Child(std::string p_key, std::string p_value);
 
     virtual void updateVisuals_Child();
 
@@ -53,6 +55,8 @@ private:
     void processDataCommand(std::string p_command);
 
     sf::Vector2f calculateGlobalPosition();
+
+    void setUIPositionFromString(std::string p_positionData);
 
     UIElement* m_parent;
 };

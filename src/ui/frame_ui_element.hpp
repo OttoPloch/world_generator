@@ -8,7 +8,7 @@
 class FrameUIElement : public UIElement
 {
 public:
-    FrameUIElement(Game* pf_game, UIPosition pf_position, std::string p_data, UIElement* pf_parent = nullptr);
+    FrameUIElement(Game* pf_game, std::string p_data, UIElement* pf_parent = nullptr);
 
     sf::Vector2f getSize() override;
 

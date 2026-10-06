@@ -30,6 +30,8 @@ public:
 
     // UIAnimationData* getUIAnimationData(std::string name);
 
+    std::vector<std::string> getTextFromFile(std::string p_fileName, std::string p_localPath, bool p_forceFileLoad = false);
+
     void updateGlobalAnimations(float dt);
 private:
     std::unordered_map<std::string, std::unique_ptr<sf::Texture>> textureMap;
@@ -44,5 +46,9 @@ private:
 
     std::unordered_map<std::string, TextureAtlas> atlasMap;
 
+    std::unordered_map<std::string, std::vector<std::string>> m_textFileCache;
+
     // std::unordered_map<std::string, UIAnimationData> UIAnimationDataMap;
+
+    std::string m_basePath;
 };

@@ -7,7 +7,7 @@
 
 EntityUISystem::EntityUISystem() {}
 
-EntityUISystem::EntityUISystem(Game* game, Scene* scene) : game(game), scene(scene), entityLayer(scene->getEntityLayer()) {}
+EntityUISystem::EntityUISystem(Game* p_game, Scene* p_scene, UIManagementSystem* p_uiManagementSystem) : game(p_game), scene(p_scene), uiManagementSystem(p_uiManagementSystem), entityLayer(scene->getEntityLayer()) {}
 
 void EntityUISystem::tick()
 {
@@ -23,36 +23,25 @@ void EntityUISystem::tick()
             continue;
         }
 
-        auto& componentUIMap = entityUIComponent->componentUI;
+        auto& IDmap = entityUIComponent->m_uiManagementIDs;
 
-        for (auto& componentUI : componentUIMap)
+        for (auto i_itr = IDmap.begin(); i_itr != IDmap.end(); i_itr++)
         {
-            if (componentUI.first == "inventory")
+            auto l_component = i_itr->first;
+            auto l_ID = i_itr->second;
+
+            if (!l_component)
             {
-                auto inventoryComponent = dynamic_cast<InventoryComponent*>(componentUI.second.first);
+                uiManagementSystem->removeObject(l_ID);
+                entityUIComponent->m_uiManagementIDs.erase(i_itr);
+            }
 
-                if (!inventoryComponent) continue;
+            if (auto l_inventory_Component = dynamic_cast<InventoryComponent*>(l_component))
+            {
+                std::unordered_map<std::string, std::string> l_variables;
+                l_variables["INVENTORY_SIZE"] = std::to_string(l_inventory_Component->inventorySize);
 
-                // REFACTOR
-                // for (int i = 0; i < inventoryComponent->inventorySize; i++)
-                // {
-                //     if (auto textComponent = componentUI.second.second[0]->getComponent<TextComponent>("//item " + std::to_string(i) + " text"))
-                //     {
-                //         auto currSlot = inventoryComponent->getItemSlot(i);
-
-                //         std::string slotText;
-                //         if (currSlot.second > 0)
-                //         {
-                //             slotText = currSlot.first.substr(5) + ": " + std::to_string(currSlot.second);
-                //         }
-                //         else
-                //         {
-                //             slotText = "empty";
-                //         }
-
-                //         textComponent->setText(slotText);
-                //     }
-                // }
+                uiManagementSystem->updateObject(l_ID, l_variables);
             }
         }
     }

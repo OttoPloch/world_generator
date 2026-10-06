@@ -36,6 +36,8 @@ enum class UIAnchor
 
 struct UIPosition
 {
+    UIPosition();
+
     UIPosition(sf::Vector2f p_offset, UIOrigin p_origin = UIOrigin::TOP_LEFT, UIAnchor p_anchor = UIAnchor::TOP_LEFT);
 
     void setOriginOffset(UIElement* p_element);

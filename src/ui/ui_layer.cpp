@@ -4,35 +4,35 @@
 #include "../core/game.hpp"
 #include "ui_position.hpp"
 
-UILayer::UILayer(Game* p_game, Camera* p_camera) : m_game(p_game), m_camera(p_camera), m_IDCounter(0)
+UILayer::UILayer(Game* p_game, Camera* p_camera) : m_IDCounter(0), m_game(p_game), m_camera(p_camera), uiManagementSystem(m_game)
 {
-    addElement(std::make_unique<TextUIElement>(m_game, UIPosition({0, 0}), "text: Hello, World!; font: sfml_font; style: 0; character_size: 24; color: 255, 0, 0"));
-    addElement(std::make_unique<TextUIElement>(m_game, UIPosition({0, 20}), "text: Hello, World!; font: sfml_font; style: 1; character_size: 24; color: 255, 130, 0"));
-    addElement(std::make_unique<TextUIElement>(m_game, UIPosition({0, 40}), "text: Hello, World!; font: sfml_font; style: 2; character_size: 24; color: 255, 255, 0"));
-    addElement(std::make_unique<TextUIElement>(m_game, UIPosition({0, 60}), "text: Hello, World!; font: sfml_font; style: 4; character_size: 24; color: 0, 255, 0"));
-    addElement(std::make_unique<TextUIElement>(m_game, UIPosition({0, 80}), "text: Hello, World!; font: sfml_font; style: 8; character_size: 24; color: 0, 0, 255"));
-    addElement(std::make_unique<TextUIElement>(m_game, UIPosition({0, 100}), "text: Hello, World!; font: sfml_font; style: 15; character_size: 24; color: 255, 0, 255"));
+    addElement(std::make_unique<TextUIElement>(m_game, "position: 0, 0; text: Hello, World!; font: sfml_font; style: 0; character_size: 24; color: 255, 0, 0"));
+    addElement(std::make_unique<TextUIElement>(m_game, "position: 0, 20; text: Hello, World!; font: sfml_font; style: 1; character_size: 24; color: 255, 130, 0"));
+    addElement(std::make_unique<TextUIElement>(m_game, "position: 0, 40; text: Hello, World!; font: sfml_font; style: 2; character_size: 24; color: 255, 255, 0"));
+    addElement(std::make_unique<TextUIElement>(m_game, "position: 0, 60; text: Hello, World!; font: sfml_font; style: 4; character_size: 24; color: 0, 255, 0"));
+    addElement(std::make_unique<TextUIElement>(m_game, "position: 0, 80; text: Hello, World!; font: sfml_font; style: 8; character_size: 24; color: 0, 0, 255"));
+    addElement(std::make_unique<TextUIElement>(m_game, "position: 0, 100; text: Hello, World!; font: sfml_font; style: 15; character_size: 24; color: 255, 0, 255"));
 
-    addElement(std::make_unique<FrameUIElement>(m_game, UIPosition({0, 120}), "size: 20, 20; color: 255, 255, 255"));
-    addElement(std::make_unique<FrameUIElement>(m_game, UIPosition({20, 120}), "size: 20, 20; color: 200, 200, 200"));
-    addElement(std::make_unique<FrameUIElement>(m_game, UIPosition({40, 120}), "size: 20, 20; color: 150, 150, 150"));
-    addElement(std::make_unique<FrameUIElement>(m_game, UIPosition({60, 120}), "size: 20, 20; color: 100, 100, 100"));
-    addElement(std::make_unique<FrameUIElement>(m_game, UIPosition({80, 120}), "size: 20, 20; color: 50, 50, 50"));
-    addElement(std::make_unique<FrameUIElement>(m_game, UIPosition({100, 120}), "size: 20, 20; color: 0, 0, 0"));
+    addElement(std::make_unique<FrameUIElement>(m_game, "position: 0, 120; size: 20, 20; color: 255, 255, 255"));
+    addElement(std::make_unique<FrameUIElement>(m_game, "position: 20, 120; size: 20, 20; color: 200, 200, 200"));
+    addElement(std::make_unique<FrameUIElement>(m_game, "position: 40, 120; size: 20, 20; color: 150, 150, 150"));
+    addElement(std::make_unique<FrameUIElement>(m_game, "position: 60, 120; size: 20, 20; color: 100, 100, 100"));
+    addElement(std::make_unique<FrameUIElement>(m_game, "position: 80, 120; size: 20, 20; color: 50, 50, 50"));
+    addElement(std::make_unique<FrameUIElement>(m_game, "position: 100, 120; size: 20, 20; color: 0, 0, 0"));
 
-    UIElement* t_parent = addElement(std::make_unique<FrameUIElement>(m_game, UIPosition({200, 10}), "size: 100, 100; color: 255, 255, 255"));
+    UIElement* t_parent = addElement(std::make_unique<FrameUIElement>(m_game, "position: 200, 10; size: 100, 100; color: 255, 255, 255"));
 
-    addElement(std::make_unique<TextUIElement>(m_game, UIPosition({0, 0}, UIOrigin::TOP_LEFT, UIAnchor::TOP_LEFT), "text: 1; character_size: 16; color: 255, 0, 0", t_parent));
-    addElement(std::make_unique<TextUIElement>(m_game, UIPosition({0, 0}, UIOrigin::TOP, UIAnchor::TOP), "text: 2; character_size: 16; color: 255, 0, 0", t_parent));
-    addElement(std::make_unique<TextUIElement>(m_game, UIPosition({0, 0}, UIOrigin::TOP_RIGHT, UIAnchor::TOP_RIGHT), "text: 3; character_size: 16; color: 255, 0, 0", t_parent));
-    addElement(std::make_unique<TextUIElement>(m_game, UIPosition({0, 0}, UIOrigin::LEFT, UIAnchor::LEFT), "text: 4; character_size: 16; color: 255, 0, 0", t_parent));
-    addElement(std::make_unique<TextUIElement>(m_game, UIPosition({0, 0}, UIOrigin::CENTER, UIAnchor::CENTER), "text: 5; character_size: 16; color: 255, 0, 0", t_parent));
-    addElement(std::make_unique<TextUIElement>(m_game, UIPosition({0, 0}, UIOrigin::RIGHT, UIAnchor::RIGHT), "text: 6; character_size: 16; color: 255, 0, 0", t_parent));
-    addElement(std::make_unique<TextUIElement>(m_game, UIPosition({0, 0}, UIOrigin::BOTTOM_LEFT, UIAnchor::BOTTOM_LEFT), "text: 7; character_size: 16; color: 255, 0, 0", t_parent));
-    addElement(std::make_unique<TextUIElement>(m_game, UIPosition({0, 0}, UIOrigin::BOTTOM, UIAnchor::BOTTOM), "text: 8; character_size: 16; color: 255, 0, 0", t_parent));
-    addElement(std::make_unique<TextUIElement>(m_game, UIPosition({0, 0}, UIOrigin::BOTTOM_RIGHT, UIAnchor::BOTTOM_RIGHT), "text: 9; character_size: 16; color: 255, 0, 0", t_parent));
+    addElement(std::make_unique<TextUIElement>(m_game, "position: 0, 0, 0, 0; text: 1; character_size: 16; color: 255, 0, 0", t_parent));
+    addElement(std::make_unique<TextUIElement>(m_game, "position: 0, 0, 1, 1; text: 2; character_size: 16; color: 255, 0, 0", t_parent));
+    addElement(std::make_unique<TextUIElement>(m_game, "position: 0, 0, 2, 2; text: 3; character_size: 16; color: 255, 0, 0", t_parent));
+    addElement(std::make_unique<TextUIElement>(m_game, "position: 0, 0, 3, 3; text: 4; character_size: 16; color: 255, 0, 0", t_parent));
+    addElement(std::make_unique<TextUIElement>(m_game, "position: 0, 0, 4, 4; text: 5; character_size: 16; color: 255, 0, 0", t_parent));
+    addElement(std::make_unique<TextUIElement>(m_game, "position: 0, 0, 5, 5; text: 6; character_size: 16; color: 255, 0, 0", t_parent));
+    addElement(std::make_unique<TextUIElement>(m_game, "position: 0, 0, 6, 6; text: 7; character_size: 16; color: 255, 0, 0", t_parent));
+    addElement(std::make_unique<TextUIElement>(m_game, "position: 0, 0, 7, 7; text: 8; character_size: 16; color: 255, 0, 0", t_parent));
+    addElement(std::make_unique<TextUIElement>(m_game, "position: 0, 0, 8, 8; text: 9; character_size: 16; color: 255, 0, 0", t_parent));
 
-    addElement(std::make_unique<TextUIElement>(m_game, UIPosition({100, 100}, UIOrigin::CENTER), "text: X; font: sfml_font; character_size: 16; color: 255, 255, 255; outline_thickness: 10"));
+    addElement(std::make_unique<TextUIElement>(m_game, "position: 100, 100, 4; text: X; font: sfml_font; character_size: 16; color: 255, 255, 255; outline_thickness: 10"));
 
     updateVisuals();
 }
@@ -64,6 +64,11 @@ UIElement* UILayer::getElement(unsigned int ID)
     }
 
     return nullptr;
+}
+
+UIManagementSystem* UILayer::getUIManagementSystem()
+{
+    return &uiManagementSystem;
 }
 
 void UILayer::updateVisuals()

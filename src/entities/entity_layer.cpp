@@ -39,7 +39,7 @@ void EntityLayer::init(Game* game)
     actionSystem = ActionSystem(game, game->getScene());
     itemSystem = ItemSystem(game, game->getScene());
     entityChunkSystem = EntityChunkSystem(game, game->getScene());
-    entityUISystem = EntityUISystem(game, game->getScene());
+    entityUISystem = EntityUISystem(game, game->getScene(), game->getScene()->getUILayer()->getUIManagementSystem());
 
     auto pt = &tManager.entityTemplates["player"];
     pt->sprite = {game->getAssetManager()->getTexture("dog", "texture_atlases/"), {20, 20}, false, false, {{0, 0}, {0, 0}}, 1.6f, nullptr, game->getAssetManager()->getAnimSet("dog")};

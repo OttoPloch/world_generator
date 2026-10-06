@@ -4,10 +4,9 @@
 #include <SFML/System/Vector2.hpp>
 #include "../core/game.hpp"
 
-UIPosition::UIPosition(sf::Vector2f p_offset, UIOrigin p_origin, UIAnchor p_anchor) : m_offset(p_offset), m_origin(p_origin), m_anchor(p_anchor)
-{
+UIPosition::UIPosition() : m_offset(0, 0), m_origin(UIOrigin::TOP_LEFT), m_anchor(UIAnchor::TOP_LEFT), m_originOffset(0, 0), m_anchorOffset(0, 0) {}
 
-}
+UIPosition::UIPosition(sf::Vector2f p_offset, UIOrigin p_origin, UIAnchor p_anchor) : m_offset(p_offset), m_origin(p_origin), m_anchor(p_anchor), m_originOffset(0, 0), m_anchorOffset(0, 0) {}
 
 void UIPosition::setOriginOffset(UIElement* p_element)
 {

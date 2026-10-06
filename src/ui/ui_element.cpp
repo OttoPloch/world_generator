@@ -1,11 +1,18 @@
 #include "ui_element.hpp"
 #include "../core/game.hpp"
+#include "ui_position.hpp"
 #include <SFML/System/Vector2.hpp>
 #include <algorithm>
 
-UIElement::UIElement(Game* p_game, UIPosition p_position, UIElement* p_parent) : m_game(p_game), m_window(p_game->getWindow()), m_position(p_position), m_parent(nullptr)
+UIElement::UIElement(Game* p_game, UIElement* p_parent) : m_game(p_game), m_window(p_game->getWindow()), m_parent(nullptr)
 {
     if (p_parent) setParent(p_parent);
+}
+
+UIElement::UIElement(Game* p_game, std::string p_data, UIElement* p_parent) : m_game(p_game), m_window(p_game->getWindow()), m_parent(nullptr)
+{
+    if (p_parent) setParent(p_parent);
+    setData(p_data);
 }
 
 void UIElement::setData(std::string p_data)
@@ -68,7 +75,7 @@ sf::Vector2f UIElement::getSize()
 
 void UIElement::update()
 {
-    
+
 }
 
 void UIElement::draw(bool p_debug)
@@ -92,6 +99,11 @@ void UIElement::setParent(UIElement* p_parent)
     m_parent->addChild(this);
 }
 
+void UIElement::processDataCommand_Child(std::string p_key, std::string p_value)
+{
+
+}
+
 void UIElement::updateVisuals_Child()
 {
 
@@ -106,10 +118,54 @@ void UIElement::processDataCommand(std::string p_command)
     auto l_key = p_command.substr(0, l_splitterIndex);
     auto l_value = p_command.substr(l_splitterIndex + 2);
 
-    processDataCommand_Child(l_key, l_value);
+    if (l_key == "position")
+    {
+        setUIPositionFromString(l_value);
+    }
+    else
+    {
+        processDataCommand_Child(l_key, l_value);
+    }
 }
 
 sf::Vector2f UIElement::calculateGlobalPosition()
 {
     return m_position.m_anchorOffset + m_position.m_originOffset + m_position.m_offset;
+}
+
+void UIElement::setUIPositionFromString(std::string p_positionData)
+{
+    std::vector<std::string> l_values = getSegmentsFromString(p_positionData, ", ");
+    if (l_values.size() < 2 || l_values.size() > 4) return;
+
+    float l_x = 0, l_y = 0;
+    UIOrigin l_origin = UIOrigin::TOP_LEFT;
+    UIAnchor l_anchor = UIAnchor::TOP_LEFT;
+    
+    l_x = std::stof(l_values[0]);
+    l_y = std::stof(l_values[1]);
+
+    if (l_values.size() >= 3)
+    {
+        unsigned int l_originInt = std::stoul(l_values[2]);
+        if (l_originInt >= enumSize<UIOrigin>())
+        {
+            std::cerr << "ERROR: origin provided for ui element position from a string is not one of the options. Full string is: " << p_positionData << '\n';
+            return;
+        }
+        l_origin = static_cast<UIOrigin>(l_originInt);
+    }
+
+    if (l_values.size() >= 4)
+    {
+        unsigned int l_anchorInt = std::stoul(l_values[3]);
+        if (l_anchorInt >= enumSize<UIAnchor>())
+        {
+            std::cerr << "ERROR: anchor provided for ui element position from a string is not one of the options. Full string is: " << p_positionData << '\n';
+            return;
+        }
+        l_anchor = static_cast<UIAnchor>(l_anchorInt);
+    }
+
+    m_position = UIPosition({l_x, l_y}, l_origin, l_anchor);
 }

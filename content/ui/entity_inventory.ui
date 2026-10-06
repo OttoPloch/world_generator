@@ -1,0 +1,3 @@
+type- entity_inventory
+parent- first
+text- position: 300, 300; text: PLACEHOLDER; character_size: 16; color: 255, 50, 150

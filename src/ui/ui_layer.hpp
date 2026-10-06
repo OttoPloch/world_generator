@@ -4,6 +4,7 @@
 #include <memory>
 #include <SFML/Graphics/View.hpp>
 #include "ui_element.hpp"
+#include "ui_management_system.hpp"
 
 class Game;
 class Camera;
@@ -18,6 +19,8 @@ public:
     UIElement* addElement(std::unique_ptr<UIElement> p_newElement);
 
     UIElement* getElement(unsigned int ID);
+
+    UIManagementSystem* getUIManagementSystem();
 
     void updateVisuals();
 
@@ -37,6 +40,8 @@ private:
     Camera* m_camera;
 
     sf::View UIView;
+
+    UIManagementSystem uiManagementSystem;
 
     std::map<unsigned int, std::unique_ptr<UIElement>> m_elements;
 };

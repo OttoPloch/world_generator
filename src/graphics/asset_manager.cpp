@@ -4,7 +4,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <fstream>
 
-AssetManager::AssetManager() {}
+AssetManager::AssetManager() : m_basePath("../../") {}
 
 sf::Texture* AssetManager::getTexture(std::string name, std::string pathFromAssets, bool pathIncludesTheFile)
 {
@@ -580,6 +580,49 @@ TextureAtlas* AssetManager::getTextureAtlas(std::string name, std::string pathFr
 //         return &UIAnimationDataMap[name];
 //     }
 // }
+
+std::vector<std::string> AssetManager::getTextFromFile(std::string p_fileName, std::string p_localPath, bool forceFileLoad)
+{
+    std::string l_fullPath = m_basePath + p_localPath + p_fileName;
+    
+    auto l_entry = m_textFileCache.find(l_fullPath);
+    if (l_entry != m_textFileCache.end() && !forceFileLoad)
+    {
+        return l_entry->second;
+    }
+
+    std::vector<std::string> l_fileData;
+
+    if (!std::filesystem::exists(l_fullPath))
+    {
+        std::cerr << "ERROR: the requested file at " + l_fullPath + " doesn't exist.\n";
+        return {};
+    }
+
+    std::ifstream l_file(l_fullPath, std::ios::in);
+
+    if (!l_file.is_open())
+    {
+        std::cerr << "ERROR: unable to open file! Full path is " << l_fullPath << '\n';
+        return {};
+    }
+
+    std::string l_line;
+    while (std::getline(l_file, l_line))
+    {
+        if (l_line.size() == 0) continue;
+
+        l_fileData.emplace_back(l_line);
+    }
+
+    l_file.close();
+
+    m_textFileCache[l_fullPath] = l_fileData;
+    
+    return m_textFileCache[l_fullPath];
+
+    return {};
+}
 
 void AssetManager::updateGlobalAnimations(float dt)
 {
