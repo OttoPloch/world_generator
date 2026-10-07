@@ -19,12 +19,26 @@ UIManagementObject::UIManagementObject(bool& pr_successful, Game* p_game, std::s
 
 void UIManagementObject::updateUI(std::unordered_map<std::string, std::string> p_variables)
 {
-    // go through the management data and replace the variable names with the values.
-
-    std::cout << "variables received:\n";
-    for (auto i : p_variables)
+    for (auto i_entry : m_updateData)
     {
-        std::cout << "  - " << i.first << ": " << i.second << '\n';
+        std::string l_elementIdentifierPath = i_entry.first;
+        std::string l_updateData = i_entry.second;
+
+        prepareUpdateData(l_updateData, p_variables);
+
+        UIElement* l_element;
+        if (l_elementIdentifierPath == "parent")
+        {
+            l_element = m_parentElement;
+        }
+        else
+        {
+            l_element = m_parentElement->getChildByIdentifier(l_elementIdentifierPath);
+        }
+
+        if (!l_element) continue;
+
+        l_element->setData(l_updateData);
     }
 }
 
@@ -36,9 +50,20 @@ std::vector<std::pair<std::string, std::string>> UIManagementObject::getDataFrom
 
     for (auto i_line : l_fileData)
     {
-        // specify if the line is for setup or update here.
+        std::vector<std::string> l_segments;
+        bool l_forUpdate;
 
-        std::vector<std::string> l_segments = getSegmentsFromString(i_line, "- ");
+        if (i_line.substr(0, 7) == "update_")
+        {
+            l_forUpdate = true;
+            l_segments = getSegmentsFromString(i_line.substr(7), "- ");
+        }
+        else
+        {
+            l_forUpdate = false;
+            l_segments = getSegmentsFromString(i_line, "- ");
+        }
+        
         if (l_segments.size() != 2)
         {
             std::cerr << "ERROR: improper .ui file notation for object type: " << p_objectType << '\n';
@@ -46,7 +71,14 @@ std::vector<std::pair<std::string, std::string>> UIManagementObject::getDataFrom
             return {};
         }
 
-        l_variables.emplace_back(l_segments[0], l_segments[1]);
+        if (l_forUpdate)
+        {
+            m_updateData.emplace_back(l_segments[0], l_segments[1]);
+        }
+        else
+        {
+            l_variables.emplace_back(l_segments[0], l_segments[1]);
+        }
     }
 
     pr_successful = true;
@@ -64,7 +96,7 @@ void UIManagementObject::setupFromData(bool& pr_successful, std::string p_object
         std::string l_name = i_variable.first;
         std::string l_value = i_variable.second;
     
-        executeData(pr_successful, l_name, l_value, p_objectType, l_firstElementIsParent, l_parentElement, l_childElements);
+        executeSetupData(pr_successful, l_name, l_value, p_objectType, l_firstElementIsParent, l_parentElement, l_childElements);
         if (!pr_successful) return;
     }
 
@@ -87,6 +119,8 @@ void UIManagementObject::setupFromData(bool& pr_successful, std::string p_object
         return;
     }
 
+    m_parentElement = l_parentElement;
+
     for (auto& i_child : l_childElements)
     {
         i_child->setParent(l_parentElement);
@@ -96,7 +130,7 @@ void UIManagementObject::setupFromData(bool& pr_successful, std::string p_object
     return;
 }
 
-void UIManagementObject::executeData(bool& pr_successful, std::string p_name, std::string p_value, std::string p_objectType, bool& pr_firstElementIsParent, UIElement* pr_parentElement, std::vector<UIElement*>& p_childElements)
+void UIManagementObject::executeSetupData(bool& pr_successful, std::string p_name, std::string p_value, std::string p_objectType, bool& pr_firstElementIsParent, UIElement* pr_parentElement, std::vector<UIElement*>& p_childElements)
 {
     if (p_name == "type")
     {
@@ -127,5 +161,31 @@ void UIManagementObject::executeData(bool& pr_successful, std::string p_name, st
     {
         UIElement* l_newFrameElement = m_uiLayer->addElement(std::make_unique<FrameUIElement>(m_game, p_value));
         p_childElements.emplace_back(l_newFrameElement);
+    }
+}
+
+void UIManagementObject::prepareUpdateData(std::string& pr_updateData, std::unordered_map<std::string, std::string>& p_variables)
+{
+    auto l_opening = pr_updateData.find("{");
+    auto l_closing = pr_updateData.find("}");
+    while (l_opening != std::string::npos && l_closing != std::string::npos)
+    {
+        int l_diff = l_closing - l_opening;
+        std::string l_variableName = pr_updateData.substr(l_opening + 1, l_diff - 1);
+        std::string l_value;
+        if (p_variables.find(l_variableName) != p_variables.end())
+        {
+            l_value = p_variables[l_variableName];
+        }
+        else
+        {
+            l_value = "ERR VAR NAME NOT FOUND";
+        }
+        
+        pr_updateData.erase(l_opening, l_diff + 1);
+        pr_updateData.insert(l_opening, l_value);
+
+        l_opening = pr_updateData.find("{");
+        l_closing = pr_updateData.find("}");
     }
 }

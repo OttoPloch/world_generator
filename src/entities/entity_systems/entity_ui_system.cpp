@@ -39,7 +39,12 @@ void EntityUISystem::tick()
             if (auto l_inventory_Component = dynamic_cast<InventoryComponent*>(l_component))
             {
                 std::unordered_map<std::string, std::string> l_variables;
-                l_variables["INVENTORY_SIZE"] = std::to_string(l_inventory_Component->inventorySize);
+                for (int i = 0; i < l_inventory_Component->inventorySize; i++)
+                {
+                    std::pair<std::string, unsigned int> l_slot = l_inventory_Component->getItemSlot(i);
+
+                    l_variables["SLOT_" + std::to_string(i)] = l_slot.first + ": " + std::to_string(l_slot.second);
+                }
 
                 uiManagementSystem->updateObject(l_ID, l_variables);
             }

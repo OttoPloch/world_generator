@@ -4,7 +4,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <algorithm>
 
-UIElement::UIElement(Game* p_game, UIElement* p_parent) : m_game(p_game), m_window(p_game->getWindow()), m_parent(nullptr)
+UIElement::UIElement(Game* p_game, UIElement* p_parent) : m_game(p_game), m_window(p_game->getWindow()), m_parent(nullptr), m_identifier("none")
 {
     if (p_parent) setParent(p_parent);
 }
@@ -43,6 +43,50 @@ UIPosition UIElement::getUIPosition()
 sf::FloatRect UIElement::getGlobalBounds()
 {
     return {m_globalPosition, getSize()};
+}
+
+std::string UIElement::getIdentifier()
+{
+    return m_identifier;
+}
+
+UIElement* UIElement::getChildByIdentifier(std::string p_childIdentifierPath)
+{
+    std::cout << "IDENTIFIER: " << p_childIdentifierPath << '\n';
+
+    std::vector<std::string> l_identifierChain = getSegmentsFromString(p_childIdentifierPath, ".");
+    if (l_identifierChain.size() == 0) return nullptr;
+
+    if (l_identifierChain.size() == 1)
+    {
+        for (auto& i_child : m_children)
+        {
+            if (i_child->getIdentifier() == l_identifierChain[0])
+            {
+                std::cout << "ONLY 1, RETURNING " << i_child->getIdentifier() << '\n';
+
+                return i_child;
+            }
+        }
+    }
+    else
+    {
+        std::string l_trimmedIdentifier = p_childIdentifierPath;
+        l_trimmedIdentifier.erase(0, l_identifierChain[0].size() + 1);
+
+        for (auto& i_child : m_children)
+        {
+            if (i_child->getIdentifier() == l_identifierChain[0])
+            {
+                std::cout << "REQUESTED MULTIPLE, ASKING CHILD FOR " << l_trimmedIdentifier << '\n';
+
+                return i_child->getChildByIdentifier(l_trimmedIdentifier);
+            }
+        }
+    }
+
+    std::cout << "NO CHILD FOUND\n";
+    return nullptr;
 }
 
 UIElement* UIElement::getParent()
@@ -121,6 +165,10 @@ void UIElement::processDataCommand(std::string p_command)
     if (l_key == "position")
     {
         setUIPositionFromString(l_value);
+    }
+    else if (l_key == "identifier")
+    {
+        m_identifier = l_value;
     }
     else
     {

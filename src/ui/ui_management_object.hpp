@@ -21,11 +21,13 @@ private:
 
     void setupFromData(bool& pr_successful, std::string p_objectType, std::vector<std::pair<std::string, std::string>> l_data);
 
-    void executeData(bool& pr_successful, std::string p_name, std::string p_value, std::string p_objectType, bool& pr_firstElementIsParent, UIElement* pr_parentElement, std::vector<UIElement*>& p_childElements);
+    void executeSetupData(bool& pr_successful, std::string p_name, std::string p_value, std::string p_objectType, bool& pr_firstElementIsParent, UIElement* pr_parentElement, std::vector<UIElement*>& p_childElements);
+
+    void prepareUpdateData(std::string& pr_updateData, std::unordered_map<std::string, std::string>& p_variables);
 
     Game* m_game;
     UILayer* m_uiLayer;
 
-    std::vector<std::string> m_managementData;
+    std::vector<std::pair<std::string, std::string>> m_updateData;
     UIElement* m_parentElement;
 };

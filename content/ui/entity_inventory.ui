@@ -1,3 +1,4 @@
 type- entity_inventory
 parent- first
-text- position: 300, 300; text: PLACEHOLDER; character_size: 16; color: 255, 50, 150
+text- position: 300, 300; identifier: text1; text: PLACEHOLDER; character_size: 16; color: 255, 50, 150;
+update_parent- text: {SLOT_0} and {SLOT_1}

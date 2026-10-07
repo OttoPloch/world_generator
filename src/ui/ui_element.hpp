@@ -22,6 +22,10 @@ public:
     
     sf::FloatRect getGlobalBounds();
     
+    std::string getIdentifier();
+
+    UIElement* getChildByIdentifier(std::string p_childIdentifierPath);
+
     void setParent(UIElement* p_parent);
 
     UIElement* getParent();
@@ -51,6 +55,8 @@ protected:
     sf::Vector2f m_globalPosition;
 
     std::vector<UIElement*> m_children;
+
+    std::string m_identifier;
 private:
     void processDataCommand(std::string p_command);
 
