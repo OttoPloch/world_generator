@@ -276,6 +276,7 @@ std::vector<Entity*> EntityLayer::getEntitiesInChunkArea(int chunkX, int chunkY,
         for (int x = chunkMin.x; x <= chunkMax.x; x++)
         {
             auto currChunk = chunkLayer->getChunk({x, y});
+            if (!currChunk) continue;
 
             entitiesWithin.insert(entitiesWithin.end(), currChunk->entitiesInChunk.begin(), currChunk->entitiesInChunk.end());
         }

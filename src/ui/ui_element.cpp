@@ -33,7 +33,7 @@ void UIElement::updateVisuals()
     m_globalPosition = calculateGlobalPosition();
 
     updateVisuals_Child();
-    
+
     for (auto& i_child : m_children)
     {
         i_child->updateVisuals();
