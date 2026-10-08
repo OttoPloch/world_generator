@@ -14,10 +14,23 @@ class UILayer
 public:
     UILayer(Game* p_game, Camera* p_camera);
 
+    unsigned int getNewID();
+
     sf::Vector2f getUIViewSize();
 
-    UIElement* addElement(std::unique_ptr<UIElement> p_newElement);
+    template<typename T>
+    UIElement* addElement(std::string p_elementData, UIElement* p_parent = nullptr)
+    {
+        unsigned int l_newID = getNewID();
 
+        std::unique_ptr<T> l_newElement = std::make_unique<T>(m_game, l_newID, p_elementData, p_parent);
+        if (!dynamic_cast<UIElement*>(l_newElement.get())) return nullptr;
+
+        m_elements[l_newID] = std::move(l_newElement);
+
+        return m_elements[l_newID].get();
+    }
+    
     UIElement* getElement(unsigned int ID);
 
     UIManagementSystem* getUIManagementSystem();
@@ -30,8 +43,6 @@ public:
 
     void draw(bool p_debug);
 private:
-    unsigned int getNewID();
-
     void setUIViewSize();
 
     unsigned int m_IDCounter;

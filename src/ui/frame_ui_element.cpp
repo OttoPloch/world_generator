@@ -4,7 +4,7 @@
 #include "ui_position.hpp"
 #include <SFML/Graphics/RectangleShape.hpp>
 
-FrameUIElement::FrameUIElement(Game* pf_game, std::string p_data, UIElement* pf_parent) : UIElement(pf_game, pf_parent), m_vertices(VertexGroup::createTriangleVerts({0, 0}, {0, 0}, sf::Color::Black))
+FrameUIElement::FrameUIElement(Game* pf_game, unsigned int pf_ID, std::string p_data, UIElement* pf_parent) : UIElement(pf_game, pf_ID, pf_parent), m_vertices(VertexGroup::createTriangleVerts({0, 0}, {0, 0}, sf::Color::Black))
 {
     setData(p_data);
 }
@@ -34,7 +34,7 @@ void FrameUIElement::processDataCommand_Child(std::string p_key, std::string p_v
 {
     if (p_key == "size")
     {
-        std::vector<float> l_values = getValuesFromString(p_value, ", ");
+        std::vector<float> l_values = getFloatsFromString(p_value, ", ");
         float x = 0, y = 0;
 
         if (l_values.size() == 2)
@@ -47,7 +47,7 @@ void FrameUIElement::processDataCommand_Child(std::string p_key, std::string p_v
     }
     else if (p_key == "color")
     {
-        std::vector<float> l_values = getValuesFromString(p_value, ", ");
+        std::vector<float> l_values = getFloatsFromString(p_value, ", ");
         int l_colors[4] = {0, 0, 0, 255};
 
         for (int i = 0; i < std::min(static_cast<int>(l_values.size()), 4); i++)

@@ -46,6 +46,11 @@ void EntityUISystem::tick()
                     l_variables["SLOT_" + std::to_string(i)] = l_slot.first + ": " + std::to_string(l_slot.second);
                 }
 
+
+                // temp
+                l_variables["XPOS"] = std::to_string(entity->position.getPosition().x);
+                l_variables["YPOS"] = std::to_string(entity->position.getPosition().y);
+
                 uiManagementSystem->updateObject(l_ID, l_variables);
             }
         }

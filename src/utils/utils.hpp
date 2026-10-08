@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <iostream>
 
 class Entity;
 class Game;
@@ -59,4 +60,6 @@ float getAngle(sf::Vector2f vec1, sf::Vector2f vec2);
 
 std::vector<std::string> getSegmentsFromString(std::string p_string, std::string p_splitter);
 
-std::vector<float> getValuesFromString(std::string p_string, std::string p_splitter);
+std::vector<float> getFloatsFromString(std::string p_string, std::string p_splitter);
+
+std::vector<unsigned int> getUIntsFromString(std::string p_string, std::string p_splitter);

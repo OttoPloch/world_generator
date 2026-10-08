@@ -12,7 +12,7 @@ class Window;
 class UIElement
 {
 public:
-    UIElement(Game* p_game, std::string p_data, UIElement* p_parent = nullptr);
+    UIElement(Game* p_game, unsigned int p_ID, std::string p_data, UIElement* p_parent = nullptr);
 
     void setData(std::string p_data);
 
@@ -21,10 +21,10 @@ public:
     UIPosition getUIPosition();
     
     sf::FloatRect getGlobalBounds();
-    
-    std::string getIdentifier();
 
-    UIElement* getChildByIdentifier(std::string p_childIdentifierPath);
+    unsigned int getID();
+
+    UIElement* getChildByIDPath(std::string p_childIDPath);
 
     void setParent(UIElement* p_parent);
 
@@ -45,7 +45,7 @@ public:
     Game* m_game;
     Window* m_window;
 protected:
-    UIElement(Game* p_game, UIElement* p_parent = nullptr);
+    UIElement(Game* p_game, unsigned int p_ID, UIElement* p_parent = nullptr);
 
     virtual void processDataCommand_Child(std::string p_key, std::string p_value);
 
@@ -56,7 +56,7 @@ protected:
 
     std::vector<UIElement*> m_children;
 
-    std::string m_identifier;
+    const unsigned int m_ID;
 private:
     void processDataCommand(std::string p_command);
 

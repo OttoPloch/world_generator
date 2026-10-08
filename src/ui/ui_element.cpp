@@ -4,12 +4,12 @@
 #include <SFML/System/Vector2.hpp>
 #include <algorithm>
 
-UIElement::UIElement(Game* p_game, UIElement* p_parent) : m_game(p_game), m_window(p_game->getWindow()), m_parent(nullptr), m_identifier("none")
+UIElement::UIElement(Game* p_game, unsigned int p_ID, UIElement* p_parent) : m_game(p_game), m_window(p_game->getWindow()), m_ID(p_ID), m_parent(nullptr)
 {
     if (p_parent) setParent(p_parent);
 }
 
-UIElement::UIElement(Game* p_game, std::string p_data, UIElement* p_parent) : m_game(p_game), m_window(p_game->getWindow()), m_parent(nullptr)
+UIElement::UIElement(Game* p_game, unsigned int p_ID, std::string p_data, UIElement* p_parent) : m_game(p_game), m_window(p_game->getWindow()), m_ID(p_ID), m_parent(nullptr)
 {
     if (p_parent) setParent(p_parent);
     setData(p_data);
@@ -33,6 +33,11 @@ void UIElement::updateVisuals()
     m_globalPosition = calculateGlobalPosition();
 
     updateVisuals_Child();
+    
+    for (auto& i_child : m_children)
+    {
+        i_child->updateVisuals();
+    }
 }
 
 UIPosition UIElement::getUIPosition()
@@ -45,47 +50,40 @@ sf::FloatRect UIElement::getGlobalBounds()
     return {m_globalPosition, getSize()};
 }
 
-std::string UIElement::getIdentifier()
+unsigned int UIElement::getID()
 {
-    return m_identifier;
+    return m_ID;
 }
 
-UIElement* UIElement::getChildByIdentifier(std::string p_childIdentifierPath)
+UIElement* UIElement::getChildByIDPath(std::string p_childIDPath)
 {
-    std::cout << "IDENTIFIER: " << p_childIdentifierPath << '\n';
-
-    std::vector<std::string> l_identifierChain = getSegmentsFromString(p_childIdentifierPath, ".");
+    std::vector<unsigned int> l_identifierChain = getUIntsFromString(p_childIDPath, ".");
     if (l_identifierChain.size() == 0) return nullptr;
 
     if (l_identifierChain.size() == 1)
     {
         for (auto& i_child : m_children)
         {
-            if (i_child->getIdentifier() == l_identifierChain[0])
+            if (i_child->getID() == l_identifierChain[0])
             {
-                std::cout << "ONLY 1, RETURNING " << i_child->getIdentifier() << '\n';
-
                 return i_child;
             }
         }
     }
     else
     {
-        std::string l_trimmedIdentifier = p_childIdentifierPath;
-        l_trimmedIdentifier.erase(0, l_identifierChain[0].size() + 1);
+        std::string l_trimmedIDPath = p_childIDPath;
+        l_trimmedIDPath.erase(0, std::to_string(l_identifierChain[0]).size() + 1);
 
         for (auto& i_child : m_children)
         {
-            if (i_child->getIdentifier() == l_identifierChain[0])
+            if (i_child->getID() == l_identifierChain[0])
             {
-                std::cout << "REQUESTED MULTIPLE, ASKING CHILD FOR " << l_trimmedIdentifier << '\n';
-
-                return i_child->getChildByIdentifier(l_trimmedIdentifier);
+                return i_child->getChildByIDPath(l_trimmedIDPath);
             }
         }
     }
 
-    std::cout << "NO CHILD FOUND\n";
     return nullptr;
 }
 
@@ -155,8 +153,6 @@ void UIElement::updateVisuals_Child()
 
 void UIElement::processDataCommand(std::string p_command)
 {
-    std::cout << "COMMAND: " << p_command << "\n";
-
     auto l_splitterIndex = p_command.find(": ");
 
     auto l_key = p_command.substr(0, l_splitterIndex);
@@ -166,14 +162,12 @@ void UIElement::processDataCommand(std::string p_command)
     {
         setUIPositionFromString(l_value);
     }
-    else if (l_key == "identifier")
-    {
-        m_identifier = l_value;
-    }
     else
     {
         processDataCommand_Child(l_key, l_value);
     }
+
+    updateVisuals();
 }
 
 sf::Vector2f UIElement::calculateGlobalPosition()
@@ -187,8 +181,8 @@ void UIElement::setUIPositionFromString(std::string p_positionData)
     if (l_values.size() < 2 || l_values.size() > 4) return;
 
     float l_x = 0, l_y = 0;
-    UIOrigin l_origin = UIOrigin::TOP_LEFT;
-    UIAnchor l_anchor = UIAnchor::TOP_LEFT;
+    UIOrigin l_origin = m_position.m_origin;
+    UIAnchor l_anchor = m_position.m_anchor;
     
     l_x = std::stof(l_values[0]);
     l_y = std::stof(l_values[1]);

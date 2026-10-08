@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <string>
 
-TextUIElement::TextUIElement(Game* pf_game, std::string p_data, UIElement* pf_parent) : UIElement(pf_game, pf_parent), m_text(*pf_game->getAssetManager()->getFont("sfml_font"), "PLACEHOLDER", 100)
+TextUIElement::TextUIElement(Game* pf_game, unsigned int pf_ID, std::string p_data, UIElement* pf_parent) : UIElement(pf_game, pf_ID, pf_parent), m_text(*pf_game->getAssetManager()->getFont("sfml_font"), "PLACEHOLDER", 100)
 {
     setData(p_data);
 }
@@ -66,7 +66,7 @@ void TextUIElement::processDataCommand_Child(std::string p_key, std::string p_va
     }
     else if (p_key == "color")
     {
-        std::vector<float> l_values = getValuesFromString(p_value, ", ");
+        std::vector<float> l_values = getFloatsFromString(p_value, ", ");
         int l_colors[4] = {0, 0, 0, 255};
 
         for (int i = 0; i < std::min(static_cast<int>(l_values.size()), 4); i++)

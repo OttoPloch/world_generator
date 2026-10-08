@@ -345,7 +345,7 @@ std::vector<std::string> getSegmentsFromString(std::string p_string, std::string
     return l_segments;
 }
 
-std::vector<float> getValuesFromString(std::string p_string, std::string p_splitter)
+std::vector<float> getFloatsFromString(std::string p_string, std::string p_splitter)
 {
     std::vector<std::string> l_segments = getSegmentsFromString(p_string, p_splitter);
     std::vector<float> l_values;
@@ -353,6 +353,19 @@ std::vector<float> getValuesFromString(std::string p_string, std::string p_split
     for (auto i_segment : l_segments)
     {
         l_values.emplace_back(std::stof(i_segment));
+    }
+
+    return l_values;
+};
+
+std::vector<unsigned int> getUIntsFromString(std::string p_string, std::string p_splitter)
+{
+    std::vector<std::string> l_segments = getSegmentsFromString(p_string, p_splitter);
+    std::vector<unsigned int> l_values;
+
+    for (auto i_segment : l_segments)
+    {
+        l_values.emplace_back(std::stoul(i_segment));
     }
 
     return l_values;
