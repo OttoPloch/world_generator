@@ -1,7 +1,6 @@
 type- entity_inventory
 
-setup parent- base- position: 500, 1000
-update parent- position: {XPOS}, {YPOS}
+setup parent- base- position: 300, 300
 
 setup slot_0_text- text- position: 0, 0; text: PLACEHOLDER; character_size: 16; color: 255, 50, 150
 update slot_0_text- text: {SLOT_0}
@@ -11,6 +10,3 @@ update slot_1_text- text: {SLOT_1}
 
 setup slot_2_text- text- position: 0, 40; text: PLACEHOLDER; character_size: 16; color: 255, 40, 160
 update slot_2_text- text: {SLOT_2}
-
-setup boi- frame- position: -30, -30; size: 100, 20; color: 255, 0, 0
-
