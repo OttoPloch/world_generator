@@ -143,7 +143,7 @@ void UIManagementObject::executeSetupData(bool& pr_successful, SetupObject p_set
     }
     else
     {
-    pr_childElements.emplace_back(l_newElement);
+        pr_childElements.emplace_back(l_newElement);
     }
 
     auto l_entry = p_namesToUpdateData.find(p_setupObject.m_elementName);
