@@ -1,0 +1,39 @@
+setup {
+    parent {
+        path = .
+        type = base
+        data = position: 300, 300
+    }
+    slot_0_text {
+        path = parent.
+        type = text
+        data = position: 0, 0; text: PLACEHOLDER; character_size: 16; color: 255, 50, 150
+    }
+    slot_1_text {
+        path = parent.
+        type = text
+        data = position: 0, 20; text: PLACEHOLDER; character_size: 16; color: 255, 40, 160
+    }
+    slot_2_text {
+        path = parent.
+        type = text
+        data = position: 0, 40; text: PLACEHOLDER; character_size: 16; color: 255, 40, 160
+    }
+    child_test {
+        path = parent.slot_0_text.
+        type = frame
+        data = position: 0, 0; size: 20, 20; color: 255, 0, 0
+    }
+}
+
+update {
+    slot_0_text {
+        data = text: {SLOT_0}
+    }
+    slot_1_text {
+        data = text: {SLOT_1}
+    }
+    slot_2_text {
+        data = text: {SLOT_2}
+    }
+}

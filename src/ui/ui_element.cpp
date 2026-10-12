@@ -192,7 +192,7 @@ void UIElement::setUIPositionFromString(std::string p_positionData)
         unsigned int l_originInt = std::stoul(l_values[2]);
         if (l_originInt >= enumSize<UIOrigin>())
         {
-            std::cerr << "ERROR: origin provided for ui element position from a string is not one of the options. Full string is: " << p_positionData << '\n';
+            std::cerr << "ERROR: Origin provided for ui element position from a string is not one of the options. Full string is: " << p_positionData << '\n';
             return;
         }
         l_origin = static_cast<UIOrigin>(l_originInt);
@@ -203,7 +203,7 @@ void UIElement::setUIPositionFromString(std::string p_positionData)
         unsigned int l_anchorInt = std::stoul(l_values[3]);
         if (l_anchorInt >= enumSize<UIAnchor>())
         {
-            std::cerr << "ERROR: anchor provided for ui element position from a string is not one of the options. Full string is: " << p_positionData << '\n';
+            std::cerr << "ERROR: Anchor provided for ui element position from a string is not one of the options. Full string is: " << p_positionData << '\n';
             return;
         }
         l_anchor = static_cast<UIAnchor>(l_anchorInt);

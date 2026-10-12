@@ -42,6 +42,8 @@ private:
 
     void prepareUpdateData(std::string& pr_preparedUpdateData, std::string p_updateData, const std::unordered_map<std::string, std::string>& p_variables);
 
+    void getSetupFromFile(bool& pr_successful, Game* p_game, std::string p_objectType);
+
     Game* m_game;
     UILayer* m_uiLayer;
 

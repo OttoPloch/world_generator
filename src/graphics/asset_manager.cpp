@@ -4,7 +4,17 @@
 #include <SFML/System/Vector2.hpp>
 #include <fstream>
 
-AssetManager::AssetManager() : m_basePath("../../") {}
+AssetManager::AssetManager(Game* p_game) : m_dataParser(p_game), m_basePath("../../") {}
+
+std::string AssetManager::getBasePath()
+{
+    return m_basePath;
+}
+
+DataParser* AssetManager::getDataParser()
+{
+    return &m_dataParser;
+}
 
 sf::Texture* AssetManager::getTexture(std::string name, std::string pathFromAssets, bool pathIncludesTheFile)
 {
@@ -581,21 +591,15 @@ TextureAtlas* AssetManager::getTextureAtlas(std::string name, std::string pathFr
 //     }
 // }
 
-std::vector<std::string> AssetManager::getTextFromFile(std::string p_fileName, std::string p_localPath, bool forceFileLoad)
+std::vector<std::string> AssetManager::getTextFromFile(std::string p_filePath)
 {
-    std::string l_fullPath = m_basePath + p_localPath + p_fileName;
-    
-    auto l_entry = m_textFileCache.find(l_fullPath);
-    if (l_entry != m_textFileCache.end() && !forceFileLoad)
-    {
-        return l_entry->second;
-    }
+    std::string l_fullPath = m_basePath + p_filePath;
 
     std::vector<std::string> l_fileData;
 
     if (!std::filesystem::exists(l_fullPath))
     {
-        std::cerr << "ERROR: the requested file at " + l_fullPath + " doesn't exist.\n";
+        std::cerr << "ERROR: The requested file at " + l_fullPath + " doesn't exist.\n";
         return {};
     }
 
@@ -603,7 +607,7 @@ std::vector<std::string> AssetManager::getTextFromFile(std::string p_fileName, s
 
     if (!l_file.is_open())
     {
-        std::cerr << "ERROR: unable to open file! Full path is " << l_fullPath << '\n';
+        std::cerr << "ERROR: Unable to open file! Full path is " << l_fullPath << '\n';
         return {};
     }
 
@@ -617,11 +621,7 @@ std::vector<std::string> AssetManager::getTextFromFile(std::string p_fileName, s
 
     l_file.close();
 
-    m_textFileCache[l_fullPath] = l_fileData;
-    
-    return m_textFileCache[l_fullPath];
-
-    return {};
+    return l_fileData;
 }
 
 void AssetManager::updateGlobalAnimations(float dt)

@@ -2,7 +2,7 @@
 #include "../utils/utils.hpp"
 #include <SFML/Graphics/CircleShape.hpp>
 
-Game::Game() : running(false), window({800, 800}, "INFINITE", false, 60, sf::Color(10, 10, 12)), scene(this)
+Game::Game() : running(false), window({800, 800}, "INFINITE", false, 60, sf::Color(10, 10, 12)), assetManager(this), scene(this)
 {
     random = Random(settings.worldSeed);
 

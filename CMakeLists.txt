@@ -26,6 +26,7 @@ src/utils/conversions.cpp
 src/utils/utils.cpp
 src/utils/game_position.cpp
 src/utils/random.cpp
+src/utils/data_parser.cpp
 
 src/config/settings.cpp
 

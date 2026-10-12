@@ -5,6 +5,7 @@
 #include "global_animation.hpp"
 #include "animation_set.hpp"
 #include "texture_atlas.hpp"
+#include "../utils/data_parser.hpp"
 
 #include <map>
 #include <string>
@@ -14,7 +15,11 @@
 class AssetManager
 {
 public:
-    AssetManager();
+    AssetManager(Game* p_game);
+
+    std::string getBasePath();
+
+    DataParser* getDataParser();
 
     sf::Texture* getTexture(std::string name, std::string pathFromAssets = "images/", bool pathIncludesTheFile = false);
 
@@ -28,9 +33,7 @@ public:
 
     TextureAtlas* getTextureAtlas(std::string name, std::string pathFromTextureAtlases = "");
 
-    // UIAnimationData* getUIAnimationData(std::string name);
-
-    std::vector<std::string> getTextFromFile(std::string p_fileName, std::string p_localPath, bool p_forceFileLoad = false);
+    std::vector<std::string> getTextFromFile(std::string p_filePath);
 
     void updateGlobalAnimations(float dt);
 private:
@@ -46,9 +49,7 @@ private:
 
     std::unordered_map<std::string, TextureAtlas> atlasMap;
 
-    std::unordered_map<std::string, std::vector<std::string>> m_textFileCache;
-
-    // std::unordered_map<std::string, UIAnimationData> UIAnimationDataMap;
-
+    DataParser m_dataParser;
+    
     std::string m_basePath;
 };

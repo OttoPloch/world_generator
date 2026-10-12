@@ -10,7 +10,6 @@ void Settings::init()
     int renderDistance = 5;
     int loadDistanceExtra = 2;
 
-    ui_animation_speed = 0.15f;
     tile_size = 10.f;
     chunk_size = 16;
     chunk_render_distance = renderDistance;
@@ -28,8 +27,8 @@ void Settings::init()
     item_maxSpawnVelocity = 1;
     item_collectMoveMultiplier = 2;
     item_stackSize = 24;
-    camera_defaultZoom = 0;
-    camera_zoomSpeed = 20;
+    camera_defaultZoom = -100;
+    camera_zoomSpeed = 50;
     camera_freecamMoveSpeedBase = 15;
     camera_minSizeFraction = .02f; // maximum zoom in
     camera_maxSizeFraction = 4.f; // maximum zoom out
