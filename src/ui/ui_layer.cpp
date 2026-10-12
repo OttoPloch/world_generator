@@ -49,20 +49,6 @@ sf::Vector2f UILayer::getUIViewSize()
     return UIView.getSize();
 }
 
-// UIElement* UILayer::addElement(std::unique_ptr<UIElement> p_newElement)
-// {
-//     if (p_newElement)
-//     {
-//         unsigned int l_elementID = p_newElement->getID();
-
-//         m_elements[l_elementID] = std::move(p_newElement);
-
-//         return m_elements[l_elementID].get();
-//     }
-
-//     return nullptr;
-// }
-
 UIElement* UILayer::getElement(unsigned int ID)
 {
     if (m_elements.find(ID) != m_elements.end())
