@@ -1,28 +1,23 @@
 setup {
     parent {
-        path = .
+        parent = .
         type = base
-        data = position: 300, 300
+        data = position: 0, 0, 0, 1
     }
     slot_0_text {
-        path = parent.
+        parent = parent
         type = text
-        data = position: 0, 0; text: PLACEHOLDER; character_size: 16; color: 255, 50, 150
+        data = position: 0, 0, 1; text: PLACEHOLDER; character_size: 16; color: 255, 50, 150; style: 1
     }
     slot_1_text {
-        path = parent.
+        parent = parent
         type = text
-        data = position: 0, 20; text: PLACEHOLDER; character_size: 16; color: 255, 40, 160
+        data = position: 0, 20, 1; text: PLACEHOLDER; character_size: 16; color: 255, 40, 160; style: 1
     }
     slot_2_text {
-        path = parent.
+        parent = parent
         type = text
-        data = position: 0, 40; text: PLACEHOLDER; character_size: 16; color: 255, 40, 160
-    }
-    child_test {
-        path = parent.slot_0_text.
-        type = frame
-        data = position: 0, 0; size: 20, 20; color: 255, 0, 0
+        data = position: 0, 40, 1; text: PLACEHOLDER; character_size: 16; color: 255, 40, 160; style: 1
     }
 }
 

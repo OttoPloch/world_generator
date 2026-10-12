@@ -6,28 +6,49 @@
 #include "ui_layer.hpp"
 #include <unordered_map>
 
-SetupObject::SetupObject(std::string p_elementName, std::string p_elementType, std::string p_setupData) : m_elementName(p_elementName), m_elementType(p_elementType), m_setupData(p_setupData) {}
-UpdateObject::UpdateObject(UIElement* p_element, std::string p_updateData) : m_element(p_element), m_updateData(p_updateData) {}
-
 UIManagementObject::UIManagementObject() {}
 
 UIManagementObject::UIManagementObject(bool& pr_successful, Game* p_game, std::string p_objectType) : m_game(p_game), m_uiLayer(m_game->getScene()->getUILayer())
 {
-    bool foo = true;
-    getSetupFromFile(foo, p_game, p_objectType);
+    DataParser* l_dataParser = m_game->getAssetManager()->getDataParser();
 
+    std::unordered_map<std::string, UIElement*> l_namesToElements;
+    std::unordered_map<std::string, std::string> l_namesAndParentNames;
 
+    std::unordered_map<std::string, DataBlock> l_dataBlocks = l_dataParser->loadData(pr_successful, "content/ui/" + p_objectType);
+    if (l_dataBlocks.find("setup") == l_dataBlocks.end() || l_dataBlocks.find("update") == l_dataBlocks.end())
+    {
+        std::cerr << "ERROR: Either no setup block or no update block was found in data for UI management object of type '" << p_objectType << "'\n";
+        pr_successful = false;
+        return;
+    }
 
+    DataBlock& l_setupBlock = l_dataBlocks["setup"];
+    processSetupBlock(pr_successful, l_setupBlock, l_namesAndParentNames, l_namesToElements);
 
+    DataBlock& l_updateBlock = l_dataBlocks["update"];
+    processUpdateBlock(pr_successful, l_updateBlock, l_namesToElements);
 
-    // std::vector<SetupObject> l_setupData;
-    // std::unordered_map<std::string, std::string> l_namesToUpdateData;
+    for (auto& i_entry : l_namesAndParentNames)
+    {
+        std::string l_elementName = i_entry.first;
+        std::string l_parentName = i_entry.second;
+  
+        if (l_parentName == ".") continue;
 
-    // getDataFromFile(pr_successful, m_game, p_objectType, l_setupData, l_namesToUpdateData);
-    // if (!pr_successful) return;
-    
-    // setupFromData(pr_successful, p_objectType, l_setupData, l_namesToUpdateData);
-    // if (!pr_successful) return;
+        auto l_elementEntry = l_namesToElements.find(l_elementName);
+        if (l_elementEntry == l_namesToElements.end()) continue;
+        if (!l_elementEntry->second) continue;
+
+        auto l_parentEntry = l_namesToElements.find(l_parentName);
+        if (l_parentEntry == l_namesToElements.end()) continue;
+        if (!l_parentEntry->second) continue;
+
+        UIElement* l_element = l_elementEntry->second;
+        UIElement* l_parent = l_parentEntry->second;
+
+        l_element->setParent(l_parent);
+    }
 }
 
 void UIManagementObject::updateUI(std::unordered_map<std::string, std::string> p_variables)
@@ -35,129 +56,81 @@ void UIManagementObject::updateUI(std::unordered_map<std::string, std::string> p
     for (auto& i_updateObject : m_updateData)
     {
         std::string l_preparedUpdateData;
-        prepareUpdateData(l_preparedUpdateData, i_updateObject.m_updateData, p_variables);
+        prepareUpdateData(l_preparedUpdateData, i_updateObject.updateData, p_variables);
 
-        if (!i_updateObject.m_element) continue;
+        if (!i_updateObject.element) continue;
 
-        i_updateObject.m_element->setData(l_preparedUpdateData);
+        i_updateObject.element->setData(l_preparedUpdateData);
     }
 }
 
-void UIManagementObject::getDataFromFile(bool& pr_successful, Game* p_game, std::string p_objectType, std::vector<SetupObject>& pr_setupData, std::unordered_map<std::string, std::string>& pr_namesToUpdateData)
-{
-    std::vector<std::string> l_fileData = p_game->getAssetManager()->getTextFromFile("content/ui/" + p_objectType + ".data");
-
-    for (auto i_line : l_fileData)
-    {
-        std::vector<std::string> l_segments;
-
-        if (i_line.substr(0, 6) == "type- ")
-        {
-            if (i_line.substr(6) != p_objectType)
-            {
-                std::cerr << "ERROR: Type variable in .ui file for " << p_objectType << " does not match. It says: " << i_line.substr(6) << '\n';
-                pr_successful = false;
-                return;
-            }
-        }
-        else if (i_line.substr(0, 6) == "setup ")
-        {
-            l_segments = getSegmentsFromString(i_line.substr(6), "- ");
-
-            if (l_segments.size() != 3)
-            {
-                std::cerr << "ERROR: Improper .ui file notation for setup for object type: " << p_objectType << '\n';
-                pr_successful = false;
-                return;
-            }
-
-            pr_setupData.emplace_back(l_segments[0], l_segments[1], l_segments[2]);
-        }
-        else if (i_line.substr(0, 7) == "update ")
-        {
-            l_segments = getSegmentsFromString(i_line.substr(7), "- ");
-
-            if (l_segments.size() != 2)
-            {
-                std::cerr << "ERROR: Improper .ui file notation for update for object type: " << p_objectType << '\n';
-                pr_successful = false;
-                return;
-            }
-
-            pr_namesToUpdateData[l_segments[0]] = l_segments[1];
-        }
-        else
-        {
-            continue;
-        }
-    }
-
-    pr_successful = true;
-}
-
-void UIManagementObject::setupFromData(bool& pr_successful, std::string p_objectType, const std::vector<SetupObject>& p_setupData, std::unordered_map<std::string, std::string>& p_namesToUpdateData)
-{
-    std::vector<UIElement*> l_childElements;
-
-    for (auto& i_setupObject : p_setupData)
-    {
-        executeSetupData(pr_successful, i_setupObject, p_objectType, l_childElements, p_namesToUpdateData);
-        if (!pr_successful) return;
-    }
-
-    if (l_childElements.size() == 0)
-    {
-        pr_successful = true;
-        return;
-    }
-
-    if (!m_parentElement)
-    {
-        std::cerr << "ERROR: No parent element created in setup for UI management object. UI management objects require one element to parent the rest.\n";
-        pr_successful = false;
-        return;
-    }
-
-    // replace with complex family support
-    for (auto& i_child : l_childElements)
-    {
-        i_child->setParent(m_parentElement);
-    }
-
-    pr_successful = true;
-    return;
-}
-
-void UIManagementObject::executeSetupData(bool& pr_successful, SetupObject p_setupObject, std::string p_objectType, std::vector<UIElement*>& pr_childElements, std::unordered_map<std::string, std::string>& p_namesToUpdateData)
+void UIManagementObject::createElementFromData(bool& pr_successful, SetupObject p_setupObject, std::unordered_map<std::string, UIElement*>& p_namesToElements)
 {
     UIElement* l_newElement;
 
-    if (p_setupObject.m_elementType == "base")
+    if (p_setupObject.elementType == "base")
     {
-        l_newElement = m_uiLayer->addElement<UIElement>(p_setupObject.m_setupData);
+        l_newElement = m_uiLayer->addElement<UIElement>(p_setupObject.setupData);
     }
-    else if (p_setupObject.m_elementType == "text")
+    else if (p_setupObject.elementType == "text")
     {
-        l_newElement = m_uiLayer->addElement<TextUIElement>(p_setupObject.m_setupData);
+        l_newElement = m_uiLayer->addElement<TextUIElement>(p_setupObject.setupData);
     }
-    else if (p_setupObject.m_elementType == "frame")
+    else if (p_setupObject.elementType == "frame")
     {
-        l_newElement = m_uiLayer->addElement<FrameUIElement>(p_setupObject.m_setupData);
-    }
-
-    if (p_setupObject.m_elementName == "parent")
-    {
-        m_parentElement = l_newElement;
-    }
-    else
-    {
-        pr_childElements.emplace_back(l_newElement);
+        l_newElement = m_uiLayer->addElement<FrameUIElement>(p_setupObject.setupData);
     }
 
-    auto l_entry = p_namesToUpdateData.find(p_setupObject.m_elementName);
-    if (l_entry != p_namesToUpdateData.end())
+    p_namesToElements[p_setupObject.elementName] = l_newElement;
+}
+
+void UIManagementObject::processSetupBlock(bool& pr_successful, DataBlock& p_setupBlock, std::unordered_map<std::string, std::string>& p_namesAndParentNames, std::unordered_map<std::string, UIElement*>& p_namesToElements)
+{
+    for (auto& i_mapEntry : p_setupBlock.entries)
     {
-        m_updateData.emplace_back(l_newElement, l_entry->second);
+        DataEntry& l_blockEntry = i_mapEntry.second;
+        
+        std::unordered_map<std::string, std::string>& l_variables = l_blockEntry.variables;
+        if (l_variables.find("parent") == l_variables.end() || l_variables.find("type") == l_variables.end() || l_variables.find("data") == l_variables.end())
+        {
+            std::cerr << "ERROR: one or more variables missing from entry in setup block of ui data file. Entry is '" << i_mapEntry.first << "'\n";
+            pr_successful = false;
+            return;
+        }
+        
+        std::string l_elementName = i_mapEntry.first;
+        std::string l_parentName = l_variables["parent"];
+        std::string l_type = l_variables["type"];
+        std::string l_setupData = l_variables["data"];
+        
+        p_namesAndParentNames[l_elementName] = l_parentName;
+        
+        createElementFromData(pr_successful, {l_elementName, l_parentName, l_type, l_setupData}, p_namesToElements);
+    }
+}
+
+void UIManagementObject::processUpdateBlock(bool& pr_successful, DataBlock& p_updateBlock, std::unordered_map<std::string, UIElement*>& p_namesToElements)
+{
+    for (auto& i_mapEntry : p_updateBlock.entries)
+    {
+        DataEntry& l_blockEntry = i_mapEntry.second;
+        
+        std::unordered_map<std::string, std::string>& l_variables = l_blockEntry.variables;
+        if (l_variables.find("data") == l_variables.end())
+        {
+            std::cerr << "ERROR: data variable missing from entry in update block of ui data file. Entry is '" << i_mapEntry.first << "'\n";
+            pr_successful = false;
+            return;
+        }
+        
+        std::string l_elementName = i_mapEntry.first;
+        std::string l_updateData = l_variables["data"];
+        
+        auto l_entry = p_namesToElements.find(l_elementName);
+        if (l_entry != p_namesToElements.end())
+        {
+            m_updateData.push_back({l_entry->second, l_updateData});
+        }
     }
 }
 
@@ -188,31 +161,5 @@ void UIManagementObject::prepareUpdateData(std::string& pr_preparedUpdateData, s
 
         l_opening = pr_preparedUpdateData.find("{");
         l_closing = pr_preparedUpdateData.find("}");
-    }
-}
-
-void UIManagementObject::getSetupFromFile(bool& pr_successful, Game* p_game, std::string p_objectType)
-{
-    DataParser* l_dataParser = p_game->getAssetManager()->getDataParser();
-
-    std::unordered_map<std::string, DataBlock> l_blocks = l_dataParser->loadData(pr_successful, "content/ui/" + p_objectType);
-
-    for (auto& i_entry : l_blocks)
-    {
-        DataBlock& l_block = i_entry.second;
-        
-        std::cout << i_entry.first << ":\n";
-
-        for (auto& i_mapEntry : l_block.entries)
-        {
-            DataEntry& l_dataEntry = i_mapEntry.second;
-
-            std::cout << "  - " << i_mapEntry.first << ":\n";
-
-            for (auto& i_entry : l_dataEntry.variables)
-            {
-                std::cout << "    - " << i_entry.first << " = " << i_entry.second << '\n';
-            }
-        }
     }
 }

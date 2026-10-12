@@ -23,7 +23,7 @@ void EntityUIComponent::createUIFor(EntityComponent* component)
 
     if (auto inventoryComponent = dynamic_cast<InventoryComponent*>(component))
     {
-        bool l_successful;
+        bool l_successful = true;
         int l_uiManagementID = myEntity->game->getScene()->getUILayer()->getUIManagementSystem()->addObject(l_successful, "entity_inventory");
 
         if (l_successful)

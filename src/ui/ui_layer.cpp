@@ -32,7 +32,7 @@ UILayer::UILayer(Game* p_game, Camera* p_camera) : m_IDCounter(0), m_game(p_game
     addElement<TextUIElement>("position: 0, 0, 7, 7; text: 8; character_size: 16; color: 255, 0, 0", t_parent);
     addElement<TextUIElement>("position: 0, 0, 8, 8; text: 9; character_size: 16; color: 255, 0, 0", t_parent);
 
-    addElement<TextUIElement>("position: 100, 100, 4; text: X; font: sfml_font; character_size: 16; color: 255, 255, 255; outline_thickness: 10");
+    addElement<TextUIElement>("position: 100, 100, 4; text: X; font: sfml_font; character_size: 16; color: 255, 255, 255; outline_thickness: 5");
 
     updateVisuals();
 }
