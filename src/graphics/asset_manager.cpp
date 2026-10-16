@@ -591,11 +591,11 @@ TextureAtlas* AssetManager::getTextureAtlas(std::string name, std::string pathFr
 //     }
 // }
 
-std::vector<std::string> AssetManager::getTextFromFile(std::string p_filePath)
+std::string AssetManager::getTextFromFile(std::string p_filePath)
 {
     std::string l_fullPath = m_basePath + p_filePath;
 
-    std::vector<std::string> l_fileData;
+    std::string l_fileData;
 
     if (!std::filesystem::exists(l_fullPath))
     {
@@ -616,7 +616,7 @@ std::vector<std::string> AssetManager::getTextFromFile(std::string p_filePath)
     {
         if (l_line.size() == 0) continue;
 
-        l_fileData.emplace_back(l_line);
+        l_fileData += l_line;
     }
 
     l_file.close();

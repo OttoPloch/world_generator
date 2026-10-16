@@ -370,3 +370,20 @@ std::vector<unsigned int> getUIntsFromString(std::string p_string, std::string p
 
     return l_values;
 }
+
+unsigned int countOccurencesInString(std::string p_string, std::string p_partToCount)
+{
+    unsigned int l_occurences = 0;
+
+    auto l_occurence = p_string.find(p_partToCount);
+    while (l_occurence != std::string::npos)
+    {
+        l_occurences++;
+
+        p_string.erase(0, l_occurence + p_partToCount.size());
+
+        l_occurence = p_string.find(p_partToCount);
+    }
+
+    return l_occurences;
+}

@@ -33,7 +33,7 @@ public:
 
     TextureAtlas* getTextureAtlas(std::string name, std::string pathFromTextureAtlases = "");
 
-    std::vector<std::string> getTextFromFile(std::string p_filePath);
+    std::string getTextFromFile(std::string p_filePath);
 
     void updateGlobalAnimations(float dt);
 private:

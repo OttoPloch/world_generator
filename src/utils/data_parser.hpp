@@ -6,15 +6,34 @@
 
 class Game;
 
+// struct DataEntry
+// {
+//     std::unordered_map<std::string, std::string> variables;
+// };
+
+// struct DataBlock
+// {
+//     std::string name;
+//     std::unordered_map<std::string, DataEntry> entries;
+// };
+
 struct DataEntry
 {
     std::unordered_map<std::string, std::string> variables;
 };
 
-struct DataBlock
+struct DataObject
 {
     std::string name;
     std::unordered_map<std::string, DataEntry> entries;
+};
+
+struct DataWord
+{
+    DataWord(std::string p_type, std::string p_contents);
+
+    std::string type;
+    std::string contents;
 };
 
 class DataParser
@@ -22,15 +41,23 @@ class DataParser
 public:
     DataParser(Game* p_game);
 
-    std::unordered_map<std::string, DataBlock> loadData(bool& pr_successful, std::string p_filePath, bool p_extensionIsInPath = false);
+    void loadData(bool& pr_successful, std::unordered_map<std::string, DataObject>& pr_objects, std::string p_filePath, bool p_extensionIsInPath = false);
 private:
-    std::unordered_map<std::string, DataBlock> getBlocksFromFileData(bool& pr_successful, std::vector<std::string>& p_fileData);
+    void getObjectsFromFileData(bool& pr_successful, std::unordered_map<std::string, DataObject>& pr_objects, std::string& p_fileData);
 
-    DataBlock extractBlockFromData(bool& pr_successful, std::string p_blockName, std::vector<std::string> p_blockLines);
+    void getWordsFromString(std::vector<DataWord>& pr_words, std::string& p_string);
 
-    DataEntry extractEntryFromData(bool& pr_successful, std::vector<std::string> p_entryLines);
+    bool charEndsWord(std::string p_expectedWordType, char p_char, const std::string& p_wordContents);
+
+    void setExpectedWordType(std::string& pr_expectedWordType, std::string p_previousWordType);
+
+    // DataBlock extractBlockFromData(bool& pr_successful, std::string p_blockName, std::vector<std::string> p_blockLines);
+
+    // DataEntry extractEntryFromData(bool& pr_successful, std::vector<std::string> p_entryLines);
+
+    
 
     Game* m_game;
 
-    std::unordered_map<std::string, DataBlock> m_dataBlocks;
+    // std::unordered_map<std::string, DataBlock> m_dataBlocks;
 };

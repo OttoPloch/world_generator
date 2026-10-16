@@ -63,3 +63,5 @@ std::vector<std::string> getSegmentsFromString(std::string p_string, std::string
 std::vector<float> getFloatsFromString(std::string p_string, std::string p_splitter);
 
 std::vector<unsigned int> getUIntsFromString(std::string p_string, std::string p_splitter);
+
+unsigned int countOccurencesInString(std::string p_string, std::string p_partToCount);
