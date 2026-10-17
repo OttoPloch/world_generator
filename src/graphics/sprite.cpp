@@ -10,13 +10,13 @@ Sprite::Sprite(GamePosition position, sf::Texture* texture, sf::Vector2f size, b
     if (texture)
     {
         sprite = std::make_unique<sf::Sprite>(*texture);
-    }
-
-    sprite->setPosition(position.getPosition());
+        
+        sprite->setPosition(position.getPosition());
+        
+        if (usingTexCoords) sprite->setTextureRect(texCoords);
     
-    if (usingTexCoords) sprite->setTextureRect(texCoords);
-
-    resize(size, sizeIsScale);
+        resize(size, sizeIsScale);
+    }
 }
 
 sf::Vector2f Sprite::getPosition() { return position.getPosition(); }
@@ -35,6 +35,8 @@ float Sprite::bottom() { return position.getPosition().y + size.y / 2.f; }
 
 void Sprite::setTexture(sf::Texture* newTexture)
 {
+    if (!sprite) return;
+
     texture = newTexture;
     
     sprite->setTexture(*newTexture);
@@ -42,6 +44,8 @@ void Sprite::setTexture(sf::Texture* newTexture)
 
 void Sprite::resize(sf::Vector2f newSize, bool sizeIsScale)
 {
+    if (!sprite) return;
+
     this->sizeIsScale = sizeIsScale;
 
     if (sizeIsScale)
@@ -60,6 +64,8 @@ void Sprite::resize(sf::Vector2f newSize, bool sizeIsScale)
 
 void Sprite::setTextureRect(sf::IntRect newTexRect)
 {
+    if (!sprite) return;
+
     sprite->setTextureRect(newTexRect);
 
     resize(size, sizeIsScale);
@@ -67,11 +73,15 @@ void Sprite::setTextureRect(sf::IntRect newTexRect)
 
 void Sprite::syncPos()
 {
+    if (!sprite) return;
+
     sprite->setPosition(position.getPosition());
 }
 
 void Sprite::update(float dt)
 {
+    if (!sprite) return;
+
     Animation* activeAnimation = nullptr;
 
     if (animation)
@@ -120,4 +130,9 @@ void Sprite::update(float dt)
     }
 }
 
-void Sprite::draw(sf::RenderWindow& window) { window.draw(*sprite); }
+void Sprite::draw(sf::RenderWindow& window)
+{
+    if (!sprite) return;
+
+    window.draw(*sprite);
+}

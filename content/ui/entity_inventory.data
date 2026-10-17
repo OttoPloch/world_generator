@@ -19,6 +19,11 @@ setup {
         type = text
         data = position: 0, 40, 1; text: PLACEHOLDER; character_size: 16; color: 255, 40, 160; style: 1
     }
+    slot_3_text {
+        parent = parent
+        type = text
+        data = position: 0, 60, 1; text: PLACEHOLDER; character_size: 16; color: 255, 0, 0; style: 1
+    }
 }
 
 update {
@@ -30,5 +35,8 @@ update {
     }
     slot_2_text {
         data = text: {SLOT_2}
+    }
+    slot_3_text {
+        data = text: {SLOT_3}
     }
 }

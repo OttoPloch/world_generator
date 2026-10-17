@@ -72,6 +72,7 @@ src/ui/ui_layer.cpp
 src/ui/ui_element.cpp
 src/ui/text_ui_element.cpp
 src/ui/frame_ui_element.cpp
+src/ui/image_ui_element.cpp
 src/ui/ui_position.cpp
 src/ui/ui_management_system.cpp
 src/ui/ui_management_object.cpp
