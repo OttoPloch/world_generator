@@ -97,15 +97,13 @@ void UILayer::tick()
 
 void UILayer::draw(bool p_debug)
 {
-    m_game->getWindow()->setView(m_UIView);
-
-    std::vector<UIElement*> l_worldElements;
+    std::vector<UIElement*> l_screenElements;
 
     for (auto& i_entry : m_elements)
     {
-        if (i_entry.second->getUIPosition().m_worldPosition)
+        if (!i_entry.second->getUIPosition().m_worldPosition)
         {
-            l_worldElements.emplace_back(i_entry.second.get());
+            l_screenElements.emplace_back(i_entry.second.get());
             continue;
         }
 
@@ -123,12 +121,12 @@ void UILayer::draw(bool p_debug)
         }
     }
 
-    m_game->getWindow()->setView(m_camera->getView());
-
-    for (auto i_element : l_worldElements)
+    m_game->getWindow()->setView(m_UIView);
+    
+    for (auto i_element : l_screenElements)
     {
         i_element->draw(p_debug);
-
+        
         if (p_debug)
         {
             sf::RectangleShape rect(i_element->getSize());
@@ -136,10 +134,12 @@ void UILayer::draw(bool p_debug)
             rect.setFillColor(sf::Color::Transparent);
             rect.setOutlineColor(sf::Color::Blue);
             rect.setOutlineThickness(1.f);
-
+            
             m_game->getWindow()->draw(rect);
         }
     }
+
+    m_game->getWindow()->setView(m_camera->getView());
 }
 
 void UILayer::setUIViewSize()
