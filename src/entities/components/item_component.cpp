@@ -20,7 +20,7 @@ void ItemComponent::init(std::string resource, unsigned int amount)
 
     if (auto s = &myEntity->getComponent<SpriteComponent>()->sprite)
     {
-        s->setTexture(myEntity->game->getAssetManager()->getTexture("items", "texture_atlases/"));
+        s->setTexture(myEntity->game->getAssetManager()->getTexture("items.png", "texture_atlases/"));
         sf::FloatRect texCoords = getRandomTextureAtlasChoice(myEntity->game, myEntity->game->getAssetManager()->getTextureAtlas(resource, "items/"));
         s->setTextureRect({static_cast<sf::Vector2i>(texCoords.position), static_cast<sf::Vector2i>(texCoords.size)});
         

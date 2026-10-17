@@ -31,7 +31,7 @@ void ChunkLayer::init(Game* game)
     lastChunkPos = {INT32_MAX, INT32_MAX};
 
     chunkGenerator.init(game, &chunks);
-    bgObjectStates.texture = game->getAssetManager()->getTexture("foliage_better", "texture_atlases/");
+    bgObjectStates.texture = game->getAssetManager()->getTexture("foliage_better.png", "texture_atlases/");
 
 
     TextureAtlas* atlas = game->getAssetManager()->getTextureAtlas("tiles_better");

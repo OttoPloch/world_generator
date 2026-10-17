@@ -27,7 +27,7 @@ Scene::Scene(Game* p_game) : m_game(p_game), window(m_game->getWindow()), uiLaye
 
     debugMode = false;
     debugLevel = 0;
-    debugChunkLayerView = -1;   
+    debugChunkLayerView = -1;
 }
 
 void Scene::tick()
@@ -198,8 +198,6 @@ void Scene::update(float dt)
 
     // if (uiLayer.getElement("action set attack button")->getAsButton()->getActive())
     // {
-    //     if (entityLayer.player)
-    //     {
     //         if (auto a = entityLayer.player->getComponent<ActionComponent>())
     //         {
     //             a->setAction("MAIN ACTION", {"attack!", 1.f, 0.f, 2.f});

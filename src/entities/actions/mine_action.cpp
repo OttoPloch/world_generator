@@ -1,8 +1,9 @@
 #include "mine_action.hpp"
 #include "../../core/game.hpp"
 #include <SFML/System/Vector2.hpp>
+#include "../../ui/image_ui_element.hpp"
 
-MineAction::MineAction(Game* game, float mineSpeed, std::string name, float rangeMultiplier) : Action(game, name, rangeMultiplier, 0.f, 0.f, true, true), mineSpeed(mineSpeed), mineZ(-1) {}
+MineAction::MineAction(Game* game, float mineSpeed, std::string name, float rangeMultiplier) : Action(game, name, rangeMultiplier, 0.f, 0.f, true, true), mineSpeed(mineSpeed), mineZ(-1), m_indicator(nullptr) {}
 
 bool MineAction::start()
 {
@@ -24,13 +25,7 @@ bool MineAction::start()
 
             timeToComplete = m->durability / mineSpeed;
             cooldown = m->durability / mineSpeed;
-
-            sf::Vector2f cursorWorldPos(game->getInputManager()->cursor->getGameCursorWorldPosition());
-            sf::Vector2i cursorTilePos = worldToTilePosition(game, cursorWorldPos, false, false);
-            sf::Vector2f cursorTileWorldPos(tileToWorldPosition(game, cursorTilePos, false));
-            sf::Vector2f cursorTileWorldPosTileCenter(cursorTileWorldPos + sf::Vector2f(game->getSettings()->tile_size / 2, game->getSettings()->tile_size / 2));
-            float tileSize = game->getSettings()->tile_size;
-
+            
             // REFACTOR
             // UIElement* indicator = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "__MineAction indicator", UIPosition(cursorTileWorldPosTileCenter, UIOrigin::TOP_LEFT, UIAnchor::TOP_LEFT, true)));
             // indicator->addComponent<ImageComponent>(
@@ -50,6 +45,14 @@ bool MineAction::start()
             //     false
             // );
             // indicator->updateVisuals();
+                
+            sf::Vector2f cursorWorldPos(game->getInputManager()->cursor->getGameCursorWorldPosition());
+            sf::Vector2i cursorTilePos = worldToTilePosition(game, cursorWorldPos, false, false);
+            sf::Vector2f cursorTileWorldPos(tileToWorldPosition(game, cursorTilePos, false));
+            float tileSize = game->getSettings()->tile_size;
+            sf::Vector2f cursorTileWorldPosTileCenter(cursorTileWorldPos + sf::Vector2f(tileSize / 2, tileSize / 2));
+                
+            m_indicator = game->getScene()->getUILayer()->addElement<ImageUIElement>("position: " + std::to_string(cursorTileWorldPosTileCenter.x) + ", " + std::to_string(cursorTileWorldPosTileCenter.y) + ", 4, 0, 1; texture: images/mining.png; size: " + std::to_string(tileSize) + ", " + std::to_string(tileSize) + "; color: 255, 255, 255, 200");
 
             active = true;
             return true;
@@ -94,8 +97,7 @@ void MineAction::reset(bool restartCooldownProgress)
     cooldownProgress = 0.f;
     active = false;
 
-    // REFACTOR
-    // game->getScene()->getUILayer()->removeElement("__MineAction indicator");
+    if (m_indicator) game->getScene()->getUILayer()->deleteElement(m_indicator->getID());    
 }
 
 std::unique_ptr<Action> MineAction::clone()

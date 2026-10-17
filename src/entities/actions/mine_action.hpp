@@ -23,4 +23,6 @@ struct MineAction : public Action
     int mineZ;
 private:
     Tile* startTile;
+
+    UIElement* m_indicator;
 };

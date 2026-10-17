@@ -52,4 +52,5 @@ private:
     DataParser m_dataParser;
     
     std::string m_basePath;
+    std::string m_assetsPath;
 };

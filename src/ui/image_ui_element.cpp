@@ -1,9 +1,11 @@
 #include "image_ui_element.hpp"
 #include "../core/game.hpp"
 
-ImageUIElement::ImageUIElement(Game* pf_game, unsigned int pf_ID, std::string p_data, UIElement* pf_parent) : UIElement(pf_game, pf_ID, p_data, pf_parent)
+ImageUIElement::ImageUIElement(Game* pf_game, unsigned int pf_ID, std::string p_data, UIElement* pf_parent) : UIElement(pf_game, pf_ID, pf_parent)
 {
-    // initialize the sprite.
+    m_sprite = Sprite(GamePosition(m_game, {0, 0}), m_game->getAssetManager()->getTexture("bush.png"));
+
+    setData(p_data);
 }
 
 sf::Vector2f ImageUIElement::getSize()
@@ -23,7 +25,7 @@ void ImageUIElement::processDataCommand_Child(std::string p_key, std::string p_v
         sf::Texture* l_newTexture = m_game->getAssetManager()->getTexture("", p_value, true);
         
         if (!l_newTexture) return;
-
+        
         m_sprite.setTexture(l_newTexture);
     }
     else if (p_key == "size")
@@ -36,14 +38,27 @@ void ImageUIElement::processDataCommand_Child(std::string p_key, std::string p_v
 
         x = l_values[0];
         y = l_values[1];
-        
-        if (l_values.size() == 3) l_isScale = static_cast<int>(l_values[2]);
 
+        if (l_values.size() == 3) l_isScale = static_cast<int>(l_values[2]);
+        
         m_sprite.resize({x, y}, l_isScale);
+    }
+    else if (p_key == "color")
+    {
+        std::vector<float> l_values = getFloatsFromString(p_value, ", ");
+        int l_colors[4] = {255, 255, 255, 255};
+
+        for (int i = 0; i < std::min(static_cast<int>(l_values.size()), 4); i++)
+        {
+            l_colors[i] = static_cast<int>(l_values[i]);
+        }
+
+        m_sprite.sprite->setColor(sf::Color(l_colors[0], l_colors[1], l_colors[2], l_colors[3]));
     }
 }
 
 void ImageUIElement::updateVisuals_Child()
 {
+    m_sprite.getPositionVar().setPosition(m_globalPosition + m_sprite.getSize() / 2.f);
     m_sprite.syncPos();
 }

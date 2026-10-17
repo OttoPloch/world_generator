@@ -26,7 +26,7 @@ public:
     float top();
     float bottom();
 
-    void setTexture(sf::Texture* newTexture);
+    void setTexture(sf::Texture* newTexture, bool resetTextureRect = true);
 
     void resize(sf::Vector2f newSize, bool sizeIsScale = true);
     void setTextureRect(sf::IntRect newTexRect);

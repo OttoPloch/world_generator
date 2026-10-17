@@ -17,17 +17,6 @@ sf::Vector2f FrameUIElement::getSize()
 void FrameUIElement::draw(bool p_debug)
 {
     m_window->getWindow().draw(m_vertices.data(), m_vertices.size(), sf::PrimitiveType::Triangles);
-
-    if (p_debug)
-    {
-        sf::RectangleShape rect(getSize());
-        rect.setPosition(m_globalPosition);
-        rect.setFillColor(sf::Color::Transparent);
-        rect.setOutlineColor(sf::Color::Blue);
-        rect.setOutlineThickness(1.f);
-
-        m_window->draw(rect);
-    }
 }
 
 void FrameUIElement::processDataCommand_Child(std::string p_key, std::string p_value)
@@ -48,7 +37,7 @@ void FrameUIElement::processDataCommand_Child(std::string p_key, std::string p_v
     else if (p_key == "color")
     {
         std::vector<float> l_values = getFloatsFromString(p_value, ", ");
-        int l_colors[4] = {0, 0, 0, 255};
+        int l_colors[4] = {255, 255, 255, 255};
 
         for (int i = 0; i < std::min(static_cast<int>(l_values.size()), 4); i++)
         {

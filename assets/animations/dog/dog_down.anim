@@ -1,4 +1,4 @@
-texture name dog
+texture name dog.png
 path texture_atlases/
 coord 0,32
 size 16,16

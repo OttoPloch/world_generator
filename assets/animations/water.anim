@@ -1,4 +1,4 @@
-texture name tiles_better
+texture name tiles_better.png
 path texture_atlases/
 default spf 1.5
 coord 32,0

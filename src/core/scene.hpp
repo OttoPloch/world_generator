@@ -67,4 +67,7 @@ private:
     std::unordered_map<std::string, float> updateBlame;
     std::unordered_map<std::string, float> drawBlame;
     sf::Clock debugClock;
+
+
+    int t_multiplier;
 };

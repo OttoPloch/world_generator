@@ -130,10 +130,6 @@ void log(sf::Vector2u msg, bool newLine)
 
 bool isOnScreen(Game* game, sf::Vector2f tl, sf::Vector2f size, bool useCameraView)
 {
-    Camera* camera = game->getScene()->getCamera();
-    sf::Vector2f cameraTopLeft = camera->getTopLeft();
-    sf::Vector2f cameraSize = camera->getView().getSize();
-
     float left = tl.x;
     float right = tl.x + size.x;
     float top = tl.y;
@@ -141,42 +137,26 @@ bool isOnScreen(Game* game, sf::Vector2f tl, sf::Vector2f size, bool useCameraVi
 
     if (useCameraView)
     {
-        if (right >= cameraTopLeft.x)
-        {
-            if (left <= cameraTopLeft.x + cameraSize.x)
-            {
-                if (bottom >= cameraTopLeft.y)
-                {
-                    if (top <= cameraTopLeft.y + cameraSize.y)
-                    {
-                        return true;
-                    }
-                }
-            }
-        }
+        Camera* camera = game->getScene()->getCamera();
+        sf::Vector2f cameraTopLeft = camera->getTopLeft();
+        sf::Vector2f cameraSize = camera->getView().getSize();
+
+        if (right < cameraTopLeft.x) return false;
+        if (left > cameraTopLeft.x + cameraSize.x) return false;
+        if (bottom < cameraTopLeft.y) return false;
+        if (top > cameraTopLeft.y + cameraSize.y) return false;
     }
     else
     {
-        return true;
-        // REFACTOR
-        // sf::Vector2f UIViewSize = game->getScene()->getUILayer()->getUIView().getSize();
+        sf::Vector2f UIViewSize = game->getScene()->getUILayer()->getUIViewSize();
 
-        // if (right >= 0)
-        // {
-        //     if (left <= UIViewSize.x)
-        //     {
-        //         if (bottom >= 0)
-        //         {
-        //             if (top <= UIViewSize.y)
-        //             {
-        //                 return true;
-        //             }
-        //         }
-        //     }
-        // }
+        if (right < 0) return false;
+        if (left > UIViewSize.x) return false;
+        if (bottom < 0) return false;
+        if (top > UIViewSize.y) return false;
     }
 
-    return false;
+    return true;
 }
 
 bool isOnScreen(Game* game, sf::Vector2f point, bool useCameraView)

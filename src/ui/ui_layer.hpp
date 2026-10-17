@@ -31,7 +31,9 @@ public:
         return m_elements[l_newID].get();
     }
     
-    UIElement* getElement(unsigned int ID);
+    void deleteElement(unsigned int p_ID);
+
+    UIElement* getElement(unsigned int p_ID);
 
     UIManagementSystem* getUIManagementSystem();
 
@@ -50,9 +52,9 @@ private:
     Game* m_game;
     Camera* m_camera;
 
-    sf::View UIView;
+    sf::View m_UIView;
 
-    UIManagementSystem uiManagementSystem;
+    UIManagementSystem m_uiManagementSystem;
 
     std::map<unsigned int, std::unique_ptr<UIElement>> m_elements;
 };

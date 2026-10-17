@@ -52,7 +52,7 @@ Chunk::Chunk(Game* game, ChunkLayer* chunkLayer, sf::Vector2i chunkPosition, std
 
     state = ChunkState::ASLEEP;
 
-    tileStates.texture = game->getAssetManager()->getTexture("tiles_better", "texture_atlases/");
+    tileStates.texture = game->getAssetManager()->getTexture("tiles_better.png", "texture_atlases/");
 }
 
 void Chunk::createTileVerts(int index, int z)

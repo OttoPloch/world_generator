@@ -24,17 +24,6 @@ void TextUIElement::draw(bool p_debug)
     ///////
 
     m_window->draw(m_text);
-
-    if (p_debug)
-    {
-        sf::RectangleShape rect(getSize());
-        rect.setPosition(m_globalPosition);
-        rect.setFillColor(sf::Color::Transparent);
-        rect.setOutlineColor(sf::Color::Blue);
-        rect.setOutlineThickness(1.f);
-
-        m_window->draw(rect);
-    }
 }
 
 void TextUIElement::setCharacterSize(unsigned int p_characterSize)

@@ -42,7 +42,7 @@ void EntityLayer::init(Game* game)
     entityUISystem = EntityUISystem(game, game->getScene(), game->getScene()->getUILayer()->getUIManagementSystem());
 
     auto pt = &tManager.entityTemplates["player"];
-    pt->sprite = {game->getAssetManager()->getTexture("dog", "texture_atlases/"), {20, 20}, false, false, {{0, 0}, {0, 0}}, 1.6f, nullptr, game->getAssetManager()->getAnimSet("dog")};
+    pt->sprite = {game->getAssetManager()->getTexture("dog.png", "texture_atlases/"), {20, 20}, false, false, {{0, 0}, {0, 0}}, 1.6f, nullptr, game->getAssetManager()->getAnimSet("dog")};
     pt->movement = {1.f, 1.5f};
     pt->control = ControlComponentData();
     pt->state = StateComponentData();
@@ -51,17 +51,16 @@ void EntityLayer::init(Game* game)
     pt->inventory = {16, 3, true};
     pt->ui = {{"inventory"}};
 
-    Entity* e = addEntity(pt, true, {0, 0});
-    player = e;
+    player = addEntity(pt, true, {0, 0});
 
     auto bt = &tManager.entityTemplates["box"];
-    bt->sprite = {game->getAssetManager()->getTexture("crate"), {35, 35}, false};
+    bt->sprite = {game->getAssetManager()->getTexture("crate.png"), {35, 35}, false};
     bt->collision = {{1.f, 1.f}, true, RectType::ACTIVE};
 
-    Entity* b = addEntity(bt, true, {-100, -100});
+    addEntity(bt, true, {-100, -100});
 
     auto it = &tManager.entityTemplates["item"];
-    it->sprite = {game->getAssetManager()->getTexture("missing"), {1, 1}, true, false};
+    it->sprite = {game->getAssetManager()->getTexture("missing.png"), {1, 1}, true, false};
     it->movement = {0, 0};
     it->collision = {{1, 1}, false, RectType::PASSIVE};
     it->item = {{game->getSettings()->tile_size / 2, game->getSettings()->tile_size / 2}, {0, 0}};

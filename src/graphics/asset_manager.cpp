@@ -4,7 +4,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <fstream>
 
-AssetManager::AssetManager(Game* p_game) : m_dataParser(p_game), m_basePath("../../") {}
+AssetManager::AssetManager(Game* p_game) : m_dataParser(p_game), m_basePath("../../"), m_assetsPath(m_basePath + "assets/") {}
 
 std::string AssetManager::getBasePath()
 {
@@ -18,8 +18,10 @@ DataParser* AssetManager::getDataParser()
 
 sf::Texture* AssetManager::getTexture(std::string name, std::string pathFromAssets, bool pathIncludesTheFile)
 {
-    auto entry = textureMap.find(name);
+    std::string l_path = pathFromAssets + name;
+    if (pathIncludesTheFile) l_path = pathFromAssets;
 
+    auto entry = textureMap.find(l_path);
     if (entry != textureMap.end())
     {
         return entry->second.get();
@@ -30,49 +32,38 @@ sf::Texture* AssetManager::getTexture(std::string name, std::string pathFromAsse
 
         if (pathIncludesTheFile)
         {
-            if (!newTexture->loadFromFile("../../assets/" + pathFromAssets))
+            if (!std::filesystem::exists(m_assetsPath + pathFromAssets))
             {
-                std::cout << "error loading texture with FULL PATH of " << pathFromAssets << '\n';
+                std::cerr << "ERROR: cannot load texture with given path: " << m_assetsPath + pathFromAssets << ". File doesn't exist.\n";
+                return nullptr;
+            }
 
+            if (!newTexture->loadFromFile(m_assetsPath + pathFromAssets))
+            {
+                std::cerr << "ERROR: cannot load texture with given path: " << m_assetsPath + pathFromAssets << ". Issue loading file.\n";
                 return nullptr;
             }
         }
         else
         {
-            if (!std::filesystem::exists("../../assets/" + pathFromAssets + name + ".jpg"))
+            if (!std::filesystem::exists(m_assetsPath + pathFromAssets + name))
             {
-                if (!std::filesystem::exists("../../assets/" + pathFromAssets + name + ".png"))
-                {
-                    std::cout << "Error loading " << name << " image with path from assets of " << pathFromAssets << ", not a jpg or png.\n";   
-    
-                    return nullptr;
-                }
-                else
-                {
-                    if (!newTexture->loadFromFile("../../assets/" + pathFromAssets + name + ".png"))
-                    {
-                        std::cout << "error loading " << name << ".png with path from assets of " << pathFromAssets << '\n';
-                        
-                        return nullptr;
-                    }
-                }
+                std::cerr << "ERROR: cannot load texture with constructed path: " << m_assetsPath + pathFromAssets + name << ". File doesn't exist.\n";
+                return nullptr;
             }
-            else
+
+            if (!newTexture->loadFromFile(m_assetsPath + pathFromAssets + name))
             {
-                if (!newTexture->loadFromFile("../../assets/" + pathFromAssets + name + ".jpg"))
-                {
-                    std::cout << "error loading " << name << ".jpg with path from assets of " << pathFromAssets << '\n';;
-    
-                    return nullptr;
-                }
+                std::cerr << "ERROR: cannot load texture with constructed path: " << m_assetsPath + pathFromAssets + name << ". Issue loading file.\n";
+                return nullptr;
             }
         }
 
         newTexture->setSmooth(false);
 
-        textureMap[name] = std::move(newTexture);
+        textureMap[l_path] = std::move(newTexture);
 
-        return textureMap[name].get();
+        return textureMap[l_path].get();
     }
 }
 
@@ -241,7 +232,7 @@ AnimationSet* AssetManager::getAnimSet(std::string name)
             
             for (int i = 0; i < keys.size(); i++)
             {
-            animations[keys[i]] = *getAnimation(animNames[i], animPath);
+                animations[keys[i]] = *getAnimation(animNames[i], animPath);
             }
 
             newSet = std::make_unique<AnimationSet>(name, animations);

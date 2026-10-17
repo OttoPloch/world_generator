@@ -5,7 +5,7 @@
 #include "../core/game.hpp"
 #include "ui_position.hpp"
 
-UILayer::UILayer(Game* p_game, Camera* p_camera) : m_IDCounter(0), m_game(p_game), m_camera(p_camera), uiManagementSystem(m_game)
+UILayer::UILayer(Game* p_game, Camera* p_camera) : m_IDCounter(0), m_game(p_game), m_camera(p_camera), m_uiManagementSystem(m_game)
 {
     addElement<TextUIElement>("position: 0, 0; text: Hello, World!; font: sfml_font; style: 0; character_size: 24; color: 255, 0, 0");
     addElement<TextUIElement>("position: 0, 20; text: Hello, World!; font: sfml_font; style: 1; character_size: 24; color: 255, 130, 0");
@@ -33,9 +33,9 @@ UILayer::UILayer(Game* p_game, Camera* p_camera) : m_IDCounter(0), m_game(p_game
     addElement<TextUIElement>("position: 0, 0, 7, 7; text: 8; character_size: 16; color: 255, 0, 0", t_parent);
     addElement<TextUIElement>("position: 0, 0, 8, 8; text: 9; character_size: 16; color: 255, 0, 0", t_parent);
 
+    addElement<ImageUIElement>("position: 0, 0, 6, 7; texture: images/dr bee.jpg; size: 100, 100, 0");
+    
     addElement<TextUIElement>("position: 100, 100, 4; text: X; font: sfml_font; character_size: 16; color: 255, 255, 255; outline_thickness: 5");
-
-    // addElement<ImageUIElement>("position: 0, 0, 4, 4; texture: images/shaq_time_out.png; size: 100, 100, 1");
 
     updateVisuals();
 }
@@ -49,28 +49,32 @@ unsigned int UILayer::getNewID()
 
 sf::Vector2f UILayer::getUIViewSize()
 {
-    return UIView.getSize();
+    return m_UIView.getSize();
 }
 
-UIElement* UILayer::getElement(unsigned int ID)
+void UILayer::deleteElement(unsigned int p_ID)
 {
-    if (m_elements.find(ID) != m_elements.end())
-    {
-        return m_elements[ID].get();
-    }
+    if (m_elements.find(p_ID) == m_elements.end()) return;
+    
+    m_elements.erase(p_ID);
+}
 
-    return nullptr;
+UIElement* UILayer::getElement(unsigned int p_ID)
+{
+    if (m_elements.find(p_ID) == m_elements.end()) return nullptr;
+    
+    return m_elements[p_ID].get();
 }
 
 UIManagementSystem* UILayer::getUIManagementSystem()
 {
-    return &uiManagementSystem;
+    return &m_uiManagementSystem;
 }
 
 void UILayer::updateVisuals()
 {
     setUIViewSize();
-    UIView.setCenter({UIView.getSize().x / 2.f, UIView.getSize().y / 2.f});
+    m_UIView.setCenter({m_UIView.getSize().x / 2.f, m_UIView.getSize().y / 2.f});
     
     for (auto& i_entry : m_elements)
     {
@@ -93,19 +97,54 @@ void UILayer::tick()
 
 void UILayer::draw(bool p_debug)
 {
-    m_game->getWindow()->setView(UIView);
+    m_game->getWindow()->setView(m_UIView);
+
+    std::vector<UIElement*> l_worldElements;
 
     for (auto& i_entry : m_elements)
     {
+        if (i_entry.second->getUIPosition().m_worldPosition)
+        {
+            l_worldElements.emplace_back(i_entry.second.get());
+            continue;
+        }
+
         i_entry.second->draw(p_debug);
+
+        if (p_debug)
+        {
+            sf::RectangleShape rect(i_entry.second->getSize());
+            rect.setPosition(i_entry.second->getGlobalBounds().position);
+            rect.setFillColor(sf::Color::Transparent);
+            rect.setOutlineColor(sf::Color::Blue);
+            rect.setOutlineThickness(1.f);
+
+            m_game->getWindow()->draw(rect);
+        }
     }
 
     m_game->getWindow()->setView(m_camera->getView());
+
+    for (auto i_element : l_worldElements)
+    {
+        i_element->draw(p_debug);
+
+        if (p_debug)
+        {
+            sf::RectangleShape rect(i_element->getSize());
+            rect.setPosition(i_element->getGlobalBounds().position);
+            rect.setFillColor(sf::Color::Transparent);
+            rect.setOutlineColor(sf::Color::Blue);
+            rect.setOutlineThickness(1.f);
+
+            m_game->getWindow()->draw(rect);
+        }
+    }
 }
 
 void UILayer::setUIViewSize()
 {
     float l_baseSize = std::fmin(1080.f, m_game->getWindow()->getSize().y);
     
-    UIView.setSize({l_baseSize * m_game->getWindow()->getAspectRatio(), l_baseSize});
+    m_UIView.setSize({l_baseSize * m_game->getWindow()->getAspectRatio(), l_baseSize});
 }

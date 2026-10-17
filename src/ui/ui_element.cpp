@@ -178,11 +178,12 @@ sf::Vector2f UIElement::calculateGlobalPosition()
 void UIElement::setUIPositionFromString(std::string p_positionData)
 {
     std::vector<std::string> l_values = getSegmentsFromString(p_positionData, ", ");
-    if (l_values.size() < 2 || l_values.size() > 4) return;
+    if (l_values.size() < 2 || l_values.size() > 5) return;
 
     float l_x = 0, l_y = 0;
     UIOrigin l_origin = m_position.m_origin;
     UIAnchor l_anchor = m_position.m_anchor;
+    bool l_worldPosition = false;
     
     l_x = std::stof(l_values[0]);
     l_y = std::stof(l_values[1]);
@@ -209,5 +210,10 @@ void UIElement::setUIPositionFromString(std::string p_positionData)
         l_anchor = static_cast<UIAnchor>(l_anchorInt);
     }
 
-    m_position = UIPosition({l_x, l_y}, l_origin, l_anchor);
+    if (l_values.size() == 5)
+    {
+        l_worldPosition = std::stoi(l_values[4]);
+    }
+
+    m_position = UIPosition({l_x, l_y}, l_origin, l_anchor, l_worldPosition);
 }
