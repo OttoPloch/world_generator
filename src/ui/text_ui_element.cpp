@@ -15,14 +15,6 @@ sf::Vector2f TextUIElement::getSize()
 
 void TextUIElement::draw(bool p_debug)
 {
-    // TEMP
-    if (m_text.getString() == "X")
-    {
-        m_position.m_offset = m_game->getInputManager()->cursor->getGameCursorUIPosition();
-        updateVisuals();
-    }
-    ///////
-
     m_window->draw(m_text);
 }
 

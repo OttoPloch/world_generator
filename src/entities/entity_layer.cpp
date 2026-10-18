@@ -369,9 +369,6 @@ void EntityLayer::draw(bool debug)
 
 void EntityLayer::refactorEntitySystemCaches()
 {
-    for (int i = 0; i < game->random.getRandInt(0, 10); i++) std::cout << " ";
-    std::cout << "refactored!\n";
-
     actionSystem.refactorEntityCache();
     animationSystem.refactorEntityCache();
     collisionSystem.refactorEntityCache();

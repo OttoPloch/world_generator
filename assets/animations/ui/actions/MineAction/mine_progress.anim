@@ -1,4 +1,4 @@
-texture name mine_progress
+texture name mine_progress.png
 path texture_atlases/ui/actions/MineAction/
 default spf 0.0625
 coord 0,0

@@ -51,6 +51,16 @@ UIManagementObject::UIManagementObject(bool& pr_successful, Game* p_game, std::s
     }
 }
 
+UIManagementObject::~UIManagementObject()
+{
+    for (auto& i_entry : m_updateData)
+    {
+        if (!i_entry.element) continue;
+
+        m_uiLayer->deleteElement(i_entry.element->getID());
+    }
+}
+
 void UIManagementObject::updateUI(std::unordered_map<std::string, std::string> p_variables)
 {
     for (auto& i_updateObject : m_updateData)

@@ -4,15 +4,14 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include "../entities/components/control_component.hpp"
+#include "../ui/image_ui_element.hpp"
 
 Cursor::Cursor(Game* game, std::string alternativeKeyForLeftClick, std::string alternativeKeyForRightClick) : game(game), inputManager(game->getInputManager()), alternativeKeyForLeftClick(alternativeKeyForLeftClick), alternativeKeyForRightClick(alternativeKeyForRightClick)
 {
     sf::Vector2u windowSize = game->getWindow()->getSize();
     gameCursorPosition = toV2F(windowSize.x / 2, windowSize.y / 2);
 
-    // REFACTOR
-    // cursorElement = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "__CURSOR", UIPosition(gameCursorPosition), INT32_MAX));
-    // cursorElement->addComponent<ImageComponent>(game, cursorElement, UIPosition({0, 0}), "//CURSOR IMAGE", 0, game->getAssetManager()->getTexture("cursor"), sf::Vector2f(30, 30), false);
+    cursorElement = game->getScene()->getUILayer()->addElement<ImageUIElement>("texture: images/cursor.png; size: 25, 25");
 
     UIMode = false;
     usingMovementForUISelector = false;
@@ -34,14 +33,14 @@ void Cursor::inputUpdate(float dt)
 
         if (UIMode)
         {
-            // cursorElement->visible = false;
+            cursorElement->m_visible = false;
 
             selectedEntity = nullptr;
             selectedTile = nullptr;
         }
         else
         {
-            // cursorElement->visible = true;
+            cursorElement->m_visible = true;
         }
     }
 
@@ -115,7 +114,9 @@ void Cursor::inputUpdate(float dt)
     sf::Vector2u windowSize = game->getWindow()->getSize();
     gameCursorPosition = {std::min(std::max(gameCursorPosition.x, 0.f), toFloat(windowSize.x)), std::min(std::max(gameCursorPosition.y, 0.f), toFloat(windowSize.y))};
     
-    // cursorElement->position.position = getGameCursorUIPosition();
+    sf::Vector2f l_cursorUIPosition = getGameCursorUIPosition();
+    std::string l_cursorUIPositionAsString = std::to_string(l_cursorUIPosition.x) + ", " + std::to_string(l_cursorUIPosition.y);
+    cursorElement->setData("position: " + l_cursorUIPositionAsString);
 
     // cursorElement->updateVisuals();
 

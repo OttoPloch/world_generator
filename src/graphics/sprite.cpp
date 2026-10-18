@@ -10,6 +10,7 @@ Sprite::Sprite(GamePosition position, sf::Texture* texture, sf::Vector2f size, b
     if (!texture)
     {
         std::cerr << "ERROR: cannot create sprite, no texture was given. Position: " << position.getPosition().x << ", " << position.getPosition().y << ". Size: " << size.x << ", " << size.y << '\n';
+        return;
     }
     
     sprite = std::make_unique<sf::Sprite>(*texture);

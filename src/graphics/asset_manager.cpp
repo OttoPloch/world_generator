@@ -69,8 +69,9 @@ sf::Texture* AssetManager::getTexture(std::string name, std::string pathFromAsse
 
 Animation* AssetManager::getAnimation(std::string name, std::string pathFromAssets)
 {
-    auto entry = animationMap.find(name);
+    std::string l_path = pathFromAssets + name;
 
+    auto entry = animationMap.find(l_path);
     if (entry != animationMap.end())
     {
         return entry->second.get();
@@ -79,13 +80,13 @@ Animation* AssetManager::getAnimation(std::string name, std::string pathFromAsse
     {
         std::unique_ptr<Animation> newAnimation;
 
-        if (!std::filesystem::exists("../../assets/" + pathFromAssets + name + ".anim"))
+        if (!std::filesystem::exists("../../assets/" + l_path + ".anim"))
         {
-            std::cout << "error loading " << pathFromAssets << name << ".anim, doesn't exist.\n";
+            std::cout << "error loading " << l_path << ".anim, doesn't exist.\n";
         }
         else
         {
-            std::ifstream animFile("../../assets/" + pathFromAssets + name + ".anim");
+            std::ifstream animFile(m_assetsPath + l_path + ".anim");
 
             std::string textureName = "missing";
             std::string texturePath = "images/";
@@ -149,9 +150,9 @@ Animation* AssetManager::getAnimation(std::string name, std::string pathFromAsse
             newAnimation = std::make_unique<Animation>(name, animTexture, frames, secondsPerFrame);
         }
 
-        animationMap[name] = std::move(newAnimation);
+        animationMap[l_path] = std::move(newAnimation);
         
-        return animationMap[name].get();
+        return animationMap[l_path].get();
     }
 
     return nullptr;

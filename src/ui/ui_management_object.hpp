@@ -30,6 +30,8 @@ public:
 
     UIManagementObject(bool& pr_successful, Game* p_game, std::string p_objectType);
 
+    ~UIManagementObject();
+
     void updateUI(std::unordered_map<std::string, std::string> p_variables);
 private:
     void createElementFromData(bool& pr_successful, SetupObject p_setupObject, std::unordered_map<std::string, UIElement*>& p_namesToElements);

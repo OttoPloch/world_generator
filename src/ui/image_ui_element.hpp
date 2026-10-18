@@ -10,6 +10,8 @@ public:
 
     sf::Vector2f getSize() override;
 
+    void update(float p_dt) override;
+
     void draw(bool p_debug) override;
 private:
     void processDataCommand_Child(std::string p_key, std::string p_value) override;

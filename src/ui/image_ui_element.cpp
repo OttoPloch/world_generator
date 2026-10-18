@@ -13,6 +13,11 @@ sf::Vector2f ImageUIElement::getSize()
     return m_sprite.getSize();
 }
 
+void ImageUIElement::update(float p_dt)
+{
+    m_sprite.update(p_dt);
+}
+
 void ImageUIElement::draw(bool p_debug)
 {
     m_sprite.draw(m_game->getWindow()->getWindow());
@@ -20,6 +25,8 @@ void ImageUIElement::draw(bool p_debug)
 
 void ImageUIElement::processDataCommand_Child(std::string p_key, std::string p_value)
 {
+    if (!m_sprite.sprite) return;
+
     if (p_key == "texture")
     {
         sf::Texture* l_newTexture = m_game->getAssetManager()->getTexture("", p_value, true);
@@ -54,6 +61,20 @@ void ImageUIElement::processDataCommand_Child(std::string p_key, std::string p_v
         }
 
         m_sprite.sprite->setColor(sf::Color(l_colors[0], l_colors[1], l_colors[2], l_colors[3]));
+    }
+    else if (p_key == "animation")
+    {
+        Animation* l_animation = m_game->getAssetManager()->getAnimation(p_value);
+
+        if (!l_animation) return;
+
+        m_sprite.animation = std::make_unique<Animation>(*l_animation);
+    }
+    else if (p_key == "animation_speed_mult")
+    {
+        float l_value = std::stof(p_value);
+
+        m_sprite.animSpeedMult = l_value;
     }
 }
 

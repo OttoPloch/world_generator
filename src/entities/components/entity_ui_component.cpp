@@ -17,6 +17,14 @@ EntityUIComponent::EntityUIComponent(Entity* myEntity, std::vector<std::string> 
     }
 }
 
+EntityUIComponent::~EntityUIComponent()
+{
+    for (auto i_entry : m_uiManagementIDs)
+    {
+        myEntity->game->getScene()->getUILayer()->getUIManagementSystem()->removeObject(i_entry.second);
+    }
+}
+
 void EntityUIComponent::createUIFor(EntityComponent* component)
 {
     if (!component) return;

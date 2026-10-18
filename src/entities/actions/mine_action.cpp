@@ -26,33 +26,17 @@ bool MineAction::start()
             timeToComplete = m->durability / mineSpeed;
             cooldown = m->durability / mineSpeed;
             
-            // REFACTOR
-            // UIElement* indicator = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "__MineAction indicator", UIPosition(cursorTileWorldPosTileCenter, UIOrigin::TOP_LEFT, UIAnchor::TOP_LEFT, true)));
-            // indicator->addComponent<ImageComponent>(
-            //     game,
-            //     indicator,
-            //     UIPosition({0, 0}, UIOrigin::CENTER),
-            //     "image",
-            //     0,
-            //     game->getAssetManager()->getTexture("mine_progress_orb", "texture_atlases/ui/actions/MineAction/"),
-            //     sf::Vector2f(tileSize, tileSize),
-            //     false,
-            //     game->getAssetManager()->getAnimation("mine_progress_orb", "animations/ui/actions/MineAction/"),
-            //     nullptr,
-            //     false,
-            //     sf::IntRect({0, 0}, {0, 0}),
-            //     1/timeToComplete,
-            //     false
-            // );
-            // indicator->updateVisuals();
-                
+            // TEMP keep the indicator but make it a ui management object or something
             sf::Vector2f cursorWorldPos(game->getInputManager()->cursor->getGameCursorWorldPosition());
             sf::Vector2i cursorTilePos = worldToTilePosition(game, cursorWorldPos, false, false);
             sf::Vector2f cursorTileWorldPos(tileToWorldPosition(game, cursorTilePos, false));
             float tileSize = game->getSettings()->tile_size;
             sf::Vector2f cursorTileWorldPosTileCenter(cursorTileWorldPos + sf::Vector2f(tileSize / 2, tileSize / 2));
                 
-            m_indicator = game->getScene()->getUILayer()->addElement<ImageUIElement>("position: " + std::to_string(cursorTileWorldPosTileCenter.x) + ", " + std::to_string(cursorTileWorldPosTileCenter.y) + ", 4, 0, 1; texture: images/mining.png; size: " + std::to_string(tileSize) + ", " + std::to_string(tileSize) + "; color: 255, 255, 255, 200");
+            std::string l_positionAsString = std::to_string(cursorTileWorldPosTileCenter.x) + ", " + std::to_string(cursorTileWorldPosTileCenter.y);
+            std::string l_sizeAsString = std::to_string(tileSize) + ", " + std::to_string(tileSize);
+            m_indicator = game->getScene()->getUILayer()->addElement<ImageUIElement>("position: " + l_positionAsString + ", 4, 0, 1; texture: texture_atlases/ui/actions/MineAction/mine_progress_orb.png; animation: ui/actions/MineAction/mine_progress_orb; animation_speed_mult: " + std::to_string(1/timeToComplete) + "; size: " + l_sizeAsString);
+            // TEMP
 
             active = true;
             return true;
@@ -66,8 +50,6 @@ bool MineAction::start()
 bool MineAction::update(float dt)
 {   
     timeProgress += dt;
-    
-    // game->getScene()->getUILayer()->getElement("__MineAction indicator")->updateVisuals();
 
     if (game->getInputManager()->cursor->getSelectedTile() != startTile)
     {

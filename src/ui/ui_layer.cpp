@@ -34,8 +34,6 @@ UILayer::UILayer(Game* p_game, Camera* p_camera) : m_IDCounter(0), m_game(p_game
     addElement<TextUIElement>("position: 0, 0, 8, 8; text: 9; character_size: 16; color: 255, 0, 0", t_parent);
 
     addElement<ImageUIElement>("position: 0, 0, 6, 7; texture: images/dr bee.jpg; size: 100, 100, 0");
-    
-    addElement<TextUIElement>("position: 100, 100, 4; text: X; font: sfml_font; character_size: 16; color: 255, 255, 255; outline_thickness: 5");
 
     updateVisuals();
 }
@@ -86,7 +84,7 @@ void UILayer::update(float p_dt)
 {
     for (auto& i_entry : m_elements)
     {
-        i_entry.second->update();
+        i_entry.second->update(p_dt);
     }
 }
 
@@ -101,6 +99,8 @@ void UILayer::draw(bool p_debug)
 
     for (auto& i_entry : m_elements)
     {
+        if (!i_entry.second->m_visible) continue;
+
         if (!i_entry.second->getUIPosition().m_worldPosition)
         {
             l_screenElements.emplace_back(i_entry.second.get());
@@ -109,16 +109,15 @@ void UILayer::draw(bool p_debug)
 
         i_entry.second->draw(p_debug);
 
-        if (p_debug)
-        {
-            sf::RectangleShape rect(i_entry.second->getSize());
-            rect.setPosition(i_entry.second->getGlobalBounds().position);
-            rect.setFillColor(sf::Color::Transparent);
-            rect.setOutlineColor(sf::Color::Blue);
-            rect.setOutlineThickness(1.f);
+        if (!p_debug) continue;
+        
+        sf::RectangleShape rect(i_entry.second->getSize());
+        rect.setPosition(i_entry.second->getGlobalBounds().position);
+        rect.setFillColor(sf::Color::Transparent);
+        rect.setOutlineColor(sf::Color::Blue);
+        rect.setOutlineThickness(1.f);
 
-            m_game->getWindow()->draw(rect);
-        }
+        m_game->getWindow()->draw(rect);
     }
 
     m_game->getWindow()->setView(m_UIView);
@@ -127,16 +126,15 @@ void UILayer::draw(bool p_debug)
     {
         i_element->draw(p_debug);
         
-        if (p_debug)
-        {
-            sf::RectangleShape rect(i_element->getSize());
-            rect.setPosition(i_element->getGlobalBounds().position);
-            rect.setFillColor(sf::Color::Transparent);
-            rect.setOutlineColor(sf::Color::Blue);
-            rect.setOutlineThickness(1.f);
-            
-            m_game->getWindow()->draw(rect);
-        }
+        if (!p_debug) continue;
+        
+        sf::RectangleShape rect(i_element->getSize());
+        rect.setPosition(i_element->getGlobalBounds().position);
+        rect.setFillColor(sf::Color::Transparent);
+        rect.setOutlineColor(sf::Color::Blue);
+        rect.setOutlineThickness(1.f);
+        
+        m_game->getWindow()->draw(rect);
     }
 
     m_game->getWindow()->setView(m_camera->getView());

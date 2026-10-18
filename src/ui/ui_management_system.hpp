@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <unordered_map>
+#include <memory>
 
 class Game;
 class UIElement;
@@ -26,5 +27,5 @@ private:
 
     Game* m_game;
 
-    std::map<unsigned int, UIManagementObject> m_objects;
+    std::map<unsigned int, std::unique_ptr<UIManagementObject>> m_objects;
 };

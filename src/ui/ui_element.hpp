@@ -4,7 +4,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <string>
-#include <vector>
+#include <unordered_map>
 
 class Game;
 class Window;
@@ -13,6 +13,8 @@ class UIElement
 {
 public:
     UIElement(Game* p_game, unsigned int p_ID, std::string p_data, UIElement* p_parent = nullptr);
+
+    ~UIElement();
 
     void setData(std::string p_data);
 
@@ -32,18 +34,18 @@ public:
 
     void addChild(UIElement* p_child);
 
-    void removeChild(UIElement* p_child);
+    void removeChild(unsigned int p_childID);
 
     virtual sf::Vector2f getSize();
 
-    virtual void update();
+    virtual void update(float p_dt);
 
     virtual void draw(bool p_debug);
 
-    virtual ~UIElement();
-
     Game* m_game;
     Window* m_window;
+
+    bool m_visible;
 protected:
     UIElement(Game* p_game, unsigned int p_ID, UIElement* p_parent = nullptr);
 
@@ -54,7 +56,7 @@ protected:
     UIPosition m_position;
     sf::Vector2f m_globalPosition;
 
-    std::vector<UIElement*> m_children;
+    std::unordered_map<unsigned int, UIElement*> m_children;
 
     const unsigned int m_ID;
 private:
