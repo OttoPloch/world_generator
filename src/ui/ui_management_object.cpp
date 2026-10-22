@@ -53,11 +53,11 @@ UIManagementObject::UIManagementObject(bool& pr_successful, Game* p_game, std::s
 
 UIManagementObject::~UIManagementObject()
 {
-    for (auto& i_entry : m_updateData)
+    for (auto& i_object : m_updateData)
     {
-        if (!i_entry.element) continue;
+        if (!i_object.element) continue;
 
-        m_uiLayer->deleteElement(i_entry.element->getID());
+        m_uiLayer->deleteElement(i_object.element->getID());
     }
 }
 

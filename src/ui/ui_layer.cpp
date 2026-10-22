@@ -53,7 +53,7 @@ sf::Vector2f UILayer::getUIViewSize()
 void UILayer::deleteElement(unsigned int p_ID)
 {
     if (m_elements.find(p_ID) == m_elements.end()) return;
-    
+
     m_elements.erase(p_ID);
 }
 
