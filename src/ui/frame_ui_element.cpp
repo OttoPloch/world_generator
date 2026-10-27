@@ -4,7 +4,7 @@
 #include "ui_position.hpp"
 #include <SFML/Graphics/RectangleShape.hpp>
 
-FrameUIElement::FrameUIElement(Game* pf_game, unsigned int pf_ID, std::string p_data, UIElement* pf_parent) : UIElement(pf_game, pf_ID, pf_parent), m_vertices(VertexGroup::createTriangleVerts({0, 0}, {0, 0}, sf::Color::Black))
+FrameUIElement::FrameUIElement(Game* pf_game, unsigned int pf_ID, std::string p_data, unsigned int pf_parent) : UIElement(pf_game, pf_ID, pf_parent), m_vertices(VertexGroup::createTriangleVerts({0, 0}, {0, 0}, sf::Color::Black))
 {
     setData(p_data);
 }

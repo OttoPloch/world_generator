@@ -90,6 +90,8 @@ src/world/tile/tags/resource_tag.cpp
 src/world/tile/tile_template_manager.cpp
 src/world/tile/tile_template.cpp
 )
+# target_compile_options(app PRIVATE -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer)
+# target_link_options(app PRIVATE -fsanitize=address,undefined)
 
 target_compile_features(app PRIVATE cxx_std_17)
 target_link_libraries(app PRIVATE SFML::Graphics)

@@ -82,7 +82,7 @@ void Game::run()
     int currentFrame = 0;
 
     bool l_successful = true;
-    unsigned int l_debugTextObjectID = scene.getUILayer()->getUIManagementSystem()->addObject(l_successful, "debug_text");
+    // unsigned int l_debugTextObjectID = scene.getUILayer()->getUIManagementSystem()->addObject(l_successful, "debug_text");
 
     while (window.getWindow().isOpen())
     {
@@ -173,7 +173,7 @@ void Game::run()
         //     }
         // }
 
-        scene.getUILayer()->getUIManagementSystem()->updateObject(l_debugTextObjectID, {{"FPS", std::to_string(static_cast<int>(smoothFps))}});
+        //scene.getUILayer()->getUIManagementSystem()->updateObject(l_debugTextObjectID, {{"FPS", std::to_string(static_cast<int>(smoothFps))}});
 
         runBlame["UI/CHUNK LOAD UPDATE"] = debugClock.restart().asSeconds();
 

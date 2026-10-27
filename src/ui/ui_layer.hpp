@@ -19,7 +19,7 @@ public:
     sf::Vector2f getUIViewSize();
 
     template<typename T>
-    UIElement* addElement(std::string p_elementData, UIElement* p_parent = nullptr)
+    UIElement* addElement(std::string p_elementData, unsigned int p_parent = UINT32_MAX)
     {
         unsigned int l_newID = getNewID();
 

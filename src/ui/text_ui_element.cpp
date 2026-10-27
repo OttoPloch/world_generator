@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <string>
 
-TextUIElement::TextUIElement(Game* pf_game, unsigned int pf_ID, std::string p_data, UIElement* pf_parent) : UIElement(pf_game, pf_ID, pf_parent), m_text(*pf_game->getAssetManager()->getFont("sfml_font"), "PLACEHOLDER", 50)
+TextUIElement::TextUIElement(Game* pf_game, unsigned int pf_ID, std::string p_data, unsigned int pf_parent) : UIElement(pf_game, pf_ID, pf_parent), m_text(*pf_game->getAssetManager()->getFont("sfml_font"), "PLACEHOLDER", 50)
 {
     setData(p_data);
 }

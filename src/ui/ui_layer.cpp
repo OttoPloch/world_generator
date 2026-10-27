@@ -21,17 +21,17 @@ UILayer::UILayer(Game* p_game, Camera* p_camera) : m_IDCounter(0), m_game(p_game
     addElement<FrameUIElement>("position: 80, 120; size: 20, 20; color: 50, 50, 50");
     addElement<FrameUIElement>("position: 100, 120; size: 20, 20; color: 0, 0, 0");
 
-    UIElement* t_parent = addElement<FrameUIElement>("position: 200, 10; size: 100, 100; color: 255, 255, 255");
+    unsigned int t_parentID = addElement<FrameUIElement>("position: 200, 10; size: 100, 100; color: 255, 255, 255")->getID();
 
-    addElement<TextUIElement>("position: 0, 0, 0, 0; text: 1; character_size: 16; color: 255, 0, 0", t_parent);
-    addElement<TextUIElement>("position: 0, 0, 1, 1; text: 2; character_size: 16; color: 255, 0, 0", t_parent);
-    addElement<TextUIElement>("position: 0, 0, 2, 2; text: 3; character_size: 16; color: 255, 0, 0", t_parent);
-    addElement<TextUIElement>("position: 0, 0, 3, 3; text: 4; character_size: 16; color: 255, 0, 0", t_parent);
-    addElement<TextUIElement>("position: 0, 0, 4, 4; text: 5; character_size: 16; color: 255, 0, 0", t_parent);
-    addElement<TextUIElement>("position: 0, 0, 5, 5; text: 6; character_size: 16; color: 255, 0, 0", t_parent);
-    addElement<TextUIElement>("position: 0, 0, 6, 6; text: 7; character_size: 16; color: 255, 0, 0", t_parent);
-    addElement<TextUIElement>("position: 0, 0, 7, 7; text: 8; character_size: 16; color: 255, 0, 0", t_parent);
-    addElement<TextUIElement>("position: 0, 0, 8, 8; text: 9; character_size: 16; color: 255, 0, 0", t_parent);
+    addElement<TextUIElement>("position: 0, 0, 0, 0; text: 1; character_size: 16; color: 255, 0, 0", t_parentID);
+    addElement<TextUIElement>("position: 0, 0, 1, 1; text: 2; character_size: 16; color: 255, 0, 0", t_parentID);
+    addElement<TextUIElement>("position: 0, 0, 2, 2; text: 3; character_size: 16; color: 255, 0, 0", t_parentID);
+    addElement<TextUIElement>("position: 0, 0, 3, 3; text: 4; character_size: 16; color: 255, 0, 0", t_parentID);
+    addElement<TextUIElement>("position: 0, 0, 4, 4; text: 5; character_size: 16; color: 255, 0, 0", t_parentID);
+    addElement<TextUIElement>("position: 0, 0, 5, 5; text: 6; character_size: 16; color: 255, 0, 0", t_parentID);
+    addElement<TextUIElement>("position: 0, 0, 6, 6; text: 7; character_size: 16; color: 255, 0, 0", t_parentID);
+    addElement<TextUIElement>("position: 0, 0, 7, 7; text: 8; character_size: 16; color: 255, 0, 0", t_parentID);
+    addElement<TextUIElement>("position: 0, 0, 8, 8; text: 9; character_size: 16; color: 255, 0, 0", t_parentID);
 
     addElement<ImageUIElement>("position: 0, 0, 6, 7; texture: images/dr bee.jpg; size: 100, 100, 0");
 
@@ -53,6 +53,7 @@ sf::Vector2f UILayer::getUIViewSize()
 void UILayer::deleteElement(unsigned int p_ID)
 {
     if (m_elements.find(p_ID) == m_elements.end()) return;
+    if (!m_elements[p_ID]) return;
 
     m_elements.erase(p_ID);
 }

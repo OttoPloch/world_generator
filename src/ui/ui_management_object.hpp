@@ -19,7 +19,7 @@ struct SetupObject
 
 struct UpdateObject
 {
-    UIElement* element;
+    unsigned int elementID;
     std::string updateData;
 };
 
@@ -34,11 +34,11 @@ public:
 
     void updateUI(std::unordered_map<std::string, std::string> p_variables);
 private:
-    void createElementFromData(bool& pr_successful, SetupObject p_setupObject, std::unordered_map<std::string, UIElement*>& p_namesToElements);
+    void createElementFromData(bool& pr_successful, SetupObject p_setupObject, std::unordered_map<std::string, unsigned int>& p_namesToElementIDs);
 
-    void processSetupBlock(bool& pr_successful, DataBlock& p_setupBlock, std::unordered_map<std::string, std::string>& p_namesAndParentNames, std::unordered_map<std::string, UIElement*>& p_namesToElements);
+    void processSetupBlock(bool& pr_successful, DataBlock& p_setupBlock, std::unordered_map<std::string, std::string>& p_namesAndParentNames, std::unordered_map<std::string, unsigned int>& p_namesToElementIDs);
     
-    void processUpdateBlock(bool& pr_successful, DataBlock& p_updateBlock, std::unordered_map<std::string, UIElement*>& p_namesToElements);
+    void processUpdateBlock(bool& pr_successful, DataBlock& p_updateBlock, std::unordered_map<std::string, unsigned int>& p_namesToElementIDs);
     
     void prepareUpdateData(std::string& pr_preparedUpdateData, std::string p_updateData, const std::unordered_map<std::string, std::string>& p_variables);
 

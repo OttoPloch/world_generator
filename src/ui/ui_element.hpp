@@ -3,8 +3,9 @@
 #include "ui_position.hpp"
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Rect.hpp>
+#include <cstdint>
 #include <string>
-#include <unordered_map>
+#include <unordered_set>
 
 class Game;
 class Window;
@@ -12,9 +13,9 @@ class Window;
 class UIElement
 {
 public:
-    UIElement(Game* p_game, unsigned int p_ID, std::string p_data, UIElement* p_parent = nullptr);
+    UIElement(Game* p_game, unsigned int p_ID, std::string p_data, unsigned int p_parent = UINT32_MAX);
 
-    ~UIElement();
+    virtual ~UIElement();
 
     void setData(std::string p_data);
 
@@ -26,13 +27,14 @@ public:
 
     unsigned int getID();
 
-    UIElement* getChildByIDPath(std::string p_childIDPath);
+    // UIElement* getChildByIDPath(std::string p_childIDPath);
 
-    void setParent(UIElement* p_parent);
+    // leave argument blank to get rid of the parent (just the association, DOES NOT DELETE THE PARENT ELEMENT)
+    void setParent(unsigned int p_parent = UINT32_MAX);
 
-    UIElement* getParent();
+    unsigned int getParentID();
 
-    void addChild(UIElement* p_child);
+    void addChild(unsigned int p_childID);
 
     void removeChild(unsigned int p_childID);
 
@@ -47,7 +49,7 @@ public:
 
     bool m_visible;
 protected:
-    UIElement(Game* p_game, unsigned int p_ID, UIElement* p_parent = nullptr);
+    UIElement(Game* p_game, unsigned int p_ID, unsigned int p_parent = UINT32_MAX);
 
     virtual void processDataCommand_Child(std::string p_key, std::string p_value);
 
@@ -56,7 +58,7 @@ protected:
     UIPosition m_position;
     sf::Vector2f m_globalPosition;
 
-    std::unordered_map<unsigned int, UIElement*> m_children;
+    std::unordered_set<unsigned int> m_children;
 
     const unsigned int m_ID;
 private:
@@ -66,5 +68,5 @@ private:
 
     void setUIPositionFromString(std::string p_positionData);
 
-    UIElement* m_parent;
+    unsigned int m_parent;
 };

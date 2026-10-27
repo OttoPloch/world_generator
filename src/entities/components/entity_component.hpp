@@ -8,7 +8,7 @@ struct EntityComponent
 {
     EntityComponent(Entity* myEntity, std::string componentTypeIdentifier);
 
-    virtual ~EntityComponent();
+    virtual ~EntityComponent() = default;
 
     Entity* myEntity;
 

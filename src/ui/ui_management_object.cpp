@@ -12,7 +12,7 @@ UIManagementObject::UIManagementObject(bool& pr_successful, Game* p_game, std::s
 {
     DataParser* l_dataParser = m_game->getAssetManager()->getDataParser();
 
-    std::unordered_map<std::string, UIElement*> l_namesToElements;
+    std::unordered_map<std::string, unsigned int> l_namesToElementIDs;
     std::unordered_map<std::string, std::string> l_namesAndParentNames;
 
     std::unordered_map<std::string, DataBlock> l_dataBlocks = l_dataParser->loadData(pr_successful, "content/ui/" + p_objectType);
@@ -24,10 +24,10 @@ UIManagementObject::UIManagementObject(bool& pr_successful, Game* p_game, std::s
     }
 
     DataBlock& l_setupBlock = l_dataBlocks["setup"];
-    processSetupBlock(pr_successful, l_setupBlock, l_namesAndParentNames, l_namesToElements);
+    processSetupBlock(pr_successful, l_setupBlock, l_namesAndParentNames, l_namesToElementIDs);
 
     DataBlock& l_updateBlock = l_dataBlocks["update"];
-    processUpdateBlock(pr_successful, l_updateBlock, l_namesToElements);
+    processUpdateBlock(pr_successful, l_updateBlock, l_namesToElementIDs);
 
     for (auto& i_entry : l_namesAndParentNames)
     {
@@ -36,18 +36,23 @@ UIManagementObject::UIManagementObject(bool& pr_successful, Game* p_game, std::s
   
         if (l_parentName == ".") continue;
 
-        auto l_elementEntry = l_namesToElements.find(l_elementName);
-        if (l_elementEntry == l_namesToElements.end()) continue;
+        auto l_elementEntry = l_namesToElementIDs.find(l_elementName);
+        if (l_elementEntry == l_namesToElementIDs.end()) continue;
         if (!l_elementEntry->second) continue;
 
-        auto l_parentEntry = l_namesToElements.find(l_parentName);
-        if (l_parentEntry == l_namesToElements.end()) continue;
+        auto l_parentEntry = l_namesToElementIDs.find(l_parentName);
+        if (l_parentEntry == l_namesToElementIDs.end()) continue;
         if (!l_parentEntry->second) continue;
 
-        UIElement* l_element = l_elementEntry->second;
-        UIElement* l_parent = l_parentEntry->second;
+        UIElement* l_element = m_uiLayer->getElement(l_elementEntry->second);
+        UIElement* l_parent = m_uiLayer->getElement(l_parentEntry->second);
 
-        l_element->setParent(l_parent);
+        if (!l_element || !l_parent)
+        {
+            continue;
+        }
+
+        l_element->setParent(l_parent->getID());
     }
 }
 
@@ -55,9 +60,7 @@ UIManagementObject::~UIManagementObject()
 {
     for (auto& i_object : m_updateData)
     {
-        if (!i_object.element) continue;
-
-        m_uiLayer->deleteElement(i_object.element->getID());
+        m_uiLayer->deleteElement(i_object.elementID);
     }
 }
 
@@ -68,13 +71,18 @@ void UIManagementObject::updateUI(std::unordered_map<std::string, std::string> p
         std::string l_preparedUpdateData;
         prepareUpdateData(l_preparedUpdateData, i_updateObject.updateData, p_variables);
 
-        if (!i_updateObject.element) continue;
+        UIElement* l_elementToUpdate = m_uiLayer->getElement(i_updateObject.elementID);
+        if (!l_elementToUpdate)
+        {
+            std::cerr << "ERROR: UIManagementObject has update data for invalid element ID '" << i_updateObject.elementID << "'\n";
+            continue;
+        }
 
-        i_updateObject.element->setData(l_preparedUpdateData);
+        l_elementToUpdate->setData(l_preparedUpdateData);
     }
 }
 
-void UIManagementObject::createElementFromData(bool& pr_successful, SetupObject p_setupObject, std::unordered_map<std::string, UIElement*>& p_namesToElements)
+void UIManagementObject::createElementFromData(bool& pr_successful, SetupObject p_setupObject, std::unordered_map<std::string, unsigned int>& p_namesToElementIDs)
 {
     UIElement* l_newElement;
 
@@ -91,10 +99,10 @@ void UIManagementObject::createElementFromData(bool& pr_successful, SetupObject 
         l_newElement = m_uiLayer->addElement<FrameUIElement>(p_setupObject.setupData);
     }
 
-    p_namesToElements[p_setupObject.elementName] = l_newElement;
+    p_namesToElementIDs[p_setupObject.elementName] = l_newElement->getID();
 }
 
-void UIManagementObject::processSetupBlock(bool& pr_successful, DataBlock& p_setupBlock, std::unordered_map<std::string, std::string>& p_namesAndParentNames, std::unordered_map<std::string, UIElement*>& p_namesToElements)
+void UIManagementObject::processSetupBlock(bool& pr_successful, DataBlock& p_setupBlock, std::unordered_map<std::string, std::string>& p_namesAndParentNames, std::unordered_map<std::string, unsigned int>& p_namesToElementIDs)
 {
     for (auto& i_mapEntry : p_setupBlock.entries)
     {
@@ -115,11 +123,11 @@ void UIManagementObject::processSetupBlock(bool& pr_successful, DataBlock& p_set
         
         p_namesAndParentNames[l_elementName] = l_parentName;
         
-        createElementFromData(pr_successful, {l_elementName, l_parentName, l_type, l_setupData}, p_namesToElements);
+        createElementFromData(pr_successful, {l_elementName, l_parentName, l_type, l_setupData}, p_namesToElementIDs);
     }
 }
 
-void UIManagementObject::processUpdateBlock(bool& pr_successful, DataBlock& p_updateBlock, std::unordered_map<std::string, UIElement*>& p_namesToElements)
+void UIManagementObject::processUpdateBlock(bool& pr_successful, DataBlock& p_updateBlock, std::unordered_map<std::string, unsigned int>& p_namesToElementIDs)
 {
     for (auto& i_mapEntry : p_updateBlock.entries)
     {
@@ -136,8 +144,8 @@ void UIManagementObject::processUpdateBlock(bool& pr_successful, DataBlock& p_up
         std::string l_elementName = i_mapEntry.first;
         std::string l_updateData = l_variables["data"];
         
-        auto l_entry = p_namesToElements.find(l_elementName);
-        if (l_entry != p_namesToElements.end())
+        auto l_entry = p_namesToElementIDs.find(l_elementName);
+        if (l_entry != p_namesToElementIDs.end())
         {
             m_updateData.push_back({l_entry->second, l_updateData});
         }

@@ -6,7 +6,7 @@
 class ImageUIElement : public UIElement
 {
 public:
-    ImageUIElement(Game* pf_game, unsigned int pf_ID, std::string p_data, UIElement* pf_parent = nullptr);
+    ImageUIElement(Game* pf_game, unsigned int pf_ID, std::string p_data, unsigned int pf_parent = UINT32_MAX);
 
     sf::Vector2f getSize() override;
 

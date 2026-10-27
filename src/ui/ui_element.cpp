@@ -3,23 +3,40 @@
 #include "ui_position.hpp"
 #include <SFML/System/Vector2.hpp>
 #include <algorithm>
+#include <cstdint>
+#include <limits>
 
-UIElement::UIElement(Game* p_game, unsigned int p_ID, UIElement* p_parent) : m_game(p_game), m_window(p_game->getWindow()), m_ID(p_ID), m_parent(nullptr), m_visible(true)
+UIElement::UIElement(Game* p_game, unsigned int p_ID, unsigned int p_parent) : m_game(p_game), m_window(p_game->getWindow()), m_ID(p_ID), m_parent(UINT32_MAX), m_visible(true)
 {
-    if (p_parent) setParent(p_parent);
+    setParent(p_parent);
 }
 
-UIElement::UIElement(Game* p_game, unsigned int p_ID, std::string p_data, UIElement* p_parent) : m_game(p_game), m_window(p_game->getWindow()), m_ID(p_ID), m_parent(nullptr)
+UIElement::UIElement(Game* p_game, unsigned int p_ID, std::string p_data, unsigned int p_parent) : m_game(p_game), m_window(p_game->getWindow()), m_ID(p_ID), m_parent(UINT32_MAX), m_visible(true)
 {
-    if (p_parent) setParent(p_parent);
+    setParent(p_parent);
     setData(p_data);
 }
 
 UIElement::~UIElement()
 {
+    for (auto i_childID : m_children)
+    {
+        UIElement* l_childElement = m_game->getScene()->getUILayer()->getElement(i_childID);
+
+        if (l_childElement)
+        {
+            l_childElement->setParent();
+        }
+    }
+
     if (m_parent)
     {
-        m_parent->removeChild(m_ID);
+        UIElement* l_parentElement = m_game->getScene()->getUILayer()->getElement(m_parent);
+
+        if (l_parentElement)
+        {
+            l_parentElement->removeChild(m_ID);
+        }
     }
 }
 
@@ -44,9 +61,10 @@ void UIElement::updateVisuals()
 
     for (auto& i_entry : m_children)
     {
-        if (!i_entry.second) continue;
+        UIElement* l_childElement = m_game->getScene()->getUILayer()->getElement(i_entry);
+        if (!l_childElement) continue;
 
-        i_entry.second->updateVisuals();
+        l_childElement->updateVisuals();
     }
 }
 
@@ -65,56 +83,68 @@ unsigned int UIElement::getID()
     return m_ID;
 }
 
-UIElement* UIElement::getChildByIDPath(std::string p_childIDPath)
+// UIElement* UIElement::getChildByIDPath(std::string p_childIDPath)
+// {
+//     std::vector<unsigned int> l_identifierChain = getUIntsFromString(p_childIDPath, ".");
+//     if (l_identifierChain.size() == 0) return nullptr;
+
+//     if (l_identifierChain.size() == 1)
+//     {
+//         for (auto& i_entry : m_children)
+//         {
+//             if (i_entry.second->getID() == l_identifierChain[0])
+//             {
+//                 return i_entry.second;
+//             }
+//         }
+//     }
+//     else
+//     {
+//         std::string l_trimmedIDPath = p_childIDPath;
+//         l_trimmedIDPath.erase(0, std::to_string(l_identifierChain[0]).size() + 1);
+
+//         for (auto& i_entry : m_children)
+//         {
+//             if (i_entry.second->getID() == l_identifierChain[0])
+//             {
+//                 return i_entry.second->getChildByIDPath(l_trimmedIDPath);
+//             }
+//         }
+//     }
+
+//     return nullptr;
+// }
+
+void UIElement::setParent(unsigned int p_parent)
 {
-    std::vector<unsigned int> l_identifierChain = getUIntsFromString(p_childIDPath, ".");
-    if (l_identifierChain.size() == 0) return nullptr;
-
-    if (l_identifierChain.size() == 1)
+    if (m_parent != UINT32_MAX)
     {
-        for (auto& i_entry : m_children)
-        {
-            if (i_entry.second->getID() == l_identifierChain[0])
-            {
-                return i_entry.second;
-            }
-        }
-    }
-    else
-    {
-        std::string l_trimmedIDPath = p_childIDPath;
-        l_trimmedIDPath.erase(0, std::to_string(l_identifierChain[0]).size() + 1);
+        UIElement* l_parent = m_game->getScene()->getUILayer()->getElement(m_parent);
 
-        for (auto& i_entry : m_children)
-        {
-            if (i_entry.second->getID() == l_identifierChain[0])
-            {
-                return i_entry.second->getChildByIDPath(l_trimmedIDPath);
-            }
-        }
+        if (l_parent) l_parent->removeChild(m_ID);
     }
 
-    return nullptr;
+    m_parent = p_parent;
 }
 
-UIElement* UIElement::getParent()
+unsigned int UIElement::getParentID()
 {
     return m_parent;
 }
 
-void UIElement::addChild(UIElement* p_child)
+void UIElement::addChild(unsigned int p_childID)
 {
-    if (!p_child) return;
-    if (m_children.find(p_child->getID()) != m_children.end()) return;
+    if (!m_game->getScene()->getUILayer()->getElement(p_childID)) return;
 
-    m_children[p_child->getID()] = p_child;
+    m_children.emplace(p_childID);
 }
 
 void UIElement::removeChild(unsigned int p_childID)
 {
-    if (m_children.find(p_childID) == m_children.end()) return;
+    auto l_entry = m_children.find(p_childID);
+    if (l_entry == m_children.end()) return;
 
-    m_children.erase(p_childID);
+    m_children.erase(l_entry);
 }
 
 sf::Vector2f UIElement::getSize()
@@ -130,17 +160,6 @@ void UIElement::update(float p_dt)
 void UIElement::draw(bool p_debug)
 {
 
-}
-
-void UIElement::setParent(UIElement* p_parent)
-{
-    if (m_parent)
-    {
-        m_parent->removeChild(m_ID);
-    }
-
-    m_parent = p_parent;
-    m_parent->addChild(this);
 }
 
 void UIElement::processDataCommand_Child(std::string p_key, std::string p_value)

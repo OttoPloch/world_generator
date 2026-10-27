@@ -1,7 +1,7 @@
 #include "image_ui_element.hpp"
 #include "../core/game.hpp"
 
-ImageUIElement::ImageUIElement(Game* pf_game, unsigned int pf_ID, std::string p_data, UIElement* pf_parent) : UIElement(pf_game, pf_ID, pf_parent)
+ImageUIElement::ImageUIElement(Game* pf_game, unsigned int pf_ID, std::string p_data, unsigned int pf_parent) : UIElement(pf_game, pf_ID, pf_parent)
 {
     m_sprite = Sprite(GamePosition(m_game, {0, 0}), m_game->getAssetManager()->getTexture("bush.png"));
 

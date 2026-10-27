@@ -21,10 +21,10 @@ unsigned int UIManagementSystem::addObject(bool& pr_successful, std::string p_ob
 
 void UIManagementSystem::removeObject(unsigned int p_ID)
 {
-    auto l_entry = m_objects.find(p_ID);
-    if (l_entry == m_objects.end()) return;
+    if (m_objects.find(p_ID) == m_objects.end()) return;
+    if (!m_objects[p_ID]) return;
 
-    m_objects.erase(l_entry);
+    m_objects.erase(p_ID);
 }
 
 void UIManagementSystem::updateObject(unsigned int p_ID, std::unordered_map<std::string, std::string> p_variables)
