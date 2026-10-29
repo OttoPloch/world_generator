@@ -1,28 +1,78 @@
 setup {
-    parent {
+    inventory_title {
         parent = .
+        type = text
+        data = position: -20, 20, 2, 2; text: Player Inventory:; character_size: 24; color: 0, 0, 255; style: 2
+    }
+    background {
+        parent = .
+        type = frame
+        data = position: 0, 0
+    }
+    item_slots_parent {
+        parent = inventory_title
         type = base
-        data = position: 0, 0, 0, 1
+        data = position: 0, 0, 0, 7
     }
     slot_0_text {
-        parent = parent
+        parent = item_slots_parent
         type = text
-        data = position: 0, 0, 1; text: PLACEHOLDER; character_size: 16; color: 255, 50, 150; style: 1
+        data = position: 0, 5, 1; text: PLACEHOLDER; character_size: 16; color: 255, 50, 150; style: 1
     }
     slot_1_text {
-        parent = parent
+        parent = item_slots_parent
         type = text
-        data = position: 0, 20, 1; text: PLACEHOLDER; character_size: 16; color: 255, 40, 160; style: 1
+        data = position: 0, 25, 1; text: PLACEHOLDER; character_size: 16; color: 255, 40, 160; style: 1
     }
     slot_2_text {
-        parent = parent
+        parent = item_slots_parent
         type = text
-        data = position: 0, 40, 1; text: PLACEHOLDER; character_size: 16; color: 255, 40, 160; style: 1
+        data = position: 0, 45, 1; text: PLACEHOLDER; character_size: 16; color: 255, 40, 160; style: 1
     }
     slot_3_text {
-        parent = parent
+        parent = item_slots_parent
         type = text
-        data = position: 0, 60, 1; text: PLACEHOLDER; character_size: 16; color: 255, 0, 0; style: 1
+        data = position: 0, 65, 1; text: PLACEHOLDER; character_size: 16; color: 255, 0, 0; style: 1
+    }
+    slot_4_text {
+        parent = item_slots_parent
+        type = text
+        data = position: 0, 85, 1; text: PLACEHOLDER; character_size: 16; color: 255, 0, 0; style: 1
+    }
+    slot_5_text {
+        parent = item_slots_parent
+        type = text
+        data = position: 0, 105, 1; text: PLACEHOLDER; character_size: 16; color: 255, 0, 0; style: 1
+    }
+    slot_6_text {
+        parent = item_slots_parent
+        type = text
+        data = position: 0, 125, 1; text: PLACEHOLDER; character_size: 16; color: 255, 0, 0; style: 1
+    }
+    slot_7_text {
+        parent = item_slots_parent
+        type = text
+        data = position: 0, 145, 1; text: PLACEHOLDER; character_size: 16; color: 255, 0, 0; style: 1
+    }
+    slot_8_text {
+        parent = item_slots_parent
+        type = text
+        data = position: 0, 165, 1; text: PLACEHOLDER; character_size: 16; color: 255, 0, 0; style: 1
+    }
+    slot_9_text {
+        parent = item_slots_parent
+        type = text
+        data = position: 0, 185, 1; text: PLACEHOLDER; character_size: 16; color: 255, 0, 0; style: 1
+    }
+    slot_10_text {
+        parent = item_slots_parent
+        type = text
+        data = position: 0, 205, 1; text: PLACEHOLDER; character_size: 16; color: 255, 0, 0; style: 1
+    }
+    slot_11_text {
+        parent = item_slots_parent
+        type = text
+        data = position: 0, 225, 1; text: PLACEHOLDER; character_size: 16; color: 255, 0, 0; style: 1
     }
 }
 
@@ -38,5 +88,32 @@ update {
     }
     slot_3_text {
         data = text: {SLOT_3}
+    }
+    slot_4_text {
+        data = text: {SLOT_4}
+    }
+    slot_5_text {
+        data = text: {SLOT_5}
+    }
+    slot_6_text {
+        data = text: {SLOT_6}
+    }
+    slot_7_text {
+        data = text: {SLOT_7}
+    }
+    slot_8_text {
+        data = text: {SLOT_8}
+    }
+    slot_9_text {
+        data = text: {SLOT_9}
+    }
+    slot_10_text {
+        data = text: {SLOT_10}
+    }
+    slot_11_text {
+        data = text: {SLOT_11}
+    }
+    background {
+        data = position: [inventory_title.bounding_box_position]; size: [inventory_title.bounding_box_size]
     }
 }

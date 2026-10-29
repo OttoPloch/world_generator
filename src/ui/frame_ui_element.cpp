@@ -21,6 +21,8 @@ void FrameUIElement::draw(bool p_debug)
 
 void FrameUIElement::processDataCommand_Child(std::string p_key, std::string p_value)
 {
+    std::cerr << p_key << ": " << p_value << '\n';
+
     if (p_key == "size")
     {
         std::vector<float> l_values = getFloatsFromString(p_value, ", ");

@@ -144,6 +144,50 @@ void UIManagementObject::processUpdateBlock(bool& pr_successful, DataBlock& p_up
         std::string l_elementName = i_mapEntry.first;
         std::string l_updateData = l_variables["data"];
         
+        // replacing the temporary name of the element that has the requested value to the ID of that element
+        auto l_openingSymbol = l_updateData.find("[");
+        auto l_closingSymbol = l_updateData.find("]");
+        int l_iterations = 1;
+        while (l_openingSymbol != std::string::npos && l_closingSymbol != std::string::npos)
+        {
+            int l_diff = l_closingSymbol - l_openingSymbol;
+            std::string l_variableFull = l_updateData.substr(l_openingSymbol + 1, l_diff - 1);
+            
+            unsigned int l_elementToReplaceID = UINT32_MAX;
+
+            std::vector<std::string> l_variableSegments = getSegmentsFromString(l_variableFull, ".");
+            if (l_variableSegments.size() != 2)
+            {
+                std::cerr << "ERROR: '" << l_variableFull << "' provided in update data '" << l_updateData << "' is not a valid variable.\n";
+            }
+
+            // getting the ID of the element from the name provided in the update data
+            std::string l_elementToReplaceName = l_variableSegments[0];
+            if (p_namesToElementIDs.find(l_elementToReplaceName) == p_namesToElementIDs.end())
+            {
+                std::cerr << "ERROR: the element name '" << l_elementToReplaceName << "' provided in variable in update data '" << l_updateData << "' has no associated ID to replace it with.\n";
+            }
+            else
+            {
+                l_elementToReplaceID = p_namesToElementIDs[l_elementToReplaceName];
+            }
+        
+            // just give a warning if the element does not exist
+            if (l_elementToReplaceID != UINT32_MAX && !m_uiLayer->getElement(l_elementToReplaceID))
+            {
+                std::cerr << "ERROR: the element with the temporary name '" << l_elementToReplaceName << "' provided in variable in update data '" << l_updateData << "' has an associated ID but does not exist.\n";
+            }
+            
+            // dont replace everything in the brackets, just the name of the element
+            l_updateData.erase(l_openingSymbol + 1, l_variableSegments[0].size());
+            l_updateData.insert(l_openingSymbol + 1, std::to_string(l_elementToReplaceID));
+
+            l_openingSymbol = getNthOccurenceInString(l_updateData, "[", l_iterations);
+            l_closingSymbol = getNthOccurenceInString(l_updateData, "]", l_iterations);
+
+            l_iterations++;
+        }
+
         auto l_entry = p_namesToElementIDs.find(l_elementName);
         if (l_entry != p_namesToElementIDs.end())
         {
@@ -156,12 +200,13 @@ void UIManagementObject::prepareUpdateData(std::string& pr_preparedUpdateData, s
 {
     pr_preparedUpdateData = p_updateData;
 
-    auto l_opening = pr_preparedUpdateData.find("{");
-    auto l_closing = pr_preparedUpdateData.find("}");
-    while (l_opening != std::string::npos && l_closing != std::string::npos)
+    // variables provided from code
+    auto l_openingSymbol = pr_preparedUpdateData.find("{");
+    auto l_closingSymbol = pr_preparedUpdateData.find("}");
+    while (l_openingSymbol != std::string::npos && l_closingSymbol != std::string::npos)
     {
-        int l_diff = l_closing - l_opening;
-        std::string l_variableName = pr_preparedUpdateData.substr(l_opening + 1, l_diff - 1);
+        int l_diff = l_closingSymbol - l_openingSymbol;
+        std::string l_variableName = pr_preparedUpdateData.substr(l_openingSymbol + 1, l_diff - 1);
         auto l_entry = p_variables.find(l_variableName);
         
         std::string l_value;
@@ -174,10 +219,47 @@ void UIManagementObject::prepareUpdateData(std::string& pr_preparedUpdateData, s
             l_value = "ERR VAR NAME NOT FOUND";
         }
         
-        pr_preparedUpdateData.erase(l_opening, l_diff + 1);
-        pr_preparedUpdateData.insert(l_opening, l_value);
+        pr_preparedUpdateData.erase(l_openingSymbol, l_diff + 1);
+        pr_preparedUpdateData.insert(l_openingSymbol, l_value);
 
-        l_opening = pr_preparedUpdateData.find("{");
-        l_closing = pr_preparedUpdateData.find("}");
+        l_openingSymbol = pr_preparedUpdateData.find("{");
+        l_closingSymbol = pr_preparedUpdateData.find("}");
+    }
+
+    // variables from other elements in the data
+    l_openingSymbol = pr_preparedUpdateData.find("[");
+    l_closingSymbol = pr_preparedUpdateData.find("]");
+    while (l_openingSymbol != std::string::npos && l_closingSymbol != std::string::npos)
+    {
+        int l_diff = l_closingSymbol - l_openingSymbol;
+        std::string l_variableFull = pr_preparedUpdateData.substr(l_openingSymbol + 1, l_diff - 1);
+        
+        std::string l_value;
+
+        std::vector<std::string> l_variableSegments = getSegmentsFromString(l_variableFull, ".");
+        if (l_variableSegments.size() != 2)
+        {
+            std::cerr << "ERROR: '" << l_variableFull << "' provided in data '" << p_updateData << "' is not a valid variable.\n";
+            l_value = "ERR VAR NOT VALID";
+        }
+
+        unsigned int l_elementID = std::stoul(l_variableSegments[0]);
+
+        UIElement* l_element = m_uiLayer->getElement(l_elementID);
+        if (l_element)
+        {
+            l_value = l_element->retrieveData(l_variableSegments[1]);
+        }
+        else
+        {
+            std::cerr << "ERROR: element with retrieved ID '" << l_elementID << "' in variable '" << l_variableFull << "' in update data '" << p_updateData << "' does not exist.\n";
+            l_value = "ERR ELMT NOT FOUND";
+        }
+
+        pr_preparedUpdateData.erase(l_openingSymbol, l_diff + 1);
+        pr_preparedUpdateData.insert(l_openingSymbol, l_value);
+
+        l_openingSymbol = pr_preparedUpdateData.find("[");
+        l_closingSymbol = pr_preparedUpdateData.find("]");
     }
 }

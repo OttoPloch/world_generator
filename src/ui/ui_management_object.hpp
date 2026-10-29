@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -22,6 +23,24 @@ struct UpdateObject
     unsigned int elementID;
     std::string updateData;
 };
+
+inline int getNthOccurenceInString(std::string p_string, std::string p_toFind, int p_n)
+{
+    int l_pos = -1;
+    int l_cnt = 0;
+
+    while (l_cnt <= p_n)
+    {
+        l_pos++;
+        l_pos = p_string.find(p_toFind, l_pos);
+
+        if (l_pos == std::string::npos) return -1;
+
+        l_cnt++;
+    }
+
+    return l_pos;
+}
 
 class UIManagementObject
 {

@@ -315,7 +315,7 @@ std::vector<std::string> getSegmentsFromString(std::string p_string, std::string
         std::string l_currSegment = l_stringTrimmed.substr(0, l_splitterIndex);
         l_segments.emplace_back(l_currSegment);
 
-        l_stringTrimmed.erase(0, l_splitterIndex + 2);
+        l_stringTrimmed.erase(0, l_splitterIndex + p_splitter.size());
 
         l_splitterIndex = l_stringTrimmed.find(p_splitter);
     }

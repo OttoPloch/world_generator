@@ -19,6 +19,8 @@ public:
 
     void setData(std::string p_data);
 
+    std::string retrieveData(std::string p_dataToRetrieve);
+
     void updateVisuals();
     
     UIPosition getUIPosition();
@@ -38,6 +40,10 @@ public:
 
     void removeChild(unsigned int p_childID);
 
+    // get the bb that contains this element and all its children.
+    sf::FloatRect getFamilyBoundingBox();
+
+    // get the size of just this element, not including children.
     virtual sf::Vector2f getSize();
 
     virtual void update(float p_dt);
@@ -54,6 +60,8 @@ protected:
     virtual void processDataCommand_Child(std::string p_key, std::string p_value);
 
     virtual void updateVisuals_Child();
+
+    virtual std::string retrieveData_Child(std::string p_dataToRetrieve);
 
     UIPosition m_position;
     sf::Vector2f m_globalPosition;

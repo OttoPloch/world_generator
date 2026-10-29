@@ -14,8 +14,6 @@ class UILayer
 public:
     UILayer(Game* p_game, Camera* p_camera);
 
-    unsigned int getNewID();
-
     sf::Vector2f getUIViewSize();
 
     template<typename T>
@@ -46,6 +44,8 @@ public:
     void draw(bool p_debug);
 private:
     void setUIViewSize();
+
+    unsigned int getNewID();
 
     unsigned int m_IDCounter;
 

@@ -1,6 +1,7 @@
 #include "ui_element.hpp"
 #include "../core/game.hpp"
 #include "ui_position.hpp"
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <algorithm>
 #include <cstdint>
@@ -19,14 +20,20 @@ UIElement::UIElement(Game* p_game, unsigned int p_ID, std::string p_data, unsign
 
 UIElement::~UIElement()
 {
+    std::vector<UIElement*> l_childrenToEmancipate;
     for (auto i_childID : m_children)
     {
         UIElement* l_childElement = m_game->getScene()->getUILayer()->getElement(i_childID);
 
         if (l_childElement)
         {
-            l_childElement->setParent();
+            l_childrenToEmancipate.emplace_back(l_childElement);
         }
+    }
+
+    for (auto i_childElement : l_childrenToEmancipate)
+    {
+        i_childElement->setParent();
     }
 
     if (m_parent)
@@ -47,6 +54,40 @@ void UIElement::setData(std::string p_data)
     for (auto i_command : l_commands)
     {
         processDataCommand(i_command);
+    }
+}
+
+std::string UIElement::retrieveData(std::string p_dataToRetrieve)
+{
+    if (p_dataToRetrieve == "local_position")
+    {
+        return std::to_string(m_position.m_offset.x) + ", " + std::to_string(m_position.m_offset.y);
+    }
+    else if (p_dataToRetrieve == "global_position")
+    {
+        return std::to_string(m_globalPosition.x) + ", " + std::to_string(m_globalPosition.y);
+    }
+    else if (p_dataToRetrieve == "size")
+    {
+        sf::Vector2f l_size = getSize();
+        return std::to_string(l_size.x) + ", " + std::to_string(l_size.y);
+    }
+    else if (p_dataToRetrieve == "bounding_box_position")
+    {
+        sf::Vector2f l_bbPosition = getFamilyBoundingBox().position;
+        return std::to_string(l_bbPosition.x) + ", " + std::to_string(l_bbPosition.y);
+    }
+    else if (p_dataToRetrieve == "bounding_box_size")
+    {
+        sf::Vector2f l_bbSize = getFamilyBoundingBox().size;
+
+        std::cerr << "senhofgiehfnoseif " << l_bbSize.x << ", " << l_bbSize.y << '\n';
+
+        return std::to_string(l_bbSize.x) + ", " + std::to_string(l_bbSize.y);
+    }
+    else
+    {
+        return retrieveData_Child(p_dataToRetrieve);
     }
 }
 
@@ -119,12 +160,23 @@ void UIElement::setParent(unsigned int p_parent)
 {
     if (m_parent != UINT32_MAX)
     {
-        UIElement* l_parent = m_game->getScene()->getUILayer()->getElement(m_parent);
+        UIElement* l_parentElement = m_game->getScene()->getUILayer()->getElement(m_parent);
 
-        if (l_parent) l_parent->removeChild(m_ID);
+        if (l_parentElement) l_parentElement->removeChild(m_ID);
     }
 
     m_parent = p_parent;
+    if (m_parent == UINT32_MAX) return;
+
+    UIElement* l_parentElement = m_game->getScene()->getUILayer()->getElement(m_parent);
+    if (!l_parentElement)
+    {
+        std::cerr << "ERROR: setting parent of UI element to ID '" << p_parent << "' failed, no element was found with that ID.\n";
+        m_parent = UINT32_MAX;
+        return;
+    }
+
+    l_parentElement->addChild(m_ID);
 }
 
 unsigned int UIElement::getParentID()
@@ -145,6 +197,33 @@ void UIElement::removeChild(unsigned int p_childID)
     if (l_entry == m_children.end()) return;
 
     m_children.erase(l_entry);
+}
+
+sf::FloatRect UIElement::getFamilyBoundingBox()
+{
+    sf::FloatRect l_globalBounds = getGlobalBounds();
+
+    float left = l_globalBounds.position.x;
+    float right = l_globalBounds.position.x + l_globalBounds.size.x;
+    float top = l_globalBounds.position.y;
+    float bottom = l_globalBounds.position.y + l_globalBounds.size.y;
+
+    for (auto i_childID : m_children)
+    {
+        UIElement* l_childElement = m_game->getScene()->getUILayer()->getElement(i_childID);
+        if (!l_childElement) continue;
+
+        sf::FloatRect l_childBounds = l_childElement->getFamilyBoundingBox();
+
+        left = std::min(left, l_childBounds.position.x);
+        right = std::max(right, l_childBounds.position.x + l_childBounds.size.x);
+        top = std::min(top, l_childBounds.position.y);
+        bottom = std::max(bottom, l_childBounds.position.y + l_childBounds.size.y);
+
+        std::cerr << bottom << "; " << l_childBounds.position.y << " + " << l_childBounds.size.y << '\n';
+    }
+
+    return {{left, top}, {right - left, bottom - top}};
 }
 
 sf::Vector2f UIElement::getSize()
@@ -172,16 +251,26 @@ void UIElement::updateVisuals_Child()
 
 }
 
+std::string UIElement::retrieveData_Child(std::string p_dataToRetrieve)
+{
+    return "ERR NO CHILD OVERRIDE";
+}
+
 void UIElement::processDataCommand(std::string p_command)
 {
     auto l_splitterIndex = p_command.find(": ");
 
-    auto l_key = p_command.substr(0, l_splitterIndex);
-    auto l_value = p_command.substr(l_splitterIndex + 2);
+    std::string l_key = p_command.substr(0, l_splitterIndex);
+    std::string l_value = p_command.substr(l_splitterIndex + 2);
 
     if (l_key == "position")
     {
         setUIPositionFromString(l_value);
+    }
+    else if (l_key == "print")
+    {
+        std::cout << "UI element with ID " << m_ID << " says:\n   ";
+        std::cout << l_value << '\n';
     }
     else
     {
