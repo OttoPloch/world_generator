@@ -2,7 +2,7 @@ setup {
     background {
         parent = .
         type = frame
-        data = position: -10, 10, 2, 2; layer: 0; color: 0, 0, 0, 200
+        data = position: -10, 10, 2, 2; layer: 0; color: 255, 255, 255, 150
     }
     inventory_title {
         parent = background
