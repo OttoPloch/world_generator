@@ -7,12 +7,12 @@
 #include <cstdint>
 #include <limits>
 
-UIElement::UIElement(Game* p_game, unsigned int p_ID, unsigned int p_parent) : m_game(p_game), m_window(p_game->getWindow()), m_ID(p_ID), m_parent(UINT32_MAX), m_visible(true)
+UIElement::UIElement(Game* p_game, unsigned int p_ID, unsigned int p_parent) : m_game(p_game), m_window(p_game->getWindow()), m_ID(p_ID), m_parent(UINT32_MAX), m_visible(true), m_layer(1)
 {
     setParent(p_parent);
 }
 
-UIElement::UIElement(Game* p_game, unsigned int p_ID, std::string p_data, unsigned int p_parent) : m_game(p_game), m_window(p_game->getWindow()), m_ID(p_ID), m_parent(UINT32_MAX), m_visible(true)
+UIElement::UIElement(Game* p_game, unsigned int p_ID, std::string p_data, unsigned int p_parent) : m_game(p_game), m_window(p_game->getWindow()), m_ID(p_ID), m_parent(UINT32_MAX), m_visible(true), m_layer(1)
 {
     setParent(p_parent);
     setData(p_data);
@@ -80,8 +80,6 @@ std::string UIElement::retrieveData(std::string p_dataToRetrieve)
     else if (p_dataToRetrieve == "bounding_box_size")
     {
         sf::Vector2f l_bbSize = getFamilyBoundingBox().size;
-
-        std::cerr << "senhofgiehfnoseif " << l_bbSize.x << ", " << l_bbSize.y << '\n';
 
         return std::to_string(l_bbSize.x) + ", " + std::to_string(l_bbSize.y);
     }
@@ -219,8 +217,6 @@ sf::FloatRect UIElement::getFamilyBoundingBox()
         right = std::max(right, l_childBounds.position.x + l_childBounds.size.x);
         top = std::min(top, l_childBounds.position.y);
         bottom = std::max(bottom, l_childBounds.position.y + l_childBounds.size.y);
-
-        std::cerr << bottom << "; " << l_childBounds.position.y << " + " << l_childBounds.size.y << '\n';
     }
 
     return {{left, top}, {right - left, bottom - top}};
@@ -271,6 +267,12 @@ void UIElement::processDataCommand(std::string p_command)
     {
         std::cout << "UI element with ID " << m_ID << " says:\n   ";
         std::cout << l_value << '\n';
+    }
+    else if (l_key == "layer")
+    {
+        unsigned int l_newLayer = std::stoul(l_value);
+
+        m_layer = l_newLayer;
     }
     else
     {

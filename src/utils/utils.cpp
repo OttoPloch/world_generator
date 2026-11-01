@@ -350,3 +350,77 @@ std::vector<unsigned int> getUIntsFromString(std::string p_string, std::string p
 
     return l_values;
 }
+
+std::string stringOperation(std::string p_firstTerm, std::string p_secondTerm, std::string p_operator)
+{
+    std::string l_result = "0";
+
+    auto l_firstTermCommaIndex = p_firstTerm.find(", ");
+    if (l_firstTermCommaIndex != std::string::npos)
+    {
+        // first term has two values
+
+        float l_xValue = std::stof(p_firstTerm.substr(0, l_firstTermCommaIndex));
+        float l_yValue = std::stof(p_firstTerm.substr(l_firstTermCommaIndex + 2));
+
+        auto l_secondTermCommaIndex = p_secondTerm.find(", ");
+        if (l_secondTermCommaIndex != std::string::npos)
+        {
+            // second term also has two values
+
+            float l_secondXValue = std::stof(p_secondTerm.substr(0, l_secondTermCommaIndex));
+            float l_secondYValue = std::stof(p_secondTerm.substr(l_secondTermCommaIndex + 2));
+
+            l_result = calculateWithStringOperator(l_xValue, l_secondXValue, p_operator) + ", " + calculateWithStringOperator(l_yValue, l_secondYValue, p_operator);
+
+            std::cerr << l_xValue << p_operator << l_secondXValue << ", " << l_yValue << p_operator << l_secondYValue << '\n';
+        }
+        else
+        {
+            // second term only has one value
+
+            float l_secondValue = std::stof(p_secondTerm);
+
+            l_result = calculateWithStringOperator(l_xValue, l_secondValue, p_operator) + ", " + calculateWithStringOperator(l_yValue, l_secondValue, p_operator);
+        }
+    }
+    else
+    {
+        // first term only has one value (second must also only have one value)
+
+        if (p_secondTerm.find(", ") != std::string::npos)
+        {
+            std::cerr << "ERROR: operation '" << p_firstTerm << p_operator << p_secondTerm << "' in update data tries to add a vector to a single value.\n";
+            return "ERR OPERATION INVALID";
+        }
+
+        float l_firstValue = std::stof(p_firstTerm);
+        float l_secondValue = std::stof(p_secondTerm);
+
+        l_result = calculateWithStringOperator(l_firstValue, l_secondValue, p_operator);
+    }
+
+    return l_result;
+}
+
+std::string calculateWithStringOperator(float p_firstValue, float p_secondValue, std::string p_operator)
+{
+    if (p_operator == "+")
+    {
+        return std::to_string(p_firstValue + p_secondValue);
+    }
+    else if (p_operator == "-")
+    {
+        return std::to_string(p_firstValue - p_secondValue);
+    }
+    else if (p_operator == "*")
+    {
+        return std::to_string(p_firstValue * p_secondValue);
+    }
+    else if (p_operator == "/")
+    {
+        return std::to_string(p_firstValue / p_secondValue);
+    }
+
+    return "ERROR OPERATOR INVALID";
+}

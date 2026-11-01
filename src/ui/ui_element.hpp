@@ -54,6 +54,8 @@ public:
     Window* m_window;
 
     bool m_visible;
+
+    unsigned int m_layer;
 protected:
     UIElement(Game* p_game, unsigned int p_ID, unsigned int p_parent = UINT32_MAX);
 

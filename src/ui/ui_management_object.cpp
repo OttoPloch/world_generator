@@ -241,25 +241,58 @@ void UIManagementObject::prepareUpdateData(std::string& pr_preparedUpdateData, s
         {
             std::cerr << "ERROR: '" << l_variableFull << "' provided in data '" << p_updateData << "' is not a valid variable.\n";
             l_value = "ERR VAR NOT VALID";
+            break;
         }
 
         unsigned int l_elementID = std::stoul(l_variableSegments[0]);
 
         UIElement* l_element = m_uiLayer->getElement(l_elementID);
-        if (l_element)
-        {
-            l_value = l_element->retrieveData(l_variableSegments[1]);
-        }
-        else
+        if (!l_element)
         {
             std::cerr << "ERROR: element with retrieved ID '" << l_elementID << "' in variable '" << l_variableFull << "' in update data '" << p_updateData << "' does not exist.\n";
-            l_value = "ERR ELMT NOT FOUND";
+            l_value = "ERR ELEMENT NOT FOUND";
+            break;
         }
+
+        l_value = l_element->retrieveData(l_variableSegments[1]);
 
         pr_preparedUpdateData.erase(l_openingSymbol, l_diff + 1);
         pr_preparedUpdateData.insert(l_openingSymbol, l_value);
 
         l_openingSymbol = pr_preparedUpdateData.find("[");
         l_closingSymbol = pr_preparedUpdateData.find("]");
+    }
+
+    l_openingSymbol = pr_preparedUpdateData.find("(");
+    l_closingSymbol = pr_preparedUpdateData.find(")");
+    while (l_openingSymbol != std::string::npos && l_closingSymbol != std::string::npos)
+    {
+        int l_diff = l_closingSymbol - l_openingSymbol;
+        std::string l_operationFull = pr_preparedUpdateData.substr(l_openingSymbol + 1, l_diff - 1);
+
+        std::string l_value;
+
+        std::string l_operatorString;
+        if (l_operationFull.find(" + ") != std::string::npos) l_operatorString = " + ";
+        else if (l_operationFull.find(" - ") != std::string::npos) l_operatorString = " - ";
+        else if (l_operationFull.find(" * ") != std::string::npos) l_operatorString = " * ";
+        else if (l_operationFull.find(" / ") != std::string::npos) l_operatorString = " / ";
+
+        std::vector<std::string> l_operationSegments = getSegmentsFromString(l_operationFull, l_operatorString);
+
+        if (l_operationSegments.size() != 2)
+        {
+            std::cerr << "ERROR: operation '" << l_operationFull << "' in update data '" << p_updateData << "' isn't valid.\n";
+            l_value = "ERR OPERATION INVALID";
+            break;
+        }
+
+        l_value = stringOperation(l_operationSegments[0], l_operationSegments[1], l_operatorString.substr(1, 1));
+
+        pr_preparedUpdateData.erase(l_openingSymbol, l_diff + 1);
+        pr_preparedUpdateData.insert(l_openingSymbol, l_value);
+
+        l_openingSymbol = pr_preparedUpdateData.find("(");
+        l_closingSymbol = pr_preparedUpdateData.find(")");
     }
 }

@@ -63,3 +63,7 @@ std::vector<std::string> getSegmentsFromString(std::string p_string, std::string
 std::vector<float> getFloatsFromString(std::string p_string, std::string p_splitter);
 
 std::vector<unsigned int> getUIntsFromString(std::string p_string, std::string p_splitter);
+
+std::string stringOperation(std::string p_firstTerm, std::string p_secondTerm, std::string p_operator);
+
+std::string calculateWithStringOperator(float p_firstValue, float p_secondValue, std::string p_operator);

@@ -4,6 +4,7 @@
 #include "frame_ui_element.hpp"
 #include "../core/game.hpp"
 #include "ui_position.hpp"
+#include <algorithm>
 
 UILayer::UILayer(Game* p_game, Camera* p_camera) : m_IDCounter(0), m_game(p_game), m_camera(p_camera), m_uiManagementSystem(m_game)
 {
@@ -21,7 +22,7 @@ UILayer::UILayer(Game* p_game, Camera* p_camera) : m_IDCounter(0), m_game(p_game
     addElement<FrameUIElement>("position: 80, 120; size: 20, 20; color: 50, 50, 50");
     addElement<FrameUIElement>("position: 100, 120; size: 20, 20; color: 0, 0, 0");
 
-    unsigned int t_parentID = addElement<FrameUIElement>("position: 200, 10; size: 100, 100; color: 255, 255, 255")->getID();
+    unsigned int t_parentID = addElement<FrameUIElement>("position: 200, 10; size: 100, 100; color: 255, 255, 255; layer: 0")->getID();
 
     addElement<TextUIElement>("position: 0, 0, 0, 0; text: 1; character_size: 16; color: 255, 0, 0", t_parentID);
     addElement<TextUIElement>("position: 0, 0, 1, 1; text: 2; character_size: 16; color: 255, 0, 0", t_parentID);
@@ -96,46 +97,71 @@ void UILayer::tick()
 
 void UILayer::draw(bool p_debug)
 {
+    std::vector<UIElement*> l_worldElements;
     std::vector<UIElement*> l_screenElements;
 
     for (auto& i_entry : m_elements)
     {
         if (!i_entry.second->m_visible) continue;
 
-        if (!i_entry.second->getUIPosition().m_worldPosition)
+        if (i_entry.second->getUIPosition().m_worldPosition)
+        {
+            l_worldElements.emplace_back(i_entry.second.get());
+        }
+        else
         {
             l_screenElements.emplace_back(i_entry.second.get());
-            continue;
         }
+    }
 
-        i_entry.second->draw(p_debug);
+    std::sort(l_worldElements.begin(), l_worldElements.end(), [](UIElement* a, UIElement* b){
+        return a->m_layer < b->m_layer;
+    });
+
+    std::sort(l_screenElements.begin(), l_screenElements.end(), [](UIElement* a, UIElement* b){
+        return a->m_layer < b->m_layer;
+    });
+
+    for (auto i_worldElement : l_worldElements)
+    {
+        i_worldElement->draw(p_debug);
 
         if (!p_debug) continue;
         
-        sf::RectangleShape rect(i_entry.second->getSize());
-        rect.setPosition(i_entry.second->getGlobalBounds().position);
+        sf::RectangleShape rect(i_worldElement->getSize());
+        rect.setPosition(i_worldElement->getGlobalBounds().position);
         rect.setFillColor(sf::Color::Transparent);
         rect.setOutlineColor(sf::Color::Blue);
-        rect.setOutlineThickness(1.f);
-
+        rect.setOutlineThickness(.7f);
         m_game->getWindow()->draw(rect);
+
+        sf::CircleShape l_circ(2);
+        l_circ.setOrigin({2, 2});
+        l_circ.setPosition(i_worldElement->getGlobalBounds().position);
+        l_circ.setFillColor(sf::Color::Red);
+        m_game->getWindow()->draw(l_circ);
     }
 
     m_game->getWindow()->setView(m_UIView);
-    
-    for (auto i_element : l_screenElements)
+
+    for (auto i_screenElement : l_screenElements)
     {
-        i_element->draw(p_debug);
+        i_screenElement->draw(p_debug);
         
         if (!p_debug) continue;
         
-        sf::RectangleShape rect(i_element->getSize());
-        rect.setPosition(i_element->getGlobalBounds().position);
+        sf::RectangleShape rect(i_screenElement->getSize());
+        rect.setPosition(i_screenElement->getGlobalBounds().position);
         rect.setFillColor(sf::Color::Transparent);
         rect.setOutlineColor(sf::Color::Blue);
-        rect.setOutlineThickness(1.f);
-        
+        rect.setOutlineThickness(.7f);
         m_game->getWindow()->draw(rect);
+        
+        sf::CircleShape l_circ(2);
+        l_circ.setOrigin({2, 2});
+        l_circ.setPosition(i_screenElement->getGlobalBounds().position);
+        l_circ.setFillColor(sf::Color::Red);
+        m_game->getWindow()->draw(l_circ);
     }
 
     m_game->getWindow()->setView(m_camera->getView());
