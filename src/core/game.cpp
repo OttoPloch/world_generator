@@ -3,7 +3,7 @@
 #include <SFML/Graphics/CircleShape.hpp>
 #include <string>
 
-Game::Game() : running(false), window({800, 800}, "INFINITE", false, 0, sf::Color(10, 10, 12)), assetManager(this), scene(this)
+Game::Game() : running(false), window({800, 800}, "INFINITE", false, 60, sf::Color(10, 10, 12)), assetManager(this), scene(this)
 {
     random = Random(settings.worldSeed);
 
