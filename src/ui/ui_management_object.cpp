@@ -4,6 +4,7 @@
 #include "text_ui_element.hpp"
 #include "ui_element.hpp"
 #include "ui_layer.hpp"
+#include <string>
 #include <unordered_map>
 
 UIManagementObject::UIManagementObject() {}
@@ -23,44 +24,22 @@ UIManagementObject::UIManagementObject(bool& pr_successful, Game* p_game, std::s
         return;
     }
 
+    replaceConstantVariablesInData(l_dataBlocks);
+
     DataBlock& l_setupBlock = l_dataBlocks["setup"];
     processSetupBlock(pr_successful, l_setupBlock, l_namesAndParentNames, l_namesToElementIDs);
 
     DataBlock& l_updateBlock = l_dataBlocks["update"];
     processUpdateBlock(pr_successful, l_updateBlock, l_namesToElementIDs);
 
-    for (auto& i_entry : l_namesAndParentNames)
-    {
-        std::string l_elementName = i_entry.first;
-        std::string l_parentName = i_entry.second;
-  
-        if (l_parentName == ".") continue;
-
-        auto l_elementEntry = l_namesToElementIDs.find(l_elementName);
-        if (l_elementEntry == l_namesToElementIDs.end()) continue;
-        if (!l_elementEntry->second) continue;
-
-        auto l_parentEntry = l_namesToElementIDs.find(l_parentName);
-        if (l_parentEntry == l_namesToElementIDs.end()) continue;
-        if (!l_parentEntry->second) continue;
-
-        UIElement* l_element = m_uiLayer->getElement(l_elementEntry->second);
-        UIElement* l_parent = m_uiLayer->getElement(l_parentEntry->second);
-
-        if (!l_element || !l_parent)
-        {
-            continue;
-        }
-
-        l_element->setParent(l_parent->getID());
-    }
+    setElementParents(l_namesAndParentNames, l_namesToElementIDs);
 }
 
 UIManagementObject::~UIManagementObject()
 {
-    for (auto& i_object : m_updateData)
+    for (auto& i_ID : m_allElementIDs)
     {
-        m_uiLayer->deleteElement(i_object.elementID);
+        m_uiLayer->deleteElement(i_ID);
     }
 }
 
@@ -100,6 +79,63 @@ void UIManagementObject::createElementFromData(bool& pr_successful, SetupObject 
     }
 
     p_namesToElementIDs[p_setupObject.elementName] = l_newElement->getID();
+
+    m_allElementIDs.emplace_back(l_newElement->getID());
+}
+
+void UIManagementObject::replaceConstantVariablesInData(std::unordered_map<std::string, DataBlock>& p_dataBlocks)
+{
+    // don't need to have constant variables, finding none could just mean there aren't any.
+    if (p_dataBlocks.find("variables") == p_dataBlocks.end()) return;
+
+    std::unordered_map<std::string, std::string> l_constantVariables;
+    for (auto& i_blockEntry : p_dataBlocks["variables"].entries)
+    {
+        for (auto& i_dataEntry : i_blockEntry.second.variables)
+        {
+            l_constantVariables[i_blockEntry.first + "." + i_dataEntry.first] = i_dataEntry.second;
+        }
+    }
+
+    for (auto& i_blockEntry : p_dataBlocks)
+    {
+        if (i_blockEntry.first == "variables") continue;
+
+        for (auto& i_dataEntry : i_blockEntry.second.entries)
+        {
+            for (auto& i_variableEntry : i_dataEntry.second.variables)
+            {
+                std::string& l_entryValue = i_variableEntry.second;
+
+                auto l_openingSymbol = l_entryValue.find("<");
+                auto l_closingSymbol = l_entryValue.find(">");
+
+                while (l_openingSymbol != std::string::npos && l_closingSymbol != std::string::npos)
+                {
+                    int l_diff = l_closingSymbol - l_openingSymbol;
+                    std::string l_variableName = l_entryValue.substr(l_openingSymbol + 1, l_diff - 1);
+                    
+                    std::string l_value;
+
+                    if (l_constantVariables.find(l_variableName) == l_constantVariables.end())
+                    {
+                        std::cerr << "ERROR: cannot replace constant variable '" << l_variableName << "' with value: no constant variable was found. Defaulting to 0.\n";
+                        l_value = "0";
+                    }
+                    else
+                    {
+                        l_value = l_constantVariables[l_variableName];
+                    }
+
+                    l_entryValue.erase(l_openingSymbol, l_diff + 1);
+                    l_entryValue.insert(l_openingSymbol, l_value);
+
+                    l_openingSymbol = l_entryValue.find("<");
+                    l_closingSymbol = l_entryValue.find(">");
+                }
+            }
+        }
+    }
 }
 
 void UIManagementObject::processSetupBlock(bool& pr_successful, DataBlock& p_setupBlock, std::unordered_map<std::string, std::string>& p_namesAndParentNames, std::unordered_map<std::string, unsigned int>& p_namesToElementIDs)
@@ -193,6 +229,35 @@ void UIManagementObject::processUpdateBlock(bool& pr_successful, DataBlock& p_up
         {
             m_updateData.push_back({l_entry->second, l_updateData});
         }
+    }
+}
+
+void UIManagementObject::setElementParents(const std::unordered_map<std::string, std::string>& p_namesAndParentNames, const std::unordered_map<std::string, unsigned int>& p_namesToElementIDs)
+{
+    for (auto& i_entry : p_namesAndParentNames)
+    {
+        std::string l_elementName = i_entry.first;
+        std::string l_parentName = i_entry.second;
+  
+        if (l_parentName == ".") continue;
+
+        auto l_elementEntry = p_namesToElementIDs.find(l_elementName);
+        if (l_elementEntry == p_namesToElementIDs.end()) continue;
+        if (!l_elementEntry->second) continue;
+
+        auto l_parentEntry = p_namesToElementIDs.find(l_parentName);
+        if (l_parentEntry == p_namesToElementIDs.end()) continue;
+        if (!l_parentEntry->second) continue;
+
+        UIElement* l_element = m_uiLayer->getElement(l_elementEntry->second);
+        UIElement* l_parent = m_uiLayer->getElement(l_parentEntry->second);
+
+        if (!l_element || !l_parent)
+        {
+            continue;
+        }
+
+        l_element->setParent(l_parent->getID());
     }
 }
 

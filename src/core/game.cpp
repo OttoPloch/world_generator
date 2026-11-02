@@ -3,7 +3,7 @@
 #include <SFML/Graphics/CircleShape.hpp>
 #include <string>
 
-Game::Game() : running(false), window({800, 800}, "INFINITE", false, 60, sf::Color(10, 10, 12)), assetManager(this), scene(this)
+Game::Game() : running(false), window({800, 800}, "INFINITE", false, 0, sf::Color(10, 10, 12)), assetManager(this), scene(this)
 {
     random = Random(settings.worldSeed);
 
@@ -82,7 +82,7 @@ void Game::run()
     int currentFrame = 0;
 
     bool l_successful = true;
-    // unsigned int l_debugTextObjectID = scene.getUILayer()->getUIManagementSystem()->addObject(l_successful, "debug_text");
+    unsigned int l_debugTextObjectID = scene.getUILayer()->getUIManagementSystem()->addObject(l_successful, "debug_text");
 
     while (window.getWindow().isOpen())
     {
@@ -173,7 +173,7 @@ void Game::run()
         //     }
         // }
 
-        //scene.getUILayer()->getUIManagementSystem()->updateObject(l_debugTextObjectID, {{"FPS", std::to_string(static_cast<int>(smoothFps))}});
+        scene.getUILayer()->getUIManagementSystem()->updateObject(l_debugTextObjectID, {{"FPS", std::to_string(static_cast<int>(smoothFps))}});
 
         runBlame["UI/CHUNK LOAD UPDATE"] = debugClock.restart().asSeconds();
 

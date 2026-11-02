@@ -1,8 +1,17 @@
+variables {
+    background {
+        MARGINS = -10, 10
+        ORIGIN/ANCHOR = 2, 2
+        PADDING = 20
+    }
+}
+
+
 setup {
     background {
         parent = .
         type = frame
-        data = position: -10, 10, 2, 2; layer: 0; color: 255, 255, 255, 150
+        data = position: <background.MARGINS>, <background.ORIGIN/ANCHOR>; layer: 0; color: 255, 255, 255, 150
     }
     inventory_title {
         parent = background
@@ -114,9 +123,9 @@ update {
         data = text: {SLOT_11}
     }
     inventory_title {
-        data = position: 0, 10
+        data = position: 0, (<background.PADDING> / 2)
     }
     background {
-        data = size: ([inventory_title.bounding_box_size] + 20)
+        data = size: ([inventory_title.bounding_box_size] + <background.PADDING>)
     }
 }

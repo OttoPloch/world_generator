@@ -55,14 +55,21 @@ public:
 private:
     void createElementFromData(bool& pr_successful, SetupObject p_setupObject, std::unordered_map<std::string, unsigned int>& p_namesToElementIDs);
 
+    void replaceConstantVariablesInData(std::unordered_map<std::string, DataBlock>& p_dataBlocks);
+
     void processSetupBlock(bool& pr_successful, DataBlock& p_setupBlock, std::unordered_map<std::string, std::string>& p_namesAndParentNames, std::unordered_map<std::string, unsigned int>& p_namesToElementIDs);
     
     void processUpdateBlock(bool& pr_successful, DataBlock& p_updateBlock, std::unordered_map<std::string, unsigned int>& p_namesToElementIDs);
-    
+
+    void setElementParents(const std::unordered_map<std::string, std::string>& p_namesAndParentNames, const std::unordered_map<std::string, unsigned int>& p_namesToElementIDs);
+
     void prepareUpdateData(std::string& pr_preparedUpdateData, std::string p_updateData, const std::unordered_map<std::string, std::string>& p_variables);
 
     Game* m_game;
     UILayer* m_uiLayer;
 
     std::vector<UpdateObject> m_updateData;
+
+    // used to keep track of all elements for when this object is deleted, so it can delete each of its elements.
+    std::vector<unsigned int> m_allElementIDs;
 };
