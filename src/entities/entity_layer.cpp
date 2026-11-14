@@ -45,7 +45,7 @@ void EntityLayer::init(Game* game)
     m_mobSystem = MobSystem(game, game->getScene());
 
     auto pt = &tManager.entityTemplates["player"];
-    pt->sprite = {game->getAssetManager()->getTexture("dog.png", "texture_atlases/"), {20, 20}, false, false, {{0, 0}, {0, 0}}, 1.6, true, nullptr, game->getAssetManager()->getAnimSet("dog")};
+    pt->sprite = {game->getAssetManager()->getTexture("dog.png", "texture_atlases/"), {32, 32}, false, false, {{0, 0}, {0, 0}}, 1.6, true, nullptr, game->getAssetManager()->getAnimSet("dog")};
     pt->movement = {1.f, 1.5f};
     pt->control = ControlComponentData();
     pt->state = StateComponentData();
@@ -69,10 +69,10 @@ void EntityLayer::init(Game* game)
     it->item = {{game->getSettings()->tile_size / 2, game->getSettings()->tile_size / 2}, {0, 0}};
 
     auto l_giraffeTemplate = &tManager.entityTemplates["giraffe"];
-    l_giraffeTemplate->sprite = {game->getAssetManager()->getTexture("missing.png"), {30, 30}, false, false, {{0, 0}, {0, 0}}, 1, true, nullptr, game->getAssetManager()->getAnimSet("dog")};
+    l_giraffeTemplate->sprite = {game->getAssetManager()->getTexture("missing.png"), {32, 64}, false, false, {{0, 0}, {0, 0}}, 3, true, nullptr, game->getAssetManager()->getAnimSet("giraffe")};
     l_giraffeTemplate->movement = {.25, 2};
     l_giraffeTemplate->state = StateComponentData();
-    l_giraffeTemplate->collision = {{1, 1}, true, RectType::ACTIVE};
+    l_giraffeTemplate->collision = {{.65, .5}, true, RectType::ACTIVE};
     l_giraffeTemplate->mob = {{0, 0}};
 
     addEntity(l_giraffeTemplate, true, {100, -100});

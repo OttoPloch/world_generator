@@ -26,7 +26,8 @@ void MobSystem::tick()
 
         if (m_game->random.getRandInt("generic", 0, m_game->getSettings()->tick_rate * 5) == 0)
         {
-            l_entityMobComponent->m_stats.movementDirection = sf::Vector2f(m_game->random.getRandInt("generic", -10, 10) / 10.f, m_game->random.getRandInt("generic", -10, 10) / 10.f);
+            l_entityMobComponent->m_stats.movementDirection = sf::Vector2f(0, m_game->random.getRandInt("generic", -10, 0) / 10.f);
+            // l_entityMobComponent->m_stats.movementDirection = sf::Vector2f(m_game->random.getRandInt("generic", -10, 10) / 10.f, m_game->random.getRandInt("generic", -10, 10) / 10.f);
         }
     }
 

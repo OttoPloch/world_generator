@@ -1,0 +1,18 @@
+texture name giraffe.png
+path texture_atlases/
+coord 0,192
+size 32,64
+coord 32,192
+size 32,64
+coord 64,192
+size 32,64
+coord 96,192
+size 32,64
+coord 128,192
+size 32,64
+coord 160,192
+size 32,64
+coord 192,192
+size 32,64
+coord 224,192
+size 32,64

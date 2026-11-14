@@ -1,0 +1,11 @@
+dir animations/giraffe/
+key 0
+anim giraffe_left
+key 1
+anim giraffe_right
+key 2
+anim giraffe_up
+key 3
+anim giraffe_down
+key 4
+anim giraffe_idle
