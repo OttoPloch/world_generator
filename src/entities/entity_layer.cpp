@@ -4,8 +4,10 @@
 #include "components/control_component.hpp"
 #include "components/entity_ui_component.hpp"
 #include "components/inventory_component.hpp"
+#include "components/mob_component.hpp"
 #include "components/sprite_component.hpp"
 #include "entity_systems/entity_chunk_system.hpp"
+#include "entity_systems/mob_system.hpp"
 #include "rect_type.hpp"
 #include "states.hpp"
 #include "../graphics/asset_manager.hpp"
@@ -40,6 +42,7 @@ void EntityLayer::init(Game* game)
     itemSystem = ItemSystem(game, game->getScene());
     entityChunkSystem = EntityChunkSystem(game, game->getScene());
     entityUISystem = EntityUISystem(game, game->getScene(), game->getScene()->getUILayer()->getUIManagementSystem());
+    m_mobSystem = MobSystem(game, game->getScene());
 
     auto pt = &tManager.entityTemplates["player"];
     pt->sprite = {game->getAssetManager()->getTexture("dog.png", "texture_atlases/"), {20, 20}, false, false, {{0, 0}, {0, 0}}, 1.6f, nullptr, game->getAssetManager()->getAnimSet("dog")};
@@ -64,6 +67,15 @@ void EntityLayer::init(Game* game)
     it->movement = {0, 0};
     it->collision = {{1, 1}, false, RectType::PASSIVE};
     it->item = {{game->getSettings()->tile_size / 2, game->getSettings()->tile_size / 2}, {0, 0}};
+
+    auto l_giraffeTemplate = &tManager.entityTemplates["giraffe"];
+    l_giraffeTemplate->sprite = {game->getAssetManager()->getTexture("missing.png"), {30, 30}, false};
+    l_giraffeTemplate->movement = {.25, 2};
+    l_giraffeTemplate->state = StateComponentData();
+    l_giraffeTemplate->collision = {{1, 1}, true, RectType::ACTIVE};
+    l_giraffeTemplate->mob = {{0, 0}};
+
+    addEntity(l_giraffeTemplate, true, {100, -100});
 
     // // PERFORMANCE TEST
     // for (int y = 0; y < 20; y++)
@@ -186,6 +198,7 @@ Entity* EntityLayer::addEntity(EntityTemplate* t, bool useCustomPosition, sf::Ve
         if (t->item) e->addComponent<ItemComponent>(e, t->item->spawnAreaOffset, t->item->spawnAreaSize);
         if (t->inventory) e->addComponent<InventoryComponent>(e, t->inventory->inventorySize, t->inventory->pickupRange, t->inventory->rangeIsInTiles);
         if (t->ui) e->addComponent<EntityUIComponent>(e, t->ui->componentTypesToShow);
+        if (t->mob) e->addComponent<MobComponent>(e, t->mob.value());
     }
 
     refactorEntitySystemCaches();
@@ -311,6 +324,8 @@ void EntityLayer::tick()
 
     entityChunkSystem.tick();
 
+    m_mobSystem.tick();
+
     entityUISystem.tick();
 
     // TEMP, TODO: player detection or something
@@ -376,4 +391,5 @@ void EntityLayer::refactorEntitySystemCaches()
     movementSystem.refactorEntityCache();
     renderSystem.refactorEntityCache();
     entityUISystem.refactorEntityCache();
+    m_mobSystem.refactorEntityCache();
 }

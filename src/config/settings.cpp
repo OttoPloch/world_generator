@@ -10,6 +10,7 @@ void Settings::init()
     int renderDistance = 5;
     int loadDistanceExtra = 2;
 
+    tick_rate = 60;
     tile_size = 10.f;
     chunk_size = 16;
     chunk_render_distance = renderDistance;

@@ -23,26 +23,27 @@ void MovementSystem::tick()
         
         entity->position.changePosition(entityMovementComponent->velocity);
         
-        sf::Vector2f movementVector = {0, 0};
         float speedMult = 1.f;
     
         if (entity->getComponent<ControlComponent>())
         {
-            movementVector = game->getInputManager()->getMovement();
-    
+            entityMovementComponent->movementInput = game->getInputManager()->getMovement();
+
             if (game->getInputManager()->isControlPressed("SPRINT")) speedMult = entityMovementComponent->stats.sprintMultilpier;
         }
+
+        if (entityMovementComponent->movementInput != sf::Vector2f(0, 0)) entityMovementComponent->movementInput = entityMovementComponent->movementInput.normalized();
     
-        if (movementVector != sf::Vector2f(0, 0))
+        (std::abs(entityMovementComponent->velocity.x) > 0.001f) ? entityMovementComponent->velocity.x *= game->getSettings()->motion_friction : entityMovementComponent->velocity.x = 0.f;
+        (std::abs(entityMovementComponent->velocity.y) > 0.001f) ? entityMovementComponent->velocity.y *= game->getSettings()->motion_friction : entityMovementComponent->velocity.y = 0.f;
+        
+        if (entityMovementComponent->movementInput != sf::Vector2f(0, 0))
         {
-            entityMovementComponent->velocity.x = entityMovementComponent->stats.speed * speedMult * movementVector.x;
-            entityMovementComponent->velocity.y = entityMovementComponent->stats.speed * speedMult * movementVector.y;
+            entityMovementComponent->velocity.x = entityMovementComponent->stats.speed * speedMult * entityMovementComponent->movementInput.x;
+            entityMovementComponent->velocity.y = entityMovementComponent->stats.speed * speedMult * entityMovementComponent->movementInput.y;
         }
-        else
-        {
-            (std::abs(entityMovementComponent->velocity.x) > 0.001f) ? entityMovementComponent->velocity.x *= game->getSettings()->motion_friction : entityMovementComponent->velocity.x = 0.f;
-            (std::abs(entityMovementComponent->velocity.y) > 0.001f) ? entityMovementComponent->velocity.y *= game->getSettings()->motion_friction : entityMovementComponent->velocity.y = 0.f;
-        }
+
+        entityMovementComponent->movementInput = {0, 0};
     }
 
     removeAllEntityIDsInVec(validEntities, noLongerValidEntities);

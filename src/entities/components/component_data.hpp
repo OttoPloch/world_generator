@@ -71,3 +71,8 @@ struct EntityUIComponentData
 {
     std::vector<std::string> componentTypesToShow;
 };
+
+struct MobComponentData
+{
+    sf::Vector2f movementDirection;
+};

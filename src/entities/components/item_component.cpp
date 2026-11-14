@@ -8,8 +8,8 @@ ItemComponent::ItemComponent(Entity* myEntity, sf::Vector2f spawnAreaOffset, sf:
 {
     myEntity->position.changePosition(spawnAreaOffset);
     myEntity->position.changePosition({
-        static_cast<float>(myEntity->game->random.getRandInt(0, spawnAreaSize.x)),
-        static_cast<float>(myEntity->game->random.getRandInt(0, spawnAreaSize.y)),
+        static_cast<float>(myEntity->game->random.getRandInt("generic", 0, spawnAreaSize.x)),
+        static_cast<float>(myEntity->game->random.getRandInt("generic", 0, spawnAreaSize.y)),
     });
 }
 
@@ -31,8 +31,8 @@ void ItemComponent::init(std::string resource, unsigned int amount)
         if (auto m = myEntity->getComponent<MovementComponent>())
         {
             m->velocity = {
-                static_cast<float>(myEntity->game->random.getRandInt(-maxSpawnVelocityScaled, maxSpawnVelocityScaled)) / 1000,
-                static_cast<float>(myEntity->game->random.getRandInt(-maxSpawnVelocityScaled, maxSpawnVelocityScaled)) / 1000
+                static_cast<float>(myEntity->game->random.getRandInt("generic", -maxSpawnVelocityScaled, maxSpawnVelocityScaled)) / 1000,
+                static_cast<float>(myEntity->game->random.getRandInt("generic", -maxSpawnVelocityScaled, maxSpawnVelocityScaled)) / 1000
             };
         }
     }

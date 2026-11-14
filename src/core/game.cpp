@@ -3,16 +3,14 @@
 #include <SFML/Graphics/CircleShape.hpp>
 #include <string>
 
-Game::Game() : running(false), window({800, 800}, "INFINITE", false, 60, sf::Color(10, 10, 12)), assetManager(this), scene(this)
+Game::Game() : running(false), random({{"generic", 2}, {"world gen", settings.worldSeed}}), window({800, 800}, "INFINITE", false, 60, sf::Color(10, 10, 12)), assetManager(this), scene(this)
 {
-    random = Random(settings.worldSeed);
-
     eventHandler.init(&window, scene.getCamera(), this, &scene);
     inputManager = InputManager(this);
 
     paused = false;
 
-    ticksPerSecond = 60;
+    ticksPerSecond = settings.tick_rate;
     secondsPerTick = 1.f / ticksPerSecond;
 
     lastWindowSize = window.getSize();

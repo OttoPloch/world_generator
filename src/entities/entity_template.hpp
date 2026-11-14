@@ -16,4 +16,5 @@ struct EntityTemplate
     std::optional<ItemComponentData> item;
     std::optional<InventoryComponentData> inventory;
     std::optional<EntityUIComponentData> ui;
+    std::optional<MobComponentData> mob;
 };

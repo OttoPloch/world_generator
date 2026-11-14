@@ -17,7 +17,7 @@ std::unique_ptr<TileTag> ResourceTag::getCopy()
 
 void ResourceTag::onTileDestroy(Tile* tile, bool& endHere)
 {
-    int extra = tile->game->random.getRandInt(0, amountRange);
+    int extra = tile->game->random.getRandInt("generic", 0, amountRange);
     int total = amountBase + extra;
 
     auto eLayer = tile->game->getScene()->getEntityLayer();

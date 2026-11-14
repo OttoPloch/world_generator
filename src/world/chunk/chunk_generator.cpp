@@ -34,7 +34,7 @@ void ChunkGenerator::init(Game* game, std::unordered_map<sf::Vector2i, std::uniq
     }
     else
     {
-        noise.SetSeed(game->random.getRandInt());
+        noise.SetSeed(game->random.getRandInt("generic"));
     }
 
     decorationAtlas = game->getAssetManager()->getTextureAtlas("foliage_better");
@@ -248,7 +248,7 @@ void ChunkGenerator::createDecoration(sf::Vector2f& chunkWorldPosition, float& s
     int chunkSize = game->getSettings()->chunk_size;
     float chunkLength = tileSize * chunkSize;
     
-    decorationLocalBottom = sf::Vector2f(game->random.getRandInt(1, chunkLength - 1), game->random.getRandInt(1, chunkLength - 1));
+    decorationLocalBottom = sf::Vector2f(game->random.getRandInt("world gen", 1, chunkLength - 1), game->random.getRandInt("world gen", 1, chunkLength - 1));
 
     decorationTexCoords = getRandomTextureAtlasChoice(game, decorationAtlas);
     decorationSize = {decorationTexCoords.size.x * scale, decorationTexCoords.size.y * scale};
@@ -260,7 +260,7 @@ void ChunkGenerator::createDecoration(sf::Vector2f& chunkWorldPosition, float& s
     // makes decorations line up with other pixels
     decorationGlobalTopleft = {roundToMultiple(decorationGlobalTopleft.x, positionRounding), roundToMultiple(decorationGlobalTopleft.y, positionRounding)};
     // offsets the decoration to avoid stitching.
-    decorationGlobalTopleft += {toFloat(game->random.getRandInt(-100000, 100000)) / 10000000.f, toFloat(game->random.getRandInt(-100000, 100000)) / 10000000.f};
+    decorationGlobalTopleft += {toFloat(game->random.getRandInt("world gen", -100000, 100000)) / 10000000.f, toFloat(game->random.getRandInt("world gen", -100000, 100000)) / 10000000.f};
 }
 
 bool ChunkGenerator::decorationTileTypeCheck(Chunk* chunk, std::vector<TileType> validTypes, sf::Vector2f decorationGlobalTopleft, sf::Vector2f decorationSize)

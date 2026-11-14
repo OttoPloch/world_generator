@@ -356,24 +356,10 @@ sf::Vector2f InputManager::getMovement()
             joystickMovement.x = std::round(getAxis(sf::Joystick::Axis::X) / 100.f);
             joystickMovement.y = std::round(getAxis(sf::Joystick::Axis::Y) / 100.f);
             
-            if (joystickMovement.x != 0 && joystickMovement.y != 0)
-            {
-                return {toFloat(joystickMovement.x) / toFloat(sqrt(2.f)), toFloat(joystickMovement.y) / toFloat(sqrt(2.f))};
-            }
-            else
-            {
-                return toV2F(joystickMovement.x, joystickMovement.y);
-            }
+            return sf::Vector2f(joystickMovement.x, joystickMovement.y);
         }
 
-        if (movement.x != 0 && movement.y != 0)
-        {
-            return {toFloat(movement.x) / toFloat(sqrt(2.f)), toFloat(movement.y) / toFloat(sqrt(2.f))};
-        }
-        else
-        {
-            return toV2F(movement.x, movement.y);
-        }
+        return sf::Vector2f(movement.x, movement.y);
     }
     
     return {0.f, 0.f};

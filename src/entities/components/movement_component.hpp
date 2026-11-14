@@ -9,5 +9,6 @@ struct MovementComponent : public EntityComponent
     MovementComponent(Entity* myEntity, sf::Vector2f velocity, MovementComponentData stats);
 
     sf::Vector2f velocity;
+    sf::Vector2f movementInput;
     MovementComponentData stats;
 };

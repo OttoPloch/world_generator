@@ -18,6 +18,7 @@
 #include "entity_systems/item_system.hpp"
 #include "entity_systems/entity_chunk_system.hpp"
 #include "entity_systems/entity_ui_system.hpp"
+#include "entity_systems/mob_system.hpp"
 
 // for entity systems to remove entities from their caches.
 inline void removeAllEntityIDsInVec(std::vector<Entity*>& entityVec, std::vector<unsigned int> IDsToRemove)
@@ -169,6 +170,7 @@ private:
     ItemSystem itemSystem;
     EntityChunkSystem entityChunkSystem;
     EntityUISystem entityUISystem;
+    MobSystem m_mobSystem;
 
     std::map<unsigned int, std::unique_ptr<Entity>> entities;
 };

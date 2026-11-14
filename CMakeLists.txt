@@ -43,6 +43,7 @@ src/entities/components/sprite_component.cpp
 src/entities/components/item_component.cpp
 src/entities/components/inventory_component.cpp
 src/entities/components/entity_ui_component.cpp
+src/entities/components/mob_component.cpp
 
 src/entities/actions/action.cpp
 src/entities/actions/mine_action.cpp
@@ -59,6 +60,7 @@ src/entities/entity_systems/action_system.cpp
 src/entities/entity_systems/item_system.cpp
 src/entities/entity_systems/entity_chunk_system.cpp
 src/entities/entity_systems/entity_ui_system.cpp
+src/entities/entity_systems/mob_system.cpp
 
 src/graphics/sprite.cpp
 src/graphics/asset_manager.cpp

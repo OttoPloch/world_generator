@@ -267,7 +267,7 @@ void Scene::sceneInput(std::string control)
     }
     else if (control == "EXTRA 1")
     {
-        entityLayer.addEntity(&entityLayer.tManager.entityTemplates["player"], true, m_game->getInputManager()->cursor->getGameCursorWorldPosition());
+        entityLayer.addEntity(&entityLayer.tManager.entityTemplates["giraffe"], true, m_game->getInputManager()->cursor->getGameCursorWorldPosition());
         
         // debugChunkLayerView++;
     }

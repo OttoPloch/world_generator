@@ -11,6 +11,7 @@ public:
 
     void init();
 
+    int tick_rate;
     float tile_size;
     int chunk_size;
     float chunk_render_distance;
