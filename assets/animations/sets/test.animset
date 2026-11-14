@@ -1,11 +1,11 @@
 dir animations/test/
 key 0
-anim test left
+anim test_left
 key 1
-anim test right
+anim test_right
 key 2
-anim test up
+anim test_up
 key 3
-anim test down
+anim test_down
 key 4
-anim test idle
+anim test_idle

@@ -45,7 +45,7 @@ void EntityLayer::init(Game* game)
     m_mobSystem = MobSystem(game, game->getScene());
 
     auto pt = &tManager.entityTemplates["player"];
-    pt->sprite = {game->getAssetManager()->getTexture("dog.png", "texture_atlases/"), {20, 20}, false, false, {{0, 0}, {0, 0}}, 1.6f, nullptr, game->getAssetManager()->getAnimSet("dog")};
+    pt->sprite = {game->getAssetManager()->getTexture("dog.png", "texture_atlases/"), {20, 20}, false, false, {{0, 0}, {0, 0}}, 1.6, true, nullptr, game->getAssetManager()->getAnimSet("dog")};
     pt->movement = {1.f, 1.5f};
     pt->control = ControlComponentData();
     pt->state = StateComponentData();
@@ -69,7 +69,7 @@ void EntityLayer::init(Game* game)
     it->item = {{game->getSettings()->tile_size / 2, game->getSettings()->tile_size / 2}, {0, 0}};
 
     auto l_giraffeTemplate = &tManager.entityTemplates["giraffe"];
-    l_giraffeTemplate->sprite = {game->getAssetManager()->getTexture("missing.png"), {30, 30}, false};
+    l_giraffeTemplate->sprite = {game->getAssetManager()->getTexture("missing.png"), {30, 30}, false, false, {{0, 0}, {0, 0}}, 1, true, nullptr, game->getAssetManager()->getAnimSet("dog")};
     l_giraffeTemplate->movement = {.25, 2};
     l_giraffeTemplate->state = StateComponentData();
     l_giraffeTemplate->collision = {{1, 1}, true, RectType::ACTIVE};
@@ -189,7 +189,7 @@ Entity* EntityLayer::addEntity(EntityTemplate* t, bool useCustomPosition, sf::Ve
 
     if (t)
     {
-        if (t->sprite) e->addComponent<SpriteComponent>(e, t->sprite->texture, t->sprite->size, t->sprite->sizeIsScale, t->sprite->animation, t->sprite->animSet, t->sprite->usingTexCoords, t->sprite->texCoords, t->sprite->animSpeedMult);
+        if (t->sprite) e->addComponent<SpriteComponent>(e, t->sprite->texture, t->sprite->size, t->sprite->sizeIsScale, t->sprite->animation, t->sprite->animSet, t->sprite->usingTexCoords, t->sprite->texCoords, t->sprite->animSpeedMult, t->sprite->animSpeedMultChangedByVelocity);
         if (t->movement) e->addComponent<MovementComponent>(e, sf::Vector2f(0, 0), t->movement.value());
         if (t->control) e->addComponent<ControlComponent>(e);
         if (t->state) e->addComponent<StateComponent>(e);

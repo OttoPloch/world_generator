@@ -23,10 +23,19 @@ void AnimationSystem::update(float dt)
 
         AnimState activeAnimState = AnimState::IDLE;
 
-        if      (entityMovementComponent->velocity.x < -0.1f) activeAnimState = AnimState::LEFT;
-        else if (entityMovementComponent->velocity.x > 0.1f) activeAnimState = AnimState::RIGHT;
-        else if (entityMovementComponent->velocity.y < -0.1f) activeAnimState = AnimState::UP;
-        else if (entityMovementComponent->velocity.y > 0.1f) activeAnimState = AnimState::DOWN;
+        if      (entityMovementComponent->velocity.x < -0.01f) activeAnimState = AnimState::LEFT;
+        else if (entityMovementComponent->velocity.x > 0.01f) activeAnimState = AnimState::RIGHT;
+        else if (entityMovementComponent->velocity.y < -0.01f) activeAnimState = AnimState::UP;
+        else if (entityMovementComponent->velocity.y > 0.01f) activeAnimState = AnimState::DOWN;
+
+        if (entitySpriteComponent->m_animSpeedMultChangedByVelocity && activeAnimState != AnimState::IDLE)
+        {
+            entitySpriteComponent->sprite.animSpeedMult = entitySpriteComponent->m_baseAnimSpeedMult * (entityMovementComponent->velocity.length() / entityMovementComponent->stats.speed);
+        }
+        else
+        {
+            entitySpriteComponent->sprite.animSpeedMult = entitySpriteComponent->m_baseAnimSpeedMult;
+        }
 
         auto animSet = entitySpriteComponent->sprite.animSet.get();
 

@@ -19,6 +19,7 @@ struct SpriteComponentData
     bool usingTexCoords;
     sf::IntRect texCoords;
     float animSpeedMult;
+    bool animSpeedMultChangedByVelocity;
     Animation* animation;
     AnimationSet* animSet;
 };
