@@ -9,4 +9,5 @@ struct MobComponent : public EntityComponent
     MobComponent(Entity* p_myEntity, MobComponentData p_stats);
 
     MobComponentData m_stats;
+    float m_moveTimer;
 };

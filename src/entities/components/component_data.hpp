@@ -76,4 +76,6 @@ struct EntityUIComponentData
 struct MobComponentData
 {
     sf::Vector2f movementDirection;
+    int ticksToMove;
+    int percentChanceToMoveWhenCan;
 };

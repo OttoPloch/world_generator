@@ -73,7 +73,7 @@ void EntityLayer::init(Game* game)
     l_giraffeTemplate->movement = {.25, 2};
     l_giraffeTemplate->state = StateComponentData();
     l_giraffeTemplate->collision = {{.65, .5}, true, RectType::ACTIVE};
-    l_giraffeTemplate->mob = {{0, 0}};
+    l_giraffeTemplate->mob = {{0, 0}, game->getSettings()->tick_rate * 2, 25};
 
     addEntity(l_giraffeTemplate, true, {100, -100});
 

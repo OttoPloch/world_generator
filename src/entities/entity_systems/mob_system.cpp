@@ -24,11 +24,13 @@ void MobSystem::tick()
 
         l_entityMovementComponent->movementInput = l_entityMobComponent->m_stats.movementDirection;
 
-        if (m_game->random.getRandInt("generic", 0, m_game->getSettings()->tick_rate * 5) == 0)
-        {
-            l_entityMobComponent->m_stats.movementDirection = sf::Vector2f(0, m_game->random.getRandInt("generic", -10, 0) / 10.f);
-            // l_entityMobComponent->m_stats.movementDirection = sf::Vector2f(m_game->random.getRandInt("generic", -10, 10) / 10.f, m_game->random.getRandInt("generic", -10, 10) / 10.f);
-        }
+        l_entityMobComponent->m_moveTimer--;
+        if (l_entityMobComponent->m_moveTimer > 0) continue;
+        l_entityMobComponent->m_moveTimer = l_entityMobComponent->m_stats.ticksToMove;
+
+        if (m_game->random.getRandInt("generic", 1, 100) > l_entityMobComponent->m_stats.percentChanceToMoveWhenCan) continue;
+        
+        l_entityMobComponent->m_stats.movementDirection = sf::Vector2f(m_game->random.getRandInt("generic", -10, 10) / 10.f, m_game->random.getRandInt("generic", -10, 10) / 10.f);
     }
 
     removeAllEntityIDsInVec(m_validEntities, l_noLongerValidEntities);
