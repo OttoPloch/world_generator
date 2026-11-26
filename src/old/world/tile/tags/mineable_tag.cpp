@@ -1,9 +1,9 @@
-#include "mineable_tag.hpp"
-#include "tile_tag.hpp"
+// #include "mineable_tag.hpp"
+// #include "tile_tag.hpp"
 
-MineableTag::MineableTag(float durability) : durability(durability) {}
+// MineableTag::MineableTag(float durability) : durability(durability) {}
 
-std::unique_ptr<TileTag> MineableTag::getCopy()
-{
-    return std::make_unique<MineableTag>(*this);
-}
+// std::unique_ptr<TileTag> MineableTag::getCopy()
+// {
+//     return std::make_unique<MineableTag>(*this);
+// }

@@ -1,377 +1,377 @@
-#include "chunk_layer.hpp"
-#include "../../core/game.hpp"
-#include "../../utils/utils.hpp"
-#include "../background_object.hpp"
-#include "../../entities/entity_layer.hpp"
-#include "../../graphics/vertex_group.hpp"
-#include "chunk.hpp"
-#include "chunk_state.hpp"
-#include <SFML/Graphics/PrimitiveType.hpp>
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <algorithm>
-#include <functional>
-#include <memory>
-#include "../tile/tags/resource_tag.hpp"
+// #include "chunk_layer.hpp"
+// #include "../../core/game.hpp"
+// #include "../../utils/utils.hpp"
+// #include "../background_object.hpp"
+// #include "../../entities/entity_layer.hpp"
+// #include "../../graphics/vertex_group.hpp"
+// #include "chunk.hpp"
+// #include "chunk_state.hpp"
+// #include <SFML/Graphics/PrimitiveType.hpp>
+// #include <SFML/Graphics/RectangleShape.hpp>
+// #include <algorithm>
+// #include <functional>
+// #include <memory>
+// #include "../tile/tags/resource_tag.hpp"
 
-ChunkLayer::ChunkLayer() : chunks(0) {}
+// ChunkLayer::ChunkLayer() : chunks(0) {}
 
-ChunkLayer::ChunkLayer(Game* game) : chunks(0)
-{
-    init(game);
-}
+// ChunkLayer::ChunkLayer(Game* game) : chunks(0)
+// {
+//     init(game);
+// }
 
-void ChunkLayer::init(Game* game)
-{
-    this->game = game;
-    this->window = game->getWindow();
+// void ChunkLayer::init(Game* game)
+// {
+//     this->game = game;
+//     this->window = game->getWindow();
 
-    chunkSize = game->getSettings()->chunk_size;
-    tileSize = game->getSettings()->tile_size;
-    chunkLength = toFloat(chunkSize) * tileSize;
-    lastChunkPos = {INT32_MAX, INT32_MAX};
+//     chunkSize = game->getSettings()->chunk_size;
+//     tileSize = game->getSettings()->tile_size;
+//     chunkLength = toFloat(chunkSize) * tileSize;
+//     lastChunkPos = {INT32_MAX, INT32_MAX};
 
-    chunkGenerator.init(game, &chunks);
-    bgObjectStates.texture = game->getAssetManager()->getTexture("foliage_better.png", "texture_atlases/");
+//     chunkGenerator.init(game, &chunks);
+//     bgObjectStates.texture = game->getAssetManager()->getTexture("foliage_better.png", "texture_atlases/");
 
 
-    TextureAtlas* atlas = game->getAssetManager()->getTextureAtlas("tiles_better");
+//     TextureAtlas* atlas = game->getAssetManager()->getTextureAtlas("tiles_better");
 
-    std::vector<std::unique_ptr<TileTag>> airTags = {};
-    tManager.tileTemplates["air"] = {
-        TileType::AIR,
-        false,
-        {0.f, 0.f},
-        {1.f, 1.f},
-        "none",
-        {atlas->itemTexCoords["air"]},
-        nullptr,
-        nullptr,
-        1.f,
-        std::move(airTags)
-    };
+//     std::vector<std::unique_ptr<TileTag>> airTags = {};
+//     tManager.tileTemplates["air"] = {
+//         TileType::AIR,
+//         false,
+//         {0.f, 0.f},
+//         {1.f, 1.f},
+//         "none",
+//         {atlas->itemTexCoords["air"]},
+//         nullptr,
+//         nullptr,
+//         1.f,
+//         std::move(airTags)
+//     };
 
-    std::vector<std::unique_ptr<TileTag>> waterTags = {};
-    tManager.tileTemplates["water"] = {
-        TileType::WATER,
-        false, // will be set to true by ChunkGenerator if touching non-water or on chunk edge
-        {0.f, 0.f},
-        {1.f, 1.f},
-        "none",
-        {atlas->itemTexCoords["water"]},
-        game->getAssetManager()->getGlobalAnimation("water"),
-        nullptr,
-        1.f,
-        std::move(waterTags)
-    };
+//     std::vector<std::unique_ptr<TileTag>> waterTags = {};
+//     tManager.tileTemplates["water"] = {
+//         TileType::WATER,
+//         false, // will be set to true by ChunkGenerator if touching non-water or on chunk edge
+//         {0.f, 0.f},
+//         {1.f, 1.f},
+//         "none",
+//         {atlas->itemTexCoords["water"]},
+//         game->getAssetManager()->getGlobalAnimation("water"),
+//         nullptr,
+//         1.f,
+//         std::move(waterTags)
+//     };
 
-    std::vector<std::unique_ptr<TileTag>> grassTags = {};
-    tManager.tileTemplates["grass"] = {
-        TileType::GRASS,
-        false,
-        {0.f, 0.f},
-        {1.f, 1.f},
-        "none",
-        {atlas->itemTexCoords["grass"]},
-        nullptr,
-        nullptr,
-        1.f,
-        std::move(grassTags)
-    };
+//     std::vector<std::unique_ptr<TileTag>> grassTags = {};
+//     tManager.tileTemplates["grass"] = {
+//         TileType::GRASS,
+//         false,
+//         {0.f, 0.f},
+//         {1.f, 1.f},
+//         "none",
+//         {atlas->itemTexCoords["grass"]},
+//         nullptr,
+//         nullptr,
+//         1.f,
+//         std::move(grassTags)
+//     };
 
-    std::vector<std::unique_ptr<TileTag>> stoneTags;
-    stoneTags.emplace_back(std::make_unique<MineableTag>(3));
-    stoneTags.emplace_back(std::make_unique<ResourceTag>("Stone", 3, 2));
-    tManager.tileTemplates["stone"] = {
-        TileType::STONE,
-        true,
-        {0.f, 0.f},
-        {.5f, .5f},
-        "stone",
-        {atlas->itemTexCoords["stone"]},
-        nullptr,
-        nullptr,
-        1.f,
-        std::move(stoneTags)
-    };
+//     std::vector<std::unique_ptr<TileTag>> stoneTags;
+//     stoneTags.emplace_back(std::make_unique<MineableTag>(3));
+//     stoneTags.emplace_back(std::make_unique<ResourceTag>("Stone", 3, 2));
+//     tManager.tileTemplates["stone"] = {
+//         TileType::STONE,
+//         true,
+//         {0.f, 0.f},
+//         {.5f, .5f},
+//         "stone",
+//         {atlas->itemTexCoords["stone"]},
+//         nullptr,
+//         nullptr,
+//         1.f,
+//         std::move(stoneTags)
+//     };
 
-    std::vector<std::unique_ptr<TileTag>> lavaTags = {};
-    tManager.tileTemplates["lava"] = {
-        TileType::LAVA,
-        false,
-        {0.f, 0.f},
-        {1.f, 1.f},
-        "none",
-        {atlas->itemTexCoords["lava"]},
-        game->getAssetManager()->getGlobalAnimation("lava"),
-        nullptr,
-        1.f,
-        std::move(lavaTags)
-    };
+//     std::vector<std::unique_ptr<TileTag>> lavaTags = {};
+//     tManager.tileTemplates["lava"] = {
+//         TileType::LAVA,
+//         false,
+//         {0.f, 0.f},
+//         {1.f, 1.f},
+//         "none",
+//         {atlas->itemTexCoords["lava"]},
+//         game->getAssetManager()->getGlobalAnimation("lava"),
+//         nullptr,
+//         1.f,
+//         std::move(lavaTags)
+//     };
 
-    std::vector<std::unique_ptr<TileTag>> cobbleTags;
-    cobbleTags.emplace_back(std::make_unique<MineableTag>(1));
-    cobbleTags.emplace_back(std::make_unique<ResourceTag>("Cobble", 1, 1));
-    tManager.tileTemplates["cobble"] = {
-        TileType::COBBLE,
-        false,
-        {0.f, 0.f},
-        {1.f, 1.f},
-        "none",
-        {atlas->itemTexCoords["cobble"]},
-        nullptr,
-        nullptr,
-        1.f,
-        std::move(cobbleTags)
-    };
+//     std::vector<std::unique_ptr<TileTag>> cobbleTags;
+//     cobbleTags.emplace_back(std::make_unique<MineableTag>(1));
+//     cobbleTags.emplace_back(std::make_unique<ResourceTag>("Cobble", 1, 1));
+//     tManager.tileTemplates["cobble"] = {
+//         TileType::COBBLE,
+//         false,
+//         {0.f, 0.f},
+//         {1.f, 1.f},
+//         "none",
+//         {atlas->itemTexCoords["cobble"]},
+//         nullptr,
+//         nullptr,
+//         1.f,
+//         std::move(cobbleTags)
+//     };
 
-    std::vector<std::unique_ptr<TileTag>> pinkTags = {};
-    tManager.tileTemplates["pink"] = {
-        TileType::PINK,
-        false,
-        {0.f, 0.f},
-        {1.f, 1.f},
-        "none",
-        {atlas->itemTexCoords["pink"]},
-        nullptr,
-        nullptr,
-        1.f,
-        std::move(pinkTags)
-    };
+//     std::vector<std::unique_ptr<TileTag>> pinkTags = {};
+//     tManager.tileTemplates["pink"] = {
+//         TileType::PINK,
+//         false,
+//         {0.f, 0.f},
+//         {1.f, 1.f},
+//         "none",
+//         {atlas->itemTexCoords["pink"]},
+//         nullptr,
+//         nullptr,
+//         1.f,
+//         std::move(pinkTags)
+//     };
 
-    loadNearbyChunks();
-}
+//     loadNearbyChunks();
+// }
 
-void ChunkLayer::loadNearbyChunks()
-{
-    int renderDist = game->getSettings()->chunk_render_distance;
-    int loadDist = game->getSettings()->chunk_load_distance;
+// void ChunkLayer::loadNearbyChunks()
+// {
+//     int renderDist = game->getSettings()->chunk_render_distance;
+//     int loadDist = game->getSettings()->chunk_load_distance;
 
-    sf::Vector2i currChunkPos = getCurrChunkPos();
+//     sf::Vector2i currChunkPos = getCurrChunkPos();
 
-    if (currChunkPos != lastChunkPos)
-    {
-        for (int y = -loadDist; y <= loadDist; y++)
-        {
-            for (int x = -loadDist; x <= loadDist; x++)
-            {
-                loadChunk({currChunkPos.x + x, currChunkPos.y + y});
+//     if (currChunkPos != lastChunkPos)
+//     {
+//         for (int y = -loadDist; y <= loadDist; y++)
+//         {
+//             for (int x = -loadDist; x <= loadDist; x++)
+//             {
+//                 loadChunk({currChunkPos.x + x, currChunkPos.y + y});
 
-                if (y >= -renderDist && y <= renderDist && x >= -renderDist && x <= renderDist)
-                {
-                    chunks[{currChunkPos.x + x, currChunkPos.y + y}]->state = ChunkState::ACTIVE;
-                }
-                else
-                {
-                    chunks[{currChunkPos.x + x, currChunkPos.y + y}]->state = ChunkState::ASLEEP;
-                }
-            }
-        }
-    }
-}
+//                 if (y >= -renderDist && y <= renderDist && x >= -renderDist && x <= renderDist)
+//                 {
+//                     chunks[{currChunkPos.x + x, currChunkPos.y + y}]->state = ChunkState::ACTIVE;
+//                 }
+//                 else
+//                 {
+//                     chunks[{currChunkPos.x + x, currChunkPos.y + y}]->state = ChunkState::ASLEEP;
+//                 }
+//             }
+//         }
+//     }
+// }
 
-bool ChunkLayer::loadChunk(sf::Vector2i chunkPosition)
-{   
-    if (chunks.find(chunkPosition) == chunks.end())
-    {
-        chunkGenerator.generate(chunkPosition);
+// bool ChunkLayer::loadChunk(sf::Vector2i chunkPosition)
+// {   
+//     if (chunks.find(chunkPosition) == chunks.end())
+//     {
+//         chunkGenerator.generate(chunkPosition);
 
-        return true;
-    }
+//         return true;
+//     }
 
-    return false;
-}
+//     return false;
+// }
 
-bool ChunkLayer::unloadChunk(sf::Vector2i chunkPosition)
-{
-    if (chunks.find(chunkPosition) != chunks.end())
-    {
-        chunks.erase(chunkPosition);
+// bool ChunkLayer::unloadChunk(sf::Vector2i chunkPosition)
+// {
+//     if (chunks.find(chunkPosition) != chunks.end())
+//     {
+//         chunks.erase(chunkPosition);
 
-        // game->getScene()->getEntityLayer()->removeAllEntitiesInChunk(chunkPosition.x, chunkPosition.y);
+//         // game->getScene()->getEntityLayer()->removeAllEntitiesInChunk(chunkPosition.x, chunkPosition.y);
 
-        return true;
-    }
+//         return true;
+//     }
 
-    return false;
-}
+//     return false;
+// }
 
-Chunk* ChunkLayer::getChunk(sf::Vector2i chunkPosition)
-{
-    if (chunks.find(chunkPosition) != chunks.end())
-    {
-        return chunks[chunkPosition].get();
-    }
+// Chunk* ChunkLayer::getChunk(sf::Vector2i chunkPosition)
+// {
+//     if (chunks.find(chunkPosition) != chunks.end())
+//     {
+//         return chunks[chunkPosition].get();
+//     }
 
-    return nullptr;
-}
+//     return nullptr;
+// }
 
-std::array<Chunk*, 9> ChunkLayer::getNearbyChunks(sf::Vector2f position)
-{
-    sf::Vector2i chunkPosition = worldToChunkPosition(game, position);
+// std::array<Chunk*, 9> ChunkLayer::getNearbyChunks(sf::Vector2f position)
+// {
+//     sf::Vector2i chunkPosition = worldToChunkPosition(game, position);
 
-    std::array<Chunk*, 9> chunks;
+//     std::array<Chunk*, 9> chunks;
 
-    for (int i = 0; i < 9; i++)
-    {
-        chunks[i] = getChunk({chunkPosition.x - 1 + (i % 3), chunkPosition.y - 1 + (toInt(std::floor(i / 3)))});
-    }
+//     for (int i = 0; i < 9; i++)
+//     {
+//         chunks[i] = getChunk({chunkPosition.x - 1 + (i % 3), chunkPosition.y - 1 + (toInt(std::floor(i / 3)))});
+//     }
 
-    return chunks;
-}
+//     return chunks;
+// }
 
-std::unordered_map<sf::Vector2i, std::unique_ptr<Chunk>, Vector2iHash>* ChunkLayer::getAllLoadedChunks()
-{
-    return &chunks;
-}
+// std::unordered_map<sf::Vector2i, std::unique_ptr<Chunk>, Vector2iHash>* ChunkLayer::getAllLoadedChunks()
+// {
+//     return &chunks;
+// }
 
-Tile* ChunkLayer::getTileAtPosition(sf::Vector2f position, bool activeChunksOnly)
-{
-    sf::Vector2i tileChunkPos(worldToChunkPosition(game, position));
+// Tile* ChunkLayer::getTileAtPosition(sf::Vector2f position, bool activeChunksOnly)
+// {
+//     sf::Vector2i tileChunkPos(worldToChunkPosition(game, position));
 
-    Chunk* chunk = getChunk(tileChunkPos);
-    if (chunk)
-    {
-        if (activeChunksOnly && chunk->state != ChunkState::ACTIVE) return nullptr;
+//     Chunk* chunk = getChunk(tileChunkPos);
+//     if (chunk)
+//     {
+//         if (activeChunksOnly && chunk->state != ChunkState::ACTIVE) return nullptr;
         
-        return chunk->getTile(worldToTilePosition(game, position, true));
-    }
+//         return chunk->getTile(worldToTilePosition(game, position, true));
+//     }
 
-    return nullptr;
-}
+//     return nullptr;
+// }
 
-void ChunkLayer::tick()
-{
-    for (auto& i : chunks)
-    {
-        if (i.second->state == ChunkState::ACTIVE)
-        {
-            i.second->tick();
-        }
-    }
-}
+// void ChunkLayer::tick()
+// {
+//     for (auto& i : chunks)
+//     {
+//         if (i.second->state == ChunkState::ACTIVE)
+//         {
+//             i.second->tick();
+//         }
+//     }
+// }
 
-void ChunkLayer::loadUpdate()
-{
-    int loadDist = game->getSettings()->chunk_load_distance;
+// void ChunkLayer::loadUpdate()
+// {
+//     int loadDist = game->getSettings()->chunk_load_distance;
 
-    sf::Vector2i currChunkPos = getCurrChunkPos();
+//     sf::Vector2i currChunkPos = getCurrChunkPos();
 
-    loadNearbyChunks();
+//     loadNearbyChunks();
 
-    std::vector<sf::Vector2i> chunksToDelete;
-    for (auto& i : chunks)
-    {
-        if (abs(currChunkPos.x - i.second->getChunkPosition().x) > loadDist || abs(currChunkPos.y - i.second->getChunkPosition().y) > loadDist)
-        {
-            chunksToDelete.push_back(i.second->getChunkPosition());
-        }
-    }
+//     std::vector<sf::Vector2i> chunksToDelete;
+//     for (auto& i : chunks)
+//     {
+//         if (abs(currChunkPos.x - i.second->getChunkPosition().x) > loadDist || abs(currChunkPos.y - i.second->getChunkPosition().y) > loadDist)
+//         {
+//             chunksToDelete.push_back(i.second->getChunkPosition());
+//         }
+//     }
 
-    for (auto chunk : chunksToDelete)
-    {
-        unloadChunk(chunk);
-    }
+//     for (auto chunk : chunksToDelete)
+//     {
+//         unloadChunk(chunk);
+//     }
 
-    if (currChunkPos != lastChunkPos)
-    {
-        lastChunkPos = currChunkPos;
-    }
-}
+//     if (currChunkPos != lastChunkPos)
+//     {
+//         lastChunkPos = currChunkPos;
+//     }
+// }
 
-void ChunkLayer::update(float dt)
-{
-    for (auto& i : chunks)
-    {
-        if (i.second->state != ChunkState::ACTIVE) continue;
+// void ChunkLayer::update(float dt)
+// {
+//     for (auto& i : chunks)
+//     {
+//         if (i.second->state != ChunkState::ACTIVE) continue;
 
-        i.second->update(dt);
-    }
-}
+//         i.second->update(dt);
+//     }
+// }
 
-void ChunkLayer::draw(bool debug, int debugLayerView)
-{
-    std::vector<BackgroundObject*> visibleBgObjects;
-    std::vector<sf::Vertex> debugBgObjectOutlineVerts;
+// void ChunkLayer::draw(bool debug, int debugLayerView)
+// {
+//     std::vector<BackgroundObject*> visibleBgObjects;
+//     std::vector<sf::Vertex> debugBgObjectOutlineVerts;
 
-    for (auto& i : chunks)
-    {
-        if (!isOnScreen(game, i.second->worldPosition, {chunkLength, chunkLength}, true))
-        {
-            continue;
-        }
+//     for (auto& i : chunks)
+//     {
+//         if (!isOnScreen(game, i.second->worldPosition, {chunkLength, chunkLength}, true))
+//         {
+//             continue;
+//         }
 
-        if (i.second->state == ChunkState::ACTIVE)
-        {
-            i.second->draw(debug, debugLayerView);    
+//         if (i.second->state == ChunkState::ACTIVE)
+//         {
+//             i.second->draw(debug, debugLayerView);    
 
-            for (int j = 0; j < i.second->bgObjects.size(); j++)
-            {
-                BackgroundObject* bgObject = &i.second->bgObjects[j];
+//             for (int j = 0; j < i.second->bgObjects.size(); j++)
+//             {
+//                 BackgroundObject* bgObject = &i.second->bgObjects[j];
     
-                if (isOnScreen(game, bgObject->rect.position, bgObject->rect.size))
-                {
-                    visibleBgObjects.push_back(bgObject);
-                }
-            }
-        }
+//                 if (isOnScreen(game, bgObject->rect.position, bgObject->rect.size))
+//                 {
+//                     visibleBgObjects.push_back(bgObject);
+//                 }
+//             }
+//         }
 
-        if (debug)
-        {
-            sf::Vector2f worldPos = i.second->worldPosition;
+//         if (debug)
+//         {
+//             sf::Vector2f worldPos = i.second->worldPosition;
 
-            sf::Vertex tl;
-            sf::Vertex tr;
-            sf::Vertex bl;
-            sf::Vertex br;
+//             sf::Vertex tl;
+//             sf::Vertex tr;
+//             sf::Vertex bl;
+//             sf::Vertex br;
     
-            tl.position = worldPos;
-            tr.position = {worldPos.x + chunkLength, worldPos.y};
-            bl.position = {worldPos.x, worldPos.y + chunkLength};
-            br.position = {worldPos.x + chunkLength, worldPos.y + chunkLength};
+//             tl.position = worldPos;
+//             tr.position = {worldPos.x + chunkLength, worldPos.y};
+//             bl.position = {worldPos.x, worldPos.y + chunkLength};
+//             br.position = {worldPos.x + chunkLength, worldPos.y + chunkLength};
 
-            std::vector<sf::Vertex> chunkOutline = {tl, tr, br, bl, tl};
+//             std::vector<sf::Vertex> chunkOutline = {tl, tr, br, bl, tl};
 
-            window->getWindow().draw(chunkOutline.data(), chunkOutline.size(), sf::PrimitiveType::LineStrip);
-        }
-    }
+//             window->getWindow().draw(chunkOutline.data(), chunkOutline.size(), sf::PrimitiveType::LineStrip);
+//         }
+//     }
 
-    // sorting, creating vertices for, and drawing all visible background objects
-    if (!visibleBgObjects.empty())
-    {
-        std::sort(visibleBgObjects.begin(), visibleBgObjects.end(), [](BackgroundObject* a, BackgroundObject* b)
-        {
-            return a->bottom < b->bottom;
-        });
+//     // sorting, creating vertices for, and drawing all visible background objects
+//     if (!visibleBgObjects.empty())
+//     {
+//         std::sort(visibleBgObjects.begin(), visibleBgObjects.end(), [](BackgroundObject* a, BackgroundObject* b)
+//         {
+//             return a->bottom < b->bottom;
+//         });
     
-        bgObjectsVertices.clear();
-        bgObjectsVertices.reserve(visibleBgObjects.size() * 6);
+//         bgObjectsVertices.clear();
+//         bgObjectsVertices.reserve(visibleBgObjects.size() * 6);
 
-        for (int i = 0; i < visibleBgObjects.size(); i++)
-        {
-            BackgroundObject* curr = visibleBgObjects[i];
+//         for (int i = 0; i < visibleBgObjects.size(); i++)
+//         {
+//             BackgroundObject* curr = visibleBgObjects[i];
 
-            std::array<sf::Vertex, 6> currObjVertices = VertexGroup::createTriangleVerts(curr->rect.position, curr->rect.size, curr->texCoords);
-            bgObjectsVertices.insert(bgObjectsVertices.end(), currObjVertices.begin(), currObjVertices.end());
+//             std::array<sf::Vertex, 6> currObjVertices = VertexGroup::createTriangleVerts(curr->rect.position, curr->rect.size, curr->texCoords);
+//             bgObjectsVertices.insert(bgObjectsVertices.end(), currObjVertices.begin(), currObjVertices.end());
 
-            if (!debug) continue;
+//             if (!debug) continue;
 
-            if (mouseRectCollide(game, curr->rect.position, curr->rect.size, true))
-            {
-                std::array<sf::Vertex, 8> verts = VertexGroup::createLineVerts(curr->rect.position, curr->rect.size, sf::Color::Red);
-                debugBgObjectOutlineVerts.insert(debugBgObjectOutlineVerts.end(), verts.begin(), verts.end());
-            }
-        }
+//             if (mouseRectCollide(game, curr->rect.position, curr->rect.size, true))
+//             {
+//                 std::array<sf::Vertex, 8> verts = VertexGroup::createLineVerts(curr->rect.position, curr->rect.size, sf::Color::Red);
+//                 debugBgObjectOutlineVerts.insert(debugBgObjectOutlineVerts.end(), verts.begin(), verts.end());
+//             }
+//         }
         
-        window->getWindow().draw(&bgObjectsVertices[0], bgObjectsVertices.size(), sf::PrimitiveType::Triangles, bgObjectStates);
+//         window->getWindow().draw(&bgObjectsVertices[0], bgObjectsVertices.size(), sf::PrimitiveType::Triangles, bgObjectStates);
 
-        if (debug && debugBgObjectOutlineVerts.size() > 0)
-        {
-            window->getWindow().draw(&debugBgObjectOutlineVerts[0], debugBgObjectOutlineVerts.size(), sf::PrimitiveType::Lines);
-        }
-    }
-}
+//         if (debug && debugBgObjectOutlineVerts.size() > 0)
+//         {
+//             window->getWindow().draw(&debugBgObjectOutlineVerts[0], debugBgObjectOutlineVerts.size(), sf::PrimitiveType::Lines);
+//         }
+//     }
+// }
 
-sf::Vector2i ChunkLayer::getCurrChunkPos()
-{
-    return worldToChunkPosition(game, game->getScene()->getCamera()->getCenter());
-}
+// sf::Vector2i ChunkLayer::getCurrChunkPos()
+// {
+//     return worldToChunkPosition(game, game->getScene()->getCamera()->getCenter());
+// }

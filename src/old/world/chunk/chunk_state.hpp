@@ -1,7 +1,7 @@
-#pragma once
+// #pragma once
 
-enum class ChunkState
-{
-    ACTIVE,
-    ASLEEP
-};
+// enum class ChunkState
+// {
+//     ACTIVE,
+//     ASLEEP
+// };

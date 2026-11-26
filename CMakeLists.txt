@@ -79,6 +79,8 @@ src/ui/ui_position.cpp
 src/ui/ui_management_system.cpp
 src/ui/ui_management_object.cpp
 
+src/world/world_layer.cpp
+
 # src/world/background_object.cpp
 
 # src/world/chunk/chunk_layer.cpp

@@ -1,90 +1,90 @@
-#pragma once
+// #pragma once
 
-#include "../../core/common.hpp"
-#include "../../graphics/global_animation.hpp"
-#include "../../graphics/vertex_group.hpp"
-#include "tile_types.hpp"
-#include "tags/tile_tag.hpp"
-#include "tags/mineable_tag.hpp"
-#include "tile_template.hpp"
+// #include "../../core/common.hpp"
+// #include "../../graphics/global_animation.hpp"
+// #include "../../graphics/vertex_group.hpp"
+// #include "tile_types.hpp"
+// #include "tags/tile_tag.hpp"
+// #include "tags/mineable_tag.hpp"
+// #include "tile_template.hpp"
 
-class Game;
-class Chunk;
+// class Game;
+// class Chunk;
 
-class Tile
-{
-public:
-    Tile();
+// class Tile
+// {
+// public:
+//     Tile();
     
-    Tile(Game* game, Chunk* chunk, sf::Vector2i localPosition, const TileTemplate& t, int z = 0);
+//     Tile(Game* game, Chunk* chunk, sf::Vector2i localPosition, const TileTemplate& t, int z = 0);
 
-    template<typename T>
-    T* getTag()
-    {
-        for (auto& t : tags)
-        {
-            if (auto casted = dynamic_cast<T*>(t.get())) return casted;
-        }
+//     template<typename T>
+//     T* getTag()
+//     {
+//         for (auto& t : tags)
+//         {
+//             if (auto casted = dynamic_cast<T*>(t.get())) return casted;
+//         }
         
-        return nullptr;
-    }
+//         return nullptr;
+//     }
 
-    template<typename T, typename... Args>
-    T& addTag(Args&&... args)
-    {
-        T* comp = new T(std::forward<Args>(args)...);
-        tags.emplace_back(comp);
-        return *comp;
-    }
+//     template<typename T, typename... Args>
+//     T& addTag(Args&&... args)
+//     {
+//         T* comp = new T(std::forward<Args>(args)...);
+//         tags.emplace_back(comp);
+//         return *comp;
+//     }
 
-    template<typename T>
-    void removeTag()
-    {
-        for (auto i = tags.begin(); i != tags.end();)
-        {
-            if (auto casted = dynamic_cast<T*>(i->get()))
-            {
-                i = tags.erase(i);
-                break;
-            }
-            else
-            {
-                ++i;
-            }
-        }
-    }
+//     template<typename T>
+//     void removeTag()
+//     {
+//         for (auto i = tags.begin(); i != tags.end();)
+//         {
+//             if (auto casted = dynamic_cast<T*>(i->get()))
+//             {
+//                 i = tags.erase(i);
+//                 break;
+//             }
+//             else
+//             {
+//                 ++i;
+//             }
+//         }
+//     }
 
-    void update(float dt);
+//     void update(float dt);
 
-    void destroy();
+//     void destroy();
 
-    Chunk* chunk;
+//     Chunk* chunk;
 
-    sf::Vector2i localPosition;
+//     sf::Vector2i localPosition;
 
-    float size;
+//     float size;
 
-    TileType type;
+//     TileType type;
 
-    bool collides;
+//     bool collides;
 
-    sf::Vector2f collOffsetFraction;
+//     sf::Vector2f collOffsetFraction;
 
-    sf::Vector2f collSizeFraction;
+//     sf::Vector2f collSizeFraction;
 
-    std::string colliderName;
+//     std::string colliderName;
 
-    VertexGroup myVerts;
+//     VertexGroup myVerts;
 
-    GlobalAnimation* globalAnimation;
-    std::unique_ptr<Animation> animation;
+//     GlobalAnimation* globalAnimation;
+//     std::unique_ptr<Animation> animation;
     
-    // only affects the individual animation, not globalAnimation
-    float animSpeedMult;
+//     // only affects the individual animation, not globalAnimation
+//     float animSpeedMult;
 
-    int z;
+//     int z;
 
-    std::vector<std::unique_ptr<TileTag>> tags;
+//     std::vector<std::unique_ptr<TileTag>> tags;
     
-    Game* game;
-};
+//     Game* game;
+// };

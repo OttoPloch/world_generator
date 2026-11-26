@@ -1,68 +1,68 @@
-#pragma once
+// #pragma once
 
-#include <SFML/Graphics/Rect.hpp>
-#include <SFML/Graphics/RenderStates.hpp>
-#include <unordered_map>
+// #include <SFML/Graphics/Rect.hpp>
+// #include <SFML/Graphics/RenderStates.hpp>
+// #include <unordered_map>
 
-#include "../../core/common.hpp"
-#include "../../entities/entity.hpp"
-#include "../../core/window.hpp"
-#include "chunk.hpp"
-#include "chunk_generator.hpp"
-#include "../tile/tile_template_manager.hpp"
+// #include "../../core/common.hpp"
+// #include "../../entities/entity.hpp"
+// #include "../../core/window.hpp"
+// #include "chunk.hpp"
+// #include "chunk_generator.hpp"
+// #include "../tile/tile_template_manager.hpp"
 
-class Game;
+// class Game;
 
-class ChunkLayer
-{
-public:
-    ChunkLayer();
+// class ChunkLayer
+// {
+// public:
+//     ChunkLayer();
 
-    ChunkLayer(Game* game);
+//     ChunkLayer(Game* game);
 
-    void init(Game* game);
+//     void init(Game* game);
 
-    void loadNearbyChunks();
+//     void loadNearbyChunks();
 
-    bool loadChunk(sf::Vector2i chunkPosition);
+//     bool loadChunk(sf::Vector2i chunkPosition);
     
-    bool unloadChunk(sf::Vector2i chunkPosition);
+//     bool unloadChunk(sf::Vector2i chunkPosition);
 
-    Chunk* getChunk(sf::Vector2i chunkPosition);
+//     Chunk* getChunk(sf::Vector2i chunkPosition);
 
-    std::array<Chunk*, 9> getNearbyChunks(sf::Vector2f position);
+//     std::array<Chunk*, 9> getNearbyChunks(sf::Vector2f position);
 
-    std::unordered_map<sf::Vector2i, std::unique_ptr<Chunk>, Vector2iHash>* getAllLoadedChunks();
+//     std::unordered_map<sf::Vector2i, std::unique_ptr<Chunk>, Vector2iHash>* getAllLoadedChunks();
 
-    Tile* getTileAtPosition(sf::Vector2f position, bool activeChunksOnly);
+//     Tile* getTileAtPosition(sf::Vector2f position, bool activeChunksOnly);
 
-    void tick();
+//     void tick();
     
-    void loadUpdate();
+//     void loadUpdate();
 
-    void update(float dt);
+//     void update(float dt);
 
-    void draw(bool debug = false, int debugLayerView = 0);
+//     void draw(bool debug = false, int debugLayerView = 0);
 
-    TileTemplateManager tManager;
-private:
-    sf::Vector2i getCurrChunkPos();
+//     TileTemplateManager tManager;
+// private:
+//     sf::Vector2i getCurrChunkPos();
 
-    Game* game;
+//     Game* game;
 
-    Window* window;
+//     Window* window;
     
-    int chunkSize;
-    float tileSize;
-    float chunkLength;
+//     int chunkSize;
+//     float tileSize;
+//     float chunkLength;
 
-    ChunkGenerator chunkGenerator;
+//     ChunkGenerator chunkGenerator;
     
-    std::unordered_map<sf::Vector2i, std::unique_ptr<Chunk>, Vector2iHash> chunks;
+//     std::unordered_map<sf::Vector2i, std::unique_ptr<Chunk>, Vector2iHash> chunks;
 
-    // background objects
-    std::vector<sf::Vertex> bgObjectsVertices;
-    sf::RenderStates bgObjectStates;
+//     // background objects
+//     std::vector<sf::Vertex> bgObjectsVertices;
+//     sf::RenderStates bgObjectStates;
     
-    sf::Vector2i lastChunkPos;
-};
+//     sf::Vector2i lastChunkPos;
+// };

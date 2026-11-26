@@ -1,7 +1,7 @@
-#include "tile_tag.hpp"
-#include "../tile.hpp"
+// #include "tile_tag.hpp"
+// #include "../tile.hpp"
 
-void TileTag::onTileDestroy(Tile* tile, bool& endHere)
-{
+// void TileTag::onTileDestroy(Tile* tile, bool& endHere)
+// {
 
-}
+// }

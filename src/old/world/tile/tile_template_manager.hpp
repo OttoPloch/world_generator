@@ -1,13 +1,13 @@
-#pragma once
+// #pragma once
 
-#include <unordered_map>
+// #include <unordered_map>
 
-#include "tile_template.hpp"
+// #include "tile_template.hpp"
 
-class TileTemplateManager
-{
-public:
-    TileTemplateManager();
+// class TileTemplateManager
+// {
+// public:
+//     TileTemplateManager();
 
-    std::unordered_map<std::string, TileTemplate> tileTemplates;
-};
+//     std::unordered_map<std::string, TileTemplate> tileTemplates;
+// };
