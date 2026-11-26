@@ -17,7 +17,7 @@ Cursor::Cursor(Game* game, std::string alternativeKeyForLeftClick, std::string a
     usingMovementForUISelector = false;
     mouseMovedThisFrame = false;
 
-    // REFACTOR
+    // REFACTOR (from ui)
     // UISelector = game->getScene()->getUILayer()->createElement(std::make_unique<UIElement>(game, "__UI SELECTOR", UIPosition({windowSize.x / 2.f, windowSize.y / 2.f}), INT32_MAX, nullptr));
     // UISelector->addComponent<BackgroundComponent>(game, UISelector, UIPosition({0, 0}), "SELECTOR BG", 0, sf::Vector2f(30, 30), 2, game->getAssetManager()->getTexture("white_border", "texture_atlases/ui/"), game->getAssetManager()->getTextureAtlas("background_8px", "ui/"), false);
     // UISelector->visible = false;
@@ -73,12 +73,14 @@ void Cursor::inputUpdate(float dt)
             // butterflies or something that is just visual and moves and animates but is not interactable (could be but for the example it's not). Also, that would make it
             // necessary to give different entities different z values, instead of just using entityTileZEquivalent in Settings, so that butterflies can be above all tiles.
             selectedEntity = game->getScene()->getEntityLayer()->getEntityAtPos(getGameCursorWorldPosition(), false);
-            selectedTile = game->getScene()->getChunkLayer()->getTileAtPosition(getGameCursorWorldPosition(), true);
+            // REFACTOR
+            //selectedTile = game->getScene()->getChunkLayer()->getTileAtPosition(getGameCursorWorldPosition(), true);
     
             if (selectedTile && selectedEntity)
             {
-                if (selectedTile->z > game->getSettings()->entityTileZEquivalent) selectedEntity = nullptr;
-                else selectedTile = nullptr;
+                // REFACTOR
+                // if (selectedTile->z > game->getSettings()->entityTileZEquivalent) selectedEntity = nullptr;
+                // else selectedTile = nullptr;
             }
         }
         else
@@ -142,7 +144,7 @@ void Cursor::moveUISelector(sf::Vector2f direction)
     {
         // no options in the selected element or none are selected, finding a new element
 
-        // REFACTOR
+        // REFACTOR (from ui)
         // UIElement* newElement = game->getScene()->getUILayer()->getNearestElement(direction, selectedElement);
     
         // if (!newElement) return;
@@ -263,7 +265,7 @@ bool Cursor::canDoInputType(std::string type)
             return false;
         }
         
-        // REFACTOR
+        // REFACTOR (from ui)
         if (false)//game->getScene()->getUILayer()->checkUICollision() || UIMode)
         {
             return false;
@@ -271,7 +273,7 @@ bool Cursor::canDoInputType(std::string type)
     }
     else if (type == "TYPE:UI")
     {
-        // REFACTOR
+        // REFACTOR (from ui)
         if (false)//!game->getScene()->getUILayer()->checkUICollision() && !UIMode)
         {
             return false;

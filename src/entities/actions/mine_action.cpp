@@ -14,34 +14,35 @@ bool MineAction::start()
 
     startTile = game->getInputManager()->cursor->getSelectedTile();
 
-    if (startTile)
-    {
-        std::vector<std::unique_ptr<TileTag>>* tags = &startTile->tags;
+    // REFACTOR
+    // if (startTile)
+    // {
+    //     std::vector<std::unique_ptr<TileTag>>* tags = &startTile->tags;
 
-        for (auto& t : *tags)
-        {
-            auto m = dynamic_cast<MineableTag*>(t.get());
-            if (!m) continue;
+    //     for (auto& t : *tags)
+    //     {
+    //         auto m = dynamic_cast<MineableTag*>(t.get());
+    //         if (!m) continue;
 
-            timeToComplete = m->durability / mineSpeed;
-            cooldown = m->durability / mineSpeed;
+    //         timeToComplete = m->durability / mineSpeed;
+    //         cooldown = m->durability / mineSpeed;
             
-            // TEMP keep the indicator but make it a ui management object or something
-            sf::Vector2f cursorWorldPos(game->getInputManager()->cursor->getGameCursorWorldPosition());
-            sf::Vector2i cursorTilePos = worldToTilePosition(game, cursorWorldPos, false, false);
-            sf::Vector2f cursorTileWorldPos(tileToWorldPosition(game, cursorTilePos, false));
-            float tileSize = game->getSettings()->tile_size;
-            sf::Vector2f cursorTileWorldPosTileCenter(cursorTileWorldPos + sf::Vector2f(tileSize / 2, tileSize / 2));
+    //         // TEMP keep the indicator but make it a ui management object or something
+    //         sf::Vector2f cursorWorldPos(game->getInputManager()->cursor->getGameCursorWorldPosition());
+    //         sf::Vector2i cursorTilePos = worldToTilePosition(game, cursorWorldPos, false, false);
+    //         sf::Vector2f cursorTileWorldPos(tileToWorldPosition(game, cursorTilePos, false));
+    //         float tileSize = game->getSettings()->tile_size;
+    //         sf::Vector2f cursorTileWorldPosTileCenter(cursorTileWorldPos + sf::Vector2f(tileSize / 2, tileSize / 2));
                 
-            std::string l_positionAsString = std::to_string(cursorTileWorldPosTileCenter.x) + ", " + std::to_string(cursorTileWorldPosTileCenter.y);
-            std::string l_sizeAsString = std::to_string(tileSize) + ", " + std::to_string(tileSize);
-            m_indicator = game->getScene()->getUILayer()->addElement<ImageUIElement>("position: " + l_positionAsString + ", 4, 0, 1; texture: texture_atlases/ui/actions/MineAction/mine_progress_orb.png; animation: ui/actions/MineAction/mine_progress_orb; animation_speed_mult: " + std::to_string(1/timeToComplete) + "; size: " + l_sizeAsString);
-            // TEMP
+    //         std::string l_positionAsString = std::to_string(cursorTileWorldPosTileCenter.x) + ", " + std::to_string(cursorTileWorldPosTileCenter.y);
+    //         std::string l_sizeAsString = std::to_string(tileSize) + ", " + std::to_string(tileSize);
+    //         m_indicator = game->getScene()->getUILayer()->addElement<ImageUIElement>("position: " + l_positionAsString + ", 4, 0, 1; texture: texture_atlases/ui/actions/MineAction/mine_progress_orb.png; animation: ui/actions/MineAction/mine_progress_orb; animation_speed_mult: " + std::to_string(1/timeToComplete) + "; size: " + l_sizeAsString);
+    //         // TEMP
 
-            active = true;
-            return true;
-        }
-    }
+    //         active = true;
+    //         return true;
+    //     }
+    // }
 
     active = false;
     return false;
@@ -61,14 +62,15 @@ bool MineAction::update(float dt)
 
 void MineAction::completeAction(Entity* actor, sf::Vector2f position)
 {
-    sf::Vector2i chunkPos = worldToChunkPosition(actor->game, startPosition);
+    // REFACTOR
+    // sf::Vector2i chunkPos = worldToChunkPosition(actor->game, startPosition);
 
-    if (Chunk* chunk = actor->game->getScene()->getChunkLayer()->getChunk(chunkPos))
-    {
-        chunk->destroyTile(startTile->localPosition, &chunk->chunkLayer->tManager.tileTemplates["air"]);
-    }
+    // if (Chunk* chunk = actor->game->getScene()->getChunkLayer()->getChunk(chunkPos))
+    // {
+    //     chunk->destroyTile(startTile->localPosition, &chunk->chunkLayer->tManager.tileTemplates["air"]);
+    // }
 
-    reset(true);
+    // reset(true);
 }
 
 void MineAction::reset(bool restartCooldownProgress)

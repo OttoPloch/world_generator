@@ -5,6 +5,7 @@
 #include "../components/components.hpp"
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <algorithm>
+#include "../../graphics/vertex_group.hpp"
 
 RenderSystem::RenderSystem() {}
 

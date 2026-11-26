@@ -19,7 +19,8 @@ Scene::Scene(Game* p_game) : m_game(p_game), window(m_game->getWindow()), uiLaye
 {
     assetManager = m_game->getAssetManager();
     
-    chunkLayer.init(m_game);
+    // REFACTOR
+    // chunkLayer.init(m_game);
 
     entityLayer.init(m_game);
 
@@ -34,7 +35,8 @@ void Scene::tick()
 {
     camera.tick();
 
-    chunkLayer.tick();
+    // REFACTOR
+    // chunkLayer.tick();
     
     entityLayer.tick();
 
@@ -97,8 +99,9 @@ void Scene::update(float dt)
     camera.update(dt);
     updateBlame["UPDATE_CAMERA"] = debugClock.restart().asSeconds();
 
-    chunkLayer.update(dt);
-    updateBlame["UPDATE_CHUNK_LAYER"] = debugClock.restart().asSeconds();
+    // REFACTOR
+    // chunkLayer.update(dt);
+    // updateBlame["UPDATE_CHUNK_LAYER"] = debugClock.restart().asSeconds();
     
     entityLayer.update(dt);
     updateBlame["UPDATE_ENTITY_LAYER"] = debugClock.restart().asSeconds();
@@ -221,7 +224,8 @@ void Scene::update(float dt)
 
 void Scene::chunkLoadUpdate()
 {
-    chunkLayer.loadUpdate();
+    // REFACTOR
+    // chunkLayer.loadUpdate();
 }
 
 void Scene::draw()
@@ -231,7 +235,8 @@ void Scene::draw()
     drawBlame.clear();
     debugClock.restart();
 
-    chunkLayer.draw(debugMode, debugChunkLayerView);
+    // REFACTOR
+    // chunkLayer.draw(debugMode, debugChunkLayerView);
     drawBlame["DRAW_CHUNK_LAYER"] = debugClock.restart().asSeconds();
 
     entityLayer.draw(debugMode);
@@ -286,43 +291,46 @@ void Scene::sceneInput(std::string control)
 
 bool Scene::processActionRequest(Entity* actor, Action* action)
 {
-    if (actor)
-    {
-        if (auto a = actor->getComponent<ActionComponent>())
-        {
-            // CHECKS
+    // REFACTOR
+    // if (actor)
+    // {
+    //     if (auto a = actor->getComponent<ActionComponent>())
+    //     {
+    //         // CHECKS
 
-            if (action->rangeMultiplier < 0.f || getDistance(actor->position.getPosition(), action->startPosition) <= a->range * action->rangeMultiplier)
-            {
-                // IS WITHIN RANGE
+    //         if (action->rangeMultiplier < 0.f || getDistance(actor->position.getPosition(), action->startPosition) <= a->range * action->rangeMultiplier)
+    //         {
+    //             // IS WITHIN RANGE
 
-                if (dynamic_cast<MineAction*>(action))
-                {
-                    // TRYING TO MINE
+    //             if (dynamic_cast<MineAction*>(action))
+    //             {
+    //                 // TRYING TO MINE
 
-                    if (auto t = m_game->getInputManager()->cursor->getSelectedTile())
-                    {
-                        // FOUND TARGETED TILE
+    //                 if (auto t = m_game->getInputManager()->cursor->getSelectedTile())
+    //                 {
+    //                     // FOUND TARGETED TILE
 
-                        for (auto& i : t->tags)
-                        {
-                            if (dynamic_cast<MineableTag*>(i.get()))
-                            {
-                                // TARGETED TILE CAN BE MINED, ACTION IS VALID
-                                return true;
-                            }
-                        }
-                    }
+    //                     for (auto& i : t->tags)
+    //                     {
+    //                         if (dynamic_cast<MineableTag*>(i.get()))
+    //                         {
+    //                             // TARGETED TILE CAN BE MINED, ACTION IS VALID
+    //                             return true;
+    //                         }
+    //                     }
+    //                 }
 
-                    // EITHER THERE IS NO TILE SELECTED, OR THE TILE IS NOT MINEABLE
-                    return false;
-                }
+    //                 // EITHER THERE IS NO TILE SELECTED, OR THE TILE IS NOT MINEABLE
+    //                 return false;
+    //             }
 
-                // ALL GENERAL CHECKS PASSED (NO SPECIFIC ACTION CHECKS APPLIED), REQUEST IS CONSIDERED VALID
-                return true;
-            }
-        }
-    }
+    //             // ALL GENERAL CHECKS PASSED (NO SPECIFIC ACTION CHECKS APPLIED), REQUEST IS CONSIDERED VALID
+    //             return true;
+    //         }
+    //     }
+    // }
+
+    // return false;
 
     return false;
 }
@@ -349,7 +357,8 @@ EntityLayer* Scene::getEntityLayer() { return &entityLayer; }
 
 UILayer* Scene::getUILayer() { return &uiLayer; }
 
-ChunkLayer* Scene::getChunkLayer() { return &chunkLayer; }
+// REFACTOR
+//ChunkLayer* Scene::getChunkLayer() { return &chunkLayer; }
 
 sf::Vector2i Scene::getWorldChunkOrigin() { return worldChunkOrigin; }
 
@@ -365,20 +374,21 @@ void Scene::adjustWorldChunkOrigin(sf::Vector2i amount)
         e.second->position.changePosition({amount.x * -chunkLength, amount.y * -chunkLength});
     }
 
-    auto allChunks = chunkLayer.getAllLoadedChunks();
-    for (auto& pair : *allChunks)
-    {
-        Chunk* c = pair.second.get();
+    // REFACTOR
+    // auto allChunks = chunkLayer.getAllLoadedChunks();
+    // for (auto& pair : *allChunks)
+    // {
+    //     Chunk* c = pair.second.get();
 
-        sf::Vector2i chunkPos = c->getChunkPosition();
-        c->worldPosition = {(chunkPos.x - worldChunkOrigin.x) * chunkLength, (chunkPos.y - worldChunkOrigin.y) * chunkLength};
+    //     sf::Vector2i chunkPos = c->getChunkPosition();
+    //     c->worldPosition = {(chunkPos.x - worldChunkOrigin.x) * chunkLength, (chunkPos.y - worldChunkOrigin.y) * chunkLength};
 
-        c->createAllTileVerts();
+    //     c->createAllTileVerts();
 
-        for (auto& bg : c->bgObjects)
-        {
-            bg.bottom += amount.y * -chunkLength;
-            bg.rect.position += {amount.x * -chunkLength, amount.y * -chunkLength};
-        }
-    }
+    //     for (auto& bg : c->bgObjects)
+    //     {
+    //         bg.bottom += amount.y * -chunkLength;
+    //         bg.rect.position += {amount.x * -chunkLength, amount.y * -chunkLength};
+    //     }
+    // }
 }

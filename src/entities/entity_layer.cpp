@@ -274,27 +274,33 @@ Entity* EntityLayer::getEntityAtPos(sf::Vector2f position, bool includePlayer)
 
 std::vector<Entity*> EntityLayer::getEntitiesInChunkArea(int chunkX, int chunkY, int chunkRadius)
 {
-    std::vector<Entity*> entitiesWithin;
+    // TEMP, REFACTOR
+    std::vector<Entity*> l_allEntities;
+    for (auto& e : entities) l_allEntities.emplace_back(e.second.get());
+    return l_allEntities;
 
-    float chunkLength = toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size;
+    // REFACTOR
+    // std::vector<Entity*> entitiesWithin;
 
-    sf::Vector2i chunkMin = {chunkX - chunkRadius, chunkY - chunkRadius};
-    sf::Vector2i chunkMax = {chunkX + chunkRadius, chunkY + chunkRadius};
+    // float chunkLength = toFloat(game->getSettings()->chunk_size) * game->getSettings()->tile_size;
 
-    auto chunkLayer = game->getScene()->getChunkLayer();
+    // sf::Vector2i chunkMin = {chunkX - chunkRadius, chunkY - chunkRadius};
+    // sf::Vector2i chunkMax = {chunkX + chunkRadius, chunkY + chunkRadius};
 
-    for (int y = chunkMin.y; y <= chunkMax.y; y++)
-    {
-        for (int x = chunkMin.x; x <= chunkMax.x; x++)
-        {
-            auto currChunk = chunkLayer->getChunk({x, y});
-            if (!currChunk) continue;
+    // auto chunkLayer = game->getScene()->getChunkLayer();
 
-            entitiesWithin.insert(entitiesWithin.end(), currChunk->entitiesInChunk.begin(), currChunk->entitiesInChunk.end());
-        }
-    }
+    // for (int y = chunkMin.y; y <= chunkMax.y; y++)
+    // {
+    //     for (int x = chunkMin.x; x <= chunkMax.x; x++)
+    //     {
+    //         auto currChunk = chunkLayer->getChunk({x, y});
+    //         if (!currChunk) continue;
 
-    return entitiesWithin;
+    //         entitiesWithin.insert(entitiesWithin.end(), currChunk->entitiesInChunk.begin(), currChunk->entitiesInChunk.end());
+    //     }
+    // }
+
+    // return entitiesWithin;
 }
 
 std::vector<Entity*> EntityLayer::getEntitiesInChunkArea(sf::Vector2f position, int chunkRadius)

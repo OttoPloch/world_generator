@@ -161,7 +161,7 @@ void Game::run()
         scene.chunkLoadUpdate();
 
         // TEMP, setting the fps display on screen to the smooth fps value.
-        // REFACTOR
+        // REFACTOR (from ui)
         // auto element = scene.getUILayer()->getElement("__debug text display");
         // if (element)
         // {

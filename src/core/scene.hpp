@@ -5,7 +5,8 @@
 #include "window.hpp"
 #include "../graphics/asset_manager.hpp"
 #include "../entities/entity_layer.hpp"
-#include "../world/chunk/chunk_layer.hpp"
+// REFACTOR
+// #include "../world/chunk/chunk_layer.hpp"
 #include "../entities/components/entity_component.hpp"
 #include "../entities/components/movement_component.hpp"
 #include "../entities/actions/action.hpp"
@@ -42,7 +43,8 @@ public:
 
     UILayer* getUILayer();
 
-    ChunkLayer* getChunkLayer();
+    // REFACTOR
+    // ChunkLayer* getChunkLayer();
     
     sf::Vector2i getWorldChunkOrigin();
     void adjustWorldChunkOrigin(sf::Vector2i amount);
@@ -53,7 +55,8 @@ private:
     Window* window;
     AssetManager* assetManager;    
 
-    ChunkLayer chunkLayer;
+    // REFACTOR
+    // ChunkLayer chunkLayer;
     EntityLayer entityLayer;
     UILayer uiLayer;
 

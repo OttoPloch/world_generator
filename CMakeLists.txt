@@ -79,18 +79,18 @@ src/ui/ui_position.cpp
 src/ui/ui_management_system.cpp
 src/ui/ui_management_object.cpp
 
-src/world/background_object.cpp
+# src/world/background_object.cpp
 
-src/world/chunk/chunk_layer.cpp
-src/world/chunk/chunk.cpp
-src/world/chunk/chunk_generator.cpp
+# src/world/chunk/chunk_layer.cpp
+# src/world/chunk/chunk.cpp
+# src/world/chunk/chunk_generator.cpp
 
-src/world/tile/tile.cpp
-src/world/tile/tags/tile_tag.cpp
-src/world/tile/tags/mineable_tag.cpp
-src/world/tile/tags/resource_tag.cpp
-src/world/tile/tile_template_manager.cpp
-src/world/tile/tile_template.cpp
+# src/world/tile/tile.cpp
+# src/world/tile/tags/tile_tag.cpp
+# src/world/tile/tags/mineable_tag.cpp
+# src/world/tile/tags/resource_tag.cpp
+# src/world/tile/tile_template_manager.cpp
+# src/world/tile/tile_template.cpp
 )
 # target_compile_options(app PRIVATE -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer)
 # target_link_options(app PRIVATE -fsanitize=address,undefined)
